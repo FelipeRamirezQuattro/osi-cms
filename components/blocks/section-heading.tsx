@@ -21,7 +21,7 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
     >
       <div className={data.align === "center" ? "text-center" : ""}>
-        <h2 className="font-display text-section tracking-tightest-display uppercase">
+        <h2 className="font-display-soft text-section font-semibold">
           {data.title}
         </h2>
         {data.lede && (

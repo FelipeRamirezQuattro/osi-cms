@@ -21,7 +21,7 @@ export function ContactFormRender({ data }: { data: ContactFormData }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
+      <h2 className="mb-8 font-display-soft text-section font-semibold">
         {data.title}
       </h2>
       {state.status === "success" ? (

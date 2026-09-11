@@ -32,7 +32,7 @@ async function Render({ data }: { data: Data }) {
       contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
     >
       <div className="mb-8 flex flex-col justify-between gap-4 border-b border-osi-steel-500/30 pb-6 sm:flex-row sm:items-center">
-        <h2 className="font-display text-section tracking-tightest-display uppercase">
+        <h2 className="font-display-soft text-section font-semibold">
           {data.title}
         </h2>
         {data.subtitle && (
