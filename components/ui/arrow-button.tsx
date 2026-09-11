@@ -32,7 +32,7 @@ export function ArrowButton({
 }: CommonProps & Omit<ComponentPropsWithoutRef<"button">, "className" | "children">) {
   if (variant === "ghost-arrow") {
     const content = (
-      <span className="group inline-flex items-center gap-2 font-display text-sm tracking-wide-display uppercase">
+      <span className="group inline-flex items-center gap-2 font-display text-sm tracking-wide-display uppercase transition-transform duration-200 active:scale-[0.97]">
         <span
           aria-hidden
           className="inline-block transition-transform motion-safe:group-hover:translate-x-1"
@@ -53,7 +53,7 @@ export function ArrowButton({
     );
   }
 
-  const shared = `group inline-flex items-center gap-4 rounded-full border py-2 pr-2 pl-6 font-display text-sm tracking-wide-display uppercase transition-colors ${VARIANT_CLASSES[variant]} ${className}`;
+  const shared = `group inline-flex items-center gap-4 rounded-full border py-2 pr-2 pl-6 font-display text-sm tracking-wide-display uppercase transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] ${VARIANT_CLASSES[variant]} ${className}`;
   const inner = (
     <>
       <span>{children}</span>
