@@ -23,7 +23,7 @@ function StatItem({ value, label, background }: z.infer<typeof statSchema> & { b
   return (
     <div className="relative z-10 h-full p-8">
       <p
-        className={`font-display text-3xl tracking-tightest-display uppercase ${
+        className={`font-display text-3xl tracking-tightest-display ${
           background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
         }`}
       >
