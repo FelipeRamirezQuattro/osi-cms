@@ -1,0 +1,63 @@
+import { z } from "zod";
+import { blockCommonSchema } from "@/lib/blocks/common";
+import { defineBlock } from "@/lib/blocks/types";
+import { Section } from "@/components/ui/section";
+
+const columnSchema = z.object({
+  heading: z.string().optional(),
+  links: z.array(z.object({ label: z.string(), href: z.string().default("#") })),
+});
+
+const schema = blockCommonSchema.extend({
+  columns: z.array(columnSchema).min(1).max(4),
+});
+
+type Data = z.infer<typeof schema>;
+
+const COLS_CLASS: Record<number, string> = {
+  1: "",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
+
+function Render({ data }: { data: Data }) {
+  return (
+    <Section
+      background={data.background}
+      spacingTop={data.spacingTop}
+      spacingBottom={data.spacingBottom}
+      anchorId={data.anchorId}
+    >
+      <div className={`grid grid-cols-1 gap-8 ${COLS_CLASS[data.columns.length] ?? ""}`}>
+        {data.columns.map((col, i) => (
+          <div key={i}>
+            {col.heading && (
+              <h3 className="mb-3 font-display text-small-label tracking-wide-label uppercase opacity-70">
+                {col.heading}
+              </h3>
+            )}
+            <ul className="space-y-2">
+              {col.links.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} className="text-sm hover:underline">
+                    → {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+export const linkColumnsBlock = defineBlock({
+  type: "link_columns",
+  label: "Link columns",
+  category: "layout",
+  schema,
+  defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", columns: [] },
+  Render,
+});

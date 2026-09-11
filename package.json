@@ -7,14 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:taxonomy": "tsx --env-file=.env.local scripts/seed-taxonomy.ts"
+    "seed:taxonomy": "tsx --env-file=.env.local scripts/seed-taxonomy.ts",
+    "seed:navigation": "tsx --env-file=.env.local scripts/seed-navigation.ts",
+    "seed:home": "tsx --env-file=.env.local scripts/seed-home-page.ts",
+    "seed:products": "tsx --env-file=.env.local scripts/seed-products.ts",
+    "seed:static-pages": "tsx --env-file=.env.local scripts/seed-static-pages.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

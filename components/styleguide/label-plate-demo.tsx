@@ -1,7 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { LabelPlateCard } from "@/components/ui/label-plate-card";
+import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 
 const CARDS = [
   { title: "Gas Release System", body: "Breaking the curve for high-GLR horizontal wells." },
@@ -11,19 +8,5 @@ const CARDS = [
 ];
 
 export function LabelPlateDemo() {
-  const [openIndex, setOpenIndex] = useState(1);
-
-  return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      {CARDS.map((card, i) => (
-        <LabelPlateCard
-          key={card.title}
-          title={card.title}
-          body={card.body}
-          open={openIndex === i}
-          onInteract={() => setOpenIndex(i)}
-        />
-      ))}
-    </div>
-  );
+  return <LabelPlateGrid items={CARDS} defaultOpenIndex={1} />;
 }

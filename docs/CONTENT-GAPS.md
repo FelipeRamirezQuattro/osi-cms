@@ -54,3 +54,15 @@ items get struck through with the resolution, not deleted.
   Beverage, Power, Pulp & Paper, Mining, HVACR, Hydrogen). Only seeded
   the confirmed 9 in `scripts/seed-taxonomy.ts` — my own screenshot
   reading could be wrong, so confirm with the client before adding it.
+
+## Found during Phase 3 (block rendering)
+
+- **No map embed URL.** `site_settings.map_embed_url` is unset, so the
+  `contact_details` block's map renders "Map unavailable." Needs a
+  Google Maps (or similar) embed URL for 1001 E. Pearl Street, Odessa,
+  TX from the client, or a decision to use a static map image instead.
+- **`news_feed` renders nothing** on the home page — no `news_posts`
+  exist yet (the mockup's "Baker Hughes Technical Conference" / "Happy
+  Hour" / "Artificial Lift Forum" items aren't confirmed structured data
+  — dates, links — so none were fabricated). Populate via the admin or
+  Phase 4 once real event details are available.

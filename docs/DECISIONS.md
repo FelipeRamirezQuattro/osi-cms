@@ -67,3 +67,31 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   Industries tab but not in the prompt's text list) are intentionally
   left unseeded — logged in `docs/CONTENT-GAPS.md` pending client
   confirmation, per constraint 4 (never invent content).
+- **Product detail pages render directly from `products` + child tables,
+  not through `pages`/`page_blocks`.** A product's structure (benefits,
+  stages, specs) is fixed and relational, not freeform CMS content — see
+  the block registry note in `CLAUDE.md`. Home, `/products` (listing),
+  and `/contact` do go through the generic block system.
+- **`ESP Chem Screen`'s `product_categories` row is "pumps," not
+  "chemical-treatment,"** even though About Us text frames it as a
+  chemical-treatment tool — matches the mockup's own mega menu placement
+  (page 4), which the master prompt treats as the higher-authority
+  source (constraint 1). `chemical-treatment` has zero seeded products
+  as a result; worth raising with the client.
+- **`global_map` renders a static list of countries with published
+  locations, not an interactive SVG map with hover cards.** Master
+  prompt open question #3 (raised, not yet answered) asks which the
+  client wants — swap in the real map once that's settled.
+- **The home/products/contact pages seeded in Phase 3 are published
+  directly**, not left `draft` like a real content migration would be
+  (master prompt §8.7) — this is architecture-proof content for Phase 3,
+  not the real client migration (that's Phase 4, and does land as draft
+  for a human to review).
+- **Two Next.js 16 requirements discovered while building Phase 3**,
+  now documented in `CLAUDE.md`: (1) a `"use client"` file cannot also
+  export the plain-object `defineBlock(...)` a server-side registry
+  reads — non-component exports from a client module arrive as unusable
+  references server-side. (2) any route reading Supabase content needs
+  `export const dynamic = "force-dynamic"` (set once, in
+  `app/(site)/layout.tsx`) or the build fails trying to statically
+  prerender a page that touches `cookies()`.

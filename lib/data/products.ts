@@ -5,6 +5,7 @@ export type ProductDetail = Tables<"products"> & {
   product_benefits: Tables<"product_benefits">[];
   product_stages: Tables<"product_stages">[];
   product_specs: Tables<"product_specs">[];
+  categorySlug: string | null;
 };
 
 export async function listProducts(locale = "en"): Promise<Tables<"products">[]> {
@@ -42,7 +43,9 @@ export async function getProductBySlug(
   const db = createServerDbClient();
   const { data, error } = await db
     .from("products")
-    .select("*, product_benefits(*), product_stages(*), product_specs(*)")
+    .select(
+      "*, product_benefits(*), product_stages(*), product_specs(*), product_categories(slug)",
+    )
     .eq("slug", slug)
     .eq("locale", locale)
     .eq("status", "published")
@@ -51,5 +54,11 @@ export async function getProductBySlug(
     .order("position", { referencedTable: "product_specs", ascending: true })
     .maybeSingle();
   if (error) throw error;
-  return data;
+  if (!data) return null;
+
+  const { product_categories, ...product } = data;
+  return {
+    ...product,
+    categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
+  };
 }

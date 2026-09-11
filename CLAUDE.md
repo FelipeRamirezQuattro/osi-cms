@@ -87,8 +87,18 @@ Specifics that affect this project:
 ## Repo layout so far
 
 ```
-app/                    routes (styleguide done; real pages Phase 3+)
-components/ui/          design-system primitives (Phase 1)
+app/(site)/              public marketing routes, wrapped with
+                         Header/Footer (route group layout sets
+                         `dynamic = "force-dynamic"` — see below)
+app/styleguide/          design reference, outside the (site) group
+components/ui/           design-system primitives (Phase 1)
+components/layout/       Header (mega menu) + Footer
+components/blocks/       one file per block type + shared bits
+                         (block-renderer.tsx, label-plate-grid.tsx)
+lib/blocks/              registry.ts, types.ts, common.ts (shared Zod
+                         base schema: anchorId/background/spacing)
+lib/actions/             Server Actions ("use server"), e.g. the
+                         contact form submit handler
 lib/db/client.ts         Supabase client factories — the only file that
                          imports @supabase/ssr's client constructors
 lib/db/database.types.ts generated types (regenerate after schema changes
@@ -96,7 +106,7 @@ lib/db/database.types.ts generated types (regenerate after schema changes
                          tool — don't hand-edit)
 lib/data/                repositories, one file per entity — pages,
                          products, taxonomy, news, resources, locations,
-                         navigation, settings so far
+                         navigation, settings, forms
 lib/auth/                thin auth adapter (Phase 5)
 lib/media.ts             resolveMediaUrl() — the only legacy-media seam
 content/legacy/          scraped Odessa Separator site (19 pages), the
@@ -107,6 +117,13 @@ supabase/migrations/     plain SQL migrations, numbered, applied via the
 scripts/                 one-off/idempotent Node scripts run via
                          `pnpm exec tsx --env-file=.env.local <file>`
 ```
+
+Every route under `app/(site)/` reads live Supabase content (draft vs
+published can change at any time via the future admin), so its layout
+sets `export const dynamic = "force-dynamic"` — without it, Next tries
+to statically prerender and fails the build the moment a data call
+touches `cookies()` (which `lib/db/client.ts` always does for session
+handling).
 
 ## Schema conventions (Phase 2)
 
@@ -134,13 +151,45 @@ table follows one pattern:
 After any migration, run `get_advisors` (security + performance) via the
 Supabase MCP and fix what it flags before moving on.
 
-## Block registry (Phase 3+)
+## Block registry (Phase 3, done)
 
-`lib/blocks/registry.ts` maps `type → { label, icon, schema, defaults,
-Render, AdminFields, category }`. Adding a block = one file in
-`components/blocks/` + one registry entry, nothing else. 26 block types
-are specified in the master prompt (hero_full, product_grid, contact_form,
-etc.) — see that spec, not reproduced here to avoid drift.
+`lib/blocks/registry.ts` maps `type → BlockDefinition` (`label`,
+`category`, `schema`, `defaults`, `Render`; `AdminFields` lands in Phase
+5). All 26 blocks from the master prompt §6 are implemented in
+`components/blocks/`, rendered by `BlockRenderer` (unknown type or a
+schema validation failure never crashes the page — a loud diagnostic in
+dev, silently skipped in prod). Adding a block = one file + one registry
+entry, same as before.
+
+**Critical gotcha — client blocks must split their file.** A block whose
+`Render` needs interactivity (`"use client"`) CANNOT also export its
+`schema`/`defineBlock(...)` from that same file: Next's client/server
+boundary means non-component exports from a `"use client"` module come
+through as unusable references when read server-side (which is exactly
+what the registry does — `definition.schema.safeParse(...)` blew up with
+`schema` silently `undefined`). Fix, and the pattern to follow for every
+new interactive block: put the client component in `<name>-client.tsx`
+(`"use client"`, no schema/registry code), and keep `<name>.tsx` (no
+directive) holding the Zod schema + `defineBlock(...)`, importing the
+`Render` from the client file. See `contact-form.tsx` /
+`contact-form-client.tsx`, `stages-carousel.tsx` /
+`-carousel-client.tsx`, `video-embed.tsx` / `-embed-client.tsx`.
+
+**Product detail pages don't use page_blocks.** `products` + its child
+tables (`product_benefits`/`product_stages`/`product_specs`) are fixed,
+relational structure, not freeform CMS content, so
+`app/(site)/products/[category]/[slug]/page.tsx` calls
+`getProductBySlug()` and composes `ProductHeroRender`,
+`BenefitsCardsRender`, `StagesCarouselRender`, `HowItWorksRender`,
+`SpecTableRender` directly with mapped props — the same Render
+components the registry uses for `product_hero`/`benefits_cards`/etc.,
+just invoked outside `BlockRenderer`. Home, `/products` (listing), and
+`/contact` do go through `pages`/`page_blocks`/`BlockRenderer`.
+
+Seeding: `pnpm seed:navigation` (mega/utility/footer nav), `pnpm
+seed:home`, `pnpm seed:static-pages` (`/products` listing, `/contact`),
+`pnpm seed:products` (the 3 real products). All idempotent — re-run
+after editing a seed script.
 
 ## Design tokens (Phase 1 builds these; noted here so nothing forgets them)
 
