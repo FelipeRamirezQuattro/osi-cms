@@ -26,14 +26,19 @@ function Render({ data }: { data: Data }) {
       <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between">
         <div>
           {data.eyebrow && (
-            <p className="mb-2 font-display text-small-label tracking-wide-label uppercase opacity-70">
+            <p className="mb-2 font-display text-small-label tracking-wide-label uppercase">
               {data.background === "cream" ? (
                 // GradientText is navy-only — gold-700 is the single
                 // WCAG-safe gold on cream, so there is no two-stop sweep
-                // to run here (see gradient-text.tsx's comment).
+                // to run here (see gradient-text.tsx's comment). Full
+                // opacity: gold-700 only clears WCAG AA on cream at 100%
+                // — the old opacity-70 dim was safe against the previous
+                // inherited navy/cream text color but isn't against gold.
                 <span className="text-osi-gold-700">{data.eyebrow}</span>
               ) : (
-                <GradientText>{data.eyebrow}</GradientText>
+                // Navy has huge contrast headroom, so the dimmed look
+                // this eyebrow had before is preserved here instead.
+                <GradientText className="opacity-70">{data.eyebrow}</GradientText>
               )}
             </p>
           )}
