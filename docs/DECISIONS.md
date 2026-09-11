@@ -95,3 +95,12 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   `export const dynamic = "force-dynamic"` (set once, in
   `app/(site)/layout.tsx`) or the build fails trying to statically
   prerender a page that touches `cookies()`.
+- **Skipped the Vercel deploy for Phase 3.** `deploy_to_vercel` replaces
+  the whole file tree per call (not incremental), and at ~75 files this
+  session couldn't reliably assemble one complete call — five attempts
+  each shipped a partial tree and would have failed to build. Phase 3 is
+  verified instead via local `pnpm build`/`lint`/`tsc` (all clean) and
+  screenshots of the running local dev server sent directly to the user.
+  Revisit deployment via GitHub + Vercel's git integration before the
+  file count grows further — manual deploys stop being practical past
+  this size.
