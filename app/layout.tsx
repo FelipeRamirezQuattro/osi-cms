@@ -32,17 +32,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               JS nothing will ever animate it back in, so reveal it up
               front rather than leaving the page blank.
 
-              Both selectors are deliberately narrower than a bare
-              [style*="opacity:0"], which is a substring match and so
-              also hits DuotoneImage's `opacity:0.35`/`0.5`/`0.55` navy
-              mix-blend-multiply tint layer — forcing that to opacity 1
-              turns every photograph into a solid navy block. Neither
-              form below can: a fractional value never has a `;`
-              immediately after the `0`, and the tint layer carries no
-              transform at all. */}
-          <style>
-            {`[style*="translateY(8px)"],[style*="opacity:0;"]{opacity:1!important;transform:none!important}`}
-          </style>
+              This is deliberately narrower than a bare [style*="opacity:0"],
+              which is a substring match and so also hits DuotoneImage's
+              `opacity:0.35`/`0.5`/`0.55` navy mix-blend-multiply tint layer
+              (and HairlineGrid's `opacity:0.15`) — forcing those to opacity
+              1 turns every photograph into a solid navy block. Excluding
+              anything with "opacity:0." rules out every fractional value
+              while still matching both `opacity:0;transform:translateY(8px)`
+              (the common case) and the bare `opacity:0` some motion.div
+              instances emit when they animate opacity alone (e.g.
+              stages-carousel-client.tsx's stage cross-fade, which has no
+              transform to reset). A fractional value always has a `.`
+              immediately after the leading `0`; neither hidden-state shape
+              ever does. */}
+          <style>{`[style*="opacity:0"]:not([style*="opacity:0."]){opacity:1!important;transform:none!important}`}</style>
         </noscript>
       </head>
       <body className="flex min-h-full flex-col bg-osi-cream-100 font-body text-osi-navy-900">
