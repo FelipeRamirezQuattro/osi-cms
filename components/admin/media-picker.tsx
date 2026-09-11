@@ -87,7 +87,7 @@ export function MediaPicker({
         <button
           type="button"
           onClick={open}
-          className="rounded border border-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label"
+          className="rounded border border-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label transition-transform duration-200 active:scale-[0.97]"
         >
           {value ? `Change ${label}` : `Choose ${label}`}
         </button>
@@ -95,7 +95,7 @@ export function MediaPicker({
           <button
             type="button"
             onClick={() => onChange("")}
-            className="text-left text-xs text-osi-slate-400 hover:underline"
+            className="text-left text-xs text-osi-slate-400 transition-transform duration-200 hover:underline active:scale-[0.97]"
           >
             Remove
           </button>
@@ -110,7 +110,11 @@ export function MediaPicker({
           >
             <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
               <h2 className="font-display text-sm tracking-wide-display uppercase">Media library</h2>
-              <button type="button" onClick={close} className="text-sm opacity-60 hover:opacity-100">
+              <button
+                type="button"
+                onClick={close}
+                className="text-sm opacity-60 transition-opacity duration-200 hover:opacity-100"
+              >
                 Close
               </button>
             </div>
@@ -127,7 +131,7 @@ export function MediaPicker({
                 />
                 <button
                   type="submit"
-                  className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white"
+                  className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white transition-transform duration-200 active:scale-[0.97]"
                 >
                   Upload
                 </button>
@@ -157,7 +161,7 @@ export function MediaPicker({
                     key={asset.id}
                     type="button"
                     onClick={() => select(asset.url)}
-                    className="relative aspect-square overflow-hidden rounded border border-osi-sand-300 hover:ring-2 hover:ring-osi-gold-500"
+                    className="relative aspect-square overflow-hidden rounded border border-osi-sand-300 transition-transform duration-200 hover:ring-2 hover:ring-osi-gold-500 active:scale-[0.97]"
                     title={asset.title ?? asset.url}
                   >
                     <Image src={resolveMediaUrl(asset.url)} alt={asset.alt ?? ""} fill className="object-cover" />

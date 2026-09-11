@@ -12,7 +12,7 @@ import { useRelationOptions } from "@/components/admin/relation-options";
 // confined to this file and admin-block-fields-form.tsx for that reason.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const INPUT_CLASS = "w-full rounded border border-osi-sand-300 px-3 py-2 text-sm";
+const INPUT_CLASS = "w-full rounded border border-osi-sand-300 px-3 py-2 text-sm transition-colors duration-200";
 
 function LabeledField({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
   return (
