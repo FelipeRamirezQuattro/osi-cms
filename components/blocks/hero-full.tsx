@@ -29,6 +29,7 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom="lg"
       anchorId={data.anchorId}
+      reveal={false}
       seam="bottom"
       className="min-h-[70vh]"
       contentClassName="relative mx-auto flex min-h-[calc(70vh-6rem)] max-w-6xl flex-col justify-center px-6 md:px-12"

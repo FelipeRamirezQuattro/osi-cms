@@ -24,6 +24,7 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
       spacingTop={data.spacingTop}
       spacingBottom="lg"
       anchorId={data.anchorId}
+      reveal={false}
       contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
     >
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">

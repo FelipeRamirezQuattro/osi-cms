@@ -19,6 +19,7 @@ export function ContactFormRender({ data }: { data: ContactFormData }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
         {data.title}

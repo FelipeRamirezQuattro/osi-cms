@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { BlockBackground, BlockSpacingSide } from "@/lib/blocks/common";
+import { RevealSection } from "./reveal-section";
 
 const SPACING_CLASSES: Record<BlockSpacingSide, string> = {
   sm: "py-8",
@@ -15,6 +16,7 @@ export function Section({
   spacingTop = "md",
   spacingBottom = "md",
   anchorId,
+  reveal = true,
   seam,
   className = "",
   contentClassName = "mx-auto max-w-6xl px-6 md:px-12",
@@ -24,6 +26,7 @@ export function Section({
   spacingTop?: BlockSpacingSide;
   spacingBottom?: BlockSpacingSide;
   anchorId?: string;
+  reveal?: boolean;
   seam?: "top" | "bottom" | "both";
   className?: string;
   contentClassName?: string;
@@ -46,12 +49,23 @@ export function Section({
   const paddingTop = SPACING_CLASSES[spacingTop].replace("py-", "pt-");
   const paddingBottom = SPACING_CLASSES[spacingBottom].replace("py-", "pb-");
 
+  const sectionClassName = `relative overflow-visible ${bgClass} ${seamClass} ${paddingTop} ${paddingBottom} ${className}`;
+  const content = <div className={contentClassName}>{children}</div>;
+
+  // Blocks that drive their own entrance motion (staggered grids) or that
+  // must paint immediately (heroes — an opacity-0 start delays LCP) pass
+  // reveal={false} and render as a plain server-rendered <section>.
+  if (!reveal) {
+    return (
+      <section id={anchorId} className={sectionClassName}>
+        {content}
+      </section>
+    );
+  }
+
   return (
-    <section
-      id={anchorId}
-      className={`relative overflow-visible ${bgClass} ${seamClass} ${paddingTop} ${paddingBottom} ${className}`}
-    >
-      <div className={contentClassName}>{children}</div>
-    </section>
+    <RevealSection id={anchorId} className={sectionClassName}>
+      {content}
+    </RevealSection>
   );
 }

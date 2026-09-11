@@ -20,6 +20,7 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between">
         <div>
