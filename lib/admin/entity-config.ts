@@ -4,10 +4,15 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
  * Config for the generic simple-entity admin (app/admin/(dashboard)/
  * [entity]/) — one list + one edit screen reused for every content table
  * that's just flat columns with no child tables (industries, applications,
- * services, resources, locations, directory_contacts, news_posts,
- * redirects). Products get a bespoke /admin/products editor instead
- * (child tables: benefits/stages/specs, category + industry/application
- * relations) — see app/admin/(dashboard)/products/.
+ * resources, locations, directory_contacts, news_posts, redirects).
+ * Products get a bespoke /admin/products editor instead (child tables:
+ * benefits/stages/specs, category + industry/application relations) —
+ * see app/admin/(dashboard)/products/.
+ *
+ * No `services` entry: Services stays CMS pages (edited in /admin/pages
+ * like any other page) rather than the dedicated `services` table —
+ * that table exists in the schema (master prompt §5.3) but is
+ * deliberately left unused. See docs/DECISIONS.md.
  *
  * Pure plain data (no Zod, no Supabase import) so it's safe to import from
  * both server and client files, same reasoning as lib/blocks/registry.ts's
@@ -16,7 +21,6 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 export type EntityKey =
   | "industries"
   | "applications"
-  | "services"
   | "news"
   | "resources"
   | "locations"
@@ -72,25 +76,6 @@ export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
       { key: "description", label: "Description", type: "textarea", optional: true },
     ],
     defaults: { name: "", slug: "", status: "draft", position: 0 },
-  },
-  services: {
-    table: "services",
-    label: "Service",
-    pluralLabel: "Services",
-    hasPosition: true,
-    hasStatus: true,
-    listColumns: [
-      { key: "name", label: "Name" },
-      { key: "slug", label: "Slug" },
-    ],
-    fields: [
-      { key: "name", label: "Name", type: "text" },
-      { key: "slug", label: "Slug", type: "text" },
-      { key: "summary", label: "Summary", type: "textarea", optional: true },
-      { key: "body", label: "Body", type: "richtext", optional: true },
-      { key: "hero_image_url", label: "Hero image", type: "image", optional: true },
-    ],
-    defaults: { name: "", slug: "", locale: "en", status: "draft", position: 0 },
   },
   news: {
     table: "news_posts",

@@ -331,7 +331,7 @@ Reflects the last **saved** draft, not unsaved form edits.
 
 **Entity admin** (`app/admin/(dashboard)/[entity]/`, `lib/admin/entity-config.ts`)
 is one list + one edit screen reused across every simple content table —
-industries, applications, services, news, resources, locations, directory,
+industries, applications, news, resources, locations, directory,
 redirects — driven by the same `FieldSpec`/`FieldRenderer` engine the block
 editor uses, plus two more `FieldSpec` variants added for this:
 `relation` (a `<select>`, e.g. `resources.product_id`) and `multi-relation`

@@ -4,7 +4,8 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { ProductGridClient, type ProductWithCategorySlug } from "@/components/blocks/product-grid-client";
-import { listProductCategories, listIndustries, listApplications, listServices } from "@/lib/data/taxonomy";
+import { listProductCategories, listIndustries, listApplications } from "@/lib/data/taxonomy";
+import { listPagesUnderSlug } from "@/lib/data/pages";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { createServerDbClient } from "@/lib/db/client";
 
@@ -32,13 +33,18 @@ async function getProductsWithCategorySlug(): Promise<ProductWithCategorySlug[]>
 }
 
 async function Render({ data }: { data: Data }) {
-  const [products, categories, industries, applications, services] = await Promise.all([
+  const [products, categories, industries, applications, servicePages] = await Promise.all([
     getProductsWithCategorySlug(),
     listProductCategories(),
     listIndustries(),
     listApplications(),
-    listServices(),
+    listPagesUnderSlug("services"),
   ]);
+  const services = servicePages.map((page) => ({
+    title: page.title,
+    body: page.seo_description ?? undefined,
+    href: `/${page.slug}`,
+  }));
 
   return (
     <Section

@@ -58,8 +58,8 @@ Fields labeled for rich text give you a small toolbar: bold, italic,
 headings, bullet/numbered lists, and links. That's it on purpose — it
 keeps every page visually consistent with the rest of the site.
 
-## Products, news, services, industries, applications, resources,
-## locations, directory
+## Products, news, industries, applications, resources, locations,
+## directory
 
 Each of these has its own section in the sidebar with a list view and an
 edit screen, the same pattern as pages: fill in the fields, set
@@ -73,6 +73,10 @@ the product applies to.
 Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
 publish it later.
+
+Note: **Services** (Fluid Levels, Pump Cards, Machine Shop) doesn't have
+its own sidebar section — those are regular pages, edited under
+**Pages** like any other page.
 
 ## Navigation
 

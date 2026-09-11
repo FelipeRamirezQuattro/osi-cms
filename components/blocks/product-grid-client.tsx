@@ -14,6 +14,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 export type ProductWithCategorySlug = Tables<"products"> & { categorySlug: string | null };
+type GridItem = { title: string; body?: string; href: string };
 
 export function ProductGridClient({
   products,
@@ -26,7 +27,9 @@ export function ProductGridClient({
   categories: Tables<"product_categories">[];
   industries: Tables<"industries">[];
   applications: Tables<"applications">[];
-  services: Tables<"services">[];
+  // Pre-mapped by the caller from real `pages` (not the `services`
+  // table, which stays unused — see docs/DECISIONS.md).
+  services: GridItem[];
 }) {
   const [tab, setTab] = useState<Tab>("products");
   const [categorySlug, setCategorySlug] = useState<string | "all">("all");
@@ -36,7 +39,7 @@ export function ProductGridClient({
     return products.filter((p) => p.categorySlug === categorySlug);
   }, [products, categorySlug]);
 
-  const itemsByTab: Record<Tab, { title: string; body?: string; href: string }[]> = {
+  const itemsByTab: Record<Tab, GridItem[]> = {
     products: filteredProducts.map((p) => ({
       title: p.name,
       body: p.summary ?? undefined,
@@ -52,11 +55,7 @@ export function ProductGridClient({
       body: a.description ?? undefined,
       href: `/applications/${a.slug}`,
     })),
-    services: services.map((s) => ({
-      title: s.name,
-      body: s.summary ?? undefined,
-      href: `/services/${s.slug}`,
-    })),
+    services,
   };
 
   return (

@@ -102,17 +102,25 @@ items get struck through with the resolution, not deleted.
   to `form_submissions`/the admin inbox regardless; only the outbound
   email is inert until the client provides a Resend account and a
   recipient address.
-- **`services`/`news_posts` tables have zero rows and no public route.**
-  The master prompt's site map (§7) calls for `/services`, `/services/
-  [slug]`, `/news`, `/news/[slug]` backed by these dedicated tables, but
-  Phase 3 never built them, and Phase 4 migrated the legacy Services
-  content (Fluid Levels, Pump Cards, Machine Shop) into generic CMS
-  `pages` instead, served by the `[...slug]` catch-all at those same
-  URLs. A `services`-table route would collide with and shadow that
-  already-working content. Site search and the sitemap are scoped to
-  `pages`+`products` only for now — see `docs/DECISIONS.md` for the
-  full reasoning. This needs a real decision: keep Services as CMS pages
-  (drop/repurpose the `services` table) or migrate it to the dedicated
-  table and give it real routes (and same question for News, which has
-  no legacy content at all — nothing to migrate, but the admin's
-  `/admin/news` CRUD is otherwise sitting unused).
+- **Resolved: Services stays as CMS pages, the `services` table is
+  intentionally unused.** (Was an open question above; decided
+  2026-09-11.) Fluid Levels/Pump Cards/Machine Shop keep living in
+  `pages`/`page_blocks`, edited via `/admin/pages` like any other page.
+  Removed `services` from the generic entity admin (`/admin/services` no
+  longer exists) and from `lib/data/taxonomy.ts` (`listServices`/
+  `getServiceBySlug` were dead code once nothing called them).
+  `product_grid`'s "Services" filter tab now pulls from real `pages`
+  under `services/` (`lib/data/pages.ts → listPagesUnderSlug`) instead
+  of the empty table — it'll show nothing until those 3 pages are
+  actually published (still `draft` as of this writing, same as every
+  other Phase 4 migrated page). The `services` table itself stays in the
+  schema (master prompt §5.3) but nothing reads or writes it going
+  forward.
+- **Still open: News.** `news_posts` has zero rows (no legacy content —
+  nothing to migrate) and no public `/news`/`/news/[slug]` route.
+  `/admin/news` CRUD exists and works; the home page's `news_feed` block
+  already renders nothing gracefully when empty, so this isn't blocking
+  anything today. Revisit once there's real news/event content to
+  publish — building the public routes then is a small, low-risk
+  addition (same pattern as everything else in `app/(site)/`), not
+  worth doing speculatively against an empty table.

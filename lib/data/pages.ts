@@ -28,6 +28,25 @@ export async function getPageBySlug(slug: string, locale = "en"): Promise<PageWi
 }
 
 /**
+ * Published pages whose slug is nested under `prefix/` (not `prefix`
+ * itself) — backs product_grid's "Services" tab, which links to the
+ * real Fluid Levels/Pump Cards/Machine Shop CMS pages rather than the
+ * (deliberately unused — see DECISIONS.md) `services` table.
+ */
+export async function listPagesUnderSlug(prefix: string, locale = "en"): Promise<Tables<"pages">[]> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("pages")
+    .select("*")
+    .eq("locale", locale)
+    .eq("status", "published")
+    .like("slug", `${prefix}/%`)
+    .order("title", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/**
  * Renders a page regardless of status, for the admin-only preview route
  * (app/(site)/preview/[...slug]/page.tsx) — access is gated by
  * requireAdmin() there, not by a signed token, since the viewer is always

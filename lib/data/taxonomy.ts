@@ -33,30 +33,3 @@ export async function listApplications(): Promise<Tables<"applications">[]> {
   return data ?? [];
 }
 
-export async function listServices(locale = "en"): Promise<Tables<"services">[]> {
-  const db = createServerDbClient();
-  const { data, error } = await db
-    .from("services")
-    .select("*")
-    .eq("locale", locale)
-    .eq("status", "published")
-    .order("position", { ascending: true });
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function getServiceBySlug(
-  slug: string,
-  locale = "en",
-): Promise<Tables<"services"> | null> {
-  const db = createServerDbClient();
-  const { data, error } = await db
-    .from("services")
-    .select("*")
-    .eq("slug", slug)
-    .eq("locale", locale)
-    .eq("status", "published")
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}

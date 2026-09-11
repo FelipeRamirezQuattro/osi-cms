@@ -213,13 +213,29 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   shipped silently without a driven browser pass.
 - **Site search and `sitemap.ts` only cover `pages` and `products`**,
   not `news_posts`/`services` despite the master prompt naming all four
-  (§9: "search over products/news/services/pages"). Both tables are
-  empty, and — more importantly — `/services/*` is already served by the
-  `[...slug]` catch-all against real, Phase-4-migrated `pages` content
-  (Fluid Levels, Pump Cards, Machine Shop); adding a `services`-table-
-  backed `/services/[slug]` route now would shadow those working pages
-  at the same URLs. Logged as an open question in `docs/CONTENT-GAPS.md`
-  rather than guessing which content model wins.
+  (§9: "search over products/news/services/pages"). At the time this was
+  decided, `/services/*` was already served by the `[...slug]` catch-all
+  against real, Phase-4-migrated `pages` content (Fluid Levels, Pump
+  Cards, Machine Shop) — since confirmed as the permanent decision (see
+  below), so this scoping is correct as-is, not a placeholder: `pages`
+  already covers Services, and `news_posts` genuinely has nothing to
+  index.
+- **Decided: Services stays CMS pages; the `services` table is
+  intentionally unused going forward** (client decision, 2026-09-11 —
+  see `docs/CONTENT-GAPS.md`). Removed `services` from the generic
+  entity admin (`lib/admin/entity-config.ts`, and the `/admin/services`
+  sidebar link) and deleted `listServices`/`getServiceBySlug` from
+  `lib/data/taxonomy.ts` as dead code. `product_grid`'s "Services" tab
+  now sources from real `pages` under `services/` (new
+  `lib/data/pages.ts → listPagesUnderSlug`) instead of the empty table —
+  the same fix that made Phase 6 search/sitemap scoping correct also
+  needed to reach this one remaining reader of the `services` table. Left
+  the `services` table itself in the schema (matches master prompt
+  §5.3) rather than dropping it — no cost to leaving an unused table in
+  place, and dropping one is the kind of irreversible action to avoid
+  without being asked. News stays genuinely open (no legacy content to
+  migrate, nothing broken by its absence) — revisit once there's real
+  content to publish.
 - **Full-text search indexes title/summary-level columns only, not the
   rich `body` jsonb (Tiptap) columns** on `pages`/`products` (migration
   `0016_search_vectors.sql`). Extracting plain text from arbitrary Tiptap
