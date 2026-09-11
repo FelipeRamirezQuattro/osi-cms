@@ -2,7 +2,12 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { fadeRiseVariants, staggerContainerVariants } from "@/lib/motion/variants";
+import {
+  fadeRiseVariants,
+  fadeRiseVariantsReduced,
+  staggerContainerVariants,
+  staggerContainerVariantsReduced,
+} from "@/lib/motion/variants";
 
 /**
  * Stagger-aware pair for grids: wrap the grid in <AnimatedGroup>, each
@@ -24,7 +29,7 @@ export function AnimatedGroup({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
-      variants={reduceMotion ? undefined : staggerContainerVariants}
+      variants={reduceMotion ? staggerContainerVariantsReduced : staggerContainerVariants}
     >
       {children}
     </motion.div>
@@ -41,7 +46,10 @@ export function AnimatedItem({
   const reduceMotion = useReducedMotion();
 
   return (
-    <motion.div className={className} variants={reduceMotion ? undefined : fadeRiseVariants}>
+    <motion.div
+      className={className}
+      variants={reduceMotion ? fadeRiseVariantsReduced : fadeRiseVariants}
+    >
       {children}
     </motion.div>
   );

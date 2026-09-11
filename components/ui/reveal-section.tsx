@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { fadeRiseVariants } from "@/lib/motion/variants";
+import { fadeRiseVariants, fadeRiseVariantsReduced } from "@/lib/motion/variants";
 
 /**
  * Scroll-reveal for a whole <section>. The motion element IS the
@@ -31,7 +31,7 @@ export function RevealSection({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
-      variants={reduceMotion ? undefined : fadeRiseVariants}
+      variants={reduceMotion ? fadeRiseVariantsReduced : fadeRiseVariants}
     >
       {children}
     </motion.section>

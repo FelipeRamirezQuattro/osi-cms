@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { fadeRiseVariants } from "@/lib/motion/variants";
+import { fadeRiseVariants, fadeRiseVariantsReduced } from "@/lib/motion/variants";
 
 /**
  * Restrained, mechanical scroll-in: fade + 8px rise, once, 400ms.
@@ -25,7 +25,7 @@ export function AnimatedSection({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
-      variants={reduceMotion ? undefined : fadeRiseVariants}
+      variants={reduceMotion ? fadeRiseVariantsReduced : fadeRiseVariants}
     >
       {children}
     </motion.div>
