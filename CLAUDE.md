@@ -201,6 +201,45 @@ angled corner clips, circled-arrow buttons, hairline grid overlay,
 label-plate cards (one "open" per grid), duotone photography, breakout
 gold CTA bar. Full detail in the master prompt §4.
 
+## Motion (Phases 1–2 of the redesign, done)
+
+`motion` (Framer Motion) is the only animation dependency. Shared tuned
+constants live in `lib/motion/variants.ts` (`EASE_OSI` mirrors the CSS
+`--ease-osi` curve — never introduce a second easing curve). CSS
+keyframe utilities (`animate-float`, `animate-gradient-shift`,
+`animate-marquee`, `animate-spin-slow`, `animate-pulse-glow`,
+`animate-pulse-glow-gold`) are declared in `app/globals.css` and must
+always be used with a `motion-safe:` prefix at the call site.
+
+Primitives in `components/ui/`: `RevealSection` (internal, drives
+`Section`'s `reveal` prop), `AnimatedSection` (single fade+rise),
+`AnimatedGroup` + `AnimatedItem` (staggered grids), `TiltCard`,
+`GradientText` (gold sweep, **navy backgrounds only**), `MarqueeStrip`.
+All visible primitives are previewed on `/styleguide`.
+
+Rules that must hold for any new animated component:
+
+- **Reduced motion is not optional.** CSS animations get `motion-safe:`;
+  Framer Motion components call `useReducedMotion()` in-component,
+  because the global `prefers-reduced-motion` rule in `globals.css`
+  cannot reach JS-driven motion.
+- **A block either uses `Section`'s `reveal` or its own stagger, never
+  both.** A block wrapping its grid in `AnimatedGroup` passes
+  `reveal={false}`.
+- **Heroes pass `reveal={false}`.** An opacity-0 start delays LCP, and
+  the hero is the LCP element on both Lighthouse target pages.
+- **Never wrap absolutely-positioned children in a transformed
+  element.** A transform creates a containing block, which silently
+  re-anchors hero background images, `CtaBreakoutBar` overhangs and
+  `HairlineGrid` overlays. That is why `RevealSection` animates the
+  `<section>` element itself rather than an inner wrapper.
+- **`clip-path` clips `box-shadow`.** A glow on a `Clipped` element or a
+  `clip-notch-*` utility renders nothing — use border/background hover
+  transitions there, or move the glow to an unclipped parent.
+- **Gold stays scarce in motion too.** `animate-pulse-glow-gold` and
+  `GradientText` are for CTAs and hero eyebrows; everything else uses
+  the neutral `osi-steel-500` variants.
+
 ## Phase discipline
 
 Work proceeds in the 8 phases from the master prompt (0 Foundation → 1
