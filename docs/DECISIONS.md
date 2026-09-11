@@ -35,3 +35,35 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   / `sb_secret_*` key format**, not the legacy JWT anon/service_role
   keys — both work interchangeably with `@supabase/ssr` and
   `supabase-js` 2.116+.
+- **Added a `status` (draft/published) column to `services`, `industries`,
+  `applications`, `locations`, and `directory_contacts`**, none of which
+  were specced with one (master prompt §5.3/§5.5). The blanket RLS rule
+  in §5.8 ("public SELECT only WHERE status='published'") only works if
+  every content table has that column, and `directory_contacts` in
+  particular holds real personal phone numbers/emails that need a way to
+  stay unpublished until reviewed.
+- **Split `is_staff()` and `is_admin()` RLS helpers.** Any active
+  `admin_profiles` row passes `is_staff()` (full content CRUD); only
+  `role='admin'` passes `is_admin()`, which gates inserting/updating/
+  deleting other `admin_profiles` rows — matches open question #8
+  ("editor can draft, cannot publish... admin role only" for inviting
+  users). Both are intentionally callable by `anon`/`authenticated` (the
+  Supabase advisor flags this) since RLS policies evaluate as the
+  connecting role — revoking EXECUTE would break every policy that calls
+  them.
+- **`redirects` is publicly readable** (no status gate) rather than
+  restricted to staff/service-role — it's just URL mappings, not
+  sensitive, and public read lets the `[slug]` catch-all resolve
+  redirects without a service-role client on every request.
+- **Consolidated each table's "public read" + "staff manage" (for all)
+  policies into one SELECT policy** (`status = 'published' OR
+  public.is_staff()`) plus separate staff-only insert/update/delete
+  policies, after the Supabase performance advisor flagged 22 tables
+  evaluating two permissive policies per query.
+- **Seeded only `product_categories` (4) and `industries` (9)** from the
+  master prompt's explicit text (§5.1, §5.3) via
+  `scripts/seed-taxonomy.ts`, run once against Supabase. `applications`
+  and a possible 10th industry ("Gas Control", seen on the mockup's
+  Industries tab but not in the prompt's text list) are intentionally
+  left unseeded — logged in `docs/CONTENT-GAPS.md` pending client
+  confirmation, per constraint 4 (never invent content).

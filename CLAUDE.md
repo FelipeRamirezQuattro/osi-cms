@@ -87,17 +87,52 @@ Specifics that affect this project:
 ## Repo layout so far
 
 ```
-app/                  routes (Phase 3+)
-lib/db/client.ts       Supabase client factories — the only file that
-                        imports @supabase/ssr's client constructors
-lib/data/              repositories (Phase 2+), one file per entity
-lib/auth/              thin auth adapter (Phase 5)
-lib/media.ts           resolveMediaUrl() — the only legacy-media seam
-content/legacy/        scraped Odessa Separator site (19 pages), the
-                        Phase 4 migration script's input — don't hand-edit
-docs/design/           the mockup PDF
-supabase/migrations/   plain SQL migrations (Phase 2+)
+app/                    routes (styleguide done; real pages Phase 3+)
+components/ui/          design-system primitives (Phase 1)
+lib/db/client.ts         Supabase client factories — the only file that
+                         imports @supabase/ssr's client constructors
+lib/db/database.types.ts generated types (regenerate after schema changes
+                         via the Supabase MCP generate_typescript_types
+                         tool — don't hand-edit)
+lib/data/                repositories, one file per entity — pages,
+                         products, taxonomy, news, resources, locations,
+                         navigation, settings so far
+lib/auth/                thin auth adapter (Phase 5)
+lib/media.ts             resolveMediaUrl() — the only legacy-media seam
+content/legacy/          scraped Odessa Separator site (19 pages), the
+                         Phase 4 migration script's input — don't hand-edit
+docs/design/             the mockup PDF
+supabase/migrations/     plain SQL migrations, numbered, applied via the
+                         Supabase MCP apply_migration tool
+scripts/                 one-off/idempotent Node scripts run via
+                         `pnpm exec tsx --env-file=.env.local <file>`
 ```
+
+## Schema conventions (Phase 2)
+
+Every content table (`pages`, `products`, `news_posts`, `services`,
+`industries`, `applications`, `locations`, `directory_contacts`,
+`resources`) has a `status` ('draft'|'published') column, even the ones
+the master prompt didn't spec one for (§5.3/§5.5 — added for consistency
+with the blanket RLS rule in §5.8; see `docs/DECISIONS.md`). RLS on every
+table follows one pattern:
+
+- One SELECT policy: `status = 'published' OR public.is_staff()` (or
+  `true` for structural tables with no draft state — nav, media,
+  settings, redirects, categories). Don't add a second permissive SELECT
+  policy for staff — that was tried and reverted (Supabase's performance
+  advisor flags "multiple permissive policies").
+- Separate staff-only INSERT/UPDATE/DELETE policies using
+  `public.is_staff()`.
+- `public.is_staff()` / `public.is_admin()` (role='admin' only, used for
+  managing `admin_profiles` itself) are `security definer` functions
+  defined in `0001_helpers_and_admin.sql` — reuse them, don't re-derive
+  the "am I staff" check inline.
+- Child tables of `products`/`pages` (benefits, stages, specs, blocks,
+  junctions) gate SELECT through the parent's `status`, not their own.
+
+After any migration, run `get_advisors` (security + performance) via the
+Supabase MCP and fix what it flags before moving on.
 
 ## Block registry (Phase 3+)
 

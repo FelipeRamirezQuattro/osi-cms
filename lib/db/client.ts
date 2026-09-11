@@ -1,5 +1,6 @@
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "./database.types";
 
 /**
  * Sole entry point for the database driver. Supabase is the MVP database
@@ -12,7 +13,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export function createServerDbClient() {
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll: async () => (await cookies()).getAll(),
       setAll: async (cookiesToSet) => {
@@ -31,7 +32,7 @@ export function createServerDbClient() {
 }
 
 export function createBrowserDbClient() {
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 }
 
 export function createServiceRoleDbClient() {
@@ -39,7 +40,7 @@ export function createServiceRoleDbClient() {
   if (!serviceRoleKey) {
     throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
   }
-  return createServerClient(supabaseUrl, serviceRoleKey, {
+  return createServerClient<Database>(supabaseUrl, serviceRoleKey, {
     cookies: { getAll: () => [], setAll: () => {} },
   });
 }

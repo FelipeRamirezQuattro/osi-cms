@@ -40,3 +40,17 @@ items get struck through with the resolution, not deleted.
 - Home page mission cards ("Our Mission" / "Global Impact") repeat
   identical placeholder link text in both cards — likely a mockup
   duplication artifact, not intentional shared content.
+
+## Found during Phase 2 (schema/taxonomy)
+
+- **Applications taxonomy has no source data.** Unlike industries, the
+  master prompt never lists explicit application names, and the
+  mockup's Applications tab wasn't legible enough to transcribe with
+  confidence. The `applications` table exists but is unseeded — needs
+  client input before Phase 3 can build the Applications filter tab.
+- **Possible 10th industry: "Gas Control."** It appeared in my read of
+  the mockup's Industries tab pills, but isn't in the master prompt's
+  explicit 9-name list (Chemistry, Rubber & Plastic, Marine, Food &
+  Beverage, Power, Pulp & Paper, Mining, HVACR, Hydrogen). Only seeded
+  the confirmed 9 in `scripts/seed-taxonomy.ts` — my own screenshot
+  reading could be wrong, so confirm with the client before adding it.
