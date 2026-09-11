@@ -7,6 +7,7 @@ import { HairlineGrid } from "@/components/ui/hairline-grid";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { TiltCard } from "@/components/ui/tilt-card";
+import { GradientText } from "@/components/ui/gradient-text";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 
 export const metadata: Metadata = {
@@ -171,6 +172,15 @@ export default function StyleguidePage() {
           aria-hidden
           className="mt-10 h-3 w-full rounded-full bg-size-[300%_300%] motion-safe:animate-gradient-shift [background-image:linear-gradient(-45deg,var(--color-osi-navy-700),var(--color-osi-steel-500),var(--color-osi-navy-600),var(--color-osi-steel-500))]"
         />
+      </Section>
+
+      <Section bg="navy" className="pt-0 pb-24">
+        <p className="mb-2 font-display text-small-label tracking-wide-label uppercase">
+          <GradientText>Gradient text</GradientText>
+        </p>
+        <p className="max-w-md text-osi-slate-200">
+          Reserved for a single eyebrow/kicker or one hero word — navy backgrounds only.
+        </p>
       </Section>
 
       <Section bg="cream" className="pt-24">
