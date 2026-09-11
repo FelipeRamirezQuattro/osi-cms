@@ -29,11 +29,11 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
       </h2>
       <AnimatedGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((item) => (
-          <AnimatedItem key={item.title}>
+          <AnimatedItem key={item.title} className="h-full">
             <Clipped
               corner="br"
               size="1.25rem"
-              className="border border-osi-steel-500/30 bg-osi-navy-600/40 p-6"
+              className="h-full border border-osi-steel-500/30 bg-osi-navy-600/40 p-6"
             >
               <h3 className="font-display text-sm tracking-wide-display uppercase">{item.title}</h3>
               {item.body && <p className="mt-2 text-sm opacity-80">{item.body}</p>}

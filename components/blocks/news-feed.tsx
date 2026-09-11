@@ -19,7 +19,7 @@ type Data = z.infer<typeof schema>;
 
 function PostCard({ post }: { post: Tables<"news_posts"> }) {
   return (
-    <Link href={`/news/${post.slug}`} className="block">
+    <Link href={`/news/${post.slug}`} className="block h-full">
       <DuotoneImage
         src={post.cover_image_url ?? undefined}
         alt={post.cover_image_url ? post.title : ""}
@@ -70,7 +70,7 @@ async function Render({ data }: { data: Data }) {
       {rest.length > 0 && (
         <AnimatedGroup className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {rest.map((post) => (
-            <AnimatedItem key={post.id}>
+            <AnimatedItem key={post.id} className="h-full">
               <PostCard post={post} />
             </AnimatedItem>
           ))}

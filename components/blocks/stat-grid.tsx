@@ -21,7 +21,7 @@ type Data = z.infer<typeof schema>;
 
 function StatItem({ value, label, background }: z.infer<typeof statSchema> & { background: Data["background"] }) {
   return (
-    <div className="relative z-10 p-8">
+    <div className="relative z-10 h-full p-8">
       <p
         className={`font-display text-3xl tracking-tightest-display uppercase ${
           background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
