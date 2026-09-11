@@ -33,7 +33,7 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
             <Clipped
               corner="br"
               size="1.25rem"
-              className="h-full border border-osi-steel-500/30 bg-osi-navy-600/40 p-6"
+              className="h-full border border-osi-steel-500/30 bg-osi-navy-600/40 p-6 transition-colors duration-300 hover:border-osi-steel-500/60 hover:bg-osi-navy-600/60"
             >
               <h3 className="font-display text-sm tracking-wide-display uppercase">{item.title}</h3>
               {item.body && <p className="mt-2 text-sm opacity-80">{item.body}</p>}

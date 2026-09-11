@@ -31,7 +31,7 @@ function Render({ data }: { data: Data }) {
       <AnimatedGroup className={`grid grid-cols-1 gap-6 ${cols}`}>
         {data.cards.map((card) => (
           <AnimatedItem key={card.title} className="h-full">
-            <div className="flex h-full flex-col gap-4">
+            <div className="flex h-full flex-col gap-4 transition-shadow duration-300 hover:shadow-[0_0_0_1px_var(--color-osi-steel-500),0_8px_32px_color-mix(in_srgb,var(--color-osi-steel-500)_25%,transparent),0_0_60px_color-mix(in_srgb,var(--color-osi-steel-500)_10%,transparent)]">
               <h3 className="font-display text-card-label tracking-wide-display uppercase">
                 → {card.title}
               </h3>

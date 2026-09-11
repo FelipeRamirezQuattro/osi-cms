@@ -34,7 +34,12 @@ function Render({ data }: { data: Data }) {
           // Opens full-size in a new tab — a real lightbox is deferred
           // until a page actually needs this block (Machine Shop).
           <AnimatedItem key={i}>
-            <a href={image.url} target="_blank" rel="noreferrer" className="relative block aspect-square">
+            <a
+              href={image.url}
+              target="_blank"
+              rel="noreferrer"
+              className="relative block aspect-square transition-shadow duration-300 hover:shadow-[0_0_0_1px_var(--color-osi-steel-500),0_8px_32px_color-mix(in_srgb,var(--color-osi-steel-500)_25%,transparent),0_0_60px_color-mix(in_srgb,var(--color-osi-steel-500)_10%,transparent)]"
+            >
               <Image src={image.url} alt={image.alt ?? ""} fill className="object-cover" />
             </a>
           </AnimatedItem>
