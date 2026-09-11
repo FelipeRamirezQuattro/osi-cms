@@ -25,6 +25,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${orbitron.variable} ${montserrat.variable} h-full antialiased`}>
+      <head>
+        <noscript>
+          {/* Motion server-renders its "hidden" initial state as an inline
+              style; with no JS nothing will ever animate it back in, so
+              reveal it up front rather than leaving the page blank. */}
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="flex min-h-full flex-col bg-osi-cream-100 font-body text-osi-navy-900">
         {children}
       </body>
