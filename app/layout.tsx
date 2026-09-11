@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 const poppins = Poppins({
   variable: "--font-display-soft",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["600"],
 });
 
 export const metadata: Metadata = {

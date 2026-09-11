@@ -98,6 +98,9 @@ export default function StyleguidePage() {
           <p className="font-display-soft text-section font-semibold">
             Section title — soft
           </p>
+          <p className="text-xs text-osi-slate-400">
+            Secondary section headers only — see CLAUDE.md&rsquo;s Design tokens section.
+          </p>
           <p className="font-display text-card-label tracking-wide-display uppercase">
             Card label
           </p>

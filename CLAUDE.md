@@ -201,6 +201,21 @@ angled corner clips, circled-arrow buttons, hairline grid overlay,
 label-plate cards (one "open" per grid), duotone photography, breakout
 gold CTA bar. Full detail in the master prompt §4.
 
+A second display typeface, `font-display-soft` (Poppins, always paired
+with `font-semibold`, mixed case, no tracking utility), exists
+specifically for the mockup's secondary section headers — a rounder,
+softer treatment distinct from the primary `font-display` (Orbitron,
+always uppercase, wide tracking) used for headlines, nav, card labels,
+and tabs everywhere else. It is currently used by exactly 4 block types:
+`section_heading`, `mission_cards`, `global_map`, `contact_form` (see
+`lib/blocks/registry.ts`). The swap is per-block-type, not per-instance —
+any block of one of those four types, on any page (home, a migrated
+legacy page, anywhere), renders in Font B; that's a deliberate
+design-system decision, not an accident. Do not apply `font-display-soft`
+to a new block without mockup evidence for it — a global swap recreates
+the original "everything looks the same" problem this typeface was
+added to fix, just in the other direction.
+
 ## Motion (Phases 1–2 of the redesign, done)
 
 `motion` (Framer Motion) is the only animation dependency. Shared tuned
