@@ -35,7 +35,11 @@ function Render({ data }: { data: Data }) {
           <h2 className="font-display text-section tracking-tightest-display uppercase">
             {data.title}
           </h2>
-          {data.body && <p className="mt-4 max-w-md text-osi-slate-300">{data.body}</p>}
+          {data.body && (
+            <p className={`mt-4 max-w-md ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+              {data.body}
+            </p>
+          )}
           {data.links.length > 0 && (
             <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3">
               {columns.map((col, i) => (

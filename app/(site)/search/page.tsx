@@ -42,7 +42,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         {results.map((result) => (
           <li key={`${result.type}-${result.href}`} className="py-4">
             <Link href={result.href} className="group block">
-              <span className="text-xs uppercase tracking-wide-label text-osi-gold-500">
+              <span className="text-xs uppercase tracking-wide-label text-osi-gold-700">
                 {TYPE_LABELS[result.type]}
               </span>
               <h2 className="font-display text-card-label tracking-wide-display uppercase group-hover:underline">

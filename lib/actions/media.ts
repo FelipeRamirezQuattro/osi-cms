@@ -21,8 +21,17 @@ export async function uploadMediaAction(
     return { status: "error", message: "Choose a file first." };
   }
 
+  // WCAG 2.1 AA (master prompt §9 Phase 7: "alt text enforced in admin")
+  // — this is the one chokepoint every image passes through, so it's
+  // enforced here server-side, not just via the form's `required`
+  // attribute (which a direct POST could bypass).
+  const alt = (formData.get("alt") as string | null)?.trim();
+  if (!alt) {
+    return { status: "error", message: "Alt text is required — describe what the image shows." };
+  }
+
   try {
-    const asset = await uploadMediaAsset(file, (formData.get("alt") as string) || undefined);
+    const asset = await uploadMediaAsset(file, alt);
     return { status: "success", asset };
   } catch {
     return { status: "error", message: "Upload failed. Please try again." };

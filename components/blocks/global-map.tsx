@@ -35,7 +35,11 @@ async function Render({ data }: { data: Data }) {
         <h2 className="font-display text-section tracking-tightest-display uppercase">
           {data.title}
         </h2>
-        {data.subtitle && <p className="text-sm text-osi-slate-300">{data.subtitle}</p>}
+        {data.subtitle && (
+          <p className={`text-sm ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+            {data.subtitle}
+          </p>
+        )}
       </div>
       <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3 rounded-full bg-osi-white/95 px-8 py-12 text-osi-navy-900">
         {countries.length > 0 ? (

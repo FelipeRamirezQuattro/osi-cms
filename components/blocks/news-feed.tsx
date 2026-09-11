@@ -19,7 +19,12 @@ type Data = z.infer<typeof schema>;
 function PostCard({ post }: { post: Tables<"news_posts"> }) {
   return (
     <Link href={`/news/${post.slug}`} className="block">
-      <DuotoneImage src={post.cover_image_url ?? undefined} className="aspect-video" intensity={0.2} />
+      <DuotoneImage
+        src={post.cover_image_url ?? undefined}
+        alt={post.cover_image_url ? post.title : ""}
+        className="aspect-video"
+        intensity={0.2}
+      />
       <p className="mt-3 text-xs text-osi-slate-400 uppercase">
         {post.published_at ? new Date(post.published_at).toLocaleDateString() : post.kind}
       </p>
@@ -52,6 +57,7 @@ async function Render({ data }: { data: Data }) {
       <Link href={`/news/${featured.slug}`} className="mb-8 block">
         <DuotoneImage
           src={featured.cover_image_url ?? undefined}
+          alt={featured.cover_image_url ? featured.title : ""}
           className="aspect-[21/9] w-full"
           intensity={0.3}
         />

@@ -20,11 +20,13 @@ const COLORS = [
   ["osi-steel-500", "#234E7B"],
   ["osi-slate-400", "#4C6880"],
   ["osi-slate-300", "#576979"],
+  ["osi-slate-200", "#818F9B"],
   ["osi-cream-100", "#F2E9DE"],
   ["osi-cream-200", "#EFE8DD"],
   ["osi-sand-300", "#D0C0A7"],
   ["osi-gold-500", "#E2902A"],
   ["osi-gold-400", "#F0A93D"],
+  ["osi-gold-700", "#885619"],
 ] as const;
 
 function Section({
@@ -63,7 +65,7 @@ export default function StyleguidePage() {
           OSI design system
         </p>
         <h1 className="font-display text-hero tracking-tightest-display uppercase">Styleguide</h1>
-        <p className="mt-4 max-w-xl text-osi-slate-300">
+        <p className="mt-4 max-w-xl text-osi-slate-200">
           Every token and primitive from the mockup, rendered in isolation. This page is the
           fidelity checkpoint — not part of the public site nav, `noindex`.
         </p>
@@ -125,7 +127,7 @@ export default function StyleguidePage() {
               <p className="font-display text-3xl tracking-tightest-display text-osi-gold-500 uppercase">
                 {stat}
               </p>
-              <p className="mt-2 text-sm text-osi-slate-300">
+              <p className="mt-2 text-sm text-osi-slate-200">
                 {i === 0
                   ? "CAPEX and OPEX savings in the last 5 years"
                   : i === 1
@@ -161,7 +163,7 @@ export default function StyleguidePage() {
       <Section bg="navy">
         <Heading>Scroll reveal</Heading>
         <ScrollReveal>
-          <p className="max-w-md text-osi-slate-300">
+          <p className="max-w-md text-osi-slate-200">
             Scroll this card out of view and back — it fades and rises once, 400ms, and is inert
             under prefers-reduced-motion.
           </p>

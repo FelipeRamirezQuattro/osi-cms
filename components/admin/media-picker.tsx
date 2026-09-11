@@ -118,6 +118,13 @@ export function MediaPicker({
             <div className="space-y-4 p-5">
               <form action={uploadFormAction} className="flex items-center gap-3">
                 <input type="file" name="file" accept="image/*" required className="text-xs" />
+                <input
+                  type="text"
+                  name="alt"
+                  placeholder="Alt text (required)"
+                  required
+                  className="flex-1 rounded border border-osi-sand-300 px-2 py-1 text-xs"
+                />
                 <button
                   type="submit"
                   className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white"

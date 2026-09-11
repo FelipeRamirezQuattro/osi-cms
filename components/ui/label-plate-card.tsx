@@ -30,17 +30,32 @@ export function LabelPlateCard({
   onInteract?: () => void;
   className?: string;
 }) {
+  // Closed: the whole tile is the "open this card" control (role="button"
+  // + tabIndex). Open: it renders a real <Link> ("Learn more") inside —
+  // keeping role="button"/tabIndex on the wrapper too would nest two
+  // interactive controls, which axe/WCAG 4.1.2 flags outright. onMouseEnter
+  // stays either way, so hovering a *different* card can still swap which
+  // one is open.
   return (
     <div
-      role="button"
-      tabIndex={0}
-      aria-expanded={open}
+      role={open ? undefined : "button"}
+      tabIndex={open ? undefined : 0}
+      // aria-expanded is only a valid attribute alongside a
+      // button/toggle role — once open, this div stops being that
+      // toggle (the real "Learn more" Link inside is the interactive
+      // element instead), so the attribute is dropped rather than set
+      // to a state the element no longer has a role to hold.
+      aria-expanded={open ? undefined : false}
       onMouseEnter={onInteract}
-      onFocus={onInteract}
-      onClick={onInteract}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onInteract?.();
-      }}
+      onFocus={open ? undefined : onInteract}
+      onClick={open ? undefined : onInteract}
+      onKeyDown={
+        open
+          ? undefined
+          : (e) => {
+              if (e.key === "Enter" || e.key === " ") onInteract?.();
+            }
+      }
       className={`relative aspect-[3/4] overflow-hidden bg-osi-navy-700 ${className}`}
     >
       <Clipped corner="br" size="1.25rem" className="absolute inset-0">

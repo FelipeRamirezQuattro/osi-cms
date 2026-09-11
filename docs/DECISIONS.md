@@ -246,6 +246,56 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   308 both map to `permanentRedirect()`, everything else to `redirect()`.
   301 vs. 308 is a real difference (308 preserves request method) but
   not one that matters for the legacy map's GET-only links.
+- **Added `--color-osi-gold-700` and `--color-osi-slate-200` design
+  tokens** (Phase 7 hardening) — the mockup's gold-500/slate-300 accent
+  colors only pass WCAG AA contrast on navy backgrounds (gold-500 on
+  cream-100 is 2.12:1; slate-300 on navy-900 is 3.07:1, confirmed by a
+  real Lighthouse failure, not a guess). gold-700/slate-200 are the same
+  hues, darkened/lightened respectively until they clear 4.5:1 against
+  the *other* background. Every block that renders one of these accent
+  colors now branches on `data.background === "cream"` to pick the
+  right variant (`hero-full`, `product-hero`, `stat-grid`,
+  `stages-carousel-client`, `split-feature`, `global-map`,
+  `contact-details`) — same pattern the codebase already used for
+  `mission-cards`' button variant. Fixed contexts (search page, admin
+  dashboard cards, styleguide, not-found/error pages) just use whichever
+  variant matches their one fixed background. `label-plate-card.tsx`'s
+  cream-background usage of slate-300 was independently verified
+  correct and left alone — not every slate-300 usage was wrong, only
+  the ones on navy.
+- **Verified Lighthouse/axe scores against a genuinely fresh `next
+  start` process, not `next dev`** — and burned real time on a false
+  lead when `pkill -f "next start"` silently failed to match the actual
+  running process (`next-server`, not `next start`), leaving a stale
+  build answering requests through two full rebuild-and-retest cycles.
+  `lsof -ti:3000 | xargs kill -9` (kill whatever actually holds the
+  port, not a name guess) is what actually works — worth remembering
+  before trusting any "it still fails after I fixed it" result against
+  a long-running dev/prod server in this environment.
+- **A universal `:focus-visible` outline uses an off-brand blue
+  (`#0066ff`), not gold or navy** — neither brand color clears 3:1 (the
+  non-text contrast floor) against both the navy and cream backgrounds a
+  focus ring needs to work on simultaneously; gold-500 is only 2.12:1 on
+  cream, navy-900 is invisible on navy. A blue reads as "system focus,"
+  not a brand color, which is arguably the right signal anyway.
+- **`LabelPlateCard`'s outer `role="button"`/`tabIndex`/`aria-expanded`
+  are dropped entirely once a card is open** (was: always present). Open
+  state renders a real `<Link>` ("Learn more") inside the same div that
+  carried `role="button"` — nesting a native interactive element inside
+  an ARIA-button container is a WCAG 4.1.2 violation (confirmed via
+  axe-core, not just inspection). `aria-expanded` doesn't move to
+  another element either, since nothing else acts as this disclosure's
+  toggle once it's open — it's just dropped, which axe also requires
+  (the attribute isn't valid without an accompanying interactive role).
+- **The media library's alt-text field is required, not optional**
+  (master prompt §9 Phase 7: "alt text enforced in admin") — enforced
+  server-side in `uploadMediaAction`, not just the form's `required`
+  attribute. This is the one chokepoint every image passes through;
+  per-block image fields (hero images, diagrams, etc.) don't each carry
+  their own alt field — where a block already has adjacent text that
+  doubles as a natural caption (a product name, a stage title), that
+  text is reused as the image's alt attribute instead of adding a new
+  admin field for every image-carrying block.
 - **Publish always writes a full `{ meta, blocks }` snapshot to
   `page_revisions`** (master prompt §5.1), and "Publish" in the UI first
   silently saves the current draft, then publishes — so publishing never

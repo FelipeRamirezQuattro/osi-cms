@@ -34,7 +34,13 @@ async function Render({ data }: { data: Data }) {
         {mapUrl ? (
           <iframe src={mapUrl} title="Map" className="h-56 w-full border-0" loading="lazy" />
         ) : (
-          <div className="flex h-56 w-full items-center justify-center bg-osi-sand-300/30 text-sm text-osi-slate-400">
+          <div
+            className={`flex h-56 w-full items-center justify-center text-sm ${
+              data.background === "cream"
+                ? "bg-osi-sand-300/30 text-osi-slate-400"
+                : "bg-osi-white/10 text-osi-white/80"
+            }`}
+          >
             Map unavailable
           </div>
         )}

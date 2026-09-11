@@ -37,14 +37,22 @@ function Render({ data }: { data: Data }) {
         <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} />
       </div>
       {data.eyebrow && (
-        <p className="mb-3 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+        <p
+          className={`mb-3 font-display text-small-label tracking-wide-label uppercase ${
+            data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
+          }`}
+        >
           {data.eyebrow}
         </p>
       )}
       <h1 className="max-w-2xl font-display text-hero tracking-tightest-display text-osi-white uppercase">
         {data.headline}
       </h1>
-      {data.subhead && <p className="mt-4 max-w-xl text-osi-slate-300">{data.subhead}</p>}
+      {data.subhead && (
+        <p className={`mt-4 max-w-xl ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+          {data.subhead}
+        </p>
+      )}
       {data.ctas.length > 0 && (
         <div className="mt-8 flex flex-wrap gap-4">
           {data.ctas.map((cta) => (

@@ -408,6 +408,58 @@ matches the slug — see `docs/DECISIONS.md` for why there (not
 `next.config.ts`, not `proxy.ts`) and for the 301/308 vs. 302/307
 mapping.
 
+## Hardening (Phase 7)
+
+**Contrast-aware accent colors.** `--color-osi-gold-700` and
+`--color-osi-slate-200` (in `app/globals.css`, alongside gold-500/
+slate-300) exist because the mockup's accent colors only pass WCAG AA on
+one background each — gold-500/slate-300 on navy, gold-700/slate-200 on
+cream. Any block rendering an accent color on an admin-configurable
+`background` field branches on `data.background === "cream"` to pick the
+right one (grep for `data.background === "cream"` to find every
+instance). Adding a new block with gold/slate accent text on a
+configurable background must do the same — check both variants against
+`bg`, don't assume the default background is the only one it'll ever
+render on.
+
+**Focus.** `app/globals.css` sets a universal `:focus-visible { outline:
+2px solid #0066ff; ... }` — deliberately not a brand color, since
+neither gold nor navy clears 3:1 against both navy and cream
+backgrounds simultaneously (see DECISIONS.md). Never add
+`focus:outline-none` without a replacement that's actually visible on
+that element's specific background.
+
+**Error/loading/not-found.** `app/(site)/not-found.tsx` (on-brand,
+inside the Header/Footer chrome) is what `notFound()` calls actually hit
+for public routes; `app/not-found.tsx` is a bare-bones root fallback for
+paths outside `(site)`. `app/(site)/error.tsx` and
+`app/admin/(dashboard)/error.tsx` are segment error boundaries;
+`app/global-error.tsx` only fires if the root layout itself throws and
+must render its own `<html>/<body>` with inline styles (no Tailwind
+tokens available at that point). `app/(site)/loading.tsx` is a generic
+skeleton for every route under it; `products/[category]/[slug]/
+loading.tsx` is tailored to that route specifically since it's one of
+the two Lighthouse targets below.
+
+**Lighthouse ≥ 90 (home + product detail)**: verified via `pnpm build
+&& pnpm start` (not `next dev`) plus the `lighthouse` CLI — currently
+100/9x/100/100 on both. If re-verifying: kill whatever's actually
+listening on port 3000 with `lsof -ti:3000 | xargs kill -9`, not
+`pkill -f "next start"` — the running process is named `next-server`,
+not `next start`, and a stale server has silently answered "still
+broken" more than once in this project's history. See DECISIONS.md.
+
+**Alt text is enforced at the media library's upload chokepoint**
+(`lib/actions/media.ts → uploadMediaAction`, server-side, not just the
+form's `required` attribute) — see `docs/DECISIONS.md` for why
+individual block image fields don't each get their own alt field on top
+of that.
+
+`docs/CLIENT-HANDBOOK.md` is the plain-language admin guide for OSI
+staff — keep it in sync with any admin UI changes that alter a
+documented workflow (adding/renaming an admin section, changing the
+block editor's controls, etc.).
+
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 
 No PDF/brochure/datasheet URLs exist anywhere in the legacy scrape;

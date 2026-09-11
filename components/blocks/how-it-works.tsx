@@ -37,7 +37,15 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
               Download PDF
             </a>
           ) : (
-            <span className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase opacity-40">
+            // WCAG 1.4.3 exempts genuinely inactive UI text from the
+            // contrast requirement, but opacity-40 (3.73:1) still fails
+            // Lighthouse's automated check, which can't see that
+            // exemption — opacity-60 (6.86:1) reads just as "disabled"
+            // and passes outright.
+            <span
+              aria-disabled
+              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase opacity-60"
+            >
               Download PDF — pending client file
             </span>
           )}

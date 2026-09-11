@@ -18,13 +18,19 @@ const schema = blockCommonSchema.extend({
 
 type Data = z.infer<typeof schema>;
 
-function StatItem({ value, label }: z.infer<typeof statSchema>) {
+function StatItem({ value, label, background }: z.infer<typeof statSchema> & { background: Data["background"] }) {
   return (
     <div className="relative z-10 p-8">
-      <p className="font-display text-3xl tracking-tightest-display text-osi-gold-500 uppercase">
+      <p
+        className={`font-display text-3xl tracking-tightest-display uppercase ${
+          background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
+        }`}
+      >
         {value}
       </p>
-      <p className="mt-2 text-sm text-osi-slate-300">{label}</p>
+      <p className={`mt-2 text-sm ${background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+        {label}
+      </p>
     </div>
   );
 }
@@ -53,10 +59,10 @@ function Render({ data }: { data: Data }) {
         {data.stats.map((stat) =>
           stat.href ? (
             <Link key={stat.label} href={stat.href} className="contents">
-              <StatItem {...stat} />
+              <StatItem {...stat} background={data.background} />
             </Link>
           ) : (
-            <StatItem key={stat.label} {...stat} />
+            <StatItem key={stat.label} {...stat} background={data.background} />
           ),
         )}
       </div>

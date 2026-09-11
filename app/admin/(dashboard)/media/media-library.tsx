@@ -45,7 +45,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
       <form action={uploadFormAction} className="flex items-center gap-3 rounded border border-osi-sand-300 bg-osi-white p-4">
         <input type="file" name="file" accept="image/*" required className="text-sm" />
-        <input name="alt" placeholder="Alt text (optional)" className="rounded border border-osi-sand-300 px-2 py-1 text-sm" />
+        <input
+          name="alt"
+          placeholder="Alt text (required)"
+          required
+          className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
+        />
         <button type="submit" className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white">
           Upload
         </button>

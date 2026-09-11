@@ -69,8 +69,8 @@ export function ProductGridClient({
             onClick={() => setTab(t.key)}
             className={`pb-3 font-display text-sm tracking-wide-display uppercase ${
               tab === t.key
-                ? "border-b-2 border-osi-gold-500 text-osi-gold-500"
-                : "text-osi-navy-900/60"
+                ? "border-b-2 border-osi-gold-700 text-osi-gold-700"
+                : "text-osi-navy-900/75"
             }`}
           >
             {t.label}

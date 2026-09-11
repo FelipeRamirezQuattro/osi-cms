@@ -29,19 +29,34 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">
         <div>
           {data.eyebrow && (
-            <p className="mb-2 text-xs text-osi-slate-400 uppercase">{data.eyebrow}</p>
+            <p
+              className={`mb-2 text-xs uppercase ${
+                data.background === "cream" ? "text-osi-slate-400" : "text-osi-slate-200"
+              }`}
+            >
+              {data.eyebrow}
+            </p>
           )}
           <h1 className="font-display text-section tracking-tightest-display uppercase">
             {data.title}
           </h1>
           <div className="mt-2 mb-4 h-px w-24 bg-osi-steel-500/50" />
-          <div className="space-y-4 text-sm text-osi-slate-300">
+          <div
+            className={`space-y-4 text-sm ${
+              data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"
+            }`}
+          >
             {data.paragraphs.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
         </div>
-        <DuotoneImage src={data.diagramImageUrl} className="aspect-square w-full" intensity={0.15} />
+        <DuotoneImage
+          src={data.diagramImageUrl}
+          alt={data.diagramImageUrl ? `${data.title} diagram` : ""}
+          className="aspect-square w-full"
+          intensity={0.15}
+        />
       </div>
       <CtaBreakoutBar href={data.ctaHref}>{data.ctaLabel}</CtaBreakoutBar>
     </Section>

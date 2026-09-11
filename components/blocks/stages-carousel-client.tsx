@@ -20,11 +20,16 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
       <div className="flex flex-col items-center gap-8 sm:flex-row">
         <DuotoneImage
           src={stage.imageUrl}
+          alt={stage.imageUrl ? stage.title : ""}
           className="h-32 w-32 shrink-0 rounded-full"
           intensity={0.2}
         />
         <div>
-          <p className="font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+          <p
+            className={`font-display text-small-label tracking-wide-label uppercase ${
+              data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
+            }`}
+          >
             {data.title} — {index + 1} of {data.stages.length}
           </p>
           <h3 className="mt-1 font-display text-card-label tracking-wide-display uppercase">

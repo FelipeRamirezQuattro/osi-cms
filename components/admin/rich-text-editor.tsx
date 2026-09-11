@@ -64,7 +64,7 @@ export function RichTextEditor({
     onUpdate: ({ editor }) => onChange(editor.getJSON()),
     editorProps: {
       attributes: {
-        class: "prose-sm min-h-[10rem] max-w-none focus:outline-none px-3 py-2 text-sm",
+        class: "prose-sm min-h-[10rem] max-w-none px-3 py-2 text-sm",
       },
     },
   });

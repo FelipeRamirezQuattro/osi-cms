@@ -17,11 +17,23 @@
   --color-osi-steel-500: #234e7b;
   --color-osi-slate-400: #4c6880;
   --color-osi-slate-300: #576979;
+  /* slate-300 reads fine on cream (4.72:1) but only 3.07:1 on navy-900 —
+     confirmed by a real Lighthouse color-contrast failure on the home
+     page's hero subhead. slate-200 is the same hue, lightened until it
+     clears 4.5:1 on navy-900 (5.26:1); use it for muted/secondary text
+     on navy backgrounds, slate-300 for the same role on cream. See
+     DECISIONS.md. */
+  --color-osi-slate-200: #818f9b;
   --color-osi-cream-100: #f2e9de;
   --color-osi-cream-200: #efe8dd;
   --color-osi-sand-300: #d0c0a7;
   --color-osi-gold-500: #e2902a;
   --color-osi-gold-400: #f0a93d;
+  /* Darker gold for text on cream/white — gold-500 on cream-100 is only
+     2.12:1, well under WCAG AA's 4.5:1 for normal text (and even under
+     the 3:1 large-text floor). Use gold-500/400 on navy backgrounds only;
+     gold-700 wherever gold text sits on cream/white. See DECISIONS.md. */
+  --color-osi-gold-700: #885619;
   --color-osi-white: #ffffff;
 
   /* Display scale — clamp(min, preferred, max) per the mockup's fluid type */
@@ -44,6 +56,22 @@
 /* Body copy runs airy, not dense — the mockup's paragraphs use 1.7 */
 body {
   line-height: 1.7;
+}
+
+/*
+ * WCAG 2.1 AA baseline focus indicator (Phase 7 hardening). Neither
+ * brand color works alone as a universal focus ring — gold-500 is
+ * 2.12:1 on cream (fails even the 3:1 non-text-contrast floor) and
+ * navy-900 all but disappears on navy backgrounds — so this uses a
+ * deliberately off-brand blue that clears 3:1 against both navy-900
+ * (3.6:1) and cream-100 (4.0:1). A focus ring should read as "system
+ * focus," not a brand color, anyway. Any component that sets its own
+ * focus-visible style (e.g. the contact form's gold ring on a
+ * guaranteed-navy background) overrides this by being more specific.
+ */
+:focus-visible {
+  outline: 2px solid #0066ff;
+  outline-offset: 2px;
 }
 
 /*

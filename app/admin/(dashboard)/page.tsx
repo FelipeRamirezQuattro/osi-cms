@@ -12,14 +12,14 @@ export default async function AdminDashboardPage() {
 
       <div className="mb-10 grid grid-cols-2 gap-6 sm:grid-cols-3">
         <div className="rounded border border-osi-sand-300 bg-white p-6">
-          <p className="font-display text-3xl text-osi-gold-500">{newSubmissions}</p>
+          <p className="font-display text-3xl text-osi-gold-700">{newSubmissions}</p>
           <p className="text-sm opacity-70">New submissions</p>
           <Link href="/admin/submissions" className="mt-2 inline-block text-sm hover:underline">
             View →
           </Link>
         </div>
         <div className="rounded border border-osi-sand-300 bg-white p-6">
-          <p className="font-display text-3xl text-osi-gold-500">{pages.length}</p>
+          <p className="font-display text-3xl text-osi-gold-700">{pages.length}</p>
           <p className="text-sm opacity-70">Total pages</p>
           <Link href="/admin/pages" className="mt-2 inline-block text-sm hover:underline">
             View →
