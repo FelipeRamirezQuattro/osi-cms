@@ -4,7 +4,8 @@ import { Clipped } from "@/components/ui/clipped";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { HairlineGrid } from "@/components/ui/hairline-grid";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { AnimatedSection } from "@/components/ui/animated-section";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 
@@ -204,12 +205,21 @@ export default function StyleguidePage() {
 
       <Section bg="navy">
         <Heading>Scroll reveal</Heading>
-        <ScrollReveal>
+        <AnimatedSection>
           <p className="max-w-md text-osi-slate-200">
             Scroll this card out of view and back — it fades and rises once, 400ms, and is inert
             under prefers-reduced-motion.
           </p>
-        </ScrollReveal>
+        </AnimatedSection>
+        <AnimatedGroup className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {["One", "Two", "Three"].map((label) => (
+            <AnimatedItem key={label} className="rounded bg-osi-steel-500/20 p-6">
+              <p className="font-display text-sm tracking-wide-display text-osi-white uppercase">
+                {label}
+              </p>
+            </AnimatedItem>
+          ))}
+        </AnimatedGroup>
       </Section>
     </main>
   );
