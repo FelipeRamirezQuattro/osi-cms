@@ -2,10 +2,22 @@ import type { ReactNode } from "react";
 import type { BlockBackground, BlockSpacingSide } from "@/lib/blocks/common";
 import { RevealSection } from "./reveal-section";
 
-const SPACING_CLASSES: Record<BlockSpacingSide, string> = {
-  sm: "py-8",
-  md: "py-16",
-  lg: "py-24",
+// Both maps spell every class out literally. Tailwind scans source for
+// literal class strings, so a class assembled at runtime — this used to be
+// SPACING_CLASSES[side].replace("py-", "pt-") — is never emitted into the
+// CSS bundle. `pt-16` (the `md` default, i.e. most sections on the site)
+// and `pb-8` were silently missing, so nearly every section rendered with
+// padding-top: 0 and stacked flush against the one above it.
+const PADDING_TOP_CLASSES: Record<BlockSpacingSide, string> = {
+  sm: "pt-8",
+  md: "pt-16",
+  lg: "pt-24",
+};
+
+const PADDING_BOTTOM_CLASSES: Record<BlockSpacingSide, string> = {
+  sm: "pb-8",
+  md: "pb-16",
+  lg: "pb-24",
 };
 
 // Every block gets an optional anchorId, a background variant, and
@@ -46,8 +58,8 @@ export function Section({
         : seam === "bottom"
           ? "diagonal-seam-b"
           : "";
-  const paddingTop = SPACING_CLASSES[spacingTop].replace("py-", "pt-");
-  const paddingBottom = SPACING_CLASSES[spacingBottom].replace("py-", "pb-");
+  const paddingTop = PADDING_TOP_CLASSES[spacingTop];
+  const paddingBottom = PADDING_BOTTOM_CLASSES[spacingBottom];
 
   const sectionClassName = `relative overflow-visible ${bgClass} ${seamClass} ${paddingTop} ${paddingBottom} ${className}`;
   const content = <div className={contentClassName}>{children}</div>;

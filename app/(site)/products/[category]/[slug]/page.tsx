@@ -75,7 +75,7 @@ export default async function ProductDetailPage({
         <BenefitsCardsRender
           data={{
             background: "navy",
-            spacingTop: "sm",
+            spacingTop: "md",
             spacingBottom: "md",
             title: "Benefits",
             items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })),
