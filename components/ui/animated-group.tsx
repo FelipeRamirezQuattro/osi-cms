@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { useRevealInView } from "@/lib/motion/use-reveal-in-view";
 import {
   fadeRiseVariants,
   fadeRiseVariantsReduced,
@@ -12,7 +13,11 @@ import {
 /**
  * Stagger-aware pair for grids: wrap the grid in <AnimatedGroup>, each
  * child in <AnimatedItem> — children fade+rise in sequence as the group
- * enters the viewport, once.
+ * enters the viewport, once. The trigger is useRevealInView + a
+ * controlled `animate`, never the `whileInView` gesture; see that hook
+ * for why (late-mounting children — e.g. LabelPlateGrid's cards after a
+ * /products category-filter change — are stranded at opacity 0 by
+ * `whileInView`).
  */
 export function AnimatedGroup({
   children,
@@ -22,13 +27,15 @@ export function AnimatedGroup({
   className?: string;
 }) {
   const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useRevealInView(ref);
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
+      animate={inView ? "visible" : "hidden"}
       variants={reduceMotion ? staggerContainerVariantsReduced : staggerContainerVariants}
     >
       {children}

@@ -27,18 +27,20 @@ function Render({ data }: { data: Data }) {
         <div>
           {data.eyebrow && (
             <p className="mb-2 font-display text-small-label tracking-wide-label uppercase">
-              {data.background === "cream" ? (
-                // GradientText is navy-only — gold-700 is the single
-                // WCAG-safe gold on cream, so there is no two-stop sweep
-                // to run here (see gradient-text.tsx's comment). Full
-                // opacity: gold-700 only clears WCAG AA on cream at 100%
-                // — the old opacity-70 dim was safe against the previous
-                // inherited navy/cream text color but isn't against gold.
-                <span className="text-osi-gold-700">{data.eyebrow}</span>
+              {data.background === "navy" ? (
+                // Navy is the ONLY background GradientText is safe on
+                // (see gradient-text.tsx) — `background` also allows
+                // "image" and "transparent", both of which render
+                // `bg-transparent` and let the cream page body through,
+                // so they take the solid fallback too. No opacity dim:
+                // compositing the gold-500 stop at 70% onto navy drops
+                // this 12px label to ~3.9:1, under the 4.5:1 AA floor.
+                <GradientText>{data.eyebrow}</GradientText>
               ) : (
-                // Navy has huge contrast headroom, so the dimmed look
-                // this eyebrow had before is preserved here instead.
-                <GradientText className="opacity-70">{data.eyebrow}</GradientText>
+                // gold-700 is the single WCAG-safe gold on cream, so
+                // there is no two-stop sweep to run here. Full opacity:
+                // gold-700 only clears AA on cream at 100%.
+                <span className="text-osi-gold-700">{data.eyebrow}</span>
               )}
             </p>
           )}

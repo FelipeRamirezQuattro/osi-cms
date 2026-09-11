@@ -40,14 +40,17 @@ function Render({ data }: { data: Data }) {
       </div>
       {data.eyebrow && (
         <p className="mb-3 font-display text-small-label tracking-wide-label uppercase">
-          {data.background === "cream" ? (
-            // GradientText is navy-only — gold-700 is the single
-            // WCAG-safe gold on cream, so there is no two-stop sweep
-            // to run here (see gradient-text.tsx's comment).
-            <span className="text-osi-gold-700">{data.eyebrow}</span>
-          ) : (
-            <GradientText>{data.eyebrow}</GradientText>
-          )}
+          {/* No `data.background` branch here, unlike hero_page/
+              product_hero: this block always paints its own full-bleed
+              navy-multiplied DuotoneImage behind the content (see the
+              -z-10 layer above), so `background` never describes what is
+              actually behind this text — the backdrop is dark whichever
+              value is set, which is also why the h1 below is
+              unconditionally text-osi-white. GradientText's navy-safe
+              gold-500/400 is therefore the right choice for every value;
+              the dark gold-700 cream fallback used elsewhere would read
+              at roughly 1.9:1 against that duotone. */}
+          <GradientText>{data.eyebrow}</GradientText>
         </p>
       )}
       <h1 className="max-w-2xl font-display text-hero tracking-tightest-display text-osi-white uppercase">

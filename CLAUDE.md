@@ -223,6 +223,18 @@ Rules that must hold for any new animated component:
   Framer Motion components call `useReducedMotion()` in-component,
   because the global `prefers-reduced-motion` rule in `globals.css`
   cannot reach JS-driven motion.
+- **One scroll-reveal trigger, and it is never `whileInView` and never
+  `amount`.** All three reveal primitives call
+  `lib/motion/use-reveal-in-view.ts` and feed the result to
+  `animate={inView ? "visible" : "hidden"}`. Two bugs are baked into
+  that hook's shape, both of which leave content permanently at opacity
+  0: `whileInView` never reaches a child that mounts after it fired (a
+  re-filtered grid), and an `amount: <ratio>` viewport is unreachable
+  for an element taller than `viewportHeight / ratio` (one long migrated
+  legacy page = one `rich_text` block in one `Section`). Its companion
+  `amount: "all"` trigger covers the mirror case — content sitting
+  inside the last 15% of the viewport at the document's end, which the
+  root-margin trigger alone cannot reach.
 - **A block either uses `Section`'s `reveal` or its own stagger, never
   both.** A block wrapping its grid in `AnimatedGroup` passes
   `reveal={false}`.

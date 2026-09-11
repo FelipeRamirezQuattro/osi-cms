@@ -14,6 +14,33 @@ export const springTransition: Transition = { type: "spring", bounce: 0, duratio
 // "snappy, no visible overshoot" feel.
 export const tiltSpringConfig = { stiffness: 300, damping: 30 } as const;
 
+// The scroll-reveal trigger every reveal primitive shares — see
+// lib/motion/use-reveal-in-view.ts, which is the only thing that should
+// consume these two. Reveal once, as soon as the element's leading edge
+// crosses 15% of the viewport height up from the bottom.
+//
+// Deliberately margin-based, never `amount: <ratio>`: a ratio threshold
+// asks for that fraction of the *element's own* area to intersect, which
+// an element taller than `viewportHeight / ratio` can never satisfy,
+// leaving it stuck at `hidden` forever. That is not hypothetical here —
+// `scripts/migrate-legacy.ts` emits each migrated legacy page as a single
+// `rich_text` block in a single `Section`, and the longest of those
+// (terms-and-conditions) clears 6.7 viewport heights at phone width. A
+// root-margin trigger has no upper bound on element height.
+export const REVEAL_VIEWPORT = { once: true, margin: "0px 0px -15% 0px" } as const;
+
+// ...and the other end of that trade: a negative bottom root margin is
+// unreachable for anything that lives entirely inside the last 15% of
+// the viewport once the document is scrolled as far as it goes — its top
+// edge never gets above the shrunken detection edge. Real case: the last
+// AnimatedGroup on /styleguide (no Footer below it, unlike every (site)
+// route) missed by three pixels at 1280x900 and stayed invisible. Such an
+// element is by definition shorter than 15% of the viewport, so it is
+// fully on screen at that point, which is what this second trigger
+// checks. Anything taller than 15% of the viewport clears the margin
+// trigger first, so this one never changes the feel of a normal reveal.
+export const REVEAL_VIEWPORT_FULLY_VISIBLE = { once: true, amount: "all" } as const;
+
 export const fadeRiseVariants: Variants = {
   hidden: { opacity: 0, y: 8 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OSI } },
