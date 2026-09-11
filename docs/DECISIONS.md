@@ -173,6 +173,44 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   a signed token adds nothing this session doesn't already have. Revisit
   if the client wants to share an unauthenticated draft link with an
   outside stakeholder.
+- **Built one generic simple-entity admin (`[entity]/`) instead of 8
+  hand-written CRUD screens** for industries, applications, services,
+  news, resources, locations, directory, and redirects — they're all just
+  flat columns with an optional `status`/`position`, described declaratively
+  in `lib/admin/entity-config.ts` and rendered through the same
+  `FieldRenderer` engine the block editor uses. Products got a bespoke
+  editor instead (`/admin/products`) because of its child tables
+  (benefits/stages/specs) and many-to-many relations
+  (industries/applications) — still built on the same `FieldRenderer`,
+  just with its own Server Actions (`lib/actions/products.ts`) instead of
+  the generic entity ones, since saving a product means writing to five
+  tables, not one.
+- **`lib/data/admin-entities.ts`'s CRUD functions take `table: string`,
+  not a `Database` key**, and lean on `any` at the Supabase-call boundary
+  to do it — the alternative (a real generic `<T extends TableName>`
+  signature) fights Supabase's overload resolution for marginal benefit,
+  since every caller already re-validates through `EntityConfig.fields`
+  at the UI layer. Confined to this one file, same reasoning as the `any`
+  usage in `field-renderer.tsx`/`page-editor.tsx`.
+- **Simple-entity/product saves do NOT re-validate with a full Zod schema**
+  server-side, unlike block saves (`saveDraftAction`). These are flat
+  columns with real Postgres `NOT NULL`/`check` constraints already
+  enforcing the required shape (unlike a block's `data` jsonb, which has
+  no DB-level shape constraint at all — Zod is the only thing keeping it
+  render-safe) — a Postgres constraint violation surfaces as a plain error
+  string in the form instead. Revisit if a specific entity's DB constraints
+  turn out to be too loose to catch a bad save.
+- **Found and fixed two real bugs only visible at runtime, not in
+  `next build`/`tsc`/`eslint`**, via a Playwright pass reading the dev
+  server's console: (1) `MediaPicker` rendered inline caused a hydration
+  failure — every caller puts it inside its own `<form>`, and its own
+  upload `<form>` made that a nested `<form>`, invalid HTML; fixed with
+  `createPortal` to `document.body`. (2) `image`/`richtext` fields were
+  wrapped in a `<label>` (copied from the plain-input fields), which made
+  `MediaPicker`'s trigger button unreachable by accessibility role — fixed
+  with a plain `<div>` wrapper (`FieldGroup`) for those two. Neither
+  showed up in the type checker or the production build; both would have
+  shipped silently without a driven browser pass.
 - **Publish always writes a full `{ meta, blocks }` snapshot to
   `page_revisions`** (master prompt §5.1), and "Publish" in the UI first
   silently saves the current draft, then publishes — so publishing never

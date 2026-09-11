@@ -1,12 +1,27 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { listMediaAction, uploadMediaAction, type UploadMediaState } from "@/lib/actions/media";
 import type { MediaAsset } from "@/lib/data/media";
 import { resolveMediaUrl } from "@/lib/media";
 
 const initialUploadState: UploadMediaState = { status: "idle" };
+
+// Same useSyncExternalStore-for-"is this the client" trick as
+// recommendations-client.tsx (see CLAUDE.md) — avoids the
+// react-hooks/set-state-in-effect lint error a useEffect+setState mount
+// flag would trigger, and matches SSR/first-paint so there's no flash.
+function subscribeNoop() {
+  return () => {};
+}
+function getClientSnapshot() {
+  return true;
+}
+function getServerSnapshot() {
+  return false;
+}
 
 export function MediaPicker({
   value,
@@ -22,6 +37,12 @@ export function MediaPicker({
   const [search, setSearch] = useState("");
   const [isLoading, startLoading] = useTransition();
   const [uploadState, uploadFormAction] = useActionState(uploadMediaAction, initialUploadState);
+  // The dialog (and its own upload <form>) is portaled to document.body —
+  // every caller of MediaPicker renders it inside its own <form>, and
+  // HTML forbids a nested <form>. Portaling avoids that regardless of
+  // where MediaPicker itself sits in the tree. Only after mount, since
+  // document.body doesn't exist during SSR.
+  const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
 
   function refresh(q?: string) {
     startLoading(async () => {
@@ -81,67 +102,65 @@ export function MediaPicker({
         )}
       </div>
 
-      <dialog
-        ref={dialogRef}
-        className="w-[90vw] max-w-3xl rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
-      >
-        <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
-          <h2 className="font-display text-sm tracking-wide-display uppercase">Media library</h2>
-          <button type="button" onClick={close} className="text-sm opacity-60 hover:opacity-100">
-            Close
-          </button>
-        </div>
-
-        <div className="space-y-4 p-5">
-          <form action={uploadFormAction} className="flex items-center gap-3">
-            <input
-              type="file"
-              name="file"
-              accept="image/*"
-              required
-              className="text-xs"
-            />
-            <button
-              type="submit"
-              className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white"
-            >
-              Upload
-            </button>
-            {uploadState.status === "error" && (
-              <span className="text-xs text-red-600">{uploadState.message}</span>
-            )}
-          </form>
-
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              refresh(e.target.value);
-            }}
-            placeholder="Search by title, alt text, or URL…"
-            className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
-          />
-
-          <div className="grid max-h-96 grid-cols-4 gap-3 overflow-y-auto sm:grid-cols-6">
-            {isLoading && <p className="col-span-full text-xs text-osi-slate-400">Loading…</p>}
-            {!isLoading && assets.length === 0 && (
-              <p className="col-span-full text-xs text-osi-slate-400">No media found.</p>
-            )}
-            {assets.map((asset) => (
-              <button
-                key={asset.id}
-                type="button"
-                onClick={() => select(asset.url)}
-                className="relative aspect-square overflow-hidden rounded border border-osi-sand-300 hover:ring-2 hover:ring-osi-gold-500"
-                title={asset.title ?? asset.url}
-              >
-                <Image src={resolveMediaUrl(asset.url)} alt={asset.alt ?? ""} fill className="object-cover" />
+      {mounted &&
+        createPortal(
+          <dialog
+            ref={dialogRef}
+            className="w-[90vw] max-w-3xl rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
+          >
+            <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
+              <h2 className="font-display text-sm tracking-wide-display uppercase">Media library</h2>
+              <button type="button" onClick={close} className="text-sm opacity-60 hover:opacity-100">
+                Close
               </button>
-            ))}
-          </div>
-        </div>
-      </dialog>
+            </div>
+
+            <div className="space-y-4 p-5">
+              <form action={uploadFormAction} className="flex items-center gap-3">
+                <input type="file" name="file" accept="image/*" required className="text-xs" />
+                <button
+                  type="submit"
+                  className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white"
+                >
+                  Upload
+                </button>
+                {uploadState.status === "error" && (
+                  <span className="text-xs text-red-600">{uploadState.message}</span>
+                )}
+              </form>
+
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  refresh(e.target.value);
+                }}
+                placeholder="Search by title, alt text, or URL…"
+                className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
+              />
+
+              <div className="grid max-h-96 grid-cols-4 gap-3 overflow-y-auto sm:grid-cols-6">
+                {isLoading && <p className="col-span-full text-xs text-osi-slate-400">Loading…</p>}
+                {!isLoading && assets.length === 0 && (
+                  <p className="col-span-full text-xs text-osi-slate-400">No media found.</p>
+                )}
+                {assets.map((asset) => (
+                  <button
+                    key={asset.id}
+                    type="button"
+                    onClick={() => select(asset.url)}
+                    className="relative aspect-square overflow-hidden rounded border border-osi-sand-300 hover:ring-2 hover:ring-osi-gold-500"
+                    title={asset.title ?? asset.url}
+                  >
+                    <Image src={resolveMediaUrl(asset.url)} alt={asset.alt ?? ""} fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </dialog>,
+          document.body,
+        )}
     </div>
   );
 }

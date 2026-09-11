@@ -4,6 +4,7 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { useRelationOptions } from "@/components/admin/relation-options";
 
 // The block editor's field shapes are fully dynamic — one shape per block
 // type, described at runtime by FieldSpec (see lib/blocks/admin-fields.ts)
@@ -22,6 +23,21 @@ function LabeledField({ label, htmlFor, children }: { label: string; htmlFor?: s
   );
 }
 
+// `<label>` is for associating text with an actual form control
+// (input/select/textarea) — wrapping a button-driven widget (the media
+// picker) or a contenteditable one (Tiptap) in one instead hides that
+// widget's own interactive elements from the accessibility tree (a real
+// bug found via Playwright: MediaPicker's trigger button stopped being
+// reachable by role). Same visual result, a <div> instead.
+function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="block space-y-1 text-sm">
+      <span className="block text-xs uppercase tracking-wide-label opacity-70">{label}</span>
+      {children}
+    </div>
+  );
+}
+
 export function defaultForFieldSpec(spec: FieldSpec): unknown {
   switch (spec.type) {
     case "boolean":
@@ -31,6 +47,7 @@ export function defaultForFieldSpec(spec: FieldSpec): unknown {
     case "select":
       return spec.options[0] ?? "";
     case "array":
+    case "multi-relation":
       return [];
     case "object":
       return Object.fromEntries(spec.fields.map((sub) => [sub.key, defaultForFieldSpec(sub)]));
@@ -82,25 +99,35 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
           </select>
         </LabeledField>
       );
-    case "image":
+    case "date":
       return (
         <LabeledField label={spec.label}>
+          <input type="date" {...register(name)} className={INPUT_CLASS} />
+        </LabeledField>
+      );
+    case "relation":
+      return <RelationFieldRenderer spec={spec} name={name} />;
+    case "multi-relation":
+      return <MultiRelationFieldRenderer spec={spec} name={name} />;
+    case "image":
+      return (
+        <FieldGroup label={spec.label}>
           <Controller
             control={control}
             name={name}
             render={({ field }) => <MediaPicker value={field.value} onChange={field.onChange} label={spec.label} />}
           />
-        </LabeledField>
+        </FieldGroup>
       );
     case "richtext":
       return (
-        <LabeledField label={spec.label}>
+        <FieldGroup label={spec.label}>
           <Controller
             control={control}
             name={name}
             render={({ field }) => <RichTextEditor value={field.value} onChange={field.onChange} />}
           />
-        </LabeledField>
+        </FieldGroup>
       );
     case "object":
       return (
@@ -114,6 +141,67 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
     case "array":
       return <ArrayFieldRenderer spec={spec} name={name} />;
   }
+}
+
+function RelationFieldRenderer({ spec, name }: { spec: Extract<FieldSpec, { type: "relation" }>; name: string }) {
+  const { register } = useFormContext<any>();
+  const options = useRelationOptions(spec.relation);
+  return (
+    <LabeledField label={spec.label}>
+      <select {...register(name)} className={INPUT_CLASS}>
+        {spec.optional && <option value="">—</option>}
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </LabeledField>
+  );
+}
+
+function MultiRelationFieldRenderer({
+  spec,
+  name,
+}: {
+  spec: Extract<FieldSpec, { type: "multi-relation" }>;
+  name: string;
+}) {
+  const { control } = useFormContext<any>();
+  const options = useRelationOptions(spec.relation);
+
+  return (
+    <LabeledField label={spec.label}>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => {
+          const selected: string[] = Array.isArray(field.value) ? field.value : [];
+          function toggle(value: string) {
+            field.onChange(
+              selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value],
+            );
+          }
+          return (
+            <div className="max-h-48 space-y-1 overflow-y-auto rounded border border-osi-sand-300 p-3">
+              {options.length === 0 && <p className="text-xs text-osi-slate-400">No options available.</p>}
+              {options.map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(opt.value)}
+                    onChange={() => toggle(opt.value)}
+                    className="h-4 w-4"
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+          );
+        }}
+      />
+    </LabeledField>
+  );
 }
 
 function ArrayFieldRenderer({

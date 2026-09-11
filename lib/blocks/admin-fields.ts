@@ -20,6 +20,16 @@ export type FieldSpec =
   | { key: string; label: string; type: "select"; options: string[]; optional?: boolean }
   | { key: string; label: string; type: "image"; optional?: boolean }
   | { key: string; label: string; type: "richtext"; optional?: boolean }
+  | { key: string; label: string; type: "date"; optional?: boolean }
+  // `relation` renders a <select> populated at runtime from a
+  // RelationOptionsProvider (components/admin/relation-options.tsx),
+  // keyed by `relation` — used by the simple-entity admin (lib/admin/
+  // entity-config.ts) for foreign keys like directory_contacts.location_id.
+  // Not used by any block — blocks don't reference other tables by id.
+  | { key: string; label: string; type: "relation"; relation: string; optional?: boolean }
+  // Checkbox list bound to an array of ids — the many-to-many equivalent
+  // of `relation` (e.g. products.industries via product_industries).
+  | { key: string; label: string; type: "multi-relation"; relation: string; optional?: boolean }
   | { key: string; label: string; type: "object"; fields: FieldSpec[]; optional?: boolean }
   | {
       key: string;

@@ -53,6 +53,10 @@ export function RichTextEditor({
         strike: false,
         code: false,
         heading: { levels: [2, 3] },
+        // StarterKit (Tiptap v3) bundles its own Link extension — disable
+        // it here so the explicit Link.configure() below (openOnClick/
+        // autolink) doesn't register twice under the same name.
+        link: false,
       }),
       Link.configure({ openOnClick: false, autolink: true }),
     ],

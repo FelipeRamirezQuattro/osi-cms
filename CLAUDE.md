@@ -312,6 +312,55 @@ an already-authenticated staff session. Revisit with real signed tokens
 if the client wants to share unauthenticated preview links externally.
 Reflects the last **saved** draft, not unsaved form edits.
 
+**Entity admin** (`app/admin/(dashboard)/[entity]/`, `lib/admin/entity-config.ts`)
+is one list + one edit screen reused across every simple content table —
+industries, applications, services, news, resources, locations, directory,
+redirects — driven by the same `FieldSpec`/`FieldRenderer` engine the block
+editor uses, plus two more `FieldSpec` variants added for this:
+`relation` (a `<select>`, e.g. `resources.product_id`) and `multi-relation`
+(a checkbox list bound to an array of ids, e.g. junction tables). Options
+for both are resolved server-side (`lib/data/admin-entities.ts →
+listRelationOptions`) and handed to the client via a `RelationOptionsProvider`
+context (`components/admin/relation-options.tsx`) rather than baked into
+the static `FieldSpec`, since they depend on live DB content. The repo
+layer (`lib/data/admin-entities.ts`) is intentionally generic — `table` is
+a runtime string, not a `Database` key, so it leans on `any` at the
+Supabase-call boundary the same way `field-renderer.tsx` does; see
+`docs/DECISIONS.md`. A literal route (e.g. `app/admin/(dashboard)/
+products/`) always wins over the `[entity]` dynamic segment for the same
+path, which is how `/admin/products` gets its own bespoke editor (child
+tables — benefits/stages/specs — plus the industries/applications
+many-to-many) while still sharing the same `FieldRenderer` machinery
+(`lib/admin/product-fields.ts`) instead of a third form system.
+
+**Navigation** (`/admin/navigation`) edits `nav_items` one level deep
+(top-level items + their direct children) — matches every menu
+`scripts/seed-navigation.ts` actually seeds; the schema's arbitrary
+`parent_id` nesting isn't exposed further than that in the UI.
+
+**Media library** (`/admin/media`) is the same `lib/data/media.ts` /
+Supabase Storage bucket the in-form `MediaPicker` uses, as a standalone
+browse/upload/delete page.
+
+**A real bug worth knowing about:** `MediaPicker`'s `<dialog>` (with its
+own upload `<form>`) is portaled to `document.body` via `createPortal`,
+not rendered inline. Every caller renders `MediaPicker` inside its own
+`<form>` (entity editor, product editor, settings, and — for `image`
+fields — the block editor), and HTML forbids a nested `<form>`; rendering
+it inline caused a real hydration failure, caught by inspecting the dev
+server's console output after a Playwright pass (production `next build`
+alone did not catch it — hydration mismatches are a runtime-only failure
+mode). The portal mounts only after `useSyncExternalStore` confirms
+client-side (same trick as `recommendations-client.tsx`) since
+`document.body` doesn't exist during SSR. Relatedly, `image` and
+`richtext` fields use a plain `<div>` wrapper (`FieldGroup` in
+`field-renderer.tsx`), not `<label>` — a `<label>` is for associating text
+with an actual form control, and wrapping a button-driven or
+contenteditable widget in one instead made that widget's own interactive
+elements unreachable by accessibility role (found the same way, via
+Playwright's `getByRole` failing to locate a button that plainly
+existed).
+
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 
 No PDF/brochure/datasheet URLs exist anywhere in the legacy scrape;
