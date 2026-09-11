@@ -62,3 +62,20 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {
   return blockRegistry[type];
 }
+
+// Client-safe summary for the admin block palette — BlockDefinition itself
+// carries a ZodType and a Render component, neither serializable across
+// the server/client boundary.
+export type BlockPaletteEntry = {
+  type: string;
+  label: string;
+  category: BlockDefinition<unknown>["category"];
+  adminFields: BlockDefinition<unknown>["adminFields"];
+  defaults: unknown;
+};
+
+export function getBlockPalette(): BlockPaletteEntry[] {
+  return Object.values(blockRegistry)
+    .map((def) => ({ type: def.type, label: def.label, category: def.category, adminFields: def.adminFields, defaults: def.defaults }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}

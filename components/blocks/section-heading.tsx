@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string(),
@@ -33,6 +34,12 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "lede", label: "Lede", type: "textarea", optional: true },
+  { key: "align", label: "Alignment", type: "select", options: ["left", "center"] },
+];
+
 export const sectionHeadingBlock = defineBlock({
   type: "section_heading",
   label: "Section heading",
@@ -40,4 +47,5 @@ export const sectionHeadingBlock = defineBlock({
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "sm", title: "", align: "left" },
   Render,
+  adminFields,
 });

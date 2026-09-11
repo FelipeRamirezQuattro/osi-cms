@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const linkSchema = z.object({ label: z.string(), href: z.string().default("#") });
 
@@ -62,6 +63,32 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "body", label: "Body", type: "textarea", optional: true },
+  {
+    key: "links",
+    label: "Links",
+    type: "array",
+    maxItems: 8,
+    itemFields: [
+      { key: "label", label: "Label", type: "text" },
+      { key: "href", label: "Link", type: "text" },
+    ],
+  },
+  { key: "imageUrl", label: "Image", type: "image", optional: true },
+  {
+    key: "cta",
+    label: "Breakout CTA",
+    type: "object",
+    optional: true,
+    fields: [
+      { key: "label", label: "Label", type: "text" },
+      { key: "href", label: "Link", type: "text" },
+    ],
+  },
+];
+
 export const splitFeatureBlock = defineBlock({
   type: "split_feature",
   label: "Split feature",
@@ -69,4 +96,5 @@ export const splitFeatureBlock = defineBlock({
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "lg", title: "", links: [] },
   Render,
+  adminFields,
 });

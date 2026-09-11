@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 export const howItWorksSchema = blockCommonSchema.extend({
   title: z.string().default("How does it work?"),
@@ -55,11 +56,19 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "body", label: "Body", type: "textarea", optional: true },
+  { key: "pdfUrl", label: "PDF URL", type: "text", optional: true },
+  { key: "show3d", label: "Show “See this tool in 3D”", type: "boolean" },
+];
+
 export const howItWorksBlock = defineBlock({
   type: "how_it_works",
   label: "How it works",
   category: "commerce",
   schema: howItWorksSchema,
+  adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "How does it work?", show3d: true },
   Render: HowItWorksRender,
 });

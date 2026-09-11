@@ -4,6 +4,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { HairlineGrid } from "@/components/ui/hairline-grid";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const statSchema = z.object({
   value: z.string(),
@@ -63,6 +64,21 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  {
+    key: "stats",
+    label: "Stats",
+    type: "array",
+    minItems: 2,
+    maxItems: 6,
+    itemFields: [
+      { key: "value", label: "Value", type: "text" },
+      { key: "label", label: "Label", type: "text" },
+      { key: "href", label: "Link", type: "text", optional: true },
+    ],
+  },
+];
+
 export const statGridBlock = defineBlock({
   type: "stat_grid",
   label: "Stat grid",
@@ -70,4 +86,5 @@ export const statGridBlock = defineBlock({
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", stats: [] },
   Render,
+  adminFields,
 });

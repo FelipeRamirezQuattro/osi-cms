@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { RecommendationsClient } from "@/components/blocks/recommendations-client";
 import { listProducts } from "@/lib/data/products";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("Recommendations"),
@@ -36,11 +37,18 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "subtitle", label: "Subtitle", type: "text" },
+  { key: "limit", label: "Max items", type: "number" },
+];
+
 export const recommendationsBlock = defineBlock({
   type: "recommendations",
   label: "Recommendations",
   category: "commerce",
   schema,
+  adminFields,
   defaults: {
     background: "navy",
     spacingTop: "md",

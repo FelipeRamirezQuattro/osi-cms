@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "static.wixstatic.com",
       },
+      {
+        // Supabase Storage — admin-uploaded media only (see lib/data/media.ts).
+        protocol: "https",
+        hostname: "ovuhuridnalxnzwggzru.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
 };

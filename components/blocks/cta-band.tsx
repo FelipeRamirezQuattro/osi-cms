@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   headline: z.string(),
@@ -31,11 +32,18 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "headline", label: "Headline", type: "text" },
+  { key: "ctaLabel", label: "CTA label", type: "text" },
+  { key: "ctaHref", label: "CTA link", type: "text" },
+];
+
 export const ctaBandBlock = defineBlock({
   type: "cta_band",
   label: "CTA band",
   category: "layout",
   schema,
+  adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", headline: "", ctaLabel: "", ctaHref: "#" },
   Render,
 });

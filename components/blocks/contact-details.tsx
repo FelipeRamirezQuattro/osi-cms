@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { getSiteSettings } from "@/lib/data/settings";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   mapEmbedUrl: z.string().optional(),
@@ -60,11 +61,17 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "mapEmbedUrl", label: "Map embed URL (overrides site setting)", type: "text", optional: true },
+  { key: "showSocial", label: "Show social links", type: "boolean" },
+];
+
 export const contactDetailsBlock = defineBlock({
   type: "contact_details",
   label: "Contact details",
   category: "content",
   schema,
+  adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", showSocial: true },
   Render,
 });

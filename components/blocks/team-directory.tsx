@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { listDirectoryContacts } from "@/lib/data/locations";
 import type { Tables } from "@/lib/db/database.types";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().optional(),
@@ -64,11 +65,14 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [{ key: "title", label: "Title", type: "text", optional: true }];
+
 export const teamDirectoryBlock = defineBlock({
   type: "team_directory",
   label: "Team directory",
   category: "content",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md" },
   Render,
 });

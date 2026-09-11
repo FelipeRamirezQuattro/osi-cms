@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { listLocations } from "@/lib/data/locations";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("See our global locations"),
@@ -55,11 +56,19 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "subtitle", label: "Subtitle", type: "text", optional: true },
+  { key: "ctaLabel", label: "CTA label", type: "text" },
+  { key: "ctaHref", label: "CTA link", type: "text" },
+];
+
 export const globalMapBlock = defineBlock({
   type: "global_map",
   label: "Global map",
   category: "content",
   schema,
+  adminFields,
   defaults: {
     background: "navy",
     spacingTop: "md",

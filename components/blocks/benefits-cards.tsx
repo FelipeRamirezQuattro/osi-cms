@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { Clipped } from "@/components/ui/clipped";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const itemSchema = z.object({ title: z.string(), body: z.string().optional() });
 
@@ -41,11 +42,27 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  {
+    key: "items",
+    label: "Items",
+    type: "array",
+    minItems: 1,
+    maxItems: 6,
+    itemFields: [
+      { key: "title", label: "Title", type: "text" },
+      { key: "body", label: "Body", type: "textarea", optional: true },
+    ],
+  },
+];
+
 export const benefitsCardsBlock = defineBlock({
   type: "benefits_cards",
   label: "Benefits cards",
   category: "commerce",
   schema: benefitsCardsSchema,
+  adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "Benefits", items: [] },
   Render: BenefitsCardsRender,
 });

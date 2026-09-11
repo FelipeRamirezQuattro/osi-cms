@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 export const productHeroSchema = blockCommonSchema.extend({
   eyebrow: z.string().optional(),
@@ -47,11 +48,21 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "eyebrow", label: "Eyebrow", type: "text", optional: true },
+  { key: "title", label: "Title", type: "text" },
+  { key: "paragraphs", label: "Paragraphs", type: "array", maxItems: 3 },
+  { key: "diagramImageUrl", label: "Diagram image", type: "image", optional: true },
+  { key: "ctaLabel", label: "CTA label", type: "text" },
+  { key: "ctaHref", label: "CTA link", type: "text" },
+];
+
 export const productHeroBlock = defineBlock({
   type: "product_hero",
   label: "Product hero",
   category: "commerce",
   schema: productHeroSchema,
+  adminFields,
   defaults: {
     background: "navy",
     spacingTop: "md",

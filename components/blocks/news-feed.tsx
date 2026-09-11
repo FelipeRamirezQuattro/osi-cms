@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { listNewsPosts } from "@/lib/data/news";
 import type { Tables } from "@/lib/db/database.types";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("OSI News"),
@@ -69,11 +70,18 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "kind", label: "Kind", type: "select", options: ["all", "news", "conference", "event"] },
+  { key: "limit", label: "Max items", type: "number" },
+];
+
 export const newsFeedBlock = defineBlock({
   type: "news_feed",
   label: "News feed",
   category: "content",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", title: "OSI News", kind: "all", limit: 4 },
   Render,
 });

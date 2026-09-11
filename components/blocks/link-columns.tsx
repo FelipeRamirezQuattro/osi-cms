@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const columnSchema = z.object({
   heading: z.string().optional(),
@@ -53,6 +54,28 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  {
+    key: "columns",
+    label: "Columns",
+    type: "array",
+    minItems: 1,
+    maxItems: 4,
+    itemFields: [
+      { key: "heading", label: "Heading", type: "text", optional: true },
+      {
+        key: "links",
+        label: "Links",
+        type: "array",
+        itemFields: [
+          { key: "label", label: "Label", type: "text" },
+          { key: "href", label: "Link", type: "text" },
+        ],
+      },
+    ],
+  },
+];
+
 export const linkColumnsBlock = defineBlock({
   type: "link_columns",
   label: "Link columns",
@@ -60,4 +83,5 @@ export const linkColumnsBlock = defineBlock({
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", columns: [] },
   Render,
+  adminFields,
 });

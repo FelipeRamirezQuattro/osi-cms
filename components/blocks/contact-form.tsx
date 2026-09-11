@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { ContactFormRender } from "@/components/blocks/contact-form-client";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 // Schema/registration must NOT carry "use client" — the registry reads
 // `.schema` server-side, and non-component exports from a client module
@@ -14,11 +15,17 @@ const schema = blockCommonSchema.extend({
 
 export type ContactFormData = z.infer<typeof schema>;
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "submitLabel", label: "Submit button label", type: "text" },
+];
+
 export const contactFormBlock = defineBlock({
   type: "contact_form",
   label: "Contact form",
   category: "forms",
   schema,
+  adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "Leave us a message", submitLabel: "Submit message" },
   Render: ContactFormRender,
 });

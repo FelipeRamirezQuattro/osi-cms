@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import type { ZodType } from "zod";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 // Several blocks fetch their own data (news_feed, global_map,
 // team_directory, product_grid) and so are async Server Components —
@@ -15,6 +16,8 @@ export interface BlockDefinition<T> {
   schema: ZodType<T>;
   defaults: T;
   Render: BlockRenderComponent<T>;
+  /** Block-specific admin form fields — COMMON_ADMIN_FIELDS is prepended by the editor UI. */
+  adminFields: FieldSpec[];
 }
 
 // Registry entries are stored type-erased (the registry itself doesn't

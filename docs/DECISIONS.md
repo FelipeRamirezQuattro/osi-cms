@@ -139,3 +139,43 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   prompt §8.7 — verified rendering correctly by temporarily flipping a
   few pages to `published` for screenshots, then reverting them to
   `draft` before committing.
+- **Admin block-editor forms are driven by a hand-written `FieldSpec[]`
+  per block (`lib/blocks/admin-fields.ts`), not runtime introspection of
+  the Zod schema.** The master prompt says "forms generated from the Zod
+  schemas"; deep-unwrapping Zod v4 internals (ZodOptional/ZodDefault/
+  ZodEnum/etc.) to synthesize a form is fragile across Zod versions and
+  can't express UI-only intent a schema doesn't carry (which string
+  field wants the media picker vs. a plain text input, which one is the
+  Tiptap editor). Each block file now exports `adminFields` next to its
+  schema and `defineBlock` call — validation still runs entirely through
+  the Zod schema at render/save time (see `BlockRenderer`); `FieldSpec`
+  is presentation metadata only. All 26 block types now carry this, and
+  `pnpm build`/`eslint`/`tsc --noEmit` are clean.
+- **Added a `media` Supabase Storage bucket** (migration
+  `0015_media_storage_bucket.sql`, public read / staff-only write) for
+  admin-uploaded images — the master prompt's "storage glue" exception to
+  constraint 2. Legacy images are unaffected and keep resolving through
+  `lib/media.ts`/`NEXT_PUBLIC_LEGACY_MEDIA_BASE`; this bucket is only ever
+  written to going forward, from `/admin` via `lib/data/media.ts`.
+- **The page editor's block-form fields are untyped
+  (`react-hook-form`'s `Control<any>`)** in `field-renderer.tsx` and
+  `page-editor.tsx` specifically — every other file in the codebase keeps
+  strict types. Each block's `data` shape is a different Zod-derived
+  object, so there's no single static type to give the form; the
+  alternative (a giant discriminated union keyed by block type, re-derived
+  by hand alongside `FieldSpec`) added real complexity for no safety this
+  form doesn't already get from server-side re-validation against the
+  real Zod schema in `saveDraftAction` before every write.
+- **Live preview (`/preview/[...slug]`) is gated by `requireAdmin()`,
+  not a signed token.** The master prompt implies a token-based mechanism
+  (`/preview/[slug]?token=`); since the only consumer right now is the
+  admin's own "Preview" button — always an authenticated staff session —
+  a signed token adds nothing this session doesn't already have. Revisit
+  if the client wants to share an unauthenticated draft link with an
+  outside stakeholder.
+- **Publish always writes a full `{ meta, blocks }` snapshot to
+  `page_revisions`** (master prompt §5.1), and "Publish" in the UI first
+  silently saves the current draft, then publishes — so publishing never
+  ships stale content relative to what's on screen. Revision restore
+  overwrites the current draft (via the same `savePageDraft` path), it
+  does not itself publish.

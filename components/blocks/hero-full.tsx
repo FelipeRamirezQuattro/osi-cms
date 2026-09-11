@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const ctaSchema = z.object({
   label: z.string(),
@@ -57,6 +58,29 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "eyebrow", label: "Eyebrow", type: "text", optional: true },
+  { key: "headline", label: "Headline", type: "text" },
+  { key: "subhead", label: "Subhead", type: "textarea", optional: true },
+  { key: "imageUrl", label: "Background image", type: "image", optional: true },
+  {
+    key: "ctas",
+    label: "Buttons",
+    type: "array",
+    maxItems: 2,
+    itemFields: [
+      { key: "label", label: "Label", type: "text" },
+      { key: "href", label: "Link", type: "text" },
+      {
+        key: "variant",
+        label: "Style",
+        type: "select",
+        options: ["outline-light", "outline-dark", "solid-gold", "ghost-arrow"],
+      },
+    ],
+  },
+];
+
 export const heroFullBlock = defineBlock({
   type: "hero_full",
   label: "Full-bleed hero",
@@ -64,4 +88,5 @@ export const heroFullBlock = defineBlock({
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "lg", headline: "", ctas: [] },
   Render,
+  adminFields,
 });

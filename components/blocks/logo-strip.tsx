@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const logoSchema = z.object({ name: z.string(), imageUrl: z.string().optional() });
 
@@ -41,11 +42,26 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text", optional: true },
+  {
+    key: "logos",
+    label: "Logos",
+    type: "array",
+    minItems: 1,
+    itemFields: [
+      { key: "name", label: "Name", type: "text" },
+      { key: "imageUrl", label: "Image", type: "image", optional: true },
+    ],
+  },
+];
+
 export const logoStripBlock = defineBlock({
   type: "logo_strip",
   label: "Logo strip",
   category: "layout",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "sm", spacingBottom: "sm", logos: [] },
   Render,
 });

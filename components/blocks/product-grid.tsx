@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { ProductGridClient, type ProductWithCategorySlug } from "@/components/blocks/product-grid-client";
 import { listProductCategories, listIndustries, listApplications, listServices } from "@/lib/data/taxonomy";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { createServerDbClient } from "@/lib/db/client";
 
 const schema = blockCommonSchema.extend({
@@ -65,11 +66,19 @@ async function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text" },
+  { key: "subtitle", label: "Subtitle", type: "text", optional: true },
+  { key: "ctaLabel", label: "CTA label", type: "text" },
+  { key: "ctaHref", label: "CTA link", type: "text" },
+];
+
 export const productGridBlock = defineBlock({
   type: "product_grid",
   label: "Product grid",
   category: "commerce",
   schema,
+  adminFields,
   defaults: {
     background: "cream",
     spacingTop: "md",

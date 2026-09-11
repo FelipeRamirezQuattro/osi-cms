@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 // Minimal reader for Tiptap's JSON doc format, restricted to the
 // admin's allowed toolbar (bold, italic, lists, links, H2/H3 — see
@@ -93,11 +94,14 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [{ key: "content", label: "Content", type: "richtext" }];
+
 export const richTextBlock = defineBlock({
   type: "rich_text",
   label: "Rich text",
   category: "content",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", content: { type: "doc", content: [] } },
   Render,
 });

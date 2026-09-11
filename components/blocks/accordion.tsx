@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const itemSchema = z.object({ title: z.string(), body: z.string() });
 
@@ -43,11 +44,26 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text", optional: true },
+  {
+    key: "items",
+    label: "Items",
+    type: "array",
+    minItems: 1,
+    itemFields: [
+      { key: "title", label: "Title", type: "text" },
+      { key: "body", label: "Body", type: "textarea" },
+    ],
+  },
+];
+
 export const accordionBlock = defineBlock({
   type: "accordion",
   label: "Accordion",
   category: "content",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", items: [] },
   Render,
 });

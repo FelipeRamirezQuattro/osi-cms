@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const imageSchema = z.object({ url: z.string(), alt: z.string().optional() });
 
@@ -39,11 +40,26 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text", optional: true },
+  {
+    key: "images",
+    label: "Images",
+    type: "array",
+    minItems: 1,
+    itemFields: [
+      { key: "url", label: "Image", type: "image" },
+      { key: "alt", label: "Alt text", type: "text", optional: true },
+    ],
+  },
+];
+
 export const imageGalleryBlock = defineBlock({
   type: "image_gallery",
   label: "Image gallery",
   category: "media",
   schema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", images: [] },
   Render,
 });

@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   eyebrow: z.string().optional(),
@@ -37,6 +38,12 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "eyebrow", label: "Eyebrow", type: "text", optional: true },
+  { key: "title", label: "Title", type: "text" },
+  { key: "imageUrl", label: "Image", type: "image", optional: true },
+];
+
 export const heroPageBlock = defineBlock({
   type: "hero_page",
   label: "Page hero",
@@ -44,4 +51,5 @@ export const heroPageBlock = defineBlock({
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "" },
   Render,
+  adminFields,
 });

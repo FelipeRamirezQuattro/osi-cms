@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const specSchema = z.object({ label: z.string(), value: z.string(), unit: z.string().optional() });
 
@@ -41,11 +42,27 @@ export function SpecTableRender({ data }: { data: SpecTableData }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text", optional: true },
+  {
+    key: "specs",
+    label: "Specs",
+    type: "array",
+    minItems: 1,
+    itemFields: [
+      { key: "label", label: "Label", type: "text" },
+      { key: "value", label: "Value", type: "text" },
+      { key: "unit", label: "Unit", type: "text", optional: true },
+    ],
+  },
+];
+
 export const specTableBlock = defineBlock({
   type: "spec_table",
   label: "Spec table",
   category: "commerce",
   schema: specTableSchema,
+  adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", specs: [] },
   Render: SpecTableRender,
 });

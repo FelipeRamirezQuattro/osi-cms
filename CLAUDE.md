@@ -154,8 +154,8 @@ Supabase MCP and fix what it flags before moving on.
 ## Block registry (Phase 3, done)
 
 `lib/blocks/registry.ts` maps `type → BlockDefinition` (`label`,
-`category`, `schema`, `defaults`, `Render`; `AdminFields` lands in Phase
-5). All 26 blocks from the master prompt §6 are implemented in
+`category`, `schema`, `defaults`, `Render`, `adminFields` — see Phase 5
+section below). All 26 blocks from the master prompt §6 are implemented in
 `components/blocks/`, rendered by `BlockRenderer` (unknown type or a
 schema validation failure never crashes the page — a loud diagnostic in
 dev, silently skipped in prod). Adding a block = one file + one registry
@@ -235,6 +235,82 @@ Generic migrated pages render through the same `pages`/`page_blocks`/
 (`app/(site)/[...slug]/page.tsx`) that joins the segment array into a
 slug — generalizes the master prompt §7 sitemap's single-segment
 `/[slug]` to support nested paths like `careers/hiring`.
+
+## Admin CMS (Phase 5, in progress)
+
+Auth: `lib/auth/index.ts` (the one other file besides `lib/db/client.ts`
+allowed to import `@supabase/ssr` directly — `proxy.ts` runs in a
+middleware context that can't use `next/headers`' `cookies()`). No public
+signup; the first (and so far only) admin account is bootstrapped via
+`pnpm create-admin <email>` (Supabase Auth `inviteUserByEmail`). `/admin/*`
+is gated by `proxy.ts` → `guardAdminRequest()`; `requireAdmin()` /
+`requireAdminRole()` guard individual Server Components/Actions.
+
+**Admin forms are driven by hand-written `FieldSpec[]` metadata, not Zod
+introspection** — see the decision in `docs/DECISIONS.md` for why.
+`lib/blocks/admin-fields.ts` defines the `FieldSpec` union (text,
+textarea, number, boolean, select, image, richtext, object, array) and
+`COMMON_ADMIN_FIELDS` (background/spacing/anchor, prepended to every
+block). Every block file now exports `adminFields` next to its schema.
+
+- `components/admin/field-renderer.tsx` — recursive `FieldSpec` → React
+  Hook Form field renderer (`useFieldArray` for `array`, indefinite
+  nesting for `object`/`array.itemFields`). Untyped (`Control<any>`) by
+  necessity — the form shape is a different Zod-derived object per block
+  type, so there's no static type to give RHF. This file and
+  `page-editor.tsx` are the only places that `any` is allowed for that
+  reason.
+- `components/admin/block-fields-form.tsx` — renders one block instance's
+  full field set (`COMMON_ADMIN_FIELDS` + the block's own `adminFields`)
+  flat under a `namePrefix` like `blocks.3.data`, matching how
+  `blockCommonSchema.extend(...)` flattens into a single `page_blocks.data`
+  object.
+- `components/admin/media-picker.tsx` — a `<dialog>`-based picker/uploader
+  bound to `type: "image"` fields via RHF `Controller`. Uploads go through
+  `lib/actions/media.ts` → `lib/data/media.ts` → Supabase Storage bucket
+  `media` (migration `0015_media_storage_bucket.sql`; public read,
+  staff-only write — the "storage glue" exception to constraint 2). This
+  is for **new** admin uploads only — legacy images still resolve through
+  `lib/media.ts` per constraint 3; add the Supabase project's storage host
+  to `next.config.ts → images.remotePatterns` if the project ever changes.
+- `components/admin/rich-text-editor.tsx` — Tiptap bound to `type:
+  "richtext"` fields, StarterKit with blockquote/codeBlock/
+  horizontalRule/strike/code all disabled and heading capped to
+  levels [2, 3] — must stay in lockstep with the restricted reader in
+  `components/blocks/rich-text.tsx` (paragraph/heading(h2/h3)/bulletList/
+  orderedList/listItem/text+bold/italic/link) so the editor can never
+  produce a doc the public site can't render.
+
+**The page editor** (`app/admin/(dashboard)/pages/[id]/page-editor.tsx`)
+is one React Hook Form instance over `{ ...page meta, blocks: [...] }`.
+Blocks are a top-level `useFieldArray`, reordered via `@dnd-kit` (sortable
+by the RHF field `id`, not array index — index changes on every reorder).
+Adding a block appends `{ type, is_visible: true, data: defaults }` using
+the block's plain-data `defaults` from the palette (see below). Save
+(`lib/actions/pages.ts → saveDraftAction`) re-validates every block's
+`data` against its real Zod schema server-side before writing — this is
+the same validation `BlockRenderer` relies on at render time, just run
+earlier so a bad save surfaces immediately in the editor UI (e.g. adding
+an `accordion` with 0 items and clicking Save shows "Accordion: Too
+small..." right there, block never hits the DB). Publish snapshots
+`{ meta, blocks }` into `page_revisions` before flipping `status` (master
+prompt §5.1); the revisions panel calls `restorePageRevision` to overwrite
+the current draft from a snapshot.
+
+`lib/blocks/registry.ts → getBlockPalette()` returns a **client-safe**
+summary (`type`, `label`, `category`, `adminFields`, `defaults`) —
+`BlockDefinition` itself carries a `ZodType` and a `Render` component,
+neither serializable to a Client Component, so the full registry never
+crosses that boundary; only this flattened palette does.
+
+**Preview** (`app/(site)/preview/[...slug]/page.tsx`) reuses
+`BlockRenderer` against `getPageBySlugForPreview()` (same as public
+`getPageBySlug` but without the `status = 'published'` filter), gated by
+`requireAdmin()` rather than a signed token — simpler than the master
+prompt's implied token mechanism, and sufficient since the only viewer is
+an already-authenticated staff session. Revisit with real signed tokens
+if the client wants to share unauthenticated preview links externally.
+Reflects the last **saved** draft, not unsaved form edits.
 
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 

@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const tileSchema = z.object({
   title: z.string(),
@@ -43,6 +44,24 @@ function Render({ data }: { data: Data }) {
   );
 }
 
+const adminFields: FieldSpec[] = [
+  { key: "title", label: "Title", type: "text", optional: true },
+  {
+    key: "tiles",
+    label: "Tiles",
+    type: "array",
+    minItems: 1,
+    maxItems: 8,
+    itemFields: [
+      { key: "title", label: "Title", type: "text" },
+      { key: "body", label: "Body", type: "textarea", optional: true },
+      { key: "href", label: "Link", type: "text" },
+      { key: "imageUrl", label: "Image", type: "image", optional: true },
+    ],
+  },
+  { key: "showLoadMore", label: "Show “Load more”", type: "boolean" },
+];
+
 export const featureTilesBlock = defineBlock({
   type: "feature_tiles",
   label: "Feature tiles",
@@ -50,4 +69,5 @@ export const featureTilesBlock = defineBlock({
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", tiles: [], showLoadMore: false },
   Render,
+  adminFields,
 });
