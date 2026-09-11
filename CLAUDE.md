@@ -477,6 +477,23 @@ staff — keep it in sync with any admin UI changes that alter a
 documented workflow (adding/renaming an admin section, changing the
 block editor's controls, etc.).
 
+## Deployment
+
+`git push origin main` on `github.com/FelipeRamirezQuattro/osi-cms`
+(public repo — see DECISIONS.md for why not the client's private org
+repo) auto-deploys to production via Vercel's git integration —
+`deploy_to_vercel`'s per-call full-tree-replace approach stopped being
+viable once the repo passed ~75 files. Live at
+`https://osi-cms.vercel.app` (project `osi-cms`,
+`prj_uKK9PZKsROFc9AdgSLQWfcIHnQoy`, team `jramirez-3311's projects`).
+Production environment variables are set (Vercel dashboard or
+`vercel env add <NAME> production --value <VALUE> --yes`, the account's
+`vercel` CLI is already authenticated) — **Preview is not** (a Vercel
+CLI bug blocked setting them non-interactively; see DECISIONS.md), so a
+preview deployment (e.g. from a future PR) will fail the same
+missing-Supabase-credentials way the first production build did, until
+someone adds the same six vars to Preview via the dashboard.
+
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 
 No PDF/brochure/datasheet URLs exist anywhere in the legacy scrape;

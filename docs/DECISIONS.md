@@ -262,6 +262,39 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   308 both map to `permanentRedirect()`, everything else to `redirect()`.
   301 vs. 308 is a real difference (308 preserves request method) but
   not one that matters for the legacy map's GET-only links.
+- **Switched deployment from manual `deploy_to_vercel` to GitHub + Vercel
+  git integration** (2026-09-11) — the file-tree-replace-per-call
+  limitation flagged back in Phase 3 (broke past ~75 files) was never
+  going to hold at the repo's current size (188 tracked files). Repo:
+  `github.com/FelipeRamirezQuattro/osi-cms` (public — a first attempt
+  under the client's `Odessa-Separator` org hit a real Vercel Hobby-plan
+  restriction: private repos owned by a GitHub Organization aren't
+  linkable below Pro. No secrets are in the repo — `.env.local` is
+  gitignored — so publicness costs nothing beyond source visibility).
+  Linked to the same Vercel project used since Phase 1
+  (`prj_uKK9PZKsROFc9AdgSLQWfcIHnQoy`, `osi-cms`), which had no
+  environment variables configured at all — the first git-triggered
+  build failed on exactly that (`Your project's URL and Key are
+  required to create a Supabase client!`, surfaced at
+  `/sitemap.xml`'s prerender, not a code bug). Set via the Vercel CLI
+  (`vercel env add ... --value ... production`, the MCP toolset has no
+  env-var-write tool) for **Production only** — `preview` env vars hit a
+  Vercel CLI bug where `env add <name> preview --yes` still returns an
+  `action_required: git_branch_required` response even with `--yes`/
+  `--non-interactive`, suggesting the identical command as its own fix.
+  Didn't chase it further since it doesn't block production; preview
+  deployments (e.g. from a future PR) will fail the same way production
+  did until someone adds those six vars to Preview too, via the
+  dashboard or CLI. `IP_HASH_SALT` got a fresh random value for
+  production (`openssl rand -hex 32`), not the repo's
+  `dev-only-salt-change-in-production` placeholder. `NEXT_PUBLIC_SITE_URL`
+  is set to `https://osi-cms.vercel.app`, not a custom domain — none
+  exists yet (master prompt open question #1, unanswered). A stray empty
+  `felipepoli/osi-cms` GitHub repo (created once before the org-repo
+  Hobby-plan restriction surfaced, then not needed) is still sitting on
+  GitHub — the `gh` token here lacks the `delete_repo` scope to remove
+  it; harmless, but worth deleting manually via GitHub's UI at some
+  point.
 - **Added a forgot/reset-password flow** (`/admin/forgot-password`,
   `/admin/reset-password`) that Phase 5 never built — surfaced by a real
   operational problem, not planned ahead of time: the first admin
