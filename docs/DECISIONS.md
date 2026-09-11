@@ -24,3 +24,14 @@ One line per non-obvious choice, with the reason. Newest at bottom.
 - **Prettier added alongside ESLint** in Phase 0 (`prettier`,
   `eslint-config-prettier`, `prettier-plugin-tailwindcss`) since the
   master prompt's stack table calls for "ESLint/Prettier" explicitly.
+- **Vercel project `osi-cms`** created fresh (team `jramirez-3311's
+  projects`, project id `prj_uKK9PZKsROFc9AdgSLQWfcIHnQoy`) after the
+  first attempt to create a new project hit a 403 — the "claude.ai
+  Vercel" connector had been authorized with a restricted token scope.
+  Reconnecting the connector fixed it. Did not reuse the pre-existing
+  `osi-website` project in the same team — it has an unrelated live
+  domain (`chatbot.qdevsolutions.com`) attached.
+- **Supabase keys stored in `.env.local` use the new `sb_publishable_*`
+  / `sb_secret_*` key format**, not the legacy JWT anon/service_role
+  keys — both work interchangeably with `@supabase/ssr` and
+  `supabase-js` 2.116+.
