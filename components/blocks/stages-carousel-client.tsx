@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
+import { EASE_OSI } from "@/lib/motion/variants";
 import type { StagesCarouselData } from "@/components/blocks/stages-carousel";
 
 export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
   const [index, setIndex] = useState(0);
+  const reduceMotion = useReducedMotion();
   const stage = data.stages[index];
   if (!stage) return null;
 
@@ -17,7 +20,13 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
     >
-      <div className="flex flex-col items-center gap-8 sm:flex-row">
+      <motion.div
+        key={index}
+        className="flex flex-col items-center gap-8 sm:flex-row"
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25, ease: EASE_OSI }}
+      >
         <DuotoneImage
           src={stage.imageUrl}
           alt={stage.imageUrl ? stage.title : ""}
@@ -37,7 +46,7 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
           </h3>
           {stage.body && <p className="mt-2 max-w-xl text-sm opacity-80">{stage.body}</p>}
         </div>
-      </div>
+      </motion.div>
       <div className="mt-6 flex gap-3">
         <button
           type="button"

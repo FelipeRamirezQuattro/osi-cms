@@ -42,11 +42,11 @@ export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
           <button
             type="button"
             onClick={() => setLoaded(true)}
-            className="absolute inset-0 flex h-full w-full items-center justify-center"
+            className="group absolute inset-0 flex h-full w-full items-center justify-center"
             aria-label="Play video"
           >
             <DuotoneImage src={data.posterImageUrl} className="absolute inset-0" intensity={0.4} />
-            <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-osi-white/90 text-osi-navy-900">
+            <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-osi-white/90 text-osi-navy-900 transition-transform duration-200 group-hover:scale-105 group-active:scale-95 motion-safe:animate-pulse-glow">
               ▶
             </span>
           </button>
