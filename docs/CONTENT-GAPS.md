@@ -66,3 +66,29 @@ items get struck through with the resolution, not deleted.
   Hour" / "Artificial Lift Forum" items aren't confirmed structured data
   — dates, links — so none were fabricated). Populate via the admin or
   Phase 4 once real event details are available.
+
+## Found during Phase 4 (content migration)
+
+- **Machine Shop's page heading merged into one very long H2.** The
+  generic split-heading recombination (see CLAUDE.md) correctly joins
+  every adjacent heading with nothing between them, but on this page
+  that chain runs from "MACHINE SHOP" all the way through "TURNING
+  CENTERS DIAMETERS UP 30'' - LENGTHS UP TO 160''" — accurate to the
+  source's structure, but too long to read as one heading. Needs a human
+  to split it into separate headings in the admin (Phase 5) before
+  publishing `/services/machine-shop`.
+- **Two directory emails don't match the person's name**: Abdullah Sakr
+  → `amohammed@lufkin.com`, Rana M. El-Saghier → `IRMohamed@lufkin.com`
+  (both Lufkin contacts). Transcribed exactly as scraped, not corrected
+  — could be a shared team inbox, a scrape artifact, or a genuine
+  mismatch; ask the client before publishing.
+- **One Canadian distributor's company name wasn't captured** in the
+  scrape (Brian Waterhouse / Brad Metke, Edmonton AB — only a "Toll-free"
+  number and address, no company name in the source paragraphs).
+  Recorded as "Edmonton distributor (company name not captured in
+  scrape)" in `locations`; needs the client to fill in.
+- **`services-4.json` / Customer Cloud client logos never migrated
+  anywhere** — Occidental, Matador, Gran Tierra, Chevron, Lario, and
+  five other operator names/logos appear only in that scraped page,
+  which is out of scope (external link). Flagging in case the client
+  wants those logos reused as a "trusted by" `logo_strip` elsewhere.

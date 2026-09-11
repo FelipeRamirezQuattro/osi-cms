@@ -104,3 +104,38 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   Revisit deployment via GitHub + Vercel's git integration before the
   file count grows further — manual deploys stop being practical past
   this size.
+- **Added a generic `[...slug]` catch-all route** (`app/(site)/
+  [...slug]/page.tsx`) instead of the master prompt §7 sitemap's
+  single-segment `/[slug]`, so nested Phase 4 pages (`careers/hiring`,
+  `hse/sg-sst-policies`, `services/machine-shop`, etc.) resolve without
+  a dedicated route file each. Renders identically to home/products/
+  contact — `getPageBySlug` + `BlockRenderer` — just with the joined
+  segment array as the slug.
+- **`osi-directory.json` is migrated by a separate, hand-curated script**
+  (`scripts/migrate-directory.ts`), not the generic
+  `scripts/migrate-legacy.ts` parser. The domestic-staff entries are
+  uniform enough to parse programmatically, but the international
+  distributor entries aren't (name+title concatenated with no separator,
+  inconsistent field order, two fields joined on one line) — a generic
+  regex parser risked misattributing a real person's phone number or
+  email. Every value was transcribed directly from the source JSON.
+- **The legacy scraper's `headings[]`/`paragraphs[]` arrays don't line
+  up 1:1 with `raw_text` order** in the way `scripts/migrate-legacy.ts`
+  first assumed — two bugs found and fixed while migrating machine-shop
+  specifically (the most heading-fragmented page): (1) independently
+  searching each heading's text in `raw_text` via `indexOf` lets a short
+  heading ("MACHINE") match inside an earlier, unrelated heading that
+  contains it as a substring ("MACHINE SHOP") — fixed with a two-pointer
+  scan that advances a single shared cursor forward through `raw_text`
+  monotonically. (2) `paragraphs[]` sometimes joins two DOM text nodes
+  with no separator where `raw_text` still has them on two lines ("- RPA
+  (Robotic Process Automation)" vs. "- RPA\n(Robotic Process
+  Automation)") — fixed by matching on whitespace-stripped fingerprints
+  instead of exact substrings, while still storing the original,
+  well-formed text. See the function's comment in
+  `scripts/migrate-legacy.ts` for the full explanation — reuse this
+  pattern for any future legacy-scrape parsing.
+- **Everything from Phase 4 landed as `draft`** exactly per master
+  prompt §8.7 — verified rendering correctly by temporarily flipping a
+  few pages to `published` for screenshots, then reverting them to
+  `draft` before committing.

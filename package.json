@@ -11,7 +11,9 @@
     "seed:navigation": "tsx --env-file=.env.local scripts/seed-navigation.ts",
     "seed:home": "tsx --env-file=.env.local scripts/seed-home-page.ts",
     "seed:products": "tsx --env-file=.env.local scripts/seed-products.ts",
-    "seed:static-pages": "tsx --env-file=.env.local scripts/seed-static-pages.ts"
+    "seed:static-pages": "tsx --env-file=.env.local scripts/seed-static-pages.ts",
+    "migrate:legacy": "tsx --env-file=.env.local scripts/migrate-legacy.ts",
+    "migrate:directory": "tsx --env-file=.env.local scripts/migrate-directory.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

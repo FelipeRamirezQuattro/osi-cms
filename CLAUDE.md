@@ -209,6 +209,33 @@ migration → 5 Admin CMS → 6 Forms/search/SEO → 7 Hardening). Plan each
 phase briefly, get a go-ahead, then build. `pnpm build`, `pnpm lint`,
 `pnpm exec tsc --noEmit` must be clean at the end of each phase.
 
+## Legacy content migration (Phase 4, done)
+
+`scripts/migrate-legacy.ts` migrates every remaining legacy page
+(about-us, careers, hiring, hse, sg-sst-policies, terms/privacy, the 3
+services sub-pages, machine-shop, services listing) into `pages`/
+`page_blocks`, all landing `status='draft'`. `scripts/migrate-directory.ts`
+separately hand-curates `osi-directory.json` into `directory_contacts`/
+`locations` — see `docs/DECISIONS.md` for why that one isn't generic.
+Both are idempotent (`pnpm migrate:legacy [--dry-run]`, `pnpm
+migrate:directory`) and regenerate `docs/MIGRATION-REPORT.md`.
+
+The legacy scrape's `headings[]`/`paragraphs[]` arrays are separate
+flat lists with no positional link to each other or guaranteed
+substring-safety against `raw_text` — see the `reconstructDocOrder`
+comment in `scripts/migrate-legacy.ts` before writing any other parser
+against `content/legacy/`. Short version: use a two-pointer scan with a
+single monotonically-advancing cursor (not independent per-text
+`indexOf`), and match on whitespace-stripped fingerprints (the scraper
+sometimes joins two text nodes into one `paragraphs[]` entry with no
+separator that `raw_text` still has on two lines).
+
+Generic migrated pages render through the same `pages`/`page_blocks`/
+`BlockRenderer` pipeline as home/products/contact, via a catch-all route
+(`app/(site)/[...slug]/page.tsx`) that joins the segment array into a
+slug — generalizes the master prompt §7 sitemap's single-segment
+`/[slug]` to support nested paths like `careers/hiring`.
+
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 
 No PDF/brochure/datasheet URLs exist anywhere in the legacy scrape;
