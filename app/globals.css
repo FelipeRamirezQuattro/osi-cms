@@ -1,29 +1,110 @@
 @import "tailwindcss";
 
 /*
- * Placeholder tokens for Phase 0. Replaced in Phase 1 with the OSI design
- * system tokens (Orbitron/Montserrat, navy/cream/gold palette) — see
- * CLAUDE.md §4 of the master prompt.
+ * OSI design tokens — see docs/design/OSI Mock-Up 9-3-2026.pdf and
+ * CLAUDE.md §"Design tokens". Registered via Tailwind v4's @theme so
+ * they're usable directly as utilities (bg-osi-navy-900, font-display,
+ * tracking-wide-label, etc.) — see /styleguide for every token rendered.
  */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-display: "Orbitron", sans-serif;
+  --font-body: "Montserrat", sans-serif;
+
+  --color-osi-navy-900: #001b33;
+  --color-osi-navy-800: #001c34;
+  --color-osi-navy-700: #04243d;
+  --color-osi-navy-600: #133752;
+  --color-osi-steel-500: #234e7b;
+  --color-osi-slate-400: #4c6880;
+  --color-osi-slate-300: #576979;
+  --color-osi-cream-100: #f2e9de;
+  --color-osi-cream-200: #efe8dd;
+  --color-osi-sand-300: #d0c0a7;
+  --color-osi-gold-500: #e2902a;
+  --color-osi-gold-400: #f0a93d;
+  --color-osi-white: #ffffff;
+
+  /* Display scale — clamp(min, preferred, max) per the mockup's fluid type */
+  --text-hero: clamp(2.5rem, 5vw, 4.5rem);
+  --text-hero--line-height: 1.05;
+  --text-section: clamp(1.75rem, 3vw, 2.75rem);
+  --text-section--line-height: 1.1;
+  --text-card-label: clamp(1rem, 1.5vw, 1.25rem);
+  --text-card-label--line-height: 1.2;
+  --text-small-label: 0.75rem;
+  --text-small-label--line-height: 1.4;
+
+  --tracking-tightest-display: 0.06em;
+  --tracking-wide-display: 0.12em;
+  --tracking-wide-label: 0.15em;
+
+  --ease-osi: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* Body copy runs airy, not dense — the mockup's paragraphs use 1.7 */
+body {
+  line-height: 1.7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+ * Motif 1 — angled corner clips, fixed default size (1.5rem). Use these
+ * for the common single-corner case; the <Clipped> component
+ * (components/ui/clipped.tsx) covers arbitrary corners/sizes and an
+ * optional outlined notch via an inline clip-path.
+ */
+@utility clip-notch-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1.5rem), calc(100% - 1.5rem) 100%, 0 100%);
+}
+@utility clip-notch-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 1.5rem 100%, 0 calc(100% - 1.5rem));
+}
+@utility clip-notch-tr {
+  clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%);
+}
+@utility clip-notch-tl {
+  clip-path: polygon(1.5rem 0, 100% 0, 100% 100%, 0 100%, 0 1.5rem);
+}
+
+/*
+ * Motif 4 (part) / section transitions — a full-width diagonal seam
+ * instead of a straight edge between a navy and a cream section.
+ * Apply to the section that should have the cut bottom or top edge.
+ */
+@utility diagonal-seam-b {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 2.5rem), 0 100%);
+}
+@utility diagonal-seam-t {
+  clip-path: polygon(0 2.5rem, 100% 0, 100% 100%, 0 100%);
+}
+
+@media (max-width: 767px) {
+  .diagonal-seam-b {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1rem), 0 100%);
+  }
+  .diagonal-seam-t {
+    clip-path: polygon(0 1rem, 100% 0, 100% 100%, 0 100%);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Motif 6 — restrained, mechanical scroll-reveal (see components/ui/scroll-reveal.tsx) */
+@utility reveal-init {
+  opacity: 0;
+  transform: translateY(8px);
+}
+@utility reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 400ms var(--ease-osi),
+    transform 400ms var(--ease-osi);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-init {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-in {
+    transition: none;
+  }
 }
