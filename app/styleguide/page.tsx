@@ -139,6 +139,38 @@ export default function StyleguidePage() {
         </div>
       </Section>
 
+      <Section bg="navy" className="pb-24">
+        <Heading>Motion foundation</Heading>
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
+          <div className="flex flex-col items-center gap-4">
+            <div aria-hidden className="h-16 w-16 rounded-full bg-osi-steel-500 motion-safe:animate-float" />
+            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">Float</p>
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <div
+              aria-hidden
+              className="h-16 w-16 rounded-full bg-osi-gold-500 motion-safe:animate-pulse-glow-gold"
+            />
+            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">
+              Pulse glow — gold (CTA-only)
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <div
+              aria-hidden
+              className="h-16 w-16 rounded-full bg-osi-steel-500 motion-safe:animate-pulse-glow"
+            />
+            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">
+              Pulse glow — neutral
+            </p>
+          </div>
+        </div>
+        <div
+          aria-hidden
+          className="mt-10 h-3 w-full rounded-full bg-size-[300%_300%] motion-safe:animate-gradient-shift [background-image:linear-gradient(-45deg,var(--color-osi-navy-700),var(--color-osi-steel-500),var(--color-osi-navy-600),var(--color-osi-steel-500))]"
+        />
+      </Section>
+
       <Section bg="cream" className="pt-24">
         <Heading>Label-plate card (one open per grid)</Heading>
         <LabelPlateDemo />

@@ -51,6 +51,12 @@
   --tracking-wide-label: 0.15em;
 
   --ease-osi: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-gradient-shift: gradientShift 8s ease infinite;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-pulse-glow-gold: pulseGlowGold 2s ease-in-out infinite;
+  --animate-pulse-glow: pulseGlow 2s ease-in-out infinite;
 }
 
 /* Body copy runs airy, not dense — the mockup's paragraphs use 1.7 */
@@ -114,25 +120,74 @@ body {
   }
 }
 
-/* Motif 6 — restrained, mechanical scroll-reveal (see components/ui/scroll-reveal.tsx) */
-@utility reveal-init {
-  opacity: 0;
-  transform: translateY(8px);
+/*
+ * Motion foundation (site-wide redesign) — keyframes for the
+ * --animate-* theme entries above. Kept as literal top-level
+ * @keyframes (not inside @theme) — same pattern Tailwind itself uses
+ * for animate-spin/animate-pulse's built-in keyframes.
+ * See docs/superpowers/specs/2026-09-11-site-wide-motion-redesign-design.md.
+ */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
-@utility reveal-in {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 400ms var(--ease-osi),
-    transform 400ms var(--ease-osi);
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+@keyframes pulseGlowGold {
+  0%,
+  100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-osi-gold-500) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 40px color-mix(in srgb, var(--color-osi-gold-500) 70%, transparent);
+  }
+}
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-osi-steel-500) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 40px color-mix(in srgb, var(--color-osi-steel-500) 60%, transparent);
+  }
 }
 
+/*
+ * prefers-reduced-motion: reduce — site-wide (supersedes the old
+ * reveal-init/reveal-in-only override). Truncates every CSS
+ * animation/transition to effectively instant rather than disabling
+ * them outright, so opacity/color state changes still communicate —
+ * just without motion. Framer Motion components additionally check
+ * useReducedMotion() in-component (lib/motion/variants.ts consumers)
+ * since this media query alone doesn't cover JS-driven motion.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-init {
-    opacity: 1;
-    transform: none;
-  }
-  .reveal-in {
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
