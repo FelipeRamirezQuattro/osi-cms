@@ -5,6 +5,7 @@ import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { HairlineGrid } from "@/components/ui/hairline-grid";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 
 export const metadata: Metadata = {
@@ -183,6 +184,15 @@ export default function StyleguidePage() {
           <Clipped corner="br" size="2rem" className="aspect-video bg-osi-steel-500" />
           <Clipped corner={["tl", "br"]} size="2rem" className="aspect-video bg-osi-gold-500" />
         </div>
+      </Section>
+
+      <Section bg="cream">
+        <Heading>Tilt card</Heading>
+        <TiltCard className="aspect-video max-w-sm rounded bg-osi-navy-700">
+          <div className="flex h-full items-center justify-center font-display text-sm tracking-wide-display text-osi-white uppercase">
+            Move your cursor over this card
+          </div>
+        </TiltCard>
       </Section>
 
       <Section bg="cream" className="pb-32">
