@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { NavItemNode } from "@/lib/data/navigation";
+import { motion, useReducedMotion } from "motion/react";
+import { springTransition } from "@/lib/motion/variants";
 
 export function MegaMenuClient({
   utilityItems,
@@ -15,6 +17,8 @@ export function MegaMenuClient({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
 
   function close() {
     setOpen(false);
@@ -63,20 +67,34 @@ export function MegaMenuClient({
           ref={triggerRef}
           type="button"
           onClick={() => setOpen(true)}
-          className="font-display text-sm tracking-wide-display uppercase"
+          className="font-display text-sm tracking-wide-display uppercase transition-transform duration-200 active:scale-[0.97]"
           aria-expanded={open}
           aria-controls="mega-menu-panel"
         >
           Menu
         </button>
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Utility">
+        <nav
+          className="hidden items-center gap-6 lg:flex"
+          aria-label="Utility"
+          onMouseLeave={() => setHoveredId(null)}
+        >
           {utilityItems.map((item) => (
             <Link
               key={item.id}
               href={item.href}
-              className="font-display text-xs tracking-wide-display uppercase opacity-80 hover:opacity-100"
+              onMouseEnter={() => setHoveredId(item.id)}
+              onFocus={() => setHoveredId(item.id)}
+              onBlur={() => setHoveredId(null)}
+              className="relative font-display text-xs tracking-wide-display uppercase opacity-80 hover:opacity-100"
             >
               {item.label}
+              {hoveredId === item.id && (
+                <motion.span
+                  layoutId="utility-nav-underline"
+                  className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-osi-gold-500"
+                  transition={reduceMotion ? { duration: 0 } : springTransition}
+                />
+              )}
             </Link>
           ))}
         </nav>

@@ -42,7 +42,7 @@ export async function Footer() {
             <ul key={i} className="space-y-2">
               {col.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.href} className="text-sm opacity-80 hover:opacity-100">
+                  <Link href={item.href} className="text-sm opacity-80 transition-opacity duration-200 hover:opacity-100">
                     {item.label}
                   </Link>
                 </li>
@@ -62,7 +62,7 @@ export async function Footer() {
                 key={s.key}
                 href={settings[s.key]!}
                 aria-label={s.label}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-current text-xs"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-current text-xs transition-opacity duration-200 hover:opacity-80"
               >
                 {s.label[0]}
               </a>
