@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const logoSchema = z.object({ name: z.string(), imageUrl: z.string().optional() });
@@ -27,17 +28,27 @@ function Render({ data }: { data: Data }) {
           {data.title}
         </p>
       )}
-      <div className="flex flex-wrap items-center justify-center gap-10 opacity-80 grayscale">
+      <MarqueeStrip className="opacity-80 grayscale">
         {data.logos.map((logo) =>
           logo.imageUrl ? (
-            <Image key={logo.name} src={logo.imageUrl} alt={logo.name} width={120} height={48} />
+            <Image
+              key={logo.name}
+              src={logo.imageUrl}
+              alt={logo.name}
+              width={120}
+              height={48}
+              className="shrink-0"
+            />
           ) : (
-            <span key={logo.name} className="font-display text-sm tracking-wide-display uppercase">
+            <span
+              key={logo.name}
+              className="shrink-0 font-display text-sm tracking-wide-display uppercase"
+            >
               {logo.name}
             </span>
           ),
         )}
-      </div>
+      </MarqueeStrip>
     </Section>
   );
 }

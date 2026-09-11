@@ -8,6 +8,7 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { GradientText } from "@/components/ui/gradient-text";
+import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 
 export const metadata: Metadata = {
@@ -204,6 +205,17 @@ export default function StyleguidePage() {
             Move your cursor over this card
           </div>
         </TiltCard>
+      </Section>
+
+      <Section bg="cream">
+        <Heading>Marquee</Heading>
+        <MarqueeStrip>
+          {["Alpha Corp", "Beta Industries", "Gamma Energy", "Delta Field Services"].map((name) => (
+            <span key={name} className="shrink-0 font-display text-sm tracking-wide-display uppercase">
+              {name}
+            </span>
+          ))}
+        </MarqueeStrip>
       </Section>
 
       <Section bg="cream" className="pb-32">
