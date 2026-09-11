@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Orbitron, Montserrat } from "next/font/google";
+import { Orbitron, Montserrat, Poppins } from "next/font/google";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -16,6 +16,12 @@ const montserrat = Montserrat({
   style: ["normal", "italic"],
 });
 
+const poppins = Poppins({
+  variable: "--font-display-soft",
+  subsets: ["latin"],
+  weight: ["500", "600"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: "Odessa Separator Inc.", template: "%s | Odessa Separator Inc." },
@@ -24,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${montserrat.variable} h-full antialiased`}>
+    <html lang="en" className={`${orbitron.variable} ${montserrat.variable} ${poppins.variable} h-full antialiased`}>
       <head>
         <noscript>
           {/* Motion server-renders its "hidden" initial state as the

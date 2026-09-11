@@ -95,6 +95,9 @@ export default function StyleguidePage() {
           <p className="font-display text-section tracking-tightest-display uppercase">
             Section title
           </p>
+          <p className="font-display-soft text-section font-semibold">
+            Section title — soft
+          </p>
           <p className="font-display text-card-label tracking-wide-display uppercase">
             Card label
           </p>

@@ -8,6 +8,7 @@
  */
 @theme {
   --font-display: "Orbitron", sans-serif;
+  --font-display-soft: "Poppins", sans-serif;
   --font-body: "Montserrat", sans-serif;
 
   --color-osi-navy-900: #001b33;
