@@ -425,6 +425,7 @@ export type Database = {
           kind: string;
           locale: string;
           published_at: string | null;
+          search_vector: unknown;
           slug: string;
           status: string;
           title: string;
@@ -444,6 +445,7 @@ export type Database = {
           kind: string;
           locale?: string;
           published_at?: string | null;
+          search_vector?: unknown;
           slug: string;
           status?: string;
           title: string;
@@ -463,6 +465,7 @@ export type Database = {
           kind?: string;
           locale?: string;
           published_at?: string | null;
+          search_vector?: unknown;
           slug?: string;
           status?: string;
           title?: string;
@@ -552,6 +555,7 @@ export type Database = {
           noindex: boolean;
           og_image_url: string | null;
           published_at: string | null;
+          search_vector: unknown;
           seo_description: string | null;
           seo_title: string | null;
           slug: string;
@@ -569,6 +573,7 @@ export type Database = {
           noindex?: boolean;
           og_image_url?: string | null;
           published_at?: string | null;
+          search_vector?: unknown;
           seo_description?: string | null;
           seo_title?: string | null;
           slug: string;
@@ -586,6 +591,7 @@ export type Database = {
           noindex?: boolean;
           og_image_url?: string | null;
           published_at?: string | null;
+          search_vector?: unknown;
           seo_description?: string | null;
           seo_title?: string | null;
           slug?: string;
@@ -855,6 +861,7 @@ export type Database = {
           model_3d_url: string | null;
           name: string;
           position: number;
+          search_vector: unknown;
           seo_description: string | null;
           seo_title: string | null;
           slug: string;
@@ -878,6 +885,7 @@ export type Database = {
           model_3d_url?: string | null;
           name: string;
           position?: number;
+          search_vector?: unknown;
           seo_description?: string | null;
           seo_title?: string | null;
           slug: string;
@@ -901,6 +909,7 @@ export type Database = {
           model_3d_url?: string | null;
           name?: string;
           position?: number;
+          search_vector?: unknown;
           seo_description?: string | null;
           seo_title?: string | null;
           slug?: string;
@@ -1006,6 +1015,7 @@ export type Database = {
           locale: string;
           name: string;
           position: number;
+          search_vector: unknown;
           slug: string;
           status: string;
           summary: string | null;
@@ -1019,6 +1029,7 @@ export type Database = {
           locale?: string;
           name: string;
           position?: number;
+          search_vector?: unknown;
           slug: string;
           status?: string;
           summary?: string | null;
@@ -1032,6 +1043,7 @@ export type Database = {
           locale?: string;
           name?: string;
           position?: number;
+          search_vector?: unknown;
           slug?: string;
           status?: string;
           summary?: string | null;
@@ -1140,8 +1152,7 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -1165,8 +1176,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -1190,8 +1200,7 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -1207,8 +1216,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["CompositeTypes"] | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }

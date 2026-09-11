@@ -172,7 +172,12 @@ export async function publishPage(id: string, userId: string): Promise<void> {
   if (!page) throw new Error("Page not found");
 
   const db = createServerDbClient();
-  const { blocks, ...meta } = page;
+  // search_vector is a generated column (migration 0016) — not
+  // Json-serializable (tsvector has no TS representation) and not
+  // meaningful to snapshot anyway, since restoring just re-derives it
+  // from title/seo_description.
+  const { blocks, search_vector: _searchVector, ...meta } = page;
+  void _searchVector;
 
   const { error: revisionError } = await db.from("page_revisions").insert({
     page_id: id,

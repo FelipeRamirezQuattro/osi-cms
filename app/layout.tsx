@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Orbitron, Montserrat } from "next/font/google";
+import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -16,7 +17,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Odessa Separator Inc.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: "Odessa Separator Inc.", template: "%s | Odessa Separator Inc." },
   description: "World-class downhole fluid-conditioning systems.",
 };
 

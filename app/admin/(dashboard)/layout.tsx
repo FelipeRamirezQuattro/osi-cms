@@ -1,8 +1,10 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
 import { logoutAction } from "@/lib/actions/auth";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard" },

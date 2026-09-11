@@ -1,5 +1,8 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { getSiteSettings } from "@/lib/data/settings";
+import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
+import { siteUrl } from "@/lib/seo";
 
 // Every route here reads live, draft/published-gated content straight
 // from Supabase (and lib/db/client.ts touches cookies() for session
@@ -11,9 +14,18 @@ export const dynamic = "force-dynamic";
 // Wraps every public marketing page with the site chrome. Deliberately
 // excludes /styleguide (isolated design reference) and the future
 // /admin (Phase 5) — those live outside this route group.
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings();
+  const socialLinks = [
+    settings.social_facebook,
+    settings.social_linkedin,
+    settings.social_youtube,
+    settings.social_instagram,
+  ].filter((url): url is string => Boolean(url));
+
   return (
     <>
+      <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

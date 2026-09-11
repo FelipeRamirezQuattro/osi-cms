@@ -361,6 +361,53 @@ elements unreachable by accessibility role (found the same way, via
 Playwright's `getByRole` failing to locate a button that plainly
 existed).
 
+## Forms, search, SEO (Phase 6)
+
+**Contact form** (`lib/actions/submit-contact-form.ts`): honeypot (Phase
+3) → rate limit (max 3 submissions per IP-hash per 10 minutes, checked
+against `form_submissions` via the **service-role** client — RLS only
+grants that table's SELECT to staff, so the anon client can't read back
+even its own rows) → insert (`ip_hash` is a salted SHA-256 of
+`x-forwarded-for`, never a raw IP) → best-effort notification email via
+`lib/email.ts` (Resend; silently no-ops if `RESEND_API_KEY`/
+`CONTACT_NOTIFICATION_EMAIL`/`RESEND_FROM_EMAIL` aren't set — see
+`docs/CONTENT-GAPS.md`, the recipient was never confirmed). A submission
+is never lost to an email failure — it's already durably saved before
+the notification is attempted.
+
+**Search** (`/search`, `lib/data/search.ts`) is Postgres full-text, no
+external service: migration `0016_search_vectors.sql` adds a generated
+`search_vector` column (title/name weighted `'A'`, a short secondary
+field `'B'`) + GIN index to `pages`/`products`/`news_posts`/`services`,
+queried via Supabase JS's `.textSearch()`. **Only `pages` and `products`
+are actually wired into search/`sitemap.ts`** — see the Content gaps
+section below for why `news_posts`/`services` are excluded. The header's
+search field (`components/layout/mega-menu-client.tsx`) is a plain GET
+`<form action="/search">`, no client JS needed.
+
+**Metadata/OG/JSON-LD**: `lib/seo.ts` (`siteUrl()`, `absoluteUrl()`,
+`resolveOgImage()` — page/product image wins, falls back to
+`site_settings.default_og_image`) and `components/seo/json-ld.tsx`
+(`<JsonLd data={...} />` plus `organizationJsonLd`/`productJsonLd`/
+`breadcrumbJsonLd` builders) are shared by every route's
+`generateMetadata`. Organization JSON-LD renders once in
+`app/(site)/layout.tsx`; Product + BreadcrumbList render on product
+detail; BreadcrumbList also renders on every `[...slug]` catch-all page
+(built from the slug segments, not a stored breadcrumb — intermediate
+segments get a title-cased label, the final segment uses the page's real
+title). `/admin/*` and `/preview/*` are `robots: {index: false}` at
+their layout level, not per-page.
+
+**`app/sitemap.ts`/`app/robots.ts`** are the Next.js App Router file
+convention (not routes under `(site)`) — their DB reads live in
+`lib/data/sitemap.ts` per constraint 2, same as everywhere else.
+
+**Legacy redirects** (`redirects` table, already seeded by migration
+`0009`) resolve inside the `[...slug]` catch-all when no `pages` row
+matches the slug — see `docs/DECISIONS.md` for why there (not
+`next.config.ts`, not `proxy.ts`) and for the 301/308 vs. 302/307
+mapping.
+
 ## Known content gaps (see `docs/CONTENT-GAPS.md` for the full list)
 
 No PDF/brochure/datasheet URLs exist anywhere in the legacy scrape;

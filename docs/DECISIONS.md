@@ -211,6 +211,41 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   with a plain `<div>` wrapper (`FieldGroup`) for those two. Neither
   showed up in the type checker or the production build; both would have
   shipped silently without a driven browser pass.
+- **Site search and `sitemap.ts` only cover `pages` and `products`**,
+  not `news_posts`/`services` despite the master prompt naming all four
+  (§9: "search over products/news/services/pages"). Both tables are
+  empty, and — more importantly — `/services/*` is already served by the
+  `[...slug]` catch-all against real, Phase-4-migrated `pages` content
+  (Fluid Levels, Pump Cards, Machine Shop); adding a `services`-table-
+  backed `/services/[slug]` route now would shadow those working pages
+  at the same URLs. Logged as an open question in `docs/CONTENT-GAPS.md`
+  rather than guessing which content model wins.
+- **Full-text search indexes title/summary-level columns only, not the
+  rich `body` jsonb (Tiptap) columns** on `pages`/`products` (migration
+  `0016_search_vectors.sql`). Extracting plain text from arbitrary Tiptap
+  JSON for a generated `tsvector` column needs a plpgsql function;
+  title/tagline/summary matching covers the realistic "do you carry X"
+  search-box use case without that complexity. Revisit if relevance
+  turns out too shallow once there's real content to search.
+- **The contact form's rate limit reads `form_submissions` via the
+  service-role client, not the request-scoped anon client** — RLS only
+  grants that table's SELECT to staff, so an anonymous visitor's own
+  Server Action has no way to read back rows (not even ones matching
+  their own `ip_hash`) through the normal cookie-authenticated client;
+  it would silently see zero every time and the limit would never
+  trigger. This is the one place outside `lib/db/client.ts`/`lib/auth`
+  that reaches for the service-role client from application code, and
+  it's confined to a single read used only for counting, not exposed.
+- **Legacy redirects resolve through `next/navigation`'s `redirect()`/
+  `permanentRedirect()` inside the `[...slug]` catch-all**, checked only
+  when no `pages` row matches — not `next.config.ts`'s static
+  `redirects()` (which can't read from the DB) and not `proxy.ts` (which
+  would add a DB round-trip to every single request, not just 404s).
+  This only distinguishes permanent (308) vs. temporary (307), not the
+  full 301/302/307/308 range `redirects.status_code` stores — 301 and
+  308 both map to `permanentRedirect()`, everything else to `redirect()`.
+  301 vs. 308 is a real difference (308 preserves request method) but
+  not one that matters for the legacy map's GET-only links.
 - **Publish always writes a full `{ meta, blocks }` snapshot to
   `page_revisions`** (master prompt §5.1), and "Publish" in the UI first
   silently saves the current draft, then publishes — so publishing never

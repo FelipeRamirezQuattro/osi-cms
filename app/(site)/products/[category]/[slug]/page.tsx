@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/data/products";
+import { getSiteSettings } from "@/lib/data/settings";
+import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl, resolveOgImage } from "@/lib/seo";
 import { ProductHeroRender } from "@/components/blocks/product-hero";
 import { BenefitsCardsRender } from "@/components/blocks/benefits-cards";
 import { StagesCarouselRender } from "@/components/blocks/stages-carousel";
@@ -17,11 +20,13 @@ export async function generateMetadata({
   params,
 }: PageProps<"/products/[category]/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, settings] = await Promise.all([getProductBySlug(slug), getSiteSettings()]);
   if (!product) return {};
+  const ogImage = resolveOgImage(product.hero_image_url ?? product.diagram_image_url, settings.default_og_image);
   return {
     title: product.seo_title ?? product.name,
     description: product.seo_description ?? product.summary ?? undefined,
+    openGraph: ogImage ? { images: [ogImage] } : undefined,
   };
 }
 
@@ -32,8 +37,26 @@ export default async function ProductDetailPage({
   const product = await getProductBySlug(slug);
   if (!product || product.categorySlug !== category) notFound();
 
+  const productUrl = absoluteUrl(`/products/${category}/${slug}`);
+  const productImage = product.hero_image_url ?? product.diagram_image_url;
+
   return (
     <>
+      <JsonLd
+        data={productJsonLd({
+          name: product.name,
+          description: product.summary,
+          url: productUrl,
+          image: productImage ? resolveOgImage(productImage, null) : undefined,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: absoluteUrl("/") },
+          { name: "Products", url: absoluteUrl("/products") },
+          { name: product.name, url: productUrl },
+        ])}
+      />
       <RecordProductView slug={product.slug} />
       <ProductHeroRender
         data={{

@@ -92,3 +92,27 @@ items get struck through with the resolution, not deleted.
   five other operator names/logos appear only in that scraped page,
   which is out of scope (external link). Flagging in case the client
   wants those logos reused as a "trusted by" `logo_strip` elsewhere.
+
+## Found during Phase 6 (forms, search, SEO)
+
+- **Contact-form email notifications are wired but unconfigured.**
+  `RESEND_API_KEY`/`RESEND_FROM_EMAIL`/`CONTACT_NOTIFICATION_EMAIL` are
+  all unset — master prompt open question #4 ("who receives contact-form
+  notifications?") was never answered. Submissions still save correctly
+  to `form_submissions`/the admin inbox regardless; only the outbound
+  email is inert until the client provides a Resend account and a
+  recipient address.
+- **`services`/`news_posts` tables have zero rows and no public route.**
+  The master prompt's site map (§7) calls for `/services`, `/services/
+  [slug]`, `/news`, `/news/[slug]` backed by these dedicated tables, but
+  Phase 3 never built them, and Phase 4 migrated the legacy Services
+  content (Fluid Levels, Pump Cards, Machine Shop) into generic CMS
+  `pages` instead, served by the `[...slug]` catch-all at those same
+  URLs. A `services`-table route would collide with and shadow that
+  already-working content. Site search and the sitemap are scoped to
+  `pages`+`products` only for now — see `docs/DECISIONS.md` for the
+  full reasoning. This needs a real decision: keep Services as CMS pages
+  (drop/repurpose the `services` table) or migrate it to the dedicated
+  table and give it real routes (and same question for News, which has
+  no legacy content at all — nothing to migrate, but the admin's
+  `/admin/news` CRUD is otherwise sitting unused).

@@ -1,7 +1,24 @@
 "use server";
 
+import { headers } from "next/headers";
+import { createHash } from "node:crypto";
 import { z } from "zod";
-import { insertFormSubmission } from "@/lib/data/forms";
+import { countRecentSubmissionsByIp, insertFormSubmission } from "@/lib/data/forms";
+import { sendContactNotification } from "@/lib/email";
+
+// Not persisted anywhere, not exposed to the client — just enough to
+// rate-limit by IP without storing a raw IP address in the DB.
+async function hashClientIp(): Promise<string> {
+  const h = await headers();
+  const forwardedFor = h.get("x-forwarded-for");
+  const ip = forwardedFor?.split(",")[0]?.trim() || h.get("x-real-ip") || "unknown";
+  return createHash("sha256")
+    .update(`${ip}:${process.env.IP_HASH_SALT ?? ""}`)
+    .digest("hex");
+}
+
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MINUTES = 10;
 
 const contactFormSchema = z.object({
   firstName: z.string().min(1),
@@ -44,19 +61,29 @@ export async function submitContactForm(
     return { status: "success" };
   }
 
-  const { pageSlug, ...payload } = parsed.data;
+  const { pageSlug, website: _website, ...payload } = parsed.data;
+  void _website;
 
-  // TODO(Phase 6): rate limiting and the Resend notification email land
-  // here, per the master prompt's "Forms, search, SEO" phase.
+  const ipHash = await hashClientIp();
+  const recentCount = await countRecentSubmissionsByIp(ipHash, RATE_LIMIT_WINDOW_MINUTES);
+  if (recentCount >= RATE_LIMIT_MAX) {
+    return { status: "error", message: "Too many submissions — please try again in a few minutes." };
+  }
+
+  const h = await headers();
   const { error } = await insertFormSubmission({
     form_key: "contact",
     page_slug: pageSlug,
     payload,
+    ip_hash: ipHash,
+    user_agent: h.get("user-agent"),
   });
 
   if (error) {
     return { status: "error", message: "Something went wrong. Please try again." };
   }
+
+  await sendContactNotification({ ...payload, pageSlug });
 
   return { status: "success" };
 }

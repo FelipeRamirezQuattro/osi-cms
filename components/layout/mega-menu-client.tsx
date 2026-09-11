@@ -36,12 +36,15 @@ export function MegaMenuClient({
             </Link>
           ))}
         </nav>
-        <input
-          type="search"
-          placeholder="What are you looking for?"
-          className="hidden w-48 border-b border-current bg-transparent pb-1 text-sm placeholder:opacity-50 focus:outline-none lg:block"
-          aria-label="Search"
-        />
+        <form action="/search" method="get" className="hidden lg:block">
+          <input
+            type="search"
+            name="q"
+            placeholder="What are you looking for?"
+            className="w-48 border-b border-current bg-transparent pb-1 text-sm placeholder:opacity-50 focus:outline-none"
+            aria-label="Search"
+          />
+        </form>
       </div>
 
       {open && (
