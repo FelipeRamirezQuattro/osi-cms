@@ -45,9 +45,17 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
     data: { user },
   } = await supabase.auth.getUser();
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
+  // These don't need (and, for reset-password, can't have yet — the
+  // recovery session from the email link's URL hash is only
+  // establishable client-side, after this server-side check already
+  // ran) an existing admin session.
+  const isPublicAuthPage =
+    isLoginPage ||
+    request.nextUrl.pathname === "/admin/forgot-password" ||
+    request.nextUrl.pathname === "/admin/reset-password";
 
   if (!user) {
-    if (isLoginPage) return response;
+    if (isPublicAuthPage) return response;
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
@@ -79,6 +87,19 @@ export async function signInWithPassword(email: string, password: string) {
 export async function signOutCurrentUser() {
   const db = createServerDbClient();
   return db.auth.signOut();
+}
+
+/**
+ * Sends a password-reset email. Supabase's link redirects the browser to
+ * `redirectTo` with the recovery session in the URL *hash fragment*
+ * (`#access_token=...&type=recovery`, implicit flow — confirmed by a
+ * real expired-link error landing on `/#error=...&error_code=otp_expired`)
+ * — that's never sent to the server, so establishing the session from it
+ * has to happen client-side. See app/admin/reset-password/.
+ */
+export async function requestPasswordReset(email: string, redirectTo: string) {
+  const db = createServerDbClient();
+  return db.auth.resetPasswordForEmail(email, { redirectTo });
 }
 
 /** Server Components / Server Actions only — reads the current session. */

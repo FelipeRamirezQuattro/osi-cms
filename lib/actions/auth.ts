@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { signInWithPassword, signOutCurrentUser } from "@/lib/auth";
+import { requestPasswordReset, signInWithPassword, signOutCurrentUser } from "@/lib/auth";
+import { siteUrl } from "@/lib/seo";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -34,4 +35,21 @@ export async function loginAction(
 export async function logoutAction() {
   await signOutCurrentUser();
   redirect("/admin/login");
+}
+
+export type ForgotPasswordState = { status: "idle" | "sent" | "error"; message?: string };
+
+export async function forgotPasswordAction(
+  _prevState: ForgotPasswordState,
+  formData: FormData,
+): Promise<ForgotPasswordState> {
+  const parsed = z.string().email().safeParse(formData.get("email"));
+  if (!parsed.success) {
+    return { status: "error", message: "Enter a valid email address." };
+  }
+
+  // Always report success either way — confirming/denying whether an
+  // email has an admin account would let anyone enumerate staff emails.
+  await requestPasswordReset(parsed.data, `${siteUrl()}/admin/reset-password`);
+  return { status: "sent" };
 }

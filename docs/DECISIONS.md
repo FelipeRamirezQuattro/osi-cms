@@ -246,6 +246,20 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   308 both map to `permanentRedirect()`, everything else to `redirect()`.
   301 vs. 308 is a real difference (308 preserves request method) but
   not one that matters for the legacy map's GET-only links.
+- **Added a forgot/reset-password flow** (`/admin/forgot-password`,
+  `/admin/reset-password`) that Phase 5 never built — surfaced by a real
+  operational problem, not planned ahead of time: the first admin
+  invite link expired before use. Supabase's recovery link puts the
+  session in the URL hash fragment, which the server never sees, so the
+  reset page has to establish it client-side. That component can't
+  import `lib/db/client.ts` for a browser client the way everything else
+  does — that file also pulls in `next/headers` (for
+  `createServerDbClient`) at module scope, and Next.js bundles the
+  whole module for any importer, which breaks the client build. Added a
+  second, client-only Supabase-client constructor in `lib/auth/client.ts`
+  specifically for this, rather than trying to split `lib/db/client.ts`
+  itself — the smaller, more contained deviation from "one client-
+  constructor file."
 - **Added `--color-osi-gold-700` and `--color-osi-slate-200` design
   tokens** (Phase 7 hardening) — the mockup's gold-500/slate-300 accent
   colors only pass WCAG AA contrast on navy backgrounds (gold-500 on

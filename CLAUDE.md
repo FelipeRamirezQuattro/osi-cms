@@ -281,6 +281,23 @@ block). Every block file now exports `adminFields` next to its schema.
   orderedList/listItem/text+bold/italic/link) so the editor can never
   produce a doc the public site can't render.
 
+**Password reset** (`/admin/forgot-password` → email → `/admin/reset-password`):
+Supabase's reset-password email redirects the browser with the recovery
+session in the URL's *hash fragment* (`#access_token=...&type=recovery`
+— confirmed by a real expired-link error, `#error=access_denied&
+error_code=otp_expired`), which is never sent to the server, so
+`app/admin/reset-password/reset-password-form.tsx` has to read it and
+call `setSession`/`updateUser` client-side. That needs a browser
+Supabase client, and — subtlety — it **cannot** import
+`lib/db/client.ts` to get one despite that being the sole client-
+constructor boundary everywhere else: that file also imports
+`next/headers` at module scope for `createServerDbClient`, and Next.js
+bundles the whole module for any importer, breaking the client build
+outright. `lib/auth/client.ts` constructs its own browser client
+directly for this one reason — see its top comment. `proxy.ts` also
+treats `/admin/forgot-password` and `/admin/reset-password` as public,
+alongside `/admin/login` (no session exists yet when either loads).
+
 **The page editor** (`app/admin/(dashboard)/pages/[id]/page-editor.tsx`)
 is one React Hook Form instance over `{ ...page meta, blocks: [...] }`.
 Blocks are a top-level `useFieldArray`, reordered via `@dnd-kit` (sortable
