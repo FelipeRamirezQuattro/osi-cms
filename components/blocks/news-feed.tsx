@@ -4,6 +4,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { listNewsPosts } from "@/lib/data/news";
 import type { Tables } from "@/lib/db/database.types";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
@@ -50,6 +51,7 @@ async function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
         {data.title}
@@ -66,11 +68,13 @@ async function Render({ data }: { data: Data }) {
         </h3>
       </Link>
       {rest.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <AnimatedGroup className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {rest.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <AnimatedItem key={post.id}>
+              <PostCard post={post} />
+            </AnimatedItem>
           ))}
-        </div>
+        </AnimatedGroup>
       )}
     </Section>
   );

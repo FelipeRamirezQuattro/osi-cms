@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const cardSchema = z.object({
@@ -25,24 +26,27 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
-      <div className={`grid grid-cols-1 gap-6 ${cols}`}>
+      <AnimatedGroup className={`grid grid-cols-1 gap-6 ${cols}`}>
         {data.cards.map((card) => (
-          <div key={card.title} className="flex flex-col gap-4">
-            <h3 className="font-display text-card-label tracking-wide-display uppercase">
-              → {card.title}
-            </h3>
-            {card.body && <p className="text-sm opacity-80">{card.body}</p>}
-            <ArrowButton
-              href={card.href}
-              variant={data.background === "navy" ? "outline-light" : "outline-dark"}
-              className="mt-auto self-start"
-            >
-              Learn more
-            </ArrowButton>
-          </div>
+          <AnimatedItem key={card.title} className="h-full">
+            <div className="flex h-full flex-col gap-4">
+              <h3 className="font-display text-card-label tracking-wide-display uppercase">
+                → {card.title}
+              </h3>
+              {card.body && <p className="text-sm opacity-80">{card.body}</p>}
+              <ArrowButton
+                href={card.href}
+                variant={data.background === "navy" ? "outline-light" : "outline-dark"}
+                className="mt-auto self-start"
+              >
+                Learn more
+              </ArrowButton>
+            </div>
+          </AnimatedItem>
         ))}
-      </div>
+      </AnimatedGroup>
     </Section>
   );
 }

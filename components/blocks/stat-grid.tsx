@@ -4,6 +4,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { HairlineGrid } from "@/components/ui/hairline-grid";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const statSchema = z.object({
@@ -53,19 +54,24 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
-      <div className={`relative grid grid-cols-1 gap-px ${cols}`}>
+      <AnimatedGroup className={`relative grid grid-cols-1 gap-px ${cols}`}>
         <HairlineGrid cols={data.stats.length} rows={1} className="-inset-x-6 md:-inset-x-12" />
         {data.stats.map((stat) =>
           stat.href ? (
-            <Link key={stat.label} href={stat.href} className="contents">
-              <StatItem {...stat} background={data.background} />
-            </Link>
+            <AnimatedItem key={stat.label}>
+              <Link href={stat.href} className="contents">
+                <StatItem {...stat} background={data.background} />
+              </Link>
+            </AnimatedItem>
           ) : (
-            <StatItem key={stat.label} {...stat} background={data.background} />
+            <AnimatedItem key={stat.label}>
+              <StatItem {...stat} background={data.background} />
+            </AnimatedItem>
           ),
         )}
-      </div>
+      </AnimatedGroup>
     </Section>
   );
 }

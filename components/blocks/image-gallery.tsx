@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const imageSchema = z.object({ url: z.string(), alt: z.string().optional() });
@@ -21,21 +22,24 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       {data.title && (
         <h2 className="mb-6 font-display text-section tracking-tightest-display uppercase">
           {data.title}
         </h2>
       )}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <AnimatedGroup className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {data.images.map((image, i) => (
           // Opens full-size in a new tab — a real lightbox is deferred
           // until a page actually needs this block (Machine Shop).
-          <a key={i} href={image.url} target="_blank" rel="noreferrer" className="relative block aspect-square">
-            <Image src={image.url} alt={image.alt ?? ""} fill className="object-cover" />
-          </a>
+          <AnimatedItem key={i}>
+            <a href={image.url} target="_blank" rel="noreferrer" className="relative block aspect-square">
+              <Image src={image.url} alt={image.alt ?? ""} fill className="object-cover" />
+            </a>
+          </AnimatedItem>
         ))}
-      </div>
+      </AnimatedGroup>
     </Section>
   );
 }

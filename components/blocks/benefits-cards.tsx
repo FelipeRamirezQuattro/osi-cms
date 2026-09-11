@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { Clipped } from "@/components/ui/clipped";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const itemSchema = z.object({ title: z.string(), body: z.string().optional() });
@@ -21,23 +22,25 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
         {data.title}
       </h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <AnimatedGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((item) => (
-          <Clipped
-            key={item.title}
-            corner="br"
-            size="1.25rem"
-            className="border border-osi-steel-500/30 bg-osi-navy-600/40 p-6"
-          >
-            <h3 className="font-display text-sm tracking-wide-display uppercase">{item.title}</h3>
-            {item.body && <p className="mt-2 text-sm opacity-80">{item.body}</p>}
-          </Clipped>
+          <AnimatedItem key={item.title}>
+            <Clipped
+              corner="br"
+              size="1.25rem"
+              className="border border-osi-steel-500/30 bg-osi-navy-600/40 p-6"
+            >
+              <h3 className="font-display text-sm tracking-wide-display uppercase">{item.title}</h3>
+              {item.body && <p className="mt-2 text-sm opacity-80">{item.body}</p>}
+            </Clipped>
+          </AnimatedItem>
         ))}
-      </div>
+      </AnimatedGroup>
     </Section>
   );
 }

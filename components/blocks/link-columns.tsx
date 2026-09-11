@@ -2,6 +2,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const columnSchema = z.object({
@@ -29,10 +30,11 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
-      <div className={`grid grid-cols-1 gap-8 ${COLS_CLASS[data.columns.length] ?? ""}`}>
+      <AnimatedGroup className={`grid grid-cols-1 gap-8 ${COLS_CLASS[data.columns.length] ?? ""}`}>
         {data.columns.map((col, i) => (
-          <div key={i}>
+          <AnimatedItem key={i}>
             {col.heading && (
               <h3 className="mb-3 font-display text-small-label tracking-wide-label uppercase opacity-70">
                 {col.heading}
@@ -47,9 +49,9 @@ function Render({ data }: { data: Data }) {
                 </li>
               ))}
             </ul>
-          </div>
+          </AnimatedItem>
         ))}
-      </div>
+      </AnimatedGroup>
     </Section>
   );
 }
