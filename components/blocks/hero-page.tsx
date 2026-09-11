@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
+import { GradientText } from "@/components/ui/gradient-text";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
@@ -26,7 +27,14 @@ function Render({ data }: { data: Data }) {
         <div>
           {data.eyebrow && (
             <p className="mb-2 font-display text-small-label tracking-wide-label uppercase opacity-70">
-              {data.eyebrow}
+              {data.background === "cream" ? (
+                // GradientText is navy-only — gold-700 is the single
+                // WCAG-safe gold on cream, so there is no two-stop sweep
+                // to run here (see gradient-text.tsx's comment).
+                <span className="text-osi-gold-700">{data.eyebrow}</span>
+              ) : (
+                <GradientText>{data.eyebrow}</GradientText>
+              )}
             </p>
           )}
           <h1 className="font-display text-section tracking-tightest-display uppercase">

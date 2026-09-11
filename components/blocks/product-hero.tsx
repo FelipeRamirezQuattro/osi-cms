@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
+import { GradientText } from "@/components/ui/gradient-text";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 export const productHeroSchema = blockCommonSchema.extend({
@@ -30,12 +31,15 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">
         <div>
           {data.eyebrow && (
-            <p
-              className={`mb-2 text-xs uppercase ${
-                data.background === "cream" ? "text-osi-slate-400" : "text-osi-slate-200"
-              }`}
-            >
-              {data.eyebrow}
+            <p className="mb-2 text-xs uppercase">
+              {data.background === "cream" ? (
+                // GradientText is navy-only — gold-700 is the single
+                // WCAG-safe gold on cream, so there is no two-stop sweep
+                // to run here (see gradient-text.tsx's comment).
+                <span className="text-osi-gold-700">{data.eyebrow}</span>
+              ) : (
+                <GradientText>{data.eyebrow}</GradientText>
+              )}
             </p>
           )}
           <h1 className="font-display text-section tracking-tightest-display uppercase">

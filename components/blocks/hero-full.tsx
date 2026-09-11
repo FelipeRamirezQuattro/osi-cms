@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import { GradientText } from "@/components/ui/gradient-text";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const ctaSchema = z.object({
@@ -38,12 +39,15 @@ function Render({ data }: { data: Data }) {
         <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} />
       </div>
       {data.eyebrow && (
-        <p
-          className={`mb-3 font-display text-small-label tracking-wide-label uppercase ${
-            data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
-          }`}
-        >
-          {data.eyebrow}
+        <p className="mb-3 font-display text-small-label tracking-wide-label uppercase">
+          {data.background === "cream" ? (
+            // GradientText is navy-only — gold-700 is the single
+            // WCAG-safe gold on cream, so there is no two-stop sweep
+            // to run here (see gradient-text.tsx's comment).
+            <span className="text-osi-gold-700">{data.eyebrow}</span>
+          ) : (
+            <GradientText>{data.eyebrow}</GradientText>
+          )}
         </p>
       )}
       <h1 className="max-w-2xl font-display text-hero tracking-tightest-display text-osi-white uppercase">
