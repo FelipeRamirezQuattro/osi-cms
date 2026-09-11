@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LabelPlateCard } from "@/components/ui/label-plate-card";
+import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 
 export interface LabelPlateItem {
   title: string;
@@ -26,18 +27,19 @@ export function LabelPlateGrid({
     columns === 2 ? "sm:grid-cols-2" : columns === 3 ? "sm:grid-cols-3" : "sm:grid-cols-4";
 
   return (
-    <div className={`grid grid-cols-2 gap-4 ${colsClass}`}>
+    <AnimatedGroup className={`grid grid-cols-2 gap-4 ${colsClass}`}>
       {items.map((item, i) => (
-        <LabelPlateCard
-          key={item.title + i}
-          title={item.title}
-          body={item.body}
-          href={item.href}
-          image={item.imageUrl}
-          open={openIndex === i}
-          onInteract={() => setOpenIndex(i)}
-        />
+        <AnimatedItem key={item.title + i}>
+          <LabelPlateCard
+            title={item.title}
+            body={item.body}
+            href={item.href}
+            image={item.imageUrl}
+            open={openIndex === i}
+            onInteract={() => setOpenIndex(i)}
+          />
+        </AnimatedItem>
       ))}
-    </div>
+    </AnimatedGroup>
   );
 }

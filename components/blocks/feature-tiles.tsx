@@ -28,6 +28,7 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       {data.title && (
         <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">

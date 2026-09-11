@@ -24,6 +24,7 @@ async function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
+      reveal={false}
     >
       <h2 className="font-display text-section tracking-tightest-display uppercase">
         {data.title}

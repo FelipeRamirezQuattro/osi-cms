@@ -53,6 +53,7 @@ async function Render({ data }: { data: Data }) {
       spacingBottom="lg"
       anchorId={data.anchorId}
       contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
+      reveal={false}
     >
       <h2 className="font-display text-section tracking-tightest-display uppercase">
         {data.title}
