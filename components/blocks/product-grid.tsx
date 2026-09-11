@@ -55,19 +55,14 @@ async function Render({ data }: { data: Data }) {
       contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
       reveal={false}
     >
-      <h2 className="font-display text-section tracking-tightest-display uppercase">
-        {data.title}
-      </h2>
-      {data.subtitle && <p className="mt-2 mb-8 max-w-xl text-sm opacity-70">{data.subtitle}</p>}
-      <div className="mt-8">
-        <ProductGridClient
-          products={products}
-          categories={categories}
-          industries={industries}
-          applications={applications}
-          services={services}
-        />
-      </div>
+      {data.subtitle && <p className="mb-8 max-w-xl text-sm opacity-70">{data.subtitle}</p>}
+      <ProductGridClient
+        products={products}
+        categories={categories}
+        industries={industries}
+        applications={applications}
+        services={services}
+      />
       <CtaBreakoutBar href={data.ctaHref}>{data.ctaLabel}</CtaBreakoutBar>
     </Section>
   );
