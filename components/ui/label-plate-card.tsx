@@ -56,7 +56,7 @@ export function LabelPlateCard({
               if (e.key === "Enter" || e.key === " ") onInteract?.();
             }
       }
-      className={`relative aspect-[3/4] overflow-hidden bg-osi-navy-700 ${className}`}
+      className={`relative aspect-[3/4] overflow-hidden bg-osi-navy-700 transition-shadow duration-300 ${open ? "" : "hover:shadow-[0_0_0_1px_var(--color-osi-steel-500),0_8px_32px_color-mix(in_srgb,var(--color-osi-steel-500)_25%,transparent),0_0_60px_color-mix(in_srgb,var(--color-osi-steel-500)_10%,transparent)]"} ${className}`}
     >
       <Clipped corner="br" size="1.25rem" className="absolute inset-0">
         {open ? (
