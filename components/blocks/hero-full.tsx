@@ -32,8 +32,16 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
       seam="bottom"
-      className="min-h-[70vh]"
-      contentClassName="relative mx-auto flex min-h-[calc(70vh-6rem)] max-w-6xl flex-col justify-center px-6 md:px-12"
+      className="min-h-[88vh]"
+      // No `relative` here, deliberately: the -z-10 backdrop below is
+      // absolute inset-0, so it anchors to the nearest positioned
+      // ancestor. With `relative` on this padded, max-w-6xl column the
+      // photo was boxed to the text column — leaving bare navy above it
+      // (the section's own padding) and down both sides on desktop. The
+      // <section> is already `relative`, so dropping it here lets the
+      // backdrop cover the whole section edge-to-edge, which is what the
+      // mockup's hero shows.
+      contentClassName="mx-auto flex min-h-[calc(88vh-8rem)] max-w-6xl flex-col justify-center px-6 md:px-12"
     >
       <div className="absolute inset-0 -z-10">
         <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} />
