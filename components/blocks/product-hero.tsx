@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { z } from "zod";
+import { resolveMediaUrl } from "@/lib/media";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
@@ -59,12 +61,27 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
             ))}
           </div>
         </div>
-        <DuotoneImage
-          src={data.diagramImageUrl}
-          alt={data.diagramImageUrl ? `${data.title} diagram` : ""}
-          className="aspect-square w-full"
-          intensity={0.15}
-        />
+        {/* Deliberately not a DuotoneImage. That primitive is built for
+            photography: it crops with object-cover and applies
+            grayscale + a navy multiply. Both are wrong for a technical
+            diagram — cropping cuts the drawing off, and the desaturation
+            mutes the colour-coded flow paths the body copy refers to by
+            name ("red flow path", "green flow path", "yellow flow path").
+            Contained, full-colour, on a light plate so the drawing's own
+            white background doesn't float on navy. */}
+        {data.diagramImageUrl ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-osi-white/95 p-4">
+            <Image
+              src={resolveMediaUrl(data.diagramImageUrl)}
+              alt={`${data.title} diagram`}
+              fill
+              sizes="(min-width: 768px) 36rem, 100vw"
+              className="object-contain p-2"
+            />
+          </div>
+        ) : (
+          <DuotoneImage src={undefined} alt="" className="aspect-square w-full" intensity={0.15} />
+        )}
       </div>
       <CtaBreakoutBar href={data.ctaHref}>{data.ctaLabel}</CtaBreakoutBar>
     </Section>

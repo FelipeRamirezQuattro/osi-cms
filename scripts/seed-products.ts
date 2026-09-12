@@ -13,6 +13,7 @@
  * Run: pnpm seed:products
  */
 import { createServiceRoleDbClient } from "../lib/db/client";
+import { LEGACY_IMAGES } from "./legacy-images";
 
 type ProductSeed = {
   slug: string;
@@ -21,12 +22,15 @@ type ProductSeed = {
   eyebrow?: string;
   summary: string;
   benefits: string[];
+  /** Technical diagram from the product's own legacy page. */
+  diagramImageUrl?: string;
   specs?: { label: string; value: string; unit?: string }[];
 };
 
 const PRODUCTS: ProductSeed[] = [
   {
     slug: "gas-release-system",
+    diagramImageUrl: LEGACY_IMAGES.diagramGasReleaseSystem,
     categorySlug: "gas-separation",
     name: "Gas Release System",
     eyebrow: "Breaking the curve",
@@ -43,6 +47,7 @@ const PRODUCTS: ProductSeed[] = [
   },
   {
     slug: "esp-chem-screen",
+    diagramImageUrl: LEGACY_IMAGES.diagramEspChemScreen,
     categorySlug: "pumps",
     name: "ESP Chem Screen",
     eyebrow: "With shut off valve",
@@ -57,6 +62,7 @@ const PRODUCTS: ProductSeed[] = [
   },
   {
     slug: "srp-sand-lift",
+    diagramImageUrl: LEGACY_IMAGES.diagramSrpSandLift,
     categorySlug: "sand-control",
     name: "SRP Sand Lift",
     summary:
@@ -97,6 +103,7 @@ async function main() {
           name: seed.name,
           category_id: categoryId,
           eyebrow: seed.eyebrow,
+          diagram_image_url: seed.diagramImageUrl ?? null,
           summary: seed.summary,
           status: "published",
           seo_title: `${seed.name} | Odessa Separator Inc`,

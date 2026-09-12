@@ -45,6 +45,16 @@ function Render({ data }: { data: Data }) {
     >
       <div className="absolute inset-0 -z-10">
         <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} />
+        {/* Scrim. The duotone alone was enough over the gradient
+            placeholder, but a real photograph has bright regions (the sky
+            in the yard shot) where slate-200 subhead copy drops under 4.5:1.
+            Darkening toward the left/bottom — where the copy sits — keeps
+            the headline and subhead legible without flattening the whole
+            image the way a higher duotone intensity would. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-r from-osi-navy-900/85 via-osi-navy-900/55 to-osi-navy-900/20"
+        />
       </div>
       {data.eyebrow && (
         <p className="mb-3 font-display text-small-label tracking-wide-label uppercase">

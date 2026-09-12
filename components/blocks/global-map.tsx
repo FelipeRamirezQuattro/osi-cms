@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { z } from "zod";
+import { resolveMediaUrl } from "@/lib/media";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
@@ -9,6 +11,11 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 const schema = blockCommonSchema.extend({
   title: z.string().default("See our global locations"),
   subtitle: z.string().optional(),
+  // The interactive SVG map is still an open decision (docs/DECISIONS.md);
+  // until then this renders the legacy site's own static world map above
+  // the country pills, which is what the mockup shows. Optional, so the
+  // block still works as a pill list when no image is set.
+  mapImageUrl: z.string().optional(),
   ctaLabel: z.string().default("Find a distributor"),
   ctaHref: z.string().default("/locations"),
 });
@@ -41,6 +48,20 @@ async function Render({ data }: { data: Data }) {
           </p>
         )}
       </div>
+      {data.mapImageUrl && (
+        <div className="mb-8 overflow-hidden rounded-2xl bg-osi-white/95 p-4 md:p-8">
+          {/* Not a DuotoneImage: the map's country labels are baked into
+              the artwork, so tinting it would cost legibility. */}
+          <Image
+            src={resolveMediaUrl(data.mapImageUrl)}
+            alt="Map of OSI locations and distributors worldwide"
+            width={1538}
+            height={697}
+            sizes="(min-width: 768px) 72rem, 100vw"
+            className="h-auto w-full"
+          />
+        </div>
+      )}
       <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3 rounded-full bg-osi-white/95 px-8 py-12 text-osi-navy-900">
         {countries.length > 0 ? (
           countries.map((country) => (
@@ -63,6 +84,7 @@ async function Render({ data }: { data: Data }) {
 const adminFields: FieldSpec[] = [
   { key: "title", label: "Title", type: "text" },
   { key: "subtitle", label: "Subtitle", type: "text", optional: true },
+  { key: "mapImageUrl", label: "Map image", type: "image", optional: true },
   { key: "ctaLabel", label: "CTA label", type: "text" },
   { key: "ctaHref", label: "CTA link", type: "text" },
 ];

@@ -3,13 +3,15 @@
  * real copy from content/legacy/pages/home.json where it exists.
  * Idempotent: upserts the page by (slug, locale), replaces its blocks.
  *
- * No hero photo is set — no legacy photography was downloaded (see
- * CLAUDE.md constraint 3/4) — so hero_full/split_feature fall back to
- * their gradient duotone placeholder until real images are sourced.
+ * Images are the legacy site's own Wix-hosted photography, referenced by
+ * absolute URL rather than re-uploaded (CLAUDE.md constraint 3). Named
+ * handles and the reasoning live in scripts/legacy-images.ts; the full
+ * catalogue is content/legacy/image-map.json.
  *
  * Run: pnpm seed:home
  */
 import { createServiceRoleDbClient } from "../lib/db/client";
+import { LEGACY_IMAGES } from "./legacy-images";
 
 async function main() {
   const db = createServiceRoleDbClient();
@@ -47,6 +49,7 @@ async function main() {
       data: {
         background: "navy",
         headline: "Your source for fluid conditioning systems",
+        imageUrl: LEGACY_IMAGES.homeHero,
         subhead:
           "We deliver advanced solutions for sand control, gas separation, and chemical treatment—driving innovation and enhancing well performance across the global energy industry.",
         ctas: [
@@ -68,18 +71,25 @@ async function main() {
             title: "Gas Release System",
             body: "Breaking the curve: improvement of gas separation efficiency for high fluid and high GLR horizontal wells.",
             href: "/products/gas-separation/gas-release-system",
+            imageUrl: LEGACY_IMAGES.homeTiles[0],
           },
           {
             title: "ESP Chem Screen",
             body: "With shut off valve — treat more effectively, with greater precision.",
             href: "/products/pumps/esp-chem-screen",
+            imageUrl: LEGACY_IMAGES.homeTiles[1],
           },
           {
             title: "SRP Sand Lift",
             body: "A sand-control tool for protecting SRP pumps. Eliminates the need for workover operations resulting from sand failures.",
             href: "/products/sand-control/srp-sand-lift",
+            imageUrl: LEGACY_IMAGES.homeTiles[2],
           },
-          { title: "Explore categories", href: "/products" },
+          {
+            title: "Explore categories",
+            href: "/products",
+            imageUrl: LEGACY_IMAGES.homeTiles[3],
+          },
         ],
       },
     },
@@ -119,6 +129,7 @@ async function main() {
       data: {
         background: "navy",
         title: "Proven Quality",
+        imageUrl: LEGACY_IMAGES.facilityShopFloor,
         body: "OSI's proven systems eliminate issues with sand, solids, gas, and chemical treatment—delivering reliable solutions to the industry's hardest wellbore problems.",
         links: [
           { label: "Sand Control", href: "/products/sand-control" },
@@ -135,6 +146,7 @@ async function main() {
         background: "navy",
         title: "See our global locations",
         subtitle: "World-class downhole fluid-conditioning systems.",
+        mapImageUrl: LEGACY_IMAGES.worldMap,
       },
     },
   ];

@@ -1,0 +1,693 @@
+{
+  "_note": "Legacy Wix media catalogue, generated from content/legacy/pages/*.json. URLs are canonical (transform-stripped) originals: https://static.wixstatic.com/media/<id>. Wix serves the full-resolution source at that form; next/image handles resizing, so the browser never downloads the original. Stored as absolute URLs per CLAUDE.md constraint 3 — no re-upload to Supabase Storage. Re-generate by re-running scripts/seed-legacy-images.ts inputs.",
+  "count": 68,
+  "catalogue": [
+    {
+      "id": "1ac9e9_bb076da2937b49dc822b269ef262689f~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_bb076da2937b49dc822b269ef262689f~mv2.jpg",
+      "alt": "ux-indonesia-8mikJ83LmSQ-unsplash.jpg",
+      "file": "ux-indonesia-8mikJ83LmSQ-unsplash.jpg",
+      "group": "stock-photo",
+      "pages": [
+        "careers"
+      ]
+    },
+    {
+      "id": "3e4a29ecd5284fadabe7da520d9970e6.jpg",
+      "url": "https://static.wixstatic.com/media/3e4a29ecd5284fadabe7da520d9970e6.jpg",
+      "alt": "Well Drill",
+      "file": "3e4a29ecd5284fadabe7da520d9970e6.jpg",
+      "group": "certification",
+      "pages": [
+        "certifications"
+      ]
+    },
+    {
+      "id": "1ac9e9_1fde555c695c43d6ac4a85923d375860~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_1fde555c695c43d6ac4a85923d375860~mv2.jpg",
+      "alt": "iso-45001.jpg",
+      "file": "1ac9e9_1fde555c695c43d6ac4a85923d375860~mv2.jpg",
+      "group": "certification",
+      "pages": [
+        "certifications"
+      ]
+    },
+    {
+      "id": "1ac9e9_97f5a053529440e19aa11773f41dd1d3~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_97f5a053529440e19aa11773f41dd1d3~mv2.jpg",
+      "alt": "ISO-9001.jpg",
+      "file": "1ac9e9_97f5a053529440e19aa11773f41dd1d3~mv2.jpg",
+      "group": "certification",
+      "pages": [
+        "certifications"
+      ]
+    },
+    {
+      "id": "1ac9e9_3f8f830c463c461697684b0561cd7220~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_3f8f830c463c461697684b0561cd7220~mv2.png",
+      "alt": "PNG image 2.png",
+      "file": "1ac9e9_3f8f830c463c461697684b0561cd7220~mv2.png",
+      "group": "unclassified",
+      "pages": [
+        "copia-de-fluid-levels",
+        "services-1"
+      ]
+    },
+    {
+      "id": "1ac9e9_2f0373d310194e098b8ef776640f1010~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_2f0373d310194e098b8ef776640f1010~mv2.png",
+      "alt": "ESP Chem Screen - OSI",
+      "file": "ESP%20Chem%20Screen%20(diagram)%20Feb14%202022.png",
+      "group": "product-diagram",
+      "pages": [
+        "esp-chem-screen-osi"
+      ]
+    },
+    {
+      "id": "1ac9e9_c6f875085b4549ec93c7d794f5548283~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_c6f875085b4549ec93c7d794f5548283~mv2.jpg",
+      "alt": "NEil-photo-2024.jpg",
+      "file": "NEil-photo-2024.jpg",
+      "group": "headshot",
+      "pages": [
+        "esp-chem-screen-osi",
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_cd46bdfe72a64aa6867d3011b3e09678~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_cd46bdfe72a64aa6867d3011b3e09678~mv2.jpg",
+      "alt": "Neil-photo-2.3.jpg",
+      "file": "Neil-photo-2_3.jpg",
+      "group": "headshot",
+      "pages": [
+        "esp-chem-screen-osi",
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png",
+      "alt": "Seal-for-web-V1.png",
+      "file": "Seal-for-web-V1.png",
+      "group": "brand",
+      "pages": [
+        "esp-chem-screen-osi",
+        "gasreleasesystem",
+        "srp-sand-lift"
+      ]
+    },
+    {
+      "id": "1ac9e9_8655fe68900b465294b3b03fc861aded~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_8655fe68900b465294b3b03fc861aded~mv2.png",
+      "alt": "ESP Chem Screen - OSI",
+      "file": "ESP%20Chem%20Screen%20V2%20(flow%20path)%20Feb14%202022%20copia.png",
+      "group": "product-flowpath",
+      "pages": [
+        "esp-chem-screen-osi",
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_669be5a52bb94913a2c1a677eba2c823~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_669be5a52bb94913a2c1a677eba2c823~mv2.jpg",
+      "alt": "Diagram GRS Dec1123 v7.jpg",
+      "file": "Diagram%20GRS%20Dec1123%20v7.jpg",
+      "group": "product-diagram",
+      "pages": [
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_9f186460251a477f98fd5ddaab33385b~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_9f186460251a477f98fd5ddaab33385b~mv2.jpg",
+      "alt": "Flowpath Aug0724 web.jpg",
+      "file": "Flowpath%20Aug0724%20web.jpg",
+      "group": "product-flowpath",
+      "pages": [
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_35620e980aaf4c0a8dfb59ba6b078407~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_35620e980aaf4c0a8dfb59ba6b078407~mv2.png",
+      "alt": "2nd page outlet port.png",
+      "file": "2nd%20page%20outlet%20port.png",
+      "group": "unclassified",
+      "pages": [
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_7b3db49caf234e208cf9e96374f4148f~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_7b3db49caf234e208cf9e96374f4148f~mv2.jpg",
+      "alt": "GRS-(OnePage)-Jul0125-table.jpg",
+      "file": "GRS-(OnePage)-Jul0125-table.jpg",
+      "group": "unclassified",
+      "pages": [
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_c89bdca646cc48f7bd495717985a0d1b~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_c89bdca646cc48f7bd495717985a0d1b~mv2.jpg",
+      "alt": "GRS-(OnePage)-Oct3024-FlowPath.jpg",
+      "file": "GRS-(OnePage)-Oct3024-FlowPath.jpg",
+      "group": "product-flowpath",
+      "pages": [
+        "gasreleasesystem"
+      ]
+    },
+    {
+      "id": "1ac9e9_7fd4ea53dff74379926da3008e297906~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_7fd4ea53dff74379926da3008e297906~mv2.jpg",
+      "alt": "03.jpg",
+      "file": "03.jpg",
+      "group": "unclassified",
+      "pages": [
+        "general-8"
+      ]
+    },
+    {
+      "id": "1ac9e9_723c66a1eddd4264a99061fe162b3365~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_723c66a1eddd4264a99061fe162b3365~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_723c66a1eddd4264a99061fe162b3365~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "general-8"
+      ]
+    },
+    {
+      "id": "1ac9e9_530e409b96b144379ab8e8ad7f561dc3~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_530e409b96b144379ab8e8ad7f561dc3~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_530e409b96b144379ab8e8ad7f561dc3~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "general-8"
+      ]
+    },
+    {
+      "id": "1ac9e9_43377e1733f54578bd6b404e616ce906~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_43377e1733f54578bd6b404e616ce906~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_43377e1733f54578bd6b404e616ce906~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "general-8"
+      ]
+    },
+    {
+      "id": "1ac9e9_76bf081ccd864cf2a3e191d1b32dd230~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_76bf081ccd864cf2a3e191d1b32dd230~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_76bf081ccd864cf2a3e191d1b32dd230~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "general-8"
+      ]
+    },
+    {
+      "id": "1ac9e9_b0aaac091f864a6385a95b8e3c72e3fe~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_b0aaac091f864a6385a95b8e3c72e3fe~mv2.png",
+      "alt": "761-[Convertido].png",
+      "file": "761-%5BConvertido%5D.png",
+      "group": "unclassified",
+      "pages": [
+        "hiring"
+      ]
+    },
+    {
+      "id": "1ac9e9_f50ca309b071438d93fa3c37869c83baf000.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_f50ca309b071438d93fa3c37869c83baf000.jpg",
+      "alt": "",
+      "file": "1ac9e9_f50ca309b071438d93fa3c37869c83baf000.jpg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_756de97cac154c87a58a603124610ed7~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_756de97cac154c87a58a603124610ed7~mv2.jpg",
+      "alt": "GRS Flowpath Jun0524.jpg",
+      "file": "GRS%20Flowpath%20Jun0524.jpg",
+      "group": "product-flowpath",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_648a7afe3c4047d282ca383a6e141407~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_648a7afe3c4047d282ca383a6e141407~mv2.png",
+      "alt": "SRP-flowPath.png",
+      "file": "SRP-flowPath.png",
+      "group": "product-flowpath",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "11062b_b02d1b7883d5447fb2453acb93a5102bf000.jpg",
+      "url": "https://static.wixstatic.com/media/11062b_b02d1b7883d5447fb2453acb93a5102bf000.jpg",
+      "alt": "",
+      "file": "11062b_b02d1b7883d5447fb2453acb93a5102bf000.jpg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_380ff5223366440d8e2f2503a00442d4~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_380ff5223366440d8e2f2503a00442d4~mv2.jpg",
+      "alt": "Maps (Dec10 25) text.jpg",
+      "file": "Maps%20(Dec10%2025)%20text.jpg",
+      "group": "world-map",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_40095ee183db4ad0b94815d65e596dec~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_40095ee183db4ad0b94815d65e596dec~mv2.jpeg",
+      "alt": "",
+      "file": "1ac9e9_40095ee183db4ad0b94815d65e596dec~mv2.jpeg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_9b6ca000e95e45e5a5577e555ef92b1e~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_9b6ca000e95e45e5a5577e555ef92b1e~mv2.jpeg",
+      "alt": "",
+      "file": "1ac9e9_9b6ca000e95e45e5a5577e555ef92b1e~mv2.jpeg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_07606a34c1af42af986e99fbd9f4464d~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_07606a34c1af42af986e99fbd9f4464d~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_07606a34c1af42af986e99fbd9f4464d~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_5b1bf0e2c5294bb4a539dc47e9657431~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_5b1bf0e2c5294bb4a539dc47e9657431~mv2.jpeg",
+      "alt": "",
+      "file": "1ac9e9_5b1bf0e2c5294bb4a539dc47e9657431~mv2.jpeg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_e8f52e10c7f94bc4806c6169bb6f7632~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_e8f52e10c7f94bc4806c6169bb6f7632~mv2.jpeg",
+      "alt": "",
+      "file": "1ac9e9_e8f52e10c7f94bc4806c6169bb6f7632~mv2.jpeg",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_cce82f3408e94f20b5f11f9554e0e558~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_cce82f3408e94f20b5f11f9554e0e558~mv2.png",
+      "alt": "",
+      "file": "1ac9e9_cce82f3408e94f20b5f11f9554e0e558~mv2.png",
+      "group": "unclassified",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_9da9bf13269f4ec08f789d802806e3cd~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_9da9bf13269f4ec08f789d802806e3cd~mv2.png",
+      "alt": "OSI-RPD-white.png",
+      "file": "OSI-RPD-white.png",
+      "group": "brand",
+      "pages": [
+        "home"
+      ]
+    },
+    {
+      "id": "1ac9e9_6d30f0d4a2bf450583e7eaa64ce1f407~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_6d30f0d4a2bf450583e7eaa64ce1f407~mv2.jpeg",
+      "alt": "WhatsApp Image 2020-05-05 at 9.19.46 AM.",
+      "file": "WhatsApp%20Image%202020-05-05%20at%209_19_46%20AM_.jpeg",
+      "group": "facility-photo",
+      "pages": [
+        "machine-shop"
+      ]
+    },
+    {
+      "id": "1ac9e9_4d2dc0bc573f4b6c931dbcce8beadc5d~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_4d2dc0bc573f4b6c931dbcce8beadc5d~mv2.jpg",
+      "alt": "laser-cut-metal-4373878_1920.jpg",
+      "file": "laser-cut-metal-4373878_1920.jpg",
+      "group": "stock-photo",
+      "pages": [
+        "machine-shop"
+      ]
+    },
+    {
+      "id": "1ac9e9_0f68c2e20492409a99c9f0fb14590fa1~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_0f68c2e20492409a99c9f0fb14590fa1~mv2.jpeg",
+      "alt": "08f9484a-ef65-4fe4-8898-b216bf620309.jpe",
+      "file": "08f9484a-ef65-4fe4-8898-b216bf620309.jpeg",
+      "group": "facility-photo",
+      "pages": [
+        "machine-shop"
+      ]
+    },
+    {
+      "id": "1ac9e9_2584e4035ef44ee98ca63232cc5c58cf~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_2584e4035ef44ee98ca63232cc5c58cf~mv2.jpeg",
+      "alt": "WhatsApp Image 2020-05-05 at 9.19.47 AM",
+      "file": "WhatsApp%20Image%202020-05-05%20at%209_19_47%20AM%20.jpeg",
+      "group": "facility-photo",
+      "pages": [
+        "machine-shop",
+        "services-1"
+      ]
+    },
+    {
+      "id": "1ac9e9_7e85f9f8c3264720850a805a3772db31~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_7e85f9f8c3264720850a805a3772db31~mv2.jpg",
+      "alt": "Img.jpg",
+      "file": "Img.jpg",
+      "group": "facility-photo",
+      "pages": [
+        "machine-shop"
+      ]
+    },
+    {
+      "id": "1ac9e9_b67b503462e0438699cfefdd32a3e557~mv2.jpeg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_b67b503462e0438699cfefdd32a3e557~mv2.jpeg",
+      "alt": "Robot.jpeg",
+      "file": "Robot.jpeg",
+      "group": "facility-photo",
+      "pages": [
+        "machine-shop"
+      ]
+    },
+    {
+      "id": "1ac9e9_617f7421ba51470f900b8462d5aa74aa~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_617f7421ba51470f900b8462d5aa74aa~mv2.png",
+      "alt": "V2.png",
+      "file": "V2.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_2f4b0dc17b6141c395841d330f69fc6d~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_2f4b0dc17b6141c395841d330f69fc6d~mv2.png",
+      "alt": "Mesa de trabajo 1 copia 2.png",
+      "file": "Mesa%20de%20trabajo%201%20copia%202.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_c3b813c9beeb4716acef0785eabb9a18~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_c3b813c9beeb4716acef0785eabb9a18~mv2.png",
+      "alt": "Impel Energy LLC.png",
+      "file": "Impel%20Energy%20LLC.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_2d52998184b74996b61c0fb678dc0898~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_2d52998184b74996b61c0fb678dc0898~mv2.jpg",
+      "alt": "MOIT.jpg",
+      "file": "MOIT.jpg",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_037c659643aa46a9bba1304e451c22a4~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_037c659643aa46a9bba1304e451c22a4~mv2.png",
+      "alt": "Western-Oilfield-Specialties-Vector-logo-reversed-final-2048x697.png",
+      "file": "Western-Oilfield-Specialties-Vector-logo-reversed-final-2048x697.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_b83fd16c63014566b5d2c59e9b6eb6b7~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_b83fd16c63014566b5d2c59e9b6eb6b7~mv2.png",
+      "alt": "Power flow v1.png",
+      "file": "Power%20flow%20v1.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_5349705fcdbf41fe9642987eb72ee2ab~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_5349705fcdbf41fe9642987eb72ee2ab~mv2.jpg",
+      "alt": "Duralitte-Logo.jpg",
+      "file": "Duralitte-Logo.jpg",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_8ea6e74ec4794a0895ca529d10bd7043~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_8ea6e74ec4794a0895ca529d10bd7043~mv2.jpg",
+      "alt": "Lufkin ok.jpg",
+      "file": "Lufkin%20ok.jpg",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_9a02c4bcb7e0413f882b686bfb83920a~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_9a02c4bcb7e0413f882b686bfb83920a~mv2.png",
+      "alt": "LATAM ENERGY SOLUTIONS.png",
+      "file": "LATAM%20ENERGY%20SOLUTIONS.png",
+      "group": "distributor-logo",
+      "pages": [
+        "osi-directory"
+      ]
+    },
+    {
+      "id": "1ac9e9_55ef093184534644b1424875a57aa4d0~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_55ef093184534644b1424875a57aa4d0~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_55ef093184534644b1424875a57aa4d0~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "services-1"
+      ]
+    },
+    {
+      "id": "1ac9e9_93c5735dc0b14e63b5f8d0456307f7db~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_93c5735dc0b14e63b5f8d0456307f7db~mv2.jpg",
+      "alt": "",
+      "file": "1ac9e9_93c5735dc0b14e63b5f8d0456307f7db~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "services-1"
+      ]
+    },
+    {
+      "id": "1ac9e9_8a15a339f27f4254a778b553addf1415~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_8a15a339f27f4254a778b553addf1415~mv2.png",
+      "alt": "Cloud banner .png",
+      "file": "Cloud%20banner%20.png",
+      "group": "unclassified",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_f90839df5bbe4b4c96f6fb68dce5c31b~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_f90839df5bbe4b4c96f6fb68dce5c31b~mv2.jpg",
+      "alt": "09.jpg",
+      "file": "09.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_345a3f23f4034be09e0cdbc53f3de664~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_345a3f23f4034be09e0cdbc53f3de664~mv2.jpg",
+      "alt": "11.jpg",
+      "file": "11.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_b741cdf868354d3da870a227c4039a50~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_b741cdf868354d3da870a227c4039a50~mv2.jpg",
+      "alt": "Logo gran tierra.jpg",
+      "file": "Logo%20gran%20tierra.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_346e23e9fca84432889094fbc4f92ccd~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_346e23e9fca84432889094fbc4f92ccd~mv2.jpg",
+      "alt": "Chevron.jpg",
+      "file": "Chevron.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_ca353ed598ba47558602b5be81c457ee~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_ca353ed598ba47558602b5be81c457ee~mv2.png",
+      "alt": "LARIO OIL & GAS COMPANY.png",
+      "file": "LARIO%20OIL%20%26%20GAS%20COMPANY.png",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_8918f63a8df14e999ae333325d85f0c0~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_8918f63a8df14e999ae333325d85f0c0~mv2.jpg",
+      "alt": "18.jpg",
+      "file": "18.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_ac60446af45d48c28415c44dcea675c8~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_ac60446af45d48c28415c44dcea675c8~mv2.jpg",
+      "alt": "17.jpg",
+      "file": "17.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_7f8a614884f549e18e5dae1686b0dfd6~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_7f8a614884f549e18e5dae1686b0dfd6~mv2.jpg",
+      "alt": "12.jpg",
+      "file": "12.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_1438324b5cf245d4a9bba70a63d7458e~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_1438324b5cf245d4a9bba70a63d7458e~mv2.jpg",
+      "alt": "16.jpg",
+      "file": "16.jpg",
+      "group": "customer-logo",
+      "pages": [
+        "services-4"
+      ]
+    },
+    {
+      "id": "1ac9e9_33dae9e7564940889765ff42eccf8c3b~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_33dae9e7564940889765ff42eccf8c3b~mv2.png",
+      "alt": "Pol SST",
+      "file": "1ac9e9_33dae9e7564940889765ff42eccf8c3b~mv2.png",
+      "group": "unclassified",
+      "pages": [
+        "sg-sst-policies"
+      ]
+    },
+    {
+      "id": "1ac9e9_749a0888ea87471dabe8217de770208e~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_749a0888ea87471dabe8217de770208e~mv2.png",
+      "alt": "Politicies-varios.png",
+      "file": "Politicies-varios.png",
+      "group": "policy-graphic",
+      "pages": [
+        "sg-sst-policies"
+      ]
+    },
+    {
+      "id": "1ac9e9_7669b47c02f74b70969cec0c6c014382~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_7669b47c02f74b70969cec0c6c014382~mv2.png",
+      "alt": "Quejas-acoso2.png",
+      "file": "Quejas-acoso2.png",
+      "group": "policy-graphic",
+      "pages": [
+        "sg-sst-policies"
+      ]
+    },
+    {
+      "id": "1ac9e9_112bb04b90694f369b4016d9f00e4a40~mv2.png",
+      "url": "https://static.wixstatic.com/media/1ac9e9_112bb04b90694f369b4016d9f00e4a40~mv2.png",
+      "alt": "Politica acoso.png",
+      "file": "Politica%20acoso.png",
+      "group": "policy-graphic",
+      "pages": [
+        "sg-sst-policies"
+      ]
+    },
+    {
+      "id": "1ac9e9_2b593b69939c4f15b12413fc809fd3e2~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_2b593b69939c4f15b12413fc809fd3e2~mv2.jpg",
+      "alt": "team.jpg",
+      "file": "1ac9e9_2b593b69939c4f15b12413fc809fd3e2~mv2.jpg",
+      "group": "unclassified",
+      "pages": [
+        "sg-sst-policies"
+      ]
+    },
+    {
+      "id": "1ac9e9_dc1744e27f5841fdbd2f450622f4fde5~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_dc1744e27f5841fdbd2f450622f4fde5~mv2.jpg",
+      "alt": "SRP-SL-Diagram-Aug05-25.jpg",
+      "file": "SRP-SL-Diagram-Aug05-25.jpg",
+      "group": "product-diagram",
+      "pages": [
+        "srp-sand-lift"
+      ]
+    },
+    {
+      "id": "1ac9e9_8fef22a258c64ae1ba169f0d80977069~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_8fef22a258c64ae1ba169f0d80977069~mv2.jpg",
+      "alt": "01 Scott.jpg",
+      "file": "01%20Scott.jpg",
+      "group": "headshot",
+      "pages": [
+        "srp-sand-lift"
+      ]
+    },
+    {
+      "id": "1ac9e9_b7ddee1e2d704ea0ba7c230037125fab~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/1ac9e9_b7ddee1e2d704ea0ba7c230037125fab~mv2.jpg",
+      "alt": "02 Scott.jpg",
+      "file": "02%20Scott.jpg",
+      "group": "headshot",
+      "pages": [
+        "srp-sand-lift"
+      ]
+    }
+  ]
+}
