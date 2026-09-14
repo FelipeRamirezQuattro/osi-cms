@@ -18,7 +18,12 @@ export const PRODUCT_FIELDS: FieldSpec[] = [
   { key: "badge", label: "Badge", type: "select", options: ["none", "new", "featured"] },
   { key: "summary", label: "Summary", type: "textarea", optional: true },
   { key: "body", label: "Body", type: "richtext", optional: true },
-  { key: "hero_image_url", label: "Hero image", type: "image", optional: true },
+  {
+    key: "hero_image_url",
+    label: "Social share image (OG/SEO only — not shown on the page; the diagram image below is the on-page hero visual)",
+    type: "image",
+    optional: true,
+  },
   { key: "diagram_image_url", label: "Diagram image", type: "image", optional: true },
   { key: "video_url", label: "Video URL", type: "text", optional: true },
   { key: "brochure_pdf_url", label: "Brochure PDF URL", type: "text", optional: true },

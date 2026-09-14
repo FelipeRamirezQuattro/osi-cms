@@ -56,14 +56,16 @@ export const productSaveInputSchema = z
     body: z.preprocess((v) => (v === undefined ? null : v), tiptapDocSchema.nullable().default(null)),
     hero_image_url: optionalNullableString(),
     diagram_image_url: optionalNullableString(),
-    // Not yet rendered anywhere on the public site (see CLAUDE.md's
-    // content gaps — no legacy video/3D-model URLs exist), but still
-    // stored fields an editor can type into directly, so still worth the
-    // same safety net as brochure_pdf_url below.
+    // Rendered via VideoEmbedRender on the product detail page (see
+    // CLAUDE.md's content gaps — no legacy video URLs exist yet, so this
+    // renders nothing on every real product today, but the plumbing is
+    // real).
     video_url: optionalSafeHrefSchema({ label: "Video URL" }),
     // Rendered as a real `<a href>` on the product detail page (via
     // HowItWorksRender's pdfUrl, app/(site)/products/[category]/[slug]/page.tsx).
     brochure_pdf_url: optionalSafeHrefSchema({ label: "Brochure PDF URL" }),
+    // Rendered as a real `<a href>` on the product detail page (via
+    // HowItWorksRender's model3dUrl) — same pattern as brochure_pdf_url.
     model_3d_url: optionalSafeHrefSchema({ label: "3D model URL" }),
     status: z.enum(["draft", "published"]),
     seo_title: optionalNullableString(),

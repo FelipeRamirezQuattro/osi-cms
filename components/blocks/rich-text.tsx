@@ -78,9 +78,15 @@ const schema = blockCommonSchema.extend({
   content: tiptapDocSchema,
 });
 
-type Data = z.infer<typeof schema>;
+export type RichTextData = z.infer<typeof schema>;
+type Data = RichTextData;
 
-function Render({ data }: { data: Data }) {
+// Exported (not just used via richTextBlock.Render) so the product detail
+// page (app/(site)/products/[category]/[slug]/page.tsx) can render
+// products.body directly — same pattern as ProductHeroRender/
+// BenefitsCardsRender/etc. there (see CLAUDE.md's "Product detail pages
+// don't use page_blocks").
+export function RichTextRender({ data }: { data: Data }) {
   const doc = data.content as TiptapNode | undefined;
   return (
     <Section
@@ -104,5 +110,5 @@ export const richTextBlock = defineBlock({
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", content: { type: "doc", content: [] } },
-  Render,
+  Render: RichTextRender,
 });

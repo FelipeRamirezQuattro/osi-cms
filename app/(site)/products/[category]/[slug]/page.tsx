@@ -9,7 +9,23 @@ import { BenefitsCardsRender } from "@/components/blocks/benefits-cards";
 import { StagesCarouselRender } from "@/components/blocks/stages-carousel";
 import { HowItWorksRender } from "@/components/blocks/how-it-works";
 import { SpecTableRender } from "@/components/blocks/spec-table";
+import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text";
+import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
 import { RecordProductView } from "@/components/blocks/record-product-view";
+
+// products.body is a Tiptap jsonb doc, same shape rich_text blocks store —
+// an empty doc (no content array, or an empty one) means "never
+// written", not "an intentional blank section", so it's treated the same
+// as null.
+function hasRichTextContent(value: unknown): value is { type: "doc"; content: unknown[] } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "content" in value &&
+    Array.isArray((value as { content: unknown }).content) &&
+    (value as { content: unknown[] }).content.length > 0
+  );
+}
 
 // Product detail renders directly from products + its child tables
 // rather than through page_blocks/BlockRenderer — its structure is
@@ -97,6 +113,16 @@ export default async function ProductDetailPage({
           }}
         />
       )}
+      <VideoEmbedRender
+        data={{
+          background: "cream",
+          spacingTop: "md",
+          spacingBottom: "md",
+          title: undefined,
+          videoUrl: product.video_url ?? null,
+          posterImageUrl: product.diagram_image_url ?? undefined,
+        }}
+      />
       <HowItWorksRender
         data={{
           background: "navy",
@@ -105,9 +131,19 @@ export default async function ProductDetailPage({
           title: "How does it work?",
           body: product.summary ?? undefined,
           pdfUrl: product.brochure_pdf_url ?? null,
-          show3d: true,
+          model3dUrl: product.model_3d_url ?? null,
         }}
       />
+      {hasRichTextContent(product.body) && (
+        <RichTextRender
+          data={{
+            background: "cream",
+            spacingTop: "md",
+            spacingBottom: "md",
+            content: product.body as RichTextData["content"],
+          }}
+        />
+      )}
       {product.product_specs.length > 0 && (
         <SpecTableRender
           data={{

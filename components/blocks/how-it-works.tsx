@@ -11,7 +11,12 @@ export const howItWorksSchema = blockCommonSchema.extend({
   // Rendered as a real `<a href>` ("Download PDF") below, not just a
   // stored reference — same safety net as any other clickable link.
   pdfUrl: optionalSafeHrefSchema({ label: "PDF URL" }),
-  show3d: z.boolean().default(true),
+  // Mirrors pdfUrl exactly: a real "See this tool in 3D" link when set,
+  // a disabled placeholder when not. Replaces the old `show3d: boolean`
+  // field, which the product detail page always hardcoded to `true`
+  // regardless of whether a real model existed — see CLAUDE.md's Task 7
+  // notes.
+  model3dUrl: optionalSafeHrefSchema({ label: "3D model URL" }),
 });
 
 export type HowItWorksData = z.infer<typeof howItWorksSchema>;
@@ -52,14 +57,21 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
               Download PDF — pending client file
             </span>
           )}
-          {data.show3d && (
-            // Out of scope per master prompt §3 — placeholder link only.
+          {data.model3dUrl ? (
             <a
-              href="#"
+              href={data.model3dUrl}
               className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase"
             >
               See this tool in 3D
             </a>
+          ) : (
+            // Same WCAG 1.4.3 reasoning as the PDF fallback above.
+            <span
+              aria-disabled
+              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase opacity-60"
+            >
+              See this tool in 3D — pending client file
+            </span>
           )}
         </div>
       </div>
@@ -71,7 +83,7 @@ const adminFields: FieldSpec[] = [
   { key: "title", label: "Title", type: "text" },
   { key: "body", label: "Body", type: "textarea", optional: true },
   { key: "pdfUrl", label: "PDF URL", type: "text", optional: true },
-  { key: "show3d", label: "Show “See this tool in 3D”", type: "boolean" },
+  { key: "model3dUrl", label: "3D model URL", type: "text", optional: true },
 ];
 
 export const howItWorksBlock = defineBlock({
@@ -80,6 +92,13 @@ export const howItWorksBlock = defineBlock({
   category: "commerce",
   schema: howItWorksSchema,
   adminFields,
-  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "How does it work?", pdfUrl: null, show3d: true },
+  defaults: {
+    background: "navy",
+    spacingTop: "md",
+    spacingBottom: "md",
+    title: "How does it work?",
+    pdfUrl: null,
+    model3dUrl: null,
+  },
   Render: HowItWorksRender,
 });
