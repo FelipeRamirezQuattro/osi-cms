@@ -7,8 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5";
   };
@@ -1151,17 +1149,10 @@ export type Database = {
     };
     Functions: {
       delete_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
-      // Task 5 (supabase/migrations/0022_product_and_reorder_atomic.sql).
-      // Hand-added rather than regenerated via the Supabase MCP
-      // generate_typescript_types tool: that migration hasn't been
-      // applied to the live project yet (implementers don't apply
-      // migrations — see CLAUDE.md/the Task 5 brief), so a real
-      // regeneration right now would just omit these functions entirely.
-      // Shaped to match the generator's existing conventions above as
-      // closely as possible; the controller should re-run
-      // generate_typescript_types after applying 0022 and diff this
-      // block against the real output.
-      delete_product_atomic: { Args: { p_product_id: string }; Returns: undefined };
+      delete_product_atomic: {
+        Args: { p_product_id: string };
+        Returns: undefined;
+      };
       duplicate_page_atomic: {
         Args: { p_new_slug: string; p_page_id: string };
         Returns: string;
@@ -1197,10 +1188,6 @@ export type Database = {
           p_benefits: Json;
           p_industry_ids: Json;
           p_meta: Json;
-          // `default null` in the SQL (required for parameter ordering —
-          // see the migration's comment) makes this optional in the
-          // generated Args, same convention as record_audit's
-          // p_entity_id above.
           p_product_id?: string;
           p_specs: Json;
           p_stages: Json;
