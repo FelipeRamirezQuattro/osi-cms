@@ -1,8 +1,10 @@
-// Generated via the Supabase MCP `generate_typescript_types` tool from
-// the migrations in supabase/migrations/. Do not hand-edit — regenerate
-// after any schema change and commit the diff.
-
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -514,38 +516,6 @@ export type Database = {
           },
         ];
       };
-      page_revisions: {
-        Row: {
-          created_at: string;
-          created_by: string | null;
-          id: string;
-          page_id: string;
-          snapshot: Json;
-        };
-        Insert: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: string;
-          page_id: string;
-          snapshot: Json;
-        };
-        Update: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: string;
-          page_id?: string;
-          snapshot?: Json;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "page_revisions_page_id_fkey";
-            columns: ["page_id"];
-            isOneToOne: false;
-            referencedRelation: "pages";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       page_publications: {
         Row: {
           locale: string;
@@ -579,6 +549,38 @@ export type Database = {
             foreignKeyName: "page_publications_page_id_fkey";
             columns: ["page_id"];
             isOneToOne: true;
+            referencedRelation: "pages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      page_revisions: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          page_id: string;
+          snapshot: Json;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          page_id: string;
+          snapshot: Json;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          page_id?: string;
+          snapshot?: Json;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "page_revisions_page_id_fkey";
+            columns: ["page_id"];
+            isOneToOne: false;
             referencedRelation: "pages";
             referencedColumns: ["id"];
           },
@@ -1149,7 +1151,10 @@ export type Database = {
     };
     Functions: {
       delete_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
-      duplicate_page_atomic: { Args: { p_new_slug: string; p_page_id: string }; Returns: string };
+      duplicate_page_atomic: {
+        Args: { p_new_slug: string; p_page_id: string };
+        Returns: string;
+      };
       has_capability: { Args: { capability: string }; Returns: boolean };
       is_admin: { Args: never; Returns: boolean };
       is_staff: { Args: never; Returns: boolean };
@@ -1158,14 +1163,27 @@ export type Database = {
         Returns: undefined;
       };
       record_audit: {
-        Args: { p_action: string; p_diff?: Json; p_entity: string; p_entity_id?: string };
+        Args: {
+          p_action: string;
+          p_diff?: Json;
+          p_entity: string;
+          p_entity_id?: string;
+        };
         Returns: undefined;
       };
       save_page_draft_atomic: {
-        Args: { p_blocks: Json; p_expected_version: number; p_meta: Json; p_page_id: string };
+        Args: {
+          p_blocks: Json;
+          p_expected_version: number;
+          p_meta: Json;
+          p_page_id: string;
+        };
         Returns: number;
       };
-      unpublish_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
+      unpublish_page_atomic: {
+        Args: { p_page_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;
@@ -1178,7 +1196,10 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -1199,8 +1220,10 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -1273,7 +1296,8 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    keyof DefaultSchema["CompositeTypes"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
