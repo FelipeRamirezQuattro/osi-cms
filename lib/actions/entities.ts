@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireCapability } from "@/lib/auth";
+import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import { ENTITY_CONFIGS, type EntityKey } from "@/lib/admin/entity-config";
 import {
   deleteEntityRow,
@@ -68,6 +68,20 @@ export async function saveEntityAction(
   await requireCapability("edit_drafts");
   const config = ENTITY_CONFIGS[entity];
   const payload = coerceValues(entity, values);
+
+  // Same reasoning as saveProductAction: edit_drafts covers ordinary
+  // create/edit, but flipping `status` to/from "published" needs the
+  // publish capability too. Only entities with a status field at all
+  // (config.hasStatus) can even attempt that transition. Read/guard
+  // before the try/catch below — a redirect() thrown inside that catch
+  // would be swallowed instead of actually redirecting.
+  if (config.hasStatus) {
+    const current = id ? await getEntityRow(config.table, id) : null;
+    await requirePublishCapabilityForStatusChange(
+      (current?.status as string | null | undefined) ?? null,
+      payload.status as string | null | undefined,
+    );
+  }
 
   try {
     if (id) {

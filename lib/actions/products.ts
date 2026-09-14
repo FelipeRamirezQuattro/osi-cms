@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireCapability } from "@/lib/auth";
+import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import {
   createProductRow,
   deleteProductRow,
@@ -11,7 +11,7 @@ import {
   updateProductRow,
   type ProductAdminDetail,
 } from "@/lib/data/products";
-import { listEntityRows, listRelationOptions, moveEntityRow } from "@/lib/data/admin-entities";
+import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow } from "@/lib/data/admin-entities";
 import { PRODUCT_RELATIONS } from "@/lib/admin/product-fields";
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
@@ -56,6 +56,18 @@ export async function saveProductAction(id: string | null, values: any): Promise
     badge: rest.badge === "none" ? null : rest.badge,
     locale: "en",
   };
+
+  // edit_drafts alone covers creating/editing a product's fields;
+  // flipping its status to/from "published" needs the publish
+  // capability too (an editor can still edit a live product's other
+  // fields — see requirePublishCapabilityForStatusChange). Read the
+  // pre-save status via the same generic getEntityRow the entity admin
+  // uses (products is a plain table by that measure too), and check
+  // this — and let it redirect — before the try/catch below, since a
+  // redirect() thrown inside that catch would be swallowed instead of
+  // actually redirecting.
+  const currentStatus = id ? ((await getEntityRow("products", id))?.status as string | null | undefined) : null;
+  await requirePublishCapabilityForStatusChange(currentStatus, meta.status as string | null | undefined);
 
   try {
     let productId = id;

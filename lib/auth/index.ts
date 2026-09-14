@@ -146,3 +146,29 @@ export async function requireCapability(capability: Capability): Promise<AdminSe
   if (!hasCapability(session.role, capability)) redirect("/admin?error=not-authorized");
   return session;
 }
+
+/**
+ * Shared by saveProductAction and saveEntityAction — the two admin
+ * "save this row's fields" actions that also expose an editable
+ * `status` (draft/published) field alongside ordinary content. `edit_
+ * drafts` alone lets an editor create/edit a draft row, or edit fields
+ * on an already-published row without touching its status — but an
+ * editor must not be the one to flip a row into or out of `published`,
+ * per the plan's "editor can create and edit content but not publish
+ * it" constraint. Call this with the row's status *before* the save and
+ * the status the incoming payload would set; it's a no-op unless that's
+ * actually a transition to or from "published", in which case it
+ * requires the `publish` capability on top of `edit_drafts`.
+ *
+ * Must be called outside any try/catch that would swallow redirect()'s
+ * throw (same reasoning as every other requireCapability call in this
+ * file) — see saveProductAction/saveEntityAction for the call site.
+ */
+export async function requirePublishCapabilityForStatusChange(
+  currentStatus: string | null | undefined,
+  nextStatus: string | null | undefined,
+): Promise<void> {
+  if (nextStatus === currentStatus) return;
+  if (nextStatus !== "published" && currentStatus !== "published") return;
+  await requireCapability("publish");
+}
