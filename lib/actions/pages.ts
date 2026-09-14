@@ -78,18 +78,29 @@ export async function createPageAction(input: PageMeta): Promise<{ id: string } 
   try {
     const page = await createPage(parsed.data);
 
+    // Best-effort, in its own try/catch: the page row above already
+    // exists at this point, so a failure seeding starter blocks (a
+    // version conflict, an RLS hiccup, whatever) must never surface as
+    // this function's page-*creation* error — the outer catch's
+    // "slug already in use" message would be actively wrong (the page
+    // was created fine; retrying would then hit a real unique-violation
+    // on the slug that already exists) and would hide a page the editor
+    // actually needs to go find under /admin/pages. Blocks can always be
+    // added manually if this silently no-ops.
     const starterTypes = STARTER_BLOCK_TYPES[parsed.data.template] ?? [];
     if (starterTypes.length > 0) {
-      const paletteByType = Object.fromEntries(getBlockPalette().map((entry) => [entry.type, entry]));
-      const blocks: BlockInput[] = starterTypes
-        .map((type) => paletteByType[type])
-        .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-        .map((entry) => ({ type: entry.type, is_visible: true, data: entry.defaults as Record<string, unknown> }));
-      // Best-effort: the page itself was already created above; a failure
-      // seeding starter blocks shouldn't fail page creation outright, so
-      // this doesn't wrap the whole try/catch's error handling around it.
-      if (blocks.length > 0) {
-        await savePageDraft(page.id, parsed.data, blocks, page.draft_version);
+      try {
+        const paletteByType = Object.fromEntries(getBlockPalette().map((entry) => [entry.type, entry]));
+        const blocks: BlockInput[] = starterTypes
+          .map((type) => paletteByType[type])
+          .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+          .map((entry) => ({ type: entry.type, is_visible: true, data: entry.defaults as Record<string, unknown> }));
+        if (blocks.length > 0) {
+          await savePageDraft(page.id, parsed.data, blocks, page.draft_version);
+        }
+      } catch {
+        // Page already exists; starter blocks just weren't seeded. Not
+        // reported to the caller as an error — see comment above.
       }
     }
 

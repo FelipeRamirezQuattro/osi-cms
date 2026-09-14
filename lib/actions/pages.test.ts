@@ -354,4 +354,25 @@ describe("createPageAction seeds starter blocks from the chosen template (Task 7
     const blocks = mockSavePageDraft.mock.calls[0][2];
     expect(blocks.map((b: { type: string }) => b.type)).toEqual(["contact_form"]);
   });
+
+  it("still returns the created page's id when seeding starter blocks fails (page already exists — not a creation failure)", async () => {
+    // Regression: seeding used to sit inside the same try/catch as
+    // createPage, so a savePageDraft failure here surfaced as this
+    // function's generic "slug already in use" creation error — wrong,
+    // since the page row was already committed above.
+    mockSavePageDraft.mockRejectedValue(new Error("version conflict"));
+
+    const result = await createPageAction({
+      title: "Landing",
+      slug: "landing-page",
+      locale: "en",
+      template: "landing",
+      seo_title: null,
+      seo_description: null,
+      og_image_url: null,
+      noindex: false,
+    });
+
+    expect(result).toEqual({ id: "page-1" });
+  });
 });

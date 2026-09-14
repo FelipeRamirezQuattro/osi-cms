@@ -111,6 +111,33 @@ describe("Product detail page — related products (item #6)", () => {
     const html = await renderPage();
     expect(html).not.toContain("Related products");
   });
+
+  it("renders every curated related product, not just ones the visitor already viewed", async () => {
+    // Regression: an earlier version routed this section through
+    // RecommendationsClient (the "based on your browsing history" block's
+    // component), which re-filters its fallback list down to only
+    // recently-viewed items whenever the visitor has viewed ANY of
+    // them — silently dropping the rest of the admin's curated list.
+    // This is the admin's curated product_related list, not an
+    // algorithmic recommendation, so it must render in full regardless
+    // of what's in "osi:viewed".
+    localStorage.setItem("osi:viewed", JSON.stringify(["esp-chem-screen"]));
+
+    mockGetProductBySlug.mockResolvedValue(product());
+    const related: RelatedProduct[] = [
+      { slug: "esp-chem-screen", name: "ESP Chem Screen", summary: "s1", categorySlug: "pumps" },
+      { slug: "sand-lift-system", name: "Sand Lift System", summary: "s2", categorySlug: "srp" },
+      { slug: "gas-release-system", name: "Gas Release System", summary: "s3", categorySlug: "gas-separation" },
+    ];
+    mockListRelatedProducts.mockResolvedValue(related);
+
+    const html = await renderPage();
+    expect(html).toContain("ESP Chem Screen");
+    expect(html).toContain("Sand Lift System");
+    expect(html).toContain("Gas Release System");
+
+    localStorage.removeItem("osi:viewed");
+  });
 });
 
 describe("Product detail page — resources (item #7)", () => {

@@ -13,8 +13,9 @@ import { HowItWorksRender } from "@/components/blocks/how-it-works";
 import { SpecTableRender } from "@/components/blocks/spec-table";
 import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text";
 import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
-import { RecommendationsClient } from "@/components/blocks/recommendations-client";
+import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { RecordProductView } from "@/components/blocks/record-product-view";
+import { productHref } from "@/lib/routes";
 
 // products.body is a Tiptap jsonb doc, same shape rich_text blocks store —
 // an empty doc (no content array, or an empty one) means "never
@@ -171,14 +172,25 @@ export default async function ProductDetailPage({
         <Section background="navy" spacingTop="md" spacingBottom="md">
           <h2 className="font-display text-section tracking-tightest-display uppercase">Related products</h2>
           <div className="mt-8">
-            <RecommendationsClient
-              fallback={relatedProducts.map((p) => ({
-                slug: p.slug,
-                name: p.name,
-                summary: p.summary,
-                categorySlug: p.categorySlug,
+            {/*
+              LabelPlateGrid directly, not RecommendationsClient: this is
+              the admin's curated product_related list, not the
+              algorithmic "based on your browsing history" recommendations
+              block — RecommendationsClient re-filters to recently-viewed
+              items whenever the visitor has viewed any of them, which
+              would silently drop curated entries the visitor hasn't
+              viewed yet (and swap post-hydration). LabelPlateGrid is
+              itself a "use client" component (its own "one open per
+              grid" state), so rendering it directly from this Server
+              Component is the normal RSC pattern, no extra client
+              wrapper needed.
+            */}
+            <LabelPlateGrid
+              items={relatedProducts.map((p) => ({
+                title: p.name,
+                body: p.summary ?? undefined,
+                href: p.categorySlug ? productHref(p.categorySlug, p.slug) : "/products",
               }))}
-              limit={relatedProducts.length}
             />
           </div>
         </Section>

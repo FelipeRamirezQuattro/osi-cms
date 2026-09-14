@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { AnnouncementBar, normalizeAnnouncementBar } from "@/components/layout/announcement-bar";
+import { normalizeAnnouncementBar } from "@/components/layout/announcement-bar";
+import { AnnouncementBar } from "@/components/layout/announcement-bar-client";
 import { getSiteSettings } from "@/lib/data/settings";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteUrl } from "@/lib/seo";
