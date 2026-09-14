@@ -3,11 +3,12 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
-import { ProductGridClient, type ProductWithCategorySlug } from "@/components/blocks/product-grid-client";
+import { ProductGridClient } from "@/components/blocks/product-grid-client";
 import { listProductCategories, listIndustries, listApplications } from "@/lib/data/taxonomy";
 import { listPagesUnderSlug } from "@/lib/data/pages";
+import { listProductsWithCategorySlug } from "@/lib/data/products";
+import { pageHref } from "@/lib/routes";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
-import { createServerDbClient } from "@/lib/db/client";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("Products"),
@@ -18,23 +19,9 @@ const schema = blockCommonSchema.extend({
 
 type Data = z.infer<typeof schema>;
 
-async function getProductsWithCategorySlug(): Promise<ProductWithCategorySlug[]> {
-  const db = createServerDbClient();
-  const { data, error } = await db
-    .from("products")
-    .select("*, product_categories(slug)")
-    .eq("status", "published")
-    .order("position", { ascending: true });
-  if (error) throw error;
-  return (data ?? []).map(({ product_categories, ...product }) => ({
-    ...product,
-    categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
-  }));
-}
-
 async function Render({ data }: { data: Data }) {
   const [products, categories, industries, applications, servicePages] = await Promise.all([
-    getProductsWithCategorySlug(),
+    listProductsWithCategorySlug(),
     listProductCategories(),
     listIndustries(),
     listApplications(),
@@ -43,7 +30,7 @@ async function Render({ data }: { data: Data }) {
   const services = servicePages.map((page) => ({
     title: page.title,
     body: page.seo_description ?? undefined,
-    href: `/${page.slug}`,
+    href: pageHref(page.slug),
   }));
 
   return (

@@ -8,6 +8,8 @@ export type ProductDetail = Tables<"products"> & {
   categorySlug: string | null;
 };
 
+export type ProductWithCategorySlug = Tables<"products"> & { categorySlug: string | null };
+
 export async function listProducts(locale = "en"): Promise<Tables<"products">[]> {
   const db = createServerDbClient();
   const { data, error } = await db
@@ -18,6 +20,21 @@ export async function listProducts(locale = "en"): Promise<Tables<"products">[]>
     .order("position", { ascending: true });
   if (error) throw error;
   return data ?? [];
+}
+
+export async function listProductsWithCategorySlug(locale = "en"): Promise<ProductWithCategorySlug[]> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("products")
+    .select("*, product_categories(slug)")
+    .eq("locale", locale)
+    .eq("status", "published")
+    .order("position", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(({ product_categories, ...product }) => ({
+    ...product,
+    categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
+  }));
 }
 
 export async function listProductsByCategory(

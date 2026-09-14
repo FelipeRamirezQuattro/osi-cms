@@ -3,7 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { RecommendationsClient } from "@/components/blocks/recommendations-client";
-import { listProducts } from "@/lib/data/products";
+import { listProductsWithCategorySlug } from "@/lib/data/products";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
@@ -15,7 +15,7 @@ const schema = blockCommonSchema.extend({
 type Data = z.infer<typeof schema>;
 
 async function Render({ data }: { data: Data }) {
-  const products = await listProducts();
+  const products = await listProductsWithCategorySlug();
   if (products.length === 0) return null;
 
   return (
@@ -31,7 +31,12 @@ async function Render({ data }: { data: Data }) {
       </h2>
       <p className="mt-1 mb-8 text-xs text-osi-slate-400 uppercase">{data.subtitle}</p>
       <RecommendationsClient
-        fallback={products.map((p) => ({ slug: p.slug, name: p.name, summary: p.summary }))}
+        fallback={products.map((p) => ({
+          slug: p.slug,
+          name: p.name,
+          summary: p.summary,
+          categorySlug: p.categorySlug,
+        }))}
         limit={data.limit}
       />
     </Section>

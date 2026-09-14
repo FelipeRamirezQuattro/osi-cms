@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import type { Tables } from "@/lib/db/database.types";
+import type { ProductWithCategorySlug } from "@/lib/data/products";
+import { applicationHref, industryHref, productHref } from "@/lib/routes";
 
 type Tab = "products" | "industries" | "applications" | "services";
 
@@ -13,7 +15,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "services", label: "Services" },
 ];
 
-export type ProductWithCategorySlug = Tables<"products"> & { categorySlug: string | null };
 type GridItem = { title: string; body?: string; href: string };
 
 export function ProductGridClient({
@@ -43,17 +44,17 @@ export function ProductGridClient({
     products: filteredProducts.map((p) => ({
       title: p.name,
       body: p.summary ?? undefined,
-      href: `/products/${p.slug}`,
+      href: p.categorySlug ? productHref(p.categorySlug, p.slug) : "/products",
     })),
     industries: industries.map((i) => ({
       title: i.name,
       body: i.description ?? undefined,
-      href: `/industries/${i.slug}`,
+      href: industryHref(i.slug),
     })),
     applications: applications.map((a) => ({
       title: a.name,
       body: a.description ?? undefined,
-      href: `/applications/${a.slug}`,
+      href: applicationHref(a.slug),
     })),
     services,
   };

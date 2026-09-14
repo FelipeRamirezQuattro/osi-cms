@@ -8,6 +8,7 @@ import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { listNewsPosts } from "@/lib/data/news";
 import type { Tables } from "@/lib/db/database.types";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { newsHref } from "@/lib/routes";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("OSI News"),
@@ -20,7 +21,7 @@ type Data = z.infer<typeof schema>;
 function PostCard({ post }: { post: Tables<"news_posts"> }) {
   return (
     <Link
-      href={`/news/${post.slug}`}
+      href={newsHref(post.slug)}
       className="block h-full transition-shadow duration-300 hover:shadow-[0_0_0_1px_var(--color-osi-steel-500),0_8px_32px_color-mix(in_srgb,var(--color-osi-steel-500)_25%,transparent),0_0_60px_color-mix(in_srgb,var(--color-osi-steel-500)_10%,transparent)]"
     >
       <DuotoneImage
@@ -59,7 +60,7 @@ async function Render({ data }: { data: Data }) {
       <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
         {data.title}
       </h2>
-      <Link href={`/news/${featured.slug}`} className="mb-8 block">
+      <Link href={newsHref(featured.slug)} className="mb-8 block">
         <DuotoneImage
           src={featured.cover_image_url ?? undefined}
           alt={featured.cover_image_url ? featured.title : ""}

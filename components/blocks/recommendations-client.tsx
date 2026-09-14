@@ -2,15 +2,21 @@
 
 import { useSyncExternalStore } from "react";
 import { LabelPlateGrid, type LabelPlateItem } from "@/components/blocks/label-plate-grid";
+import { productHref } from "@/lib/routes";
 
 export interface RecommendableProduct {
   slug: string;
   name: string;
   summary: string | null;
+  categorySlug: string | null;
 }
 
 function toItem(p: RecommendableProduct): LabelPlateItem {
-  return { title: p.name, body: p.summary ?? undefined, href: `/products/${p.slug}` };
+  return {
+    title: p.name,
+    body: p.summary ?? undefined,
+    href: p.categorySlug ? productHref(p.categorySlug, p.slug) : "/products",
+  };
 }
 
 function subscribeToNothing() {
