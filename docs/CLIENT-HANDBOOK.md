@@ -19,6 +19,16 @@ After signing in you'll land on the dashboard: how many new contact-form
 submissions are waiting, how many pages exist, and a list of recently
 edited pages. The left sidebar is how you get everywhere else.
 
+## Creating a page
+
+**Pages → New page** asks for a title, a web address (slug), and a
+**Starting point** — a quick preset that adds a few blocks to get you
+going (a landing page starts with a hero and a call-to-action band, a
+legal page starts with one text block, a contact page starts with the
+contact form; "standard" starts blank). It's only a starting point — you
+can add, remove, or rearrange blocks freely afterward, and changing it
+later doesn't do anything.
+
 ## Editing a page
 
 **Pages → click a page** opens the editor. A page is built from
@@ -68,7 +78,8 @@ edit screen, the same pattern as pages: fill in the fields, set
 **Products** is the most detailed one — besides the basics (name,
 images, description), it has Benefits, Stages, and Specs, each an
 add/remove list, plus checkboxes for which Industries and Applications
-the product applies to.
+the product applies to, and which other products to show as **Related
+products** on that product's page.
 
 Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
@@ -80,10 +91,13 @@ its own sidebar section — those are regular pages, edited under
 
 ## Navigation
 
-**Navigation** controls the menus — the main header menu, the mega menu
-(the big dropdown with product columns), the footer columns, and so on.
-Switch between menus using the tabs at the top. Add a top-level item,
+**Navigation** controls the menus — the header's utility links, the mega
+menu (the big dropdown with product columns), the footer columns, and so
+on. Switch between menus using the tabs at the top. Add a top-level item,
 optionally add children under it, and use the ↑/↓ arrows to reorder.
+Check **External link** for anything that points off the OSI site (a
+distributor's own website, for example) — it opens in a new tab and
+shows a small ↗ mark so visitors know it's leaving the site.
 
 ## Media library
 
@@ -104,7 +118,12 @@ record either way.
 
 **Settings** holds the site-wide basics: phone number, address, map
 embed, social media links, and the default social-sharing image (used
-when a page doesn't have its own).
+when a page doesn't have its own). It also has the **Announcement bar**
+— a banner across the top of every page for something time-sensitive
+(a trade show, a holiday closure). Turn it on, write the message, and
+optionally add a link. Once a visitor closes it, it stays closed for
+them until you change the message — editing the text brings it back for
+everyone, even people who dismissed the old wording.
 
 ## Redirects
 
