@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { redirect } from "next/navigation";
 import { createServerDbClient } from "@/lib/db/client";
+import { hasCapability, type Capability } from "@/lib/auth/capabilities";
 
 /**
  * Thin auth adapter (see CLAUDE.md constraint 2) — the only place
@@ -136,5 +137,12 @@ export async function requireAdmin(): Promise<AdminSession> {
 export async function requireAdminRole(): Promise<AdminSession> {
   const session = await requireAdmin();
   if (session.role !== "admin") redirect("/admin");
+  return session;
+}
+
+/** Every Server Action checks an explicit capability at its own boundary. */
+export async function requireCapability(capability: Capability): Promise<AdminSession> {
+  const session = await requireAdmin();
+  if (!hasCapability(session.role, capability)) redirect("/admin?error=not-authorized");
   return session;
 }
