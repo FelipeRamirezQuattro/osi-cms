@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth";
 import { listProductsAction } from "@/lib/actions/products";
 import { listProductCategories } from "@/lib/data/taxonomy";
 import { ProductsList } from "@/app/admin/(dashboard)/products/products-list";
@@ -5,8 +6,9 @@ import { ProductsList } from "@/app/admin/(dashboard)/products/products-list";
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
+  const session = await requireAdmin();
   const [products, categories] = await Promise.all([listProductsAction(), listProductCategories()]);
   const categoryNames = Object.fromEntries(categories.map((c) => [c.id, c.name]));
 
-  return <ProductsList products={products} categoryNames={categoryNames} />;
+  return <ProductsList products={products} categoryNames={categoryNames} role={session.role} />;
 }

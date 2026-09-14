@@ -6,6 +6,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FieldRenderer } from "@/components/admin/field-renderer";
 import { RelationOptionsProvider, type RelationOptionsMap } from "@/components/admin/relation-options";
 import { deleteEntityAction, saveEntityAction } from "@/lib/actions/entities";
+import { hasCapability } from "@/lib/auth/capabilities";
+import type { AdminRole } from "@/lib/auth";
 import type { EntityConfig, EntityKey } from "@/lib/admin/entity-config";
 import type { EntityRow } from "@/lib/data/admin-entities";
 
@@ -19,12 +21,15 @@ export function EntityEditor({
   config,
   row,
   relationOptions,
+  role = "editor",
 }: {
   entity: EntityKey;
   config: EntityConfig;
   row: EntityRow | null;
   relationOptions: RelationOptionsMap;
+  role?: AdminRole;
 }) {
+  const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +67,7 @@ export function EntityEditor({
             <h1 className="font-display text-lg tracking-wide-display uppercase">
               {row ? `Edit ${config.label.toLowerCase()}` : `New ${config.label.toLowerCase()}`}
             </h1>
-            {row && (
+            {row && canDelete && (
               <button type="button" onClick={onDelete} className="text-xs text-red-600 hover:underline">
                 Delete
               </button>

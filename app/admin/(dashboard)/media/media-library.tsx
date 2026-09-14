@@ -3,12 +3,15 @@
 import { useActionState, useState, useTransition } from "react";
 import Image from "next/image";
 import { deleteMediaActionFn, listMediaAction, uploadMediaAction, type UploadMediaState } from "@/lib/actions/media";
+import { hasCapability } from "@/lib/auth/capabilities";
+import type { AdminRole } from "@/lib/auth";
 import type { MediaAsset } from "@/lib/data/media";
 import { resolveMediaUrl } from "@/lib/media";
 
 const initialUploadState: UploadMediaState = { status: "idle" };
 
-export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] }) {
+export function MediaLibrary({ initialAssets, role }: { initialAssets: MediaAsset[]; role: AdminRole }) {
+  const canDelete = hasCapability(role, "delete_media");
   const [assets, setAssets] = useState(initialAssets);
   const [search, setSearch] = useState("");
   const [isLoading, startLoading] = useTransition();
@@ -77,7 +80,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               {asset.title ?? asset.url}
             </p>
             <p className="text-[10px] uppercase opacity-40">{asset.source}</p>
-            {asset.source === "uploaded" && (
+            {asset.source === "uploaded" && canDelete && (
               <button
                 type="button"
                 onClick={() => onDelete(asset.id)}

@@ -5,17 +5,22 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import type { EntityConfig, EntityKey } from "@/lib/admin/entity-config";
 import { deleteEntityAction, moveEntityAction } from "@/lib/actions/entities";
+import { hasCapability } from "@/lib/auth/capabilities";
+import type { AdminRole } from "@/lib/auth";
 import type { EntityRow } from "@/lib/data/admin-entities";
 
 export function EntityList({
   entity,
   config,
   initialRows,
+  role,
 }: {
   entity: EntityKey;
   config: EntityConfig;
   initialRows: EntityRow[];
+  role: AdminRole;
 }) {
+  const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -111,14 +116,16 @@ export function EntityList({
                   </td>
                 )}
                 <td className="px-4 py-2 text-right">
-                  <button
-                    type="button"
-                    onClick={() => remove(row)}
-                    disabled={isPending}
-                    className="text-xs text-red-600 hover:underline disabled:opacity-40"
-                  >
-                    Delete
-                  </button>
+                  {canDelete && (
+                    <button
+                      type="button"
+                      onClick={() => remove(row)}
+                      disabled={isPending}
+                      className="text-xs text-red-600 hover:underline disabled:opacity-40"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

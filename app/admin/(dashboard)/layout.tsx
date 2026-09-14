@@ -1,31 +1,39 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
+import { hasCapability, type Capability } from "@/lib/auth/capabilities";
 import { logoutAction } from "@/lib/actions/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/pages", label: "Pages" },
-  { href: "/admin/products", label: "Products" },
-  { href: "/admin/news", label: "News" },
-  { href: "/admin/industries", label: "Industries" },
-  { href: "/admin/applications", label: "Applications" },
-  { href: "/admin/resources", label: "Resources" },
-  { href: "/admin/locations", label: "Locations" },
-  { href: "/admin/directory", label: "Directory" },
-  { href: "/admin/navigation", label: "Navigation" },
-  { href: "/admin/media", label: "Media" },
-  { href: "/admin/submissions", label: "Submissions" },
-  { href: "/admin/redirects", label: "Redirects" },
-  { href: "/admin/settings", label: "Settings" },
-  { href: "/admin/users", label: "Users" },
+// `capability: null` means "every active staff session sees this" (the
+// dashboard landing page itself) — everything else is gated by the same
+// capability its Server Action(s) require, so an editor never sees a
+// link to a section every action behind it would redirect them out of.
+const NAV_ITEMS: { href: string; label: string; capability: Capability | null }[] = [
+  { href: "/admin", label: "Dashboard", capability: null },
+  { href: "/admin/pages", label: "Pages", capability: "edit_drafts" },
+  { href: "/admin/products", label: "Products", capability: "edit_drafts" },
+  { href: "/admin/news", label: "News", capability: "edit_drafts" },
+  { href: "/admin/industries", label: "Industries", capability: "edit_drafts" },
+  { href: "/admin/applications", label: "Applications", capability: "edit_drafts" },
+  { href: "/admin/resources", label: "Resources", capability: "edit_drafts" },
+  { href: "/admin/locations", label: "Locations", capability: "edit_drafts" },
+  { href: "/admin/directory", label: "Directory", capability: "edit_drafts" },
+  { href: "/admin/navigation", label: "Navigation", capability: "manage_navigation" },
+  { href: "/admin/media", label: "Media", capability: "upload_media" },
+  { href: "/admin/submissions", label: "Submissions", capability: "view_submissions" },
+  { href: "/admin/redirects", label: "Redirects", capability: "edit_drafts" },
+  { href: "/admin/settings", label: "Settings", capability: "manage_settings" },
+  { href: "/admin/users", label: "Users", capability: "manage_users" },
 ];
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await requireAdmin();
+  const visibleNavItems = NAV_ITEMS.filter(
+    (item) => item.capability === null || hasCapability(session.role, item.capability),
+  );
 
   return (
     <div className="flex min-h-screen bg-osi-cream-100 text-osi-navy-900">
@@ -34,7 +42,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
           OSI Admin
         </Link>
         <nav className="flex-1 space-y-0.5 overflow-y-auto">
-          {NAV_ITEMS.map((item) => (
+          {visibleNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

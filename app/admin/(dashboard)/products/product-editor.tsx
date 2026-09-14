@@ -7,6 +7,8 @@ import { FieldRenderer } from "@/components/admin/field-renderer";
 import { RelationOptionsProvider, type RelationOptionsMap } from "@/components/admin/relation-options";
 import { deleteProductAction, saveProductAction } from "@/lib/actions/products";
 import { PRODUCT_DEFAULTS, PRODUCT_FIELDS } from "@/lib/admin/product-fields";
+import { hasCapability } from "@/lib/auth/capabilities";
+import type { AdminRole } from "@/lib/auth";
 import type { ProductAdminDetail } from "@/lib/data/products";
 
 // Same reasoning as page-editor.tsx / entity-editor.tsx.
@@ -15,10 +17,13 @@ import type { ProductAdminDetail } from "@/lib/data/products";
 export function ProductEditor({
   product,
   relationOptions,
+  role = "editor",
 }: {
   product: ProductAdminDetail | null;
   relationOptions: RelationOptionsMap;
+  role?: AdminRole;
 }) {
+  const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +67,7 @@ export function ProductEditor({
             <h1 className="font-display text-lg tracking-wide-display uppercase">
               {product ? `Edit ${product.name}` : "New product"}
             </h1>
-            {product && (
+            {product && canDelete && (
               <button type="button" onClick={onDelete} className="text-xs text-red-600 hover:underline">
                 Delete
               </button>

@@ -24,6 +24,8 @@ import {
   saveDraftAction,
   unpublishPageAction,
 } from "@/lib/actions/pages";
+import { hasCapability } from "@/lib/auth/capabilities";
+import type { AdminRole } from "@/lib/auth";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import type { PageWithBlocks } from "@/lib/data/pages";
 import type { Tables } from "@/lib/db/database.types";
@@ -39,11 +41,15 @@ export function PageEditor({
   page,
   palette,
   revisions,
+  role,
 }: {
   page: PageWithBlocks;
   palette: BlockPaletteEntry[];
   revisions: Tables<"page_revisions">[];
+  role: AdminRole;
 }) {
+  const canPublish = hasCapability(role, "publish");
+  const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isSaving, startSaving] = useTransition();
   const [isPublishing, startPublishing] = useTransition();
@@ -216,25 +222,26 @@ export function PageEditor({
             >
               {isSaving ? "Saving…" : "Save draft"}
             </button>
-            {status === "published" ? (
-              <button
-                type="button"
-                onClick={onUnpublish}
-                disabled={isPublishing}
-                className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-              >
-                Unpublish
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onPublish}
-                disabled={isPublishing}
-                className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
-              >
-                {isPublishing ? "Publishing…" : "Publish"}
-              </button>
-            )}
+            {canPublish &&
+              (status === "published" ? (
+                <button
+                  type="button"
+                  onClick={onUnpublish}
+                  disabled={isPublishing}
+                  className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
+                >
+                  Unpublish
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onPublish}
+                  disabled={isPublishing}
+                  className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
+                >
+                  {isPublishing ? "Publishing…" : "Publish"}
+                </button>
+              ))}
           </div>
         </div>
 
@@ -363,9 +370,11 @@ export function PageEditor({
                 <button type="button" onClick={onDuplicate} className="block text-sm hover:underline">
                   Duplicate page
                 </button>
-                <button type="button" onClick={onDelete} className="block text-sm text-red-600 hover:underline">
-                  Delete page
-                </button>
+                {canDelete && (
+                  <button type="button" onClick={onDelete} className="block text-sm text-red-600 hover:underline">
+                    Delete page
+                  </button>
+                )}
               </section>
             )}
 
