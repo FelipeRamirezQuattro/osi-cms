@@ -5,14 +5,18 @@ import { NavEditor } from "@/app/admin/(dashboard)/navigation/nav-editor";
 
 export const dynamic = "force-dynamic";
 
-const MENU_KEYS: NavMenuKey[] = ["primary", "mega", "utility", "footer-1", "footer-2", "footer-3", "footer-4"];
+// "primary" was removed (Task 7 item #11) — confirmed unused anywhere
+// (not seeded by scripts/seed-navigation.ts, not queried, not rendered);
+// utility + mega are the established header model. See
+// supabase/migrations/0024_remove_primary_nav_menu.sql.
+const MENU_KEYS: NavMenuKey[] = ["mega", "utility", "footer-1", "footer-2", "footer-3", "footer-4"];
 
 export default async function NavigationPage({
   searchParams,
 }: PageProps<"/admin/navigation">) {
   const params = await searchParams;
-  const raw = typeof params.menu === "string" ? params.menu : "primary";
-  const key = (MENU_KEYS.includes(raw as NavMenuKey) ? raw : "primary") as NavMenuKey;
+  const raw = typeof params.menu === "string" ? params.menu : "mega";
+  const key = (MENU_KEYS.includes(raw as NavMenuKey) ? raw : "mega") as NavMenuKey;
 
   const { menu, items } = await getMenuItemsAction(key);
 
