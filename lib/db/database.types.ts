@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   __InternalSupabase: {
@@ -1047,51 +1041,6 @@ export type Database = {
           },
         ];
       };
-      services: {
-        Row: {
-          body: Json | null;
-          created_at: string;
-          hero_image_url: string | null;
-          id: string;
-          locale: string;
-          name: string;
-          position: number;
-          search_vector: unknown;
-          slug: string;
-          status: string;
-          summary: string | null;
-          updated_at: string;
-        };
-        Insert: {
-          body?: Json | null;
-          created_at?: string;
-          hero_image_url?: string | null;
-          id?: string;
-          locale?: string;
-          name: string;
-          position?: number;
-          search_vector?: unknown;
-          slug: string;
-          status?: string;
-          summary?: string | null;
-          updated_at?: string;
-        };
-        Update: {
-          body?: Json | null;
-          created_at?: string;
-          hero_image_url?: string | null;
-          id?: string;
-          locale?: string;
-          name?: string;
-          position?: number;
-          search_vector?: unknown;
-          slug?: string;
-          status?: string;
-          summary?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       site_settings: {
         Row: {
           address_lines: string[] | null;
@@ -1189,6 +1138,7 @@ export type Database = {
           p_industry_ids: Json;
           p_meta: Json;
           p_product_id?: string;
+          p_related_ids?: Json;
           p_specs: Json;
           p_stages: Json;
         };
@@ -1218,10 +1168,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof Database,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -1242,10 +1189,8 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -1318,8 +1263,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["CompositeTypes"] | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }

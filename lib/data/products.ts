@@ -1,19 +1,7 @@
 import { createServerDbClient } from "@/lib/db/client";
 import type { Database, Json, Tables } from "@/lib/db/database.types";
 
-/**
- * save_product_atomic's generated Args type doesn't include p_related_ids
- * yet — migration 0023_product_related_atomic.sql (which adds it) hasn't
- * been applied/regenerated as of this writing (repo convention: this
- * implementer writes migrations for controller review, never applies
- * them — see CLAUDE.md). Delete this overlay type and pass
- * Database["public"]["Functions"]["save_product_atomic"]["Args"] directly
- * once `pnpm exec supabase gen types`/the MCP generate_typescript_types
- * tool has regenerated database.types.ts against the applied migration.
- */
-type SaveProductAtomicArgs = Database["public"]["Functions"]["save_product_atomic"]["Args"] & {
-  p_related_ids: Json;
-};
+type SaveProductAtomicArgs = Database["public"]["Functions"]["save_product_atomic"]["Args"];
 
 export type ProductDetail = Tables<"products"> & {
   product_benefits: Tables<"product_benefits">[];
@@ -36,7 +24,9 @@ export async function listProducts(locale = "en"): Promise<Tables<"products">[]>
   return data ?? [];
 }
 
-export async function listProductsWithCategorySlug(locale = "en"): Promise<ProductWithCategorySlug[]> {
+export async function listProductsWithCategorySlug(
+  locale = "en",
+): Promise<ProductWithCategorySlug[]> {
   const db = createServerDbClient();
   const { data, error } = await db
     .from("products")
@@ -85,7 +75,10 @@ export type RelatedProduct = {
  * that entirely and is just as cheap for the handful of related products
  * a product ever has.
  */
-export async function listRelatedProducts(productId: string, locale = "en"): Promise<RelatedProduct[]> {
+export async function listRelatedProducts(
+  productId: string,
+  locale = "en",
+): Promise<RelatedProduct[]> {
   const db = createServerDbClient();
   const { data: links, error: linksError } = await db
     .from("product_related")
@@ -116,16 +109,11 @@ export async function listRelatedProducts(productId: string, locale = "en"): Pro
     }));
 }
 
-export async function getProductBySlug(
-  slug: string,
-  locale = "en",
-): Promise<ProductDetail | null> {
+export async function getProductBySlug(slug: string, locale = "en"): Promise<ProductDetail | null> {
   const db = createServerDbClient();
   const { data, error } = await db
     .from("products")
-    .select(
-      "*, product_benefits(*), product_stages(*), product_specs(*), product_categories(slug)",
-    )
+    .select("*, product_benefits(*), product_stages(*), product_specs(*), product_categories(slug)")
     .eq("slug", slug)
     .eq("locale", locale)
     .eq("status", "published")
@@ -156,7 +144,10 @@ export type ProductAdminDetail = Tables<"products"> & {
 
 export async function listAllProducts(): Promise<Tables<"products">[]> {
   const db = createServerDbClient();
-  const { data, error } = await db.from("products").select("*").order("position", { ascending: true });
+  const { data, error } = await db
+    .from("products")
+    .select("*")
+    .order("position", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }
@@ -168,12 +159,28 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
   if (!product) return null;
 
   const [benefits, stages, specs, industries, applications, related] = await Promise.all([
-    db.from("product_benefits").select("*").eq("product_id", id).order("position", { ascending: true }),
-    db.from("product_stages").select("*").eq("product_id", id).order("position", { ascending: true }),
-    db.from("product_specs").select("*").eq("product_id", id).order("position", { ascending: true }),
+    db
+      .from("product_benefits")
+      .select("*")
+      .eq("product_id", id)
+      .order("position", { ascending: true }),
+    db
+      .from("product_stages")
+      .select("*")
+      .eq("product_id", id)
+      .order("position", { ascending: true }),
+    db
+      .from("product_specs")
+      .select("*")
+      .eq("product_id", id)
+      .order("position", { ascending: true }),
     db.from("product_industries").select("industry_id").eq("product_id", id),
     db.from("product_applications").select("application_id").eq("product_id", id),
-    db.from("product_related").select("related_product_id").eq("product_id", id).order("position", { ascending: true }),
+    db
+      .from("product_related")
+      .select("related_product_id")
+      .eq("product_id", id)
+      .order("position", { ascending: true }),
   ]);
   if (benefits.error) throw benefits.error;
   if (stages.error) throw stages.error;
