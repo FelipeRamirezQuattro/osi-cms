@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { publishPageAction, unpublishPageAction, deletePageAction } from "@/lib/actions/pages";
+import { createPageAction, publishPageAction, unpublishPageAction, deletePageAction } from "@/lib/actions/pages";
 import { inviteUserAction, setUserRoleAction, setUserActiveAction } from "@/lib/actions/users";
 import { createNavItemAction } from "@/lib/actions/navigation";
 import { saveSettingsAction } from "@/lib/actions/settings";
@@ -36,10 +36,12 @@ vi.mock("@/lib/auth", () => ({
   requireCapability: mockRequireCapability,
 }));
 
-const { mockPublishPage, mockUnpublishPage, mockDeletePage } = vi.hoisted(() => ({
+const { mockPublishPage, mockUnpublishPage, mockDeletePage, mockCreatePage, mockSavePageDraft } = vi.hoisted(() => ({
   mockPublishPage: vi.fn(),
   mockUnpublishPage: vi.fn(),
   mockDeletePage: vi.fn(),
+  mockCreatePage: vi.fn(),
+  mockSavePageDraft: vi.fn(),
 }));
 vi.mock("@/lib/data/pages", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/data/pages")>();
@@ -48,6 +50,8 @@ vi.mock("@/lib/data/pages", async (importOriginal) => {
     publishPage: mockPublishPage,
     unpublishPage: mockUnpublishPage,
     deletePage: mockDeletePage,
+    createPage: mockCreatePage,
+    savePageDraft: mockSavePageDraft,
   };
 });
 
@@ -267,5 +271,87 @@ describe("deletePageAction propagates system-page delete protection (regression 
 
     await expect(deletePageAction("page-1")).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockDeletePage).not.toHaveBeenCalled();
+  });
+});
+
+describe("createPageAction seeds starter blocks from the chosen template (Task 7 item #8)", () => {
+  // template is a one-time creation preset (lib/validation/pages.ts) —
+  // this is the only place it has any effect. STARTER_BLOCK_TYPES in
+  // lib/actions/pages.ts maps each template to real block registry
+  // types, so this also incidentally guards against a typo'd type that
+  // getBlockPalette() wouldn't recognize.
+
+  beforeEach(() => {
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
+    mockCreatePage.mockResolvedValue({ id: "page-1", draft_version: 1 });
+    mockSavePageDraft.mockResolvedValue(2);
+  });
+
+  it("seeds no blocks for the 'standard' template", async () => {
+    const result = await createPageAction({
+      title: "Plain page",
+      slug: "plain-page",
+      locale: "en",
+      template: "standard",
+      seo_title: null,
+      seo_description: null,
+      og_image_url: null,
+      noindex: false,
+    });
+
+    expect(result).toEqual({ id: "page-1" });
+    expect(mockSavePageDraft).not.toHaveBeenCalled();
+  });
+
+  it("seeds a hero_full + cta_band draft for the 'landing' template", async () => {
+    await createPageAction({
+      title: "Landing",
+      slug: "landing-page",
+      locale: "en",
+      template: "landing",
+      seo_title: null,
+      seo_description: null,
+      og_image_url: null,
+      noindex: false,
+    });
+
+    expect(mockSavePageDraft).toHaveBeenCalledTimes(1);
+    const [pageId, , blocks, expectedVersion] = mockSavePageDraft.mock.calls[0];
+    expect(pageId).toBe("page-1");
+    expect(expectedVersion).toBe(1);
+    expect(blocks.map((b: { type: string }) => b.type)).toEqual(["hero_full", "cta_band"]);
+    expect(blocks.every((b: { is_visible: boolean }) => b.is_visible)).toBe(true);
+  });
+
+  it("seeds a single rich_text block for the 'legal' template", async () => {
+    await createPageAction({
+      title: "Terms",
+      slug: "terms",
+      locale: "en",
+      template: "legal",
+      seo_title: null,
+      seo_description: null,
+      og_image_url: null,
+      noindex: false,
+    });
+
+    const blocks = mockSavePageDraft.mock.calls[0][2];
+    expect(blocks.map((b: { type: string }) => b.type)).toEqual(["rich_text"]);
+  });
+
+  it("seeds a single contact_form block for the 'contact' template", async () => {
+    await createPageAction({
+      title: "Contact",
+      slug: "contact-us",
+      locale: "en",
+      template: "contact",
+      seo_title: null,
+      seo_description: null,
+      og_image_url: null,
+      noindex: false,
+    });
+
+    const blocks = mockSavePageDraft.mock.calls[0][2];
+    expect(blocks.map((b: { type: string }) => b.type)).toEqual(["contact_form"]);
   });
 });

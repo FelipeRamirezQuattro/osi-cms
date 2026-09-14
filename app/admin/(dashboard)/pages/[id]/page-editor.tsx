@@ -29,13 +29,12 @@ import type { AdminRole } from "@/lib/auth";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import type { PageWithBlocks } from "@/lib/data/pages";
 import type { Tables } from "@/lib/db/database.types";
+import { PAGE_TEMPLATES } from "@/lib/validation/pages";
 
 // The page form mixes fixed page metadata with a `blocks` array whose
 // `data` shape varies per block type (see FieldRenderer's comment) — no
 // static type covers that, so the form itself is untyped here too.
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-const TEMPLATES = ["standard", "landing", "legal", "product", "contact"] as const;
 
 export function PageEditor({
   page,
@@ -329,14 +328,17 @@ export function PageEditor({
                 <input {...register("slug")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm" />
               </label>
               <label className="block space-y-1 text-sm">
-                <span className="block text-xs uppercase tracking-wide-label opacity-70">Template</span>
+                <span className="block text-xs uppercase tracking-wide-label opacity-70">Starting point</span>
                 <select {...register("template")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm">
-                  {TEMPLATES.map((t) => (
+                  {PAGE_TEMPLATES.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
                   ))}
                 </select>
+                <span className="block text-xs opacity-50">
+                  Only affects which blocks were added when this page was first created.
+                </span>
               </label>
             </section>
 

@@ -8,7 +8,19 @@ import { optionalNullableString, requiredString, slugSchema } from "@/lib/valida
  * `""` or `slug` is well formed. `template` mirrors the DB check
  * constraint in supabase/migrations/0004_pages.sql.
  */
-export const PAGE_TEMPLATES = ["standard", "landing", "legal", "product", "contact"] as const;
+/**
+ * A one-time creation preset (see createPageAction), not a runtime
+ * behavior switch — nothing on the public rendering path branches on
+ * `template`. "product" was removed (Task 7 item #8): real products
+ * live in their own `products` table/route (app/(site)/products/
+ * [category]/[slug]/page.tsx), never in `pages`/`page_blocks`, so
+ * offering it here was actively misleading. The column itself stays
+ * (an accurate historical record of which starter blocks a page got at
+ * creation), just with a narrower, honest set of options going forward.
+ */
+export const PAGE_TEMPLATES = ["standard", "landing", "legal", "contact"] as const;
+
+export type PageTemplate = (typeof PAGE_TEMPLATES)[number];
 
 export const pageMetaSchema = z.object({
   slug: slugSchema("Slug"),

@@ -3,8 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createPageAction } from "@/lib/actions/pages";
+import { PAGE_TEMPLATES, type PageTemplate } from "@/lib/validation/pages";
 
-const TEMPLATES = ["standard", "landing", "legal", "product", "contact"] as const;
+const STARTING_POINT_HINTS: Record<PageTemplate, string> = {
+  standard: "No starter blocks — build the page from scratch.",
+  landing: "Starts with a full hero and a closing CTA band.",
+  legal: "Starts with a single rich-text block for policy/legal copy.",
+  contact: "Starts with the contact form block.",
+};
 
 export function NewPageForm() {
   const router = useRouter();
@@ -12,7 +18,7 @@ export function NewPageForm() {
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [template, setTemplate] = useState<(typeof TEMPLATES)[number]>("standard");
+  const [template, setTemplate] = useState<PageTemplate>("standard");
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,18 +64,19 @@ export function NewPageForm() {
         />
       </label>
       <label className="block space-y-1 text-sm">
-        <span className="block text-xs uppercase tracking-wide-label opacity-70">Template</span>
+        <span className="block text-xs uppercase tracking-wide-label opacity-70">Starting point</span>
         <select
           value={template}
-          onChange={(e) => setTemplate(e.target.value as (typeof TEMPLATES)[number])}
+          onChange={(e) => setTemplate(e.target.value as PageTemplate)}
           className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
         >
-          {TEMPLATES.map((t) => (
+          {PAGE_TEMPLATES.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
           ))}
         </select>
+        <span className="block text-xs opacity-60">{STARTING_POINT_HINTS[template]}</span>
       </label>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button

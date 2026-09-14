@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireCapability } from "@/lib/auth";
-import { getBlockDefinition } from "@/lib/blocks/registry";
+import { getBlockDefinition, getBlockPalette } from "@/lib/blocks/registry";
 import {
   createPage,
   deletePage,
@@ -16,7 +16,21 @@ import {
   type PageMeta,
 } from "@/lib/data/pages";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
-import { newPageSlugSchema, pageMetaSchema } from "@/lib/validation/pages";
+import { newPageSlugSchema, pageMetaSchema, type PageTemplate } from "@/lib/validation/pages";
+
+/**
+ * Task 7 item #8: `template` is a one-time creation preset, not a
+ * runtime switch — this is the only place it has any effect. Each entry
+ * is a block registry `type` (lib/blocks/registry.ts); an unknown type
+ * (e.g. a block later removed from the registry) is silently skipped
+ * rather than failing page creation.
+ */
+const STARTER_BLOCK_TYPES: Record<PageTemplate, string[]> = {
+  standard: [],
+  landing: ["hero_full", "cta_band"],
+  legal: ["rich_text"],
+  contact: ["contact_form"],
+};
 
 export type SaveResult =
   | { status: "success"; newVersion: number }
@@ -63,6 +77,22 @@ export async function createPageAction(input: PageMeta): Promise<{ id: string } 
 
   try {
     const page = await createPage(parsed.data);
+
+    const starterTypes = STARTER_BLOCK_TYPES[parsed.data.template] ?? [];
+    if (starterTypes.length > 0) {
+      const paletteByType = Object.fromEntries(getBlockPalette().map((entry) => [entry.type, entry]));
+      const blocks: BlockInput[] = starterTypes
+        .map((type) => paletteByType[type])
+        .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+        .map((entry) => ({ type: entry.type, is_visible: true, data: entry.defaults as Record<string, unknown> }));
+      // Best-effort: the page itself was already created above; a failure
+      // seeding starter blocks shouldn't fail page creation outright, so
+      // this doesn't wrap the whole try/catch's error handling around it.
+      if (blocks.length > 0) {
+        await savePageDraft(page.id, parsed.data, blocks, page.draft_version);
+      }
+    }
+
     return { id: page.id };
   } catch (error) {
     if (isUniqueViolationError(error)) {
