@@ -1,0 +1,22 @@
+-- Task 7 item #13: `services` (0002_taxonomy.sql) has zero admin config,
+-- zero query anywhere in lib/ or app/, and is explicitly excluded from
+-- search/sitemap with comments citing docs/DECISIONS.md ("Services
+-- remain versioned CMS pages" — the real "Fluid Levels"/"Pump Cards"/
+-- "Machine Shop" service pages live in pages/page_blocks, migrated by
+-- scripts/migrate-legacy.ts, and product_grid links to those directly
+-- via listPagesUnderSlug rather than this table).
+--
+-- A read-only preflight confirmed it holds no data:
+--
+--   select count(*) from services;  -- 0
+--
+-- so this drops it outright rather than archiving anything. No other
+-- table has a foreign key into services (confirmed by grep across every
+-- migration file), so a plain `drop table` needs no `cascade` for that —
+-- the only cascades are internal to this table's own dependents:
+-- services_search_vector_idx (the GIN index added in
+-- 0016_search_vectors.sql), its `set_updated_at` trigger, and its two
+-- RLS policies. All of those go away automatically with the table; no
+-- separate `drop index`/`drop trigger`/`drop policy` statements needed.
+
+drop table services;
