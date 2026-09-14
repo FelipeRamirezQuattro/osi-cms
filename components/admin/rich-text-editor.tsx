@@ -10,6 +10,46 @@ import Link from "@tiptap/extension-link";
 // editor can never produce a doc the public site can't render.
 const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
 
+/**
+ * The exact extension list the live editor below registers — pulled out
+ * to a named export (rather than inlined in the `useEditor({...})` call)
+ * so rich-text-editor.test.tsx can build a real, headless `@tiptap/core`
+ * `Editor` from this *same* array and check what it can actually produce,
+ * instead of a second, hand-copied "restricted set" that could silently
+ * drift from this one the way the prose comment above already did once
+ * (StarterKit's hardBreak/underline were left enabled despite this
+ * comment's claim that "everything else... is disabled").
+ */
+export function richTextExtensions() {
+  return [
+    StarterKit.configure({
+      blockquote: false,
+      codeBlock: false,
+      horizontalRule: false,
+      strike: false,
+      code: false,
+      // StarterKit (Tiptap v3) also bundles HardBreak (Shift+Enter) and
+      // Underline (Ctrl/Cmd+U) by default — neither is mentioned in the
+      // restricted set this comment already documented, and neither has
+      // a toolbar button here, but both are ordinary editor shortcuts a
+      // user can trigger with no UI at all. Left enabled, they'd let the
+      // editor produce a doc components/blocks/rich-text.tsx can't
+      // render and lib/validation/rich-text.ts's tiptapDocSchema
+      // rejects at save time — explicitly disabled here instead so the
+      // three-way lockstep (this config / the schema / the reader) that
+      // comment already calls out actually holds.
+      hardBreak: false,
+      underline: false,
+      heading: { levels: [2, 3] },
+      // StarterKit (Tiptap v3) bundles its own Link extension — disable
+      // it here so the explicit Link.configure() below (openOnClick/
+      // autolink) doesn't register twice under the same name.
+      link: false,
+    }),
+    Link.configure({ openOnClick: false, autolink: true }),
+  ];
+}
+
 function ToolbarButton({
   onClick,
   active,
@@ -45,21 +85,7 @@ export function RichTextEditor({
 }) {
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [
-      StarterKit.configure({
-        blockquote: false,
-        codeBlock: false,
-        horizontalRule: false,
-        strike: false,
-        code: false,
-        heading: { levels: [2, 3] },
-        // StarterKit (Tiptap v3) bundles its own Link extension — disable
-        // it here so the explicit Link.configure() below (openOnClick/
-        // autolink) doesn't register twice under the same name.
-        link: false,
-      }),
-      Link.configure({ openOnClick: false, autolink: true }),
-    ],
+    extensions: richTextExtensions(),
     content: value && value.content?.length ? value : EMPTY_DOC,
     onUpdate: ({ editor }) => onChange(editor.getJSON()),
     editorProps: {

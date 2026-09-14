@@ -17,6 +17,13 @@ function toEmbedUrl(url: string): string {
 export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
   const [loaded, setLoaded] = useState(false);
 
+  // videoUrl is optional at the schema level (see video-embed.tsx) since
+  // there's no safe, non-invented URL to default it to — a freshly added
+  // block with no URL yet renders nothing rather than a play button that
+  // opens a blank iframe.
+  if (!data.videoUrl) return null;
+  const videoUrl = data.videoUrl;
+
   return (
     <Section
       background={data.background}
@@ -32,7 +39,7 @@ export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
       <Clipped corner="br" size="1.5rem" className="relative aspect-video w-full overflow-hidden">
         {loaded ? (
           <iframe
-            src={toEmbedUrl(data.videoUrl)}
+            src={toEmbedUrl(videoUrl)}
             title={data.title ?? "Video"}
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
