@@ -14,13 +14,25 @@ import { inviteUserAction, setUserRoleAction, setUserActiveAction } from "@/lib/
  * referencing a non-hoisted const would throw "Cannot access before
  * initialization".
  */
-const { mockRequireAdmin, mockRequireAdminRole } = vi.hoisted(() => ({
+const { mockRequireAdmin, mockRequireAdminRole, mockRequireCapability } = vi.hoisted(() => ({
   mockRequireAdmin: vi.fn(),
   mockRequireAdminRole: vi.fn(),
+  mockRequireCapability: vi.fn(),
 }));
+// Not spread from the actual module (unlike the @/lib/data/pages mock
+// below): lib/auth/index.ts's real requireCapability calls the module's
+// *own* requireAdmin internally — a same-module function reference that
+// overriding the mocked *export* wouldn't intercept — so spreading
+// `...actual` here would silently let a real, uncontrolled
+// createServerDbClient()/cookies() session lookup leak into this test the
+// moment Task 4 wires requireCapability in. Mocking requireCapability
+// directly as its own controllable export sidesteps that, and covers the
+// other plausible shape Task 4 might take too (requireAdmin() + an inline
+// hasCapability() check + a bare redirect()) via the existing mockRedirect.
 vi.mock("@/lib/auth", () => ({
   requireAdmin: mockRequireAdmin,
   requireAdminRole: mockRequireAdminRole,
+  requireCapability: mockRequireCapability,
 }));
 
 const { mockPublishPage, mockUnpublishPage, mockDeletePage } = vi.hoisted(() => ({
@@ -71,30 +83,48 @@ describe("publish/unpublish role enforcement (known defect — Task 4 territory)
   // wired to call requireCapability("publish") yet (that's Task 4).
   //
   // test.fails() documents "this is broken today, for this exact reason"
-  // without turning the suite red: the wrapped assertion is written as
-  // the CORRECT (fixed) behavior, which fails right now because the
-  // mutation runs anyway. Once Task 4 wires requireCapability into these
-  // two actions, an editor session will be rejected before the mutation
-  // runs, the assertion will start passing, and test.fails() itself will
-  // start failing — that's the intended signal to remove the annotation.
+  // without turning the suite red — but only if the wrapped assertion is
+  // written so it actually throws today (a resolved promise where a
+  // rejection was expected) rather than merely evaluating false: once
+  // Task 4 wires requireCapability("publish") in, that call redirects
+  // (lib/auth/index.ts's real requireCapability calls redirect(...) on
+  // failure, which this file's mocked next/navigation.redirect throws
+  // for), so `await publishPageAction(...)` itself would throw *before* a
+  // bare `expect(...).not.toHaveBeenCalled()` on the next line ever ran —
+  // a synchronous assertion after an unawaited throw point would still
+  // read as "test failed" today for the WRONG reason (nothing throws yet)
+  // and would keep reading as "test failed" after the fix too (something
+  // throws, uncaught, same test-level failure) — test.fails() can't tell
+  // those apart and would silently stay green forever. Wrapping the call
+  // itself in `.rejects.toThrow()` fixes that: today the promise resolves
+  // successfully, so `.rejects` itself fails (the real defect); once
+  // Task 4 lands, the promise rejects as expected, `.rejects.toThrow()`
+  // passes, the mutation was never called, the test body completes
+  // without throwing, and test.fails() correctly flips to a hard failure
+  // — the intended signal to remove the annotation.
 
   beforeEach(() => {
     mockRequireAdmin.mockResolvedValue(editorSession);
+    mockRequireCapability.mockImplementation(() => {
+      throw new Error("REDIRECT:/admin?error=not-authorized");
+    });
     mockPublishPage.mockResolvedValue(undefined);
     mockUnpublishPage.mockResolvedValue(undefined);
   });
 
-  // TODO(Task 4): remove test.fails() once publishPageAction calls
-  // requireCapability("publish") instead of bare requireAdmin().
+  // TODO(Task 4): remove test.fails() once publishPageAction rejects an
+  // editor session (via requireCapability("publish") or an equivalent
+  // inline check) instead of letting it through bare requireAdmin().
   test.fails("an editor session cannot publish a page", async () => {
-    await publishPageAction("page-1", 1);
+    await expect(publishPageAction("page-1", 1)).rejects.toThrow();
     expect(mockPublishPage).not.toHaveBeenCalled();
   });
 
-  // TODO(Task 4): remove test.fails() once unpublishPageAction calls
-  // requireCapability("publish") instead of bare requireAdmin().
+  // TODO(Task 4): remove test.fails() once unpublishPageAction rejects an
+  // editor session (via requireCapability("publish") or an equivalent
+  // inline check) instead of letting it through bare requireAdmin().
   test.fails("an editor session cannot unpublish a page", async () => {
-    await unpublishPageAction("page-1");
+    await expect(unpublishPageAction("page-1")).rejects.toThrow();
     expect(mockUnpublishPage).not.toHaveBeenCalled();
   });
 });
