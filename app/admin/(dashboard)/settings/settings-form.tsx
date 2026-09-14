@@ -21,13 +21,35 @@ const SETTINGS_FIELDS: FieldSpec[] = [
   { key: "social_instagram", label: "Instagram URL", type: "text", optional: true },
   { key: "footer_tagline", label: "Footer tagline", type: "text", optional: true },
   { key: "default_og_image", label: "Default social image", type: "image", optional: true },
+  {
+    key: "announcement_bar",
+    label: "Announcement bar",
+    type: "object",
+    fields: [
+      { key: "enabled", label: "Show announcement bar", type: "boolean" },
+      { key: "message", label: "Message", type: "text", optional: true },
+      { key: "link_url", label: "Link URL (optional)", type: "text", optional: true },
+      { key: "link_label", label: "Link label (optional)", type: "text", optional: true },
+    ],
+  },
 ];
+
+const EMPTY_ANNOUNCEMENT_BAR = { enabled: false, message: "", link_url: "", link_label: "" };
 
 export function SettingsForm({ settings }: { settings: Tables<"site_settings"> }) {
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ kind: "success" | "error"; text: string } | null>(null);
 
-  const form = useForm<any>({ defaultValues: settings });
+  // announcement_bar is a nullable jsonb column — a row that predates
+  // this field (or was never touched) has it as `null`, which
+  // react-hook-form can't register nested "announcement_bar.enabled"-style
+  // paths against.
+  const form = useForm<any>({
+    defaultValues: {
+      ...settings,
+      announcement_bar: (settings.announcement_bar as Record<string, unknown> | null) ?? EMPTY_ANNOUNCEMENT_BAR,
+    },
+  });
 
   function onSubmit(values: any) {
     setMessage(null);

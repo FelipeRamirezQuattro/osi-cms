@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { AnnouncementBar, normalizeAnnouncementBar } from "@/components/layout/announcement-bar";
 import { getSiteSettings } from "@/lib/data/settings";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteUrl } from "@/lib/seo";
@@ -26,6 +27,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <>
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
+      <AnnouncementBar settings={normalizeAnnouncementBar(settings.announcement_bar)} />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

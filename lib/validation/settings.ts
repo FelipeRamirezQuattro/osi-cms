@@ -2,6 +2,21 @@ import { z } from "zod";
 import { optionalNullableString, optionalSafeHrefSchema } from "@/lib/validation/common";
 
 /**
+ * site_settings.announcement_bar (jsonb, 0007_nav_settings_media.sql) —
+ * Task 7 item #12. `link_url` reuses optionalSafeHrefSchema (the same
+ * isSafeHref-backed guard every other admin-editable link in this file
+ * goes through), not a re-derived check.
+ */
+export const announcementBarSchema = z.object({
+  enabled: z.boolean().default(false),
+  message: optionalNullableString(),
+  link_url: optionalSafeHrefSchema({ label: "Announcement link URL" }),
+  link_label: optionalNullableString(),
+});
+
+export type AnnouncementBarInput = z.infer<typeof announcementBarSchema>;
+
+/**
  * site_settings is a singleton row (supabase/migrations/0007) with every
  * column nullable — there's no "required" field here, only format
  * checks: email must look like an email when set, the map embed and
@@ -28,11 +43,12 @@ export const siteSettingsSchema = z.object({
   social_instagram: optionalSafeHrefSchema({ label: "Instagram URL" }),
   footer_tagline: optionalNullableString(),
   default_og_image: optionalNullableString(),
-  // announcement_bar (jsonb) has no admin UI field today — left out of
-  // this schema entirely rather than typed loosely; z.object() strips
-  // unrecognized keys by default, so if a future caller ever sends it,
-  // it's silently dropped here rather than reaching updateSiteSettings
-  // unvalidated.
+  announcement_bar: announcementBarSchema.default({
+    enabled: false,
+    message: null,
+    link_url: null,
+    link_label: null,
+  }),
 });
 
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
