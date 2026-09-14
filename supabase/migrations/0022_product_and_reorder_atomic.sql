@@ -47,14 +47,21 @@
 --    operates on nav_items — so it skips the allowlist question
 --    entirely by construction.
 
+-- p_product_id is last (not first) despite being conceptually the
+-- "primary" argument: Postgres requires every parameter after the first
+-- one with a default to also have a default, so a defaultable
+-- p_product_id has to be trailing. Doesn't affect any call site — every
+-- caller in this codebase invokes this via supabase-js's .rpc(name,
+-- argsObject), which PostgREST resolves as named/keyword arguments, not
+-- positional ones.
 create or replace function public.save_product_atomic(
-  p_product_id uuid,
   p_meta jsonb,
   p_benefits jsonb,
   p_stages jsonb,
   p_specs jsonb,
   p_industry_ids jsonb,
-  p_application_ids jsonb
+  p_application_ids jsonb,
+  p_product_id uuid default null
 )
 returns uuid
 language plpgsql
@@ -63,8 +70,35 @@ set search_path = public
 as $$
 declare
   v_product_id uuid;
+  v_current_status text;
+  v_new_status text := coalesce(nullif(p_meta->>'status', ''), 'draft');
 begin
   if not public.has_capability('edit_drafts') then
+    raise exception 'Not authorized';
+  end if;
+
+  if p_product_id is not null then
+    select status into v_current_status from products where id = p_product_id for update;
+    if not found then raise exception 'Product not found'; end if;
+  end if;
+
+  -- Mirrors lib/auth/index.ts's requirePublishCapabilityForStatusChange:
+  -- a no-op transition, or one that never touches 'published' on either
+  -- side, needs only edit_drafts; flipping to *or away from* 'published'
+  -- needs the publish capability too. This function is `security
+  -- definer` and `grant execute ... to authenticated`, making it the
+  -- authoritative write path for a product's status regardless of RLS —
+  -- the TypeScript-side guard alone isn't a real boundary for a caller
+  -- that reaches this RPC directly (e.g. via a raw PostgREST RPC call),
+  -- so the check has to live here too, the same way 0017 isolates the
+  -- publish-capability check into publish_page_atomic rather than
+  -- letting save_page_draft_atomic touch `status` at all. `v_current_status`
+  -- is NULL for a brand-new product (nothing to compare against), and
+  -- `is distinct from` (rather than `<>`) makes that comparison behave
+  -- correctly against NULL instead of evaluating to NULL/false.
+  if v_new_status is distinct from v_current_status
+     and (v_new_status = 'published' or v_current_status = 'published')
+     and not public.has_capability('publish') then
     raise exception 'Not authorized';
   end if;
 
@@ -115,7 +149,9 @@ begin
       seo_title = nullif(trim(p_meta->>'seo_title'), ''),
       seo_description = nullif(trim(p_meta->>'seo_description'), '')
     where id = v_product_id;
-    if not found then raise exception 'Product not found'; end if;
+    -- No `if not found` check needed here — the select ... for update
+    -- above already confirmed the row exists and holds its lock for the
+    -- rest of this transaction.
   end if;
 
   delete from product_benefits where product_id = v_product_id;
@@ -267,17 +303,17 @@ $$;
 -- get_advisors flags the exposure regardless). Do both from the start
 -- here instead of needing a 0023 follow-up fix migration the way 0017
 -- did.
-revoke all on function public.save_product_atomic(uuid, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb) from public;
+revoke all on function public.save_product_atomic(jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid) from public;
 revoke all on function public.delete_product_atomic(uuid) from public;
 revoke all on function public.swap_entity_position(text, uuid, uuid) from public;
 revoke all on function public.swap_nav_item_position(uuid, uuid) from public;
 
-revoke execute on function public.save_product_atomic(uuid, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb) from anon;
+revoke execute on function public.save_product_atomic(jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid) from anon;
 revoke execute on function public.delete_product_atomic(uuid) from anon;
 revoke execute on function public.swap_entity_position(text, uuid, uuid) from anon;
 revoke execute on function public.swap_nav_item_position(uuid, uuid) from anon;
 
-grant execute on function public.save_product_atomic(uuid, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb) to authenticated;
+grant execute on function public.save_product_atomic(jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid) to authenticated;
 grant execute on function public.delete_product_atomic(uuid) to authenticated;
 grant execute on function public.swap_entity_position(text, uuid, uuid) to authenticated;
 grant execute on function public.swap_nav_item_position(uuid, uuid) to authenticated;

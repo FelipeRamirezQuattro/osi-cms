@@ -155,7 +155,7 @@ export async function saveProduct(
 ): Promise<string> {
   const db = createServerDbClient();
   const { data, error } = await db.rpc("save_product_atomic", {
-    p_product_id: productId,
+    p_product_id: productId ?? undefined,
     p_meta: meta as unknown as Json,
     p_benefits: benefits as unknown as Json,
     p_stages: stages as unknown as Json,

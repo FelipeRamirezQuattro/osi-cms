@@ -119,6 +119,15 @@ a role: **editor** can create and edit content but not publish it or
 manage users; **admin** can do everything. You can also disable an
 account here if someone leaves.
 
+## Audit log
+
+**Audit log** (visible to admins only) is a running record of who
+changed what — every create, edit, delete, publish, reorder, and setting
+change across the site, with who did it and when. Filter by staff
+member, the kind of thing that changed (a product, a page, navigation,
+and so on), the action taken, or a date range, to answer "who changed
+this and when" without having to ask around.
+
 ## If something looks wrong
 
 - A page showing old content after you published? Give it a few seconds

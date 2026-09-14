@@ -1197,7 +1197,11 @@ export type Database = {
           p_benefits: Json;
           p_industry_ids: Json;
           p_meta: Json;
-          p_product_id: string | null;
+          // `default null` in the SQL (required for parameter ordering —
+          // see the migration's comment) makes this optional in the
+          // generated Args, same convention as record_audit's
+          // p_entity_id above.
+          p_product_id?: string;
           p_specs: Json;
           p_stages: Json;
         };

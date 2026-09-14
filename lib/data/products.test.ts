@@ -63,13 +63,21 @@ describe("saveProduct", () => {
     ]);
   });
 
-  it("passes null as p_product_id for a brand-new product", async () => {
+  it("omits p_product_id (sends undefined, not null) for a brand-new product", async () => {
+    // save_product_atomic's SQL parameter is `p_product_id uuid default
+    // null` (required for parameter ordering — see the migration's
+    // comment), which the generated Args type surfaces as an optional
+    // key (`p_product_id?: string`), not `string | null` — so the
+    // create path must send `undefined`, matching recordAudit's own
+    // `entityId ?? undefined` pattern for the same kind of defaulted arg.
     const fake = createFakeDbClient({ data: "new-id", error: null });
     mockCreateServerDbClient.mockReturnValue(fake);
 
     await saveProduct(null, { name: "Widget" }, [], [], [], [], []);
 
-    expect(fake.rpcCalls[0].args).toMatchObject({ p_product_id: null });
+    const args = fake.rpcCalls[0].args as Record<string, unknown>;
+    expect(args.p_product_id).toBeUndefined();
+    expect("p_product_id" in args).toBe(true);
   });
 
   it("throws when the RPC reports an error, rather than returning a partial result", async () => {
