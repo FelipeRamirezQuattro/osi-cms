@@ -3,28 +3,34 @@ import type { Json, Tables } from "@/lib/db/database.types";
 
 export type PageWithBlocks = Tables<"pages"> & { blocks: Tables<"page_blocks">[] };
 
+type PublishedSnapshot = {
+  meta: Tables<"pages">;
+  blocks: Tables<"page_blocks">[];
+};
+
+function publicationToPage(
+  publication: Pick<Tables<"page_publications">, "snapshot" | "published_at">,
+): PageWithBlocks {
+  const snapshot = publication.snapshot as unknown as PublishedSnapshot;
+  return {
+    ...snapshot.meta,
+    status: "published",
+    published_at: publication.published_at,
+    blocks: snapshot.blocks.filter((block) => block.is_visible).sort((a, b) => a.position - b.position),
+  };
+}
+
 export async function getPageBySlug(slug: string, locale = "en"): Promise<PageWithBlocks | null> {
   const db = createServerDbClient();
 
-  const { data: page, error } = await db
-    .from("pages")
-    .select("*")
+  const { data: publication, error } = await db
+    .from("page_publications")
+    .select("snapshot, published_at")
     .eq("slug", slug)
     .eq("locale", locale)
-    .eq("status", "published")
     .maybeSingle();
   if (error) throw error;
-  if (!page) return null;
-
-  const { data: blocks, error: blocksError } = await db
-    .from("page_blocks")
-    .select("*")
-    .eq("page_id", page.id)
-    .eq("is_visible", true)
-    .order("position", { ascending: true });
-  if (blocksError) throw blocksError;
-
-  return { ...page, blocks: blocks ?? [] };
+  return publication ? publicationToPage(publication) : null;
 }
 
 /**
@@ -36,14 +42,13 @@ export async function getPageBySlug(slug: string, locale = "en"): Promise<PageWi
 export async function listPagesUnderSlug(prefix: string, locale = "en"): Promise<Tables<"pages">[]> {
   const db = createServerDbClient();
   const { data, error } = await db
-    .from("pages")
-    .select("*")
+    .from("page_publications")
+    .select("snapshot, published_at")
     .eq("locale", locale)
-    .eq("status", "published")
     .like("slug", `${prefix}/%`)
-    .order("title", { ascending: true });
+    .order("slug", { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((publication) => publicationToPage(publication));
 }
 
 /**
@@ -121,100 +126,53 @@ export async function createPage(input: PageMeta): Promise<Tables<"pages">> {
 }
 
 export async function duplicatePage(id: string, newSlug: string): Promise<Tables<"pages">> {
-  const source = await getPageById(id);
-  if (!source) throw new Error("Page not found");
-
   const db = createServerDbClient();
-  const { blocks, id: _id, created_at, updated_at, published_at, status, is_system, ...meta } = source;
-  void _id;
-  void created_at;
-  void updated_at;
-  void published_at;
-  void status;
-  void is_system;
-
-  const { data: page, error } = await db
-    .from("pages")
-    .insert({ ...meta, slug: newSlug, status: "draft" })
-    .select("*")
-    .single();
+  const { data: newId, error } = await db.rpc("duplicate_page_atomic", {
+    p_page_id: id,
+    p_new_slug: newSlug,
+  });
   if (error) throw error;
-
-  if (blocks.length > 0) {
-    const { error: blocksError } = await db.from("page_blocks").insert(
-      blocks.map((b) => ({
-        page_id: page.id,
-        type: b.type,
-        position: b.position,
-        is_visible: b.is_visible,
-        data: b.data,
-      })),
-    );
-    if (blocksError) throw blocksError;
-  }
-
+  const page = await getPageById(newId);
+  if (!page) throw new Error("Duplicated page could not be loaded");
   return page;
 }
 
 export async function deletePage(id: string): Promise<void> {
   const db = createServerDbClient();
-  const { error } = await db.from("pages").delete().eq("id", id);
+  const { error } = await db.rpc("delete_page_atomic", { p_page_id: id });
   if (error) throw error;
 }
 
-/** Replaces page metadata + the full block list (delete-then-insert — no concurrent-editor support). */
-export async function savePageDraft(id: string, meta: PageMeta, blocks: BlockInput[]): Promise<void> {
+/** Atomically replaces draft metadata + blocks with optimistic concurrency. */
+export async function savePageDraft(
+  id: string,
+  meta: PageMeta,
+  blocks: BlockInput[],
+  expectedVersion: number,
+): Promise<number> {
   const db = createServerDbClient();
-
-  const { error: metaError } = await db.from("pages").update(meta).eq("id", id);
-  if (metaError) throw metaError;
-
-  const { error: deleteError } = await db.from("page_blocks").delete().eq("page_id", id);
-  if (deleteError) throw deleteError;
-
-  if (blocks.length > 0) {
-    const { error: insertError } = await db.from("page_blocks").insert(
-      blocks.map((b, index) => ({
-        page_id: id,
-        type: b.type,
-        position: index,
-        is_visible: b.is_visible,
-        data: b.data as Json,
-      })),
-    );
-    if (insertError) throw insertError;
-  }
+  const { data, error } = await db.rpc("save_page_draft_atomic", {
+    p_page_id: id,
+    p_meta: meta as unknown as Json,
+    p_blocks: blocks as unknown as Json,
+    p_expected_version: expectedVersion,
+  });
+  if (error) throw error;
+  return data;
 }
 
-export async function publishPage(id: string, userId: string): Promise<void> {
-  const page = await getPageById(id);
-  if (!page) throw new Error("Page not found");
-
+export async function publishPage(id: string, expectedVersion: number): Promise<void> {
   const db = createServerDbClient();
-  // search_vector is a generated column (migration 0016) — not
-  // Json-serializable (tsvector has no TS representation) and not
-  // meaningful to snapshot anyway, since restoring just re-derives it
-  // from title/seo_description.
-  const { blocks, search_vector: _searchVector, ...meta } = page;
-  void _searchVector;
-
-  const { error: revisionError } = await db.from("page_revisions").insert({
-    page_id: id,
-    snapshot: { meta, blocks },
-    created_by: userId,
+  const { error } = await db.rpc("publish_page_atomic", {
+    p_page_id: id,
+    p_expected_version: expectedVersion,
   });
-  if (revisionError) throw revisionError;
-
-  const { error } = await db
-    .from("pages")
-    .update({ status: "published", published_at: new Date().toISOString(), updated_by: userId })
-    .eq("id", id);
   if (error) throw error;
 }
 
 export async function unpublishPage(id: string): Promise<void> {
   const db = createServerDbClient();
-  const { error } = await db.from("pages").update({ status: "draft" }).eq("id", id);
+  const { error } = await db.rpc("unpublish_page_atomic", { p_page_id: id });
   if (error) throw error;
 }
 
@@ -230,7 +188,11 @@ export async function listPageRevisions(pageId: string): Promise<Tables<"page_re
   return data ?? [];
 }
 
-export async function restorePageRevision(pageId: string, revisionId: string): Promise<void> {
+export async function restorePageRevision(
+  pageId: string,
+  revisionId: string,
+  expectedVersion: number,
+): Promise<number> {
   const db = createServerDbClient();
   const { data: revision, error } = await db
     .from("page_revisions")
@@ -241,9 +203,26 @@ export async function restorePageRevision(pageId: string, revisionId: string): P
   if (error) throw error;
 
   const snapshot = revision.snapshot as { meta: PageMeta; blocks: Tables<"page_blocks">[] };
-  await savePageDraft(
+  return savePageDraft(
     pageId,
     snapshot.meta,
     snapshot.blocks.map((b) => ({ type: b.type, is_visible: b.is_visible, data: b.data as Record<string, unknown> })),
+    expectedVersion,
   );
+}
+
+export async function recordAudit(
+  action: string,
+  entity: string,
+  entityId?: string,
+  diff?: Json,
+): Promise<void> {
+  const db = createServerDbClient();
+  const { error } = await db.rpc("record_audit", {
+    p_action: action,
+    p_entity: entity,
+    p_entity_id: entityId,
+    p_diff: diff,
+  });
+  if (error) throw error;
 }

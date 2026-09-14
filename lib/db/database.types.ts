@@ -546,9 +546,45 @@ export type Database = {
           },
         ];
       };
+      page_publications: {
+        Row: {
+          locale: string;
+          page_id: string;
+          published_at: string;
+          slug: string;
+          snapshot: Json;
+          updated_at: string;
+        };
+        Insert: {
+          locale?: string;
+          page_id: string;
+          published_at?: string;
+          slug: string;
+          snapshot: Json;
+          updated_at?: string;
+        };
+        Update: {
+          locale?: string;
+          page_id?: string;
+          published_at?: string;
+          slug?: string;
+          snapshot?: Json;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "page_publications_page_id_fkey";
+            columns: ["page_id"];
+            isOneToOne: true;
+            referencedRelation: "pages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       pages: {
         Row: {
           created_at: string;
+          draft_version: number;
           id: string;
           is_system: boolean;
           locale: string;
@@ -567,6 +603,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          draft_version?: number;
           id?: string;
           is_system?: boolean;
           locale?: string;
@@ -585,6 +622,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          draft_version?: number;
           id?: string;
           is_system?: boolean;
           locale?: string;
@@ -1107,8 +1145,24 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      delete_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
+      duplicate_page_atomic: { Args: { p_new_slug: string; p_page_id: string }; Returns: string };
+      has_capability: { Args: { capability: string }; Returns: boolean };
       is_admin: { Args: never; Returns: boolean };
       is_staff: { Args: never; Returns: boolean };
+      publish_page_atomic: {
+        Args: { p_expected_version: number; p_page_id: string };
+        Returns: undefined;
+      };
+      record_audit: {
+        Args: { p_action: string; p_diff?: Json; p_entity: string; p_entity_id?: string };
+        Returns: undefined;
+      };
+      save_page_draft_atomic: {
+        Args: { p_blocks: Json; p_expected_version: number; p_meta: Json; p_page_id: string };
+        Returns: number;
+      };
+      unpublish_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;
