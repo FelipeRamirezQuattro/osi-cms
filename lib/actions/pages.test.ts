@@ -3,6 +3,7 @@ import { publishPageAction, unpublishPageAction, deletePageAction } from "@/lib/
 import { inviteUserAction, setUserRoleAction, setUserActiveAction } from "@/lib/actions/users";
 import { createNavItemAction } from "@/lib/actions/navigation";
 import { saveSettingsAction } from "@/lib/actions/settings";
+import { hasCapability, type Capability } from "@/lib/auth/capabilities";
 
 /**
  * These exercise the real lib/actions/pages.ts, lib/actions/users.ts,
@@ -82,11 +83,30 @@ vi.mock("@/lib/data/settings", () => ({
   updateSiteSettings: mockUpdateSiteSettings,
 }));
 
+const editorSession = { userId: "editor-1", email: "editor@example.com", role: "editor" as const, fullName: "Edie Tor" };
 const adminSession = { userId: "admin-1", email: "admin@example.com", role: "admin" as const, fullName: "Ada Min" };
 
-/** Mimics the real requireCapability's failure mode: redirect() throws. */
-function rejectAsUnauthorized() {
-  throw new Error("REDIRECT:/admin?error=not-authorized");
+/**
+ * A role-driven mock for requireCapability that exercises the REAL
+ * hasCapability() function against a given session, instead of always
+ * unconditionally accepting or rejecting. This is what makes these
+ * tests able to catch a capability *mis-mapping* (e.g. publishPageAction
+ * accidentally wired to requireCapability("edit_drafts") instead of
+ * "publish"): an "editor cannot X" test built on requireCapabilityAs
+ * (editorSession) only rejects if the capability the action under test
+ * actually asked for is one hasCapability("editor", ...) says no to —
+ * an unconditional "always throw" mock would pass that same test
+ * whether the action asked for the *right* capability or not. Mirrors
+ * the real requireCapability's failure mode (redirect() throws) for the
+ * rejection case.
+ */
+function requireCapabilityAs(session: typeof editorSession | typeof adminSession) {
+  return async (capability: Capability) => {
+    if (!hasCapability(session.role, capability)) {
+      throw new Error("REDIRECT:/admin?error=not-authorized");
+    }
+    return session;
+  };
 }
 
 beforeEach(() => {
@@ -103,7 +123,7 @@ describe("publish/unpublish require the publish capability", () => {
   // before the underlying mutation ever runs.
 
   it("rejects an editor session before publishing", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
     mockPublishPage.mockResolvedValue(undefined);
 
     await expect(publishPageAction("page-1", 1)).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
@@ -111,7 +131,7 @@ describe("publish/unpublish require the publish capability", () => {
   });
 
   it("rejects an editor session before unpublishing", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
     mockUnpublishPage.mockResolvedValue(undefined);
 
     await expect(unpublishPageAction("page-1")).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
@@ -119,7 +139,7 @@ describe("publish/unpublish require the publish capability", () => {
   });
 
   it("allows an admin session to publish", async () => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
     mockPublishPage.mockResolvedValue(undefined);
 
     const result = await publishPageAction("page-1", 1);
@@ -132,14 +152,14 @@ describe("navigation mutations require the manage_navigation capability", () => 
   const input = { menu_id: "menu-1", parent_id: null, label: "Products", href: "/products", is_external: false };
 
   it("rejects an editor session before creating a nav item", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(createNavItemAction(input)).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockCreateNavItem).not.toHaveBeenCalled();
   });
 
   it("allows an admin session to create a nav item", async () => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
     mockCreateNavItem.mockResolvedValue(undefined);
 
     await createNavItemAction(input);
@@ -149,7 +169,7 @@ describe("navigation mutations require the manage_navigation capability", () => 
 
 describe("settings mutations require the manage_settings capability", () => {
   it("rejects an editor session before saving settings", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(saveSettingsAction({ phone: "555-1234", address_lines: [] })).rejects.toThrow(
       "REDIRECT:/admin?error=not-authorized",
@@ -158,7 +178,7 @@ describe("settings mutations require the manage_settings capability", () => {
   });
 
   it("allows an admin session to save settings", async () => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
     mockUpdateSiteSettings.mockResolvedValue(undefined);
 
     const result = await saveSettingsAction({ phone: "555-1234", address_lines: ["", "1 Main St"] });
@@ -174,7 +194,7 @@ describe("user-management actions require the manage_users capability", () => {
   // absent from EDITOR_CAPABILITIES).
 
   it("rejects an editor session before inviting a user", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(inviteUserAction("new@example.com", "editor")).rejects.toThrow(
       "REDIRECT:/admin?error=not-authorized",
@@ -183,21 +203,21 @@ describe("user-management actions require the manage_users capability", () => {
   });
 
   it("rejects an editor session before changing a user's role", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(setUserRoleAction("user-1", "admin")).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockUpdateAdminUserRow).not.toHaveBeenCalled();
   });
 
   it("rejects an editor session before activating/deactivating a user", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(setUserActiveAction("user-1", false)).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockUpdateAdminUserRow).not.toHaveBeenCalled();
   });
 
   it("allows an admin session to invite a user", async () => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
     mockInviteAdminUser.mockResolvedValue(undefined);
 
     const result = await inviteUserAction("new@example.com", "editor");
@@ -206,7 +226,7 @@ describe("user-management actions require the manage_users capability", () => {
   });
 
   it("allows an admin session to activate/deactivate a user", async () => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
     mockUpdateAdminUserRow.mockResolvedValue(undefined);
 
     await setUserActiveAction("user-1", false);
@@ -222,7 +242,7 @@ describe("deletePageAction propagates system-page delete protection (regression 
   // succeeded.
 
   beforeEach(() => {
-    mockRequireCapability.mockResolvedValue(adminSession);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
   });
 
   it("propagates the rejection and never redirects when deletePage rejects", async () => {
@@ -241,7 +261,7 @@ describe("deletePageAction propagates system-page delete protection (regression 
   });
 
   it("rejects an editor session before a delete is even attempted", async () => {
-    mockRequireCapability.mockImplementation(rejectAsUnauthorized);
+    mockRequireCapability.mockImplementation(requireCapabilityAs(editorSession));
 
     await expect(deletePageAction("page-1")).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockDeletePage).not.toHaveBeenCalled();
