@@ -139,7 +139,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     expect(mockSaveProduct).not.toHaveBeenCalled();
   });
 
-  it("calls saveProduct with the product id (null for create) and all 5 child arrays, in the atomic RPC's shape", async () => {
+  it("calls saveProduct with the product id (null for create) and all 6 child/junction arrays, in the atomic RPC's shape", async () => {
     mockRequirePublish.mockResolvedValue(undefined);
     mockSaveProduct.mockResolvedValue("p1");
     mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
@@ -153,6 +153,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
       specs: [{ label: "Weight", value: "10kg" }],
       industries: ["ind-1"],
       applications: ["app-1"],
+      related_product_ids: ["p2"],
     });
 
     // productSaveInputSchema (lib/validation/products.ts) normalizes every
@@ -166,6 +167,31 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
       [{ label: "Weight", value: "10kg", unit: null }],
       ["ind-1"],
       ["app-1"],
+      ["p2"],
+    );
+  });
+
+  it("filters the product's own id out of related_product_ids (defense in depth against a self-reference)", async () => {
+    mockRequirePublish.mockResolvedValue(undefined);
+    mockSaveProduct.mockResolvedValue("p1");
+    mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
+
+    await saveProductAction("p1", {
+      name: "Widget",
+      slug: "widget",
+      status: "draft",
+      related_product_ids: ["p1", "p2"],
+    });
+
+    expect(mockSaveProduct).toHaveBeenCalledWith(
+      "p1",
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      ["p2"],
     );
   });
 });

@@ -75,6 +75,7 @@ export const productSaveInputSchema = z
     specs: z.array(productSpecSchema).default([]),
     industries: z.array(z.string()).default([]),
     applications: z.array(z.string()).default([]),
+    related_product_ids: z.array(z.string()).default([]),
   })
   .superRefine((data, ctx) => {
     // A product's canonical URL (/products/[category]/[slug]) is built

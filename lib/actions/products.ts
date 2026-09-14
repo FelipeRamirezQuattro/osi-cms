@@ -26,12 +26,22 @@ export async function getProductAction(id: string): Promise<ProductAdminDetail |
   return getProductByIdAdmin(id);
 }
 
-export async function getProductRelationOptionsAction(): Promise<RelationOptionsMap> {
+/**
+ * `excludeProductId` (the product currently being edited, if any) is
+ * filtered out of the `related_products` option list only — a product
+ * can't be related to itself (product_related's own check constraint
+ * would reject it anyway; see saveProductAction's defensive filter too).
+ */
+export async function getProductRelationOptionsAction(excludeProductId?: string): Promise<RelationOptionsMap> {
   await requireCapability("edit_drafts");
   const entries = await Promise.all(
     PRODUCT_RELATIONS.map(async (r) => [r.key, await listRelationOptions(r.table, r.valueColumn, r.labelColumn)] as const),
   );
-  return Object.fromEntries(entries);
+  const options = Object.fromEntries(entries);
+  if (excludeProductId && options.related_products) {
+    options.related_products = options.related_products.filter((opt) => opt.value !== excludeProductId);
+  }
+  return options;
 }
 
 export async function moveProductAction(id: string, direction: "up" | "down"): Promise<void> {
@@ -55,7 +65,7 @@ export async function saveProductAction(id: string | null, values: any): Promise
     const { message, field } = formatZodError(parsed.error);
     return { status: "error", message, field };
   }
-  const { benefits, stages, specs, industries, applications, ...rest } = parsed.data;
+  const { benefits, stages, specs, industries, applications, related_product_ids, ...rest } = parsed.data;
 
   const meta: Record<string, unknown> = { ...rest, locale: "en" };
 
@@ -77,6 +87,14 @@ export async function saveProductAction(id: string | null, values: any): Promise
       meta.position = existing.length > 0 ? Number(existing[0].position ?? 0) + 1 : 0;
     }
 
+    // Defensive: the admin's related-products options already exclude the
+    // product being edited (getProductRelationOptionsAction), and
+    // product_related's own check(product_id <> related_product_id)
+    // constraint would reject a self-reference anyway — this just avoids
+    // surfacing that as a raw DB error for a value that should never
+    // reach here in the first place.
+    const relatedProductIds = (related_product_ids ?? []).filter((relatedId) => relatedId !== id);
+
     const productId = await saveProduct(
       id,
       meta,
@@ -85,6 +103,7 @@ export async function saveProductAction(id: string | null, values: any): Promise
       specs ?? [],
       industries ?? [],
       applications ?? [],
+      relatedProductIds,
     );
 
     return { status: "success", id: productId };

@@ -1,5 +1,19 @@
 import { createServerDbClient } from "@/lib/db/client";
-import type { Json, Tables } from "@/lib/db/database.types";
+import type { Database, Json, Tables } from "@/lib/db/database.types";
+
+/**
+ * save_product_atomic's generated Args type doesn't include p_related_ids
+ * yet — migration 0023_product_related_atomic.sql (which adds it) hasn't
+ * been applied/regenerated as of this writing (repo convention: this
+ * implementer writes migrations for controller review, never applies
+ * them — see CLAUDE.md). Delete this overlay type and pass
+ * Database["public"]["Functions"]["save_product_atomic"]["Args"] directly
+ * once `pnpm exec supabase gen types`/the MCP generate_typescript_types
+ * tool has regenerated database.types.ts against the applied migration.
+ */
+type SaveProductAtomicArgs = Database["public"]["Functions"]["save_product_atomic"]["Args"] & {
+  p_related_ids: Json;
+};
 
 export type ProductDetail = Tables<"products"> & {
   product_benefits: Tables<"product_benefits">[];
@@ -53,6 +67,55 @@ export async function listProductsByCategory(
   return data ?? [];
 }
 
+export type RelatedProduct = {
+  slug: string;
+  name: string;
+  summary: string | null;
+  categorySlug: string | null;
+};
+
+/**
+ * Products a given product links to via product_related, published and
+ * in the same locale only, in the admin-chosen order — feeds
+ * RecommendationsClient/LabelPlateGrid on the product detail page (Task
+ * 7 item #6). Two queries rather than one embedded select: product_related
+ * has two FKs to products (product_id and related_product_id), and
+ * PostgREST's embed syntax needs an explicit FK hint to disambiguate that
+ * — reading the link rows and then the target products separately avoids
+ * that entirely and is just as cheap for the handful of related products
+ * a product ever has.
+ */
+export async function listRelatedProducts(productId: string, locale = "en"): Promise<RelatedProduct[]> {
+  const db = createServerDbClient();
+  const { data: links, error: linksError } = await db
+    .from("product_related")
+    .select("related_product_id, position")
+    .eq("product_id", productId)
+    .order("position", { ascending: true });
+  if (linksError) throw linksError;
+  if (!links || links.length === 0) return [];
+
+  const ids = links.map((link) => link.related_product_id);
+  const { data: relatedProducts, error } = await db
+    .from("products")
+    .select("id, slug, name, summary, status, locale, product_categories(slug)")
+    .in("id", ids)
+    .eq("status", "published")
+    .eq("locale", locale);
+  if (error) throw error;
+
+  const byId = new Map((relatedProducts ?? []).map((p) => [p.id, p]));
+  return links
+    .map((link) => byId.get(link.related_product_id))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p))
+    .map((p) => ({
+      slug: p.slug,
+      name: p.name,
+      summary: p.summary,
+      categorySlug: (p.product_categories as { slug: string } | null)?.slug ?? null,
+    }));
+}
+
 export async function getProductBySlug(
   slug: string,
   locale = "en",
@@ -88,6 +151,7 @@ export type ProductAdminDetail = Tables<"products"> & {
   specs: Tables<"product_specs">[];
   industries: string[];
   applications: string[];
+  related_product_ids: string[];
 };
 
 export async function listAllProducts(): Promise<Tables<"products">[]> {
@@ -103,18 +167,20 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
   if (error) throw error;
   if (!product) return null;
 
-  const [benefits, stages, specs, industries, applications] = await Promise.all([
+  const [benefits, stages, specs, industries, applications, related] = await Promise.all([
     db.from("product_benefits").select("*").eq("product_id", id).order("position", { ascending: true }),
     db.from("product_stages").select("*").eq("product_id", id).order("position", { ascending: true }),
     db.from("product_specs").select("*").eq("product_id", id).order("position", { ascending: true }),
     db.from("product_industries").select("industry_id").eq("product_id", id),
     db.from("product_applications").select("application_id").eq("product_id", id),
+    db.from("product_related").select("related_product_id").eq("product_id", id).order("position", { ascending: true }),
   ]);
   if (benefits.error) throw benefits.error;
   if (stages.error) throw stages.error;
   if (specs.error) throw specs.error;
   if (industries.error) throw industries.error;
   if (applications.error) throw applications.error;
+  if (related.error) throw related.error;
 
   return {
     ...product,
@@ -123,6 +189,7 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
     specs: specs.data ?? [],
     industries: (industries.data ?? []).map((r) => r.industry_id),
     applications: (applications.data ?? []).map((r) => r.application_id),
+    related_product_ids: (related.data ?? []).map((r) => r.related_product_id),
   };
 }
 
@@ -152,9 +219,10 @@ export async function saveProduct(
   specs: SpecInput[],
   industryIds: string[],
   applicationIds: string[],
+  relatedProductIds: string[],
 ): Promise<string> {
   const db = createServerDbClient();
-  const { data, error } = await db.rpc("save_product_atomic", {
+  const args: SaveProductAtomicArgs = {
     p_product_id: productId ?? undefined,
     p_meta: meta as unknown as Json,
     p_benefits: benefits as unknown as Json,
@@ -162,7 +230,9 @@ export async function saveProduct(
     p_specs: specs as unknown as Json,
     p_industry_ids: industryIds as unknown as Json,
     p_application_ids: applicationIds as unknown as Json,
-  });
+    p_related_ids: relatedProductIds as unknown as Json,
+  };
+  const { data, error } = await db.rpc("save_product_atomic", args);
   if (error) throw error;
   return data;
 }

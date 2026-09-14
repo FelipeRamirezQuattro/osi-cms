@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { deleteProduct, saveProduct } from "@/lib/data/products";
+import { deleteProduct, listRelatedProducts, saveProduct } from "@/lib/data/products";
 
 /**
  * Task 5: saveProduct/deleteProduct must go through the
@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 describe("saveProduct", () => {
-  it("calls save_product_atomic with the product id, meta, and all 5 child arrays, and returns the RPC's id", async () => {
+  it("calls save_product_atomic with the product id, meta, and all 6 child/junction arrays, and returns the RPC's id", async () => {
     const fake = createFakeDbClient({ data: "product-1", error: null });
     mockCreateServerDbClient.mockReturnValue(fake);
 
@@ -43,8 +43,18 @@ describe("saveProduct", () => {
     const specs = [{ label: "Weight", value: "10kg" }];
     const industries = ["ind-1"];
     const applications = ["app-1"];
+    const related = ["prod-2"];
 
-    const result = await saveProduct("product-1", { name: "Widget", status: "draft" }, benefits, stages, specs, industries, applications);
+    const result = await saveProduct(
+      "product-1",
+      { name: "Widget", status: "draft" },
+      benefits,
+      stages,
+      specs,
+      industries,
+      applications,
+      related,
+    );
 
     expect(result).toBe("product-1");
     expect(fake.rpcCalls).toEqual([
@@ -58,6 +68,7 @@ describe("saveProduct", () => {
           p_specs: specs,
           p_industry_ids: industries,
           p_application_ids: applications,
+          p_related_ids: related,
         },
       },
     ]);
@@ -73,7 +84,7 @@ describe("saveProduct", () => {
     const fake = createFakeDbClient({ data: "new-id", error: null });
     mockCreateServerDbClient.mockReturnValue(fake);
 
-    await saveProduct(null, { name: "Widget" }, [], [], [], [], []);
+    await saveProduct(null, { name: "Widget" }, [], [], [], [], [], []);
 
     const args = fake.rpcCalls[0].args as Record<string, unknown>;
     expect(args.p_product_id).toBeUndefined();
@@ -84,7 +95,9 @@ describe("saveProduct", () => {
     const fake = createFakeDbClient({ data: null, error: new Error("constraint violation") });
     mockCreateServerDbClient.mockReturnValue(fake);
 
-    await expect(saveProduct("p1", { name: "Widget" }, [], [], [], [], [])).rejects.toThrow("constraint violation");
+    await expect(saveProduct("p1", { name: "Widget" }, [], [], [], [], [], [])).rejects.toThrow(
+      "constraint violation",
+    );
   });
 });
 
@@ -96,5 +109,53 @@ describe("deleteProduct", () => {
     await deleteProduct("product-1");
 
     expect(fake.rpcCalls).toEqual([{ name: "delete_product_atomic", args: { p_product_id: "product-1" } }]);
+  });
+});
+
+/**
+ * Task 7 item #6: product_related had zero query anywhere. Two queries
+ * (link rows, then the target products) rather than one ambiguous
+ * embedded select — see listRelatedProducts's own comment for why.
+ */
+describe("listRelatedProducts", () => {
+  function createFakeFromClient(responses: unknown[]) {
+    const queue = [...responses];
+    const chain: Record<string, unknown> = {};
+    for (const method of ["select", "eq", "order", "in"]) {
+      chain[method] = () => chain;
+    }
+    chain.then = (resolve: (v: unknown) => void, reject?: (e: unknown) => void) => {
+      Promise.resolve(queue.shift()).then(resolve, reject);
+    };
+    return { from: () => chain };
+  }
+
+  it("returns related products in link position order, published + locale filtered", async () => {
+    const fake = createFakeFromClient([
+      {
+        data: [
+          { related_product_id: "p2", position: 0 },
+          { related_product_id: "p3", position: 1 },
+        ],
+        error: null,
+      },
+      {
+        data: [{ id: "p3", slug: "s3", name: "Third", summary: "sum3", product_categories: { slug: "cat" } }],
+        error: null,
+      },
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    // p2 isn't in the second query's result (e.g. draft or wrong locale) —
+    // it's silently dropped, not rendered as a broken card.
+    const result = await listRelatedProducts("p1");
+    expect(result).toEqual([{ slug: "s3", name: "Third", summary: "sum3", categorySlug: "cat" }]);
+  });
+
+  it("returns [] without a second query when there are no link rows", async () => {
+    const fake = createFakeFromClient([{ data: [], error: null }]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    expect(await listRelatedProducts("p1")).toEqual([]);
   });
 });

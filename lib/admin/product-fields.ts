@@ -63,6 +63,7 @@ export const PRODUCT_FIELDS: FieldSpec[] = [
   },
   { key: "industries", label: "Industries", type: "multi-relation", relation: "industries" },
   { key: "applications", label: "Applications", type: "multi-relation", relation: "applications" },
+  { key: "related_product_ids", label: "Related products", type: "multi-relation", relation: "related_products" },
 ];
 
 export const PRODUCT_DEFAULTS: Record<string, unknown> = {
@@ -78,10 +79,16 @@ export const PRODUCT_DEFAULTS: Record<string, unknown> = {
   specs: [],
   industries: [],
   applications: [],
+  related_product_ids: [],
 };
 
 export const PRODUCT_RELATIONS = [
   { key: "categories", table: "product_categories", valueColumn: "id", labelColumn: "name" },
   { key: "industries", table: "industries", valueColumn: "id", labelColumn: "name" },
   { key: "applications", table: "applications", valueColumn: "id", labelColumn: "name" },
+  // Self-referencing (products -> products); the product currently being
+  // edited is filtered out of this option list by
+  // getProductRelationOptionsAction, not here — this table-level config
+  // has no notion of "the current row".
+  { key: "related_products", table: "products", valueColumn: "id", labelColumn: "name" },
 ];

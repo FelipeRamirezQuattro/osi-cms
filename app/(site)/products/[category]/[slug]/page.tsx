@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getProductBySlug } from "@/lib/data/products";
+import { getProductBySlug, listRelatedProducts } from "@/lib/data/products";
+import { listResourcesForProduct } from "@/lib/data/resources";
 import { getSiteSettings } from "@/lib/data/settings";
 import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, resolveOgImage } from "@/lib/seo";
+import { Section } from "@/components/ui/section";
 import { ProductHeroRender } from "@/components/blocks/product-hero";
 import { BenefitsCardsRender } from "@/components/blocks/benefits-cards";
 import { StagesCarouselRender } from "@/components/blocks/stages-carousel";
@@ -11,6 +13,7 @@ import { HowItWorksRender } from "@/components/blocks/how-it-works";
 import { SpecTableRender } from "@/components/blocks/spec-table";
 import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text";
 import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
+import { RecommendationsClient } from "@/components/blocks/recommendations-client";
 import { RecordProductView } from "@/components/blocks/record-product-view";
 
 // products.body is a Tiptap jsonb doc, same shape rich_text blocks store —
@@ -52,6 +55,11 @@ export default async function ProductDetailPage({
   const { category, slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product || product.categorySlug !== category) notFound();
+
+  const [relatedProducts, resources] = await Promise.all([
+    listRelatedProducts(product.id),
+    listResourcesForProduct(product.id),
+  ]);
 
   const productUrl = absoluteUrl(`/products/${category}/${slug}`);
   const productImage = product.hero_image_url ?? product.diagram_image_url;
@@ -158,6 +166,41 @@ export default async function ProductDetailPage({
             })),
           }}
         />
+      )}
+      {relatedProducts.length > 0 && (
+        <Section background="navy" spacingTop="md" spacingBottom="md">
+          <h2 className="font-display text-section tracking-tightest-display uppercase">Related products</h2>
+          <div className="mt-8">
+            <RecommendationsClient
+              fallback={relatedProducts.map((p) => ({
+                slug: p.slug,
+                name: p.name,
+                summary: p.summary,
+                categorySlug: p.categorySlug,
+              }))}
+              limit={relatedProducts.length}
+            />
+          </div>
+        </Section>
+      )}
+      {resources.length > 0 && (
+        <Section background="cream" spacingTop="md" spacingBottom="md">
+          <h2 className="font-display text-section tracking-tightest-display uppercase">Resources</h2>
+          <ul className="mt-6 space-y-3">
+            {resources.map((resource) => (
+              <li key={resource.id}>
+                <a
+                  href={resource.file_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-display text-sm tracking-wide-display uppercase underline underline-offset-4 hover:opacity-80"
+                >
+                  {resource.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Section>
       )}
     </>
   );
