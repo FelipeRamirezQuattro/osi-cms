@@ -7,6 +7,7 @@ import {
   createPage,
   deletePage,
   duplicatePage,
+  isVersionConflictError,
   publishPage,
   restorePageRevision,
   savePageDraft,
@@ -15,7 +16,18 @@ import {
   type PageMeta,
 } from "@/lib/data/pages";
 
-export type SaveResult = { status: "success" } | { status: "error"; message: string; blockIndex?: number };
+export type SaveResult =
+  | { status: "success"; newVersion: number }
+  | { status: "error"; message: string; blockIndex?: number; conflict?: boolean };
+
+/** Prefers the SQL function's own user-facing message; falls back if the thrown value is shaped unexpectedly. */
+function conflictResult(error: unknown, fallbackMessage: string): SaveResult {
+  const message =
+    isVersionConflictError(error) && typeof error.message === "string" && error.message.length > 0
+      ? error.message
+      : fallbackMessage;
+  return { status: "error", message, conflict: true };
+}
 
 /** Validates every block's data against its registered Zod schema before writing. */
 function validateBlocks(blocks: BlockInput[]): SaveResult | null {
@@ -46,26 +58,41 @@ export async function createPageAction(input: PageMeta): Promise<{ id: string } 
   }
 }
 
-export async function saveDraftAction(pageId: string, meta: PageMeta, blocks: BlockInput[]): Promise<SaveResult> {
+export async function saveDraftAction(
+  pageId: string,
+  meta: PageMeta,
+  blocks: BlockInput[],
+  expectedVersion: number,
+): Promise<SaveResult> {
   await requireAdmin();
 
   const validationError = validateBlocks(blocks);
   if (validationError) return validationError;
 
   try {
-    await savePageDraft(pageId, meta, blocks);
-    return { status: "success" };
-  } catch {
+    const newVersion = await savePageDraft(pageId, meta, blocks, expectedVersion);
+    return { status: "success", newVersion };
+  } catch (error) {
+    if (isVersionConflictError(error)) {
+      return conflictResult(error, "This page was changed by another editor. Refresh before saving.");
+    }
     return { status: "error", message: "Save failed. Please try again." };
   }
 }
 
-export async function publishPageAction(pageId: string): Promise<SaveResult> {
-  const session = await requireAdmin();
+export async function publishPageAction(pageId: string, expectedVersion: number): Promise<SaveResult> {
+  await requireAdmin();
   try {
-    await publishPage(pageId, session.userId);
-    return { status: "success" };
-  } catch {
+    await publishPage(pageId, expectedVersion);
+    // publish_page_atomic doesn't bump draft_version (it only flips
+    // status/published_at) — the version the editor already holds is
+    // still correct, so it's threaded back through unchanged for a
+    // uniform SaveResult the editor can handle the same way as save/restore.
+    return { status: "success", newVersion: expectedVersion };
+  } catch (error) {
+    if (isVersionConflictError(error)) {
+      return conflictResult(error, "This page was changed by another editor. Refresh before publishing.");
+    }
     return { status: "error", message: "Publish failed. Please try again." };
   }
 }
@@ -91,7 +118,19 @@ export async function duplicatePageAction(pageId: string, newSlug: string): Prom
   }
 }
 
-export async function restoreRevisionAction(pageId: string, revisionId: string): Promise<void> {
+export async function restoreRevisionAction(
+  pageId: string,
+  revisionId: string,
+  expectedVersion: number,
+): Promise<SaveResult> {
   await requireAdmin();
-  await restorePageRevision(pageId, revisionId);
+  try {
+    const newVersion = await restorePageRevision(pageId, revisionId, expectedVersion);
+    return { status: "success", newVersion };
+  } catch (error) {
+    if (isVersionConflictError(error)) {
+      return conflictResult(error, "This page was changed by another editor. Refresh before restoring.");
+    }
+    return { status: "error", message: "Restore failed. Please try again." };
+  }
 }

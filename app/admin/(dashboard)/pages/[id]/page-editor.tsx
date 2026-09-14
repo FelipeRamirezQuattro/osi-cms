@@ -48,7 +48,10 @@ export function PageEditor({
   const [isSaving, startSaving] = useTransition();
   const [isPublishing, startPublishing] = useTransition();
   const [status, setStatus] = useState(page.status);
-  const [banner, setBanner] = useState<{ kind: "success" | "error"; message: string } | null>(null);
+  const [version, setVersion] = useState(page.draft_version);
+  const [banner, setBanner] = useState<{ kind: "success" | "error"; message: string; conflict?: boolean } | null>(
+    null,
+  );
   const [addType, setAddType] = useState(palette[0]?.type ?? "");
 
   const paletteByType = Object.fromEntries(palette.map((p) => [p.type, p]));
@@ -95,15 +98,16 @@ export function PageEditor({
   }
 
   function saveDraft(values: any) {
-    return saveDraftAction(page.id, buildMeta(values), values.blocks);
+    return saveDraftAction(page.id, buildMeta(values), values.blocks, version);
   }
 
   const onSaveDraft = handleSubmit((values) => {
     startSaving(async () => {
       const result = await saveDraft(values);
       if (result.status === "error") {
-        setBanner({ kind: "error", message: result.message });
+        setBanner({ kind: "error", message: result.message, conflict: result.conflict });
       } else {
+        setVersion(result.newVersion);
         setBanner({ kind: "success", message: "Draft saved." });
         router.refresh();
       }
@@ -114,12 +118,13 @@ export function PageEditor({
     startPublishing(async () => {
       const saveResult = await saveDraft(values);
       if (saveResult.status === "error") {
-        setBanner({ kind: "error", message: saveResult.message });
+        setBanner({ kind: "error", message: saveResult.message, conflict: saveResult.conflict });
         return;
       }
-      const publishResult = await publishPageAction(page.id);
+      setVersion(saveResult.newVersion);
+      const publishResult = await publishPageAction(page.id, saveResult.newVersion);
       if (publishResult.status === "error") {
-        setBanner({ kind: "error", message: publishResult.message });
+        setBanner({ kind: "error", message: publishResult.message, conflict: publishResult.conflict });
         return;
       }
       setStatus("published");
@@ -159,7 +164,11 @@ export function PageEditor({
   function onRestoreRevision(revisionId: string) {
     if (!window.confirm("Restore this revision? Unsaved changes will be lost.")) return;
     startSaving(async () => {
-      await restoreRevisionAction(page.id, revisionId);
+      const result = await restoreRevisionAction(page.id, revisionId, version);
+      if (result.status === "error") {
+        setBanner({ kind: "error", message: result.message, conflict: result.conflict });
+        return;
+      }
       router.refresh();
       window.location.reload();
     });
@@ -230,9 +239,20 @@ export function PageEditor({
         </div>
 
         {banner && (
-          <p className={banner.kind === "error" ? "text-sm text-red-600" : "text-sm text-green-700"}>
-            {banner.message}
-          </p>
+          <div className="flex items-center gap-3">
+            <p className={banner.kind === "error" ? "text-sm text-red-600" : "text-sm text-green-700"}>
+              {banner.message}
+            </p>
+            {banner.conflict && (
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="rounded border border-red-600 px-2 py-1 text-xs uppercase tracking-wide-label text-red-600"
+              >
+                Reload page
+              </button>
+            )}
+          </div>
         )}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">

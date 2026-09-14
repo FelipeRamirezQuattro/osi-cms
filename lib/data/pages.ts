@@ -211,6 +211,27 @@ export async function restorePageRevision(
   );
 }
 
+/**
+ * save_page_draft_atomic/publish_page_atomic (and restorePageRevision,
+ * which calls the former) raise with errcode 40001 on an optimistic-
+ * concurrency mismatch — see supabase/migrations/
+ * 0017_publishing_permissions_atomic.sql. Every `.rpc()` call above does
+ * a plain `if (error) throw error;`, so the thrown value is the
+ * PostgrestError object as-is, whose `.code` carries the raw Postgres
+ * SQLSTATE verbatim (no HTTP-status translation for RPC calls). Lives
+ * here rather than in lib/actions/pages.ts because a "use server" module
+ * may only export async functions (Next.js requirement — every export
+ * from such a file is treated as a Server Action reference).
+ */
+export function isVersionConflictError(error: unknown): error is { code: string; message?: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "40001"
+  );
+}
+
 export async function recordAudit(
   action: string,
   entity: string,
