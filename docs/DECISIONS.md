@@ -365,3 +365,34 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   ships stale content relative to what's on screen. Revision restore
   overwrites the current draft (via the same `savePageDraft` path), it
   does not itself publish.
+- **Removed the `"image"` background option instead of building it out**
+  (Task 7 audit remediation). `components/ui/section.tsx` already
+  rendered it identically to `"transparent"` — a fully dead option, not
+  a partially-built one — and a real configurable-background-image
+  system (overlay, focal point, accessible decorative semantics) is
+  disproportionate scope for a dead-field fix, plus a step away from
+  this project's documented navy/cream/gold design system toward
+  generic photo backgrounds. A read-only preflight against `page_blocks`
+  confirmed zero live rows used it, so no data-fixup migration was
+  needed either.
+- **Removed the unused `"primary"` nav menu** (Task 7) rather than
+  wiring it into the public header — utility + mega are the established
+  header model (confirmed: `scripts/seed-navigation.ts` only ever seeds
+  those two; nothing queries or renders `"primary"`). The `nav_menus.key`
+  check constraint still technically permits the value going forward;
+  narrowing it would need a constraint rebuild for no real benefit now
+  that the admin UI simply never offers it as a choice.
+- **Page `template` is a one-time creation preset, not a runtime
+  switch** (Task 7) — the column stays (it's now an honest historical
+  record of which starter blocks a page got at creation), but nothing
+  on the public rendering path branches on it, and `"product"` was
+  dropped from the option enum entirely: real products live in their
+  own `products` table/route, never in `pages`/`page_blocks`, so
+  offering it there was actively misleading.
+- **Announcement bar dismissal is keyed off a hash of the message
+  text**, not a fixed localStorage key or an admin-managed version
+  number (Task 7). Changing the announcement's copy in the admin
+  therefore makes it reappear for everyone who already dismissed the
+  old one — publishing new copy is a new announcement as far as a
+  viewer's dismissal history goes, without needing staff to remember to
+  bump a version field.
