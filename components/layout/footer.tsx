@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getNavMenu } from "@/lib/data/navigation";
 import { getSiteSettings } from "@/lib/data/settings";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
+import { externalLinkAttrs } from "@/lib/routes";
 
 const SOCIAL_LINKS = [
   { key: "social_facebook", label: "Facebook" },
@@ -42,8 +44,13 @@ export async function Footer() {
             <ul key={i} className="space-y-2">
               {col.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.href} className="text-sm opacity-80 transition-opacity duration-200 hover:opacity-100">
+                  <Link
+                    href={item.href}
+                    className="text-sm opacity-80 transition-opacity duration-200 hover:opacity-100"
+                    {...externalLinkAttrs(item.is_external)}
+                  >
                     {item.label}
+                    {item.is_external && <ExternalLinkIcon className="ml-1 text-[0.85em]" />}
                   </Link>
                 </li>
               ))}

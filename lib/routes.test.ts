@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applicationHref,
+  externalLinkAttrs,
   industryHref,
   isSafeHref,
   newsHref,
@@ -28,5 +29,15 @@ describe("CMS route helpers", () => {
     expect(isSafeHref("/contact")).toBe(true);
     expect(isSafeHref("https://osi.example/file.pdf")).toBe(true);
     expect(isSafeHref("#details", { allowAnchor: true })).toBe(true);
+  });
+});
+
+describe("externalLinkAttrs (Task 7 item #10 — nav_items.is_external)", () => {
+  it("returns target=_blank and a safe rel for an external nav item", () => {
+    expect(externalLinkAttrs(true)).toEqual({ target: "_blank", rel: "noopener noreferrer" });
+  });
+
+  it("returns no attrs at all for an internal nav item", () => {
+    expect(externalLinkAttrs(false)).toEqual({});
   });
 });

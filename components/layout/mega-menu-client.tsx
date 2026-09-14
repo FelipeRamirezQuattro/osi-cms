@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import type { NavItemNode } from "@/lib/data/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { springTransition } from "@/lib/motion/variants";
+import { externalLinkAttrs } from "@/lib/routes";
+import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
 
 export function MegaMenuClient({
   utilityItems,
@@ -86,8 +88,10 @@ export function MegaMenuClient({
               onFocus={() => setHoveredId(item.id)}
               onBlur={() => setHoveredId(null)}
               className="relative font-display text-xs tracking-wide-display uppercase opacity-80 hover:opacity-100"
+              {...externalLinkAttrs(item.is_external)}
             >
               {item.label}
+              {item.is_external && <ExternalLinkIcon className="ml-1 text-[0.85em]" />}
               {hoveredId === item.id && (
                 <motion.span
                   layoutId="utility-nav-underline"
@@ -144,8 +148,10 @@ export function MegaMenuClient({
                         href={child.href}
                         onClick={close}
                         className="font-display text-sm tracking-wide-display uppercase opacity-90 hover:opacity-100"
+                        {...externalLinkAttrs(child.is_external)}
                       >
                         {child.label}
+                        {child.is_external && <ExternalLinkIcon className="ml-1 text-[0.85em]" />}
                         {child.badge && (
                           <span className="ml-2 text-osi-gold-500">{child.badge}</span>
                         )}

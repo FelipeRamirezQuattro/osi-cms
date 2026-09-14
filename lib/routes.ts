@@ -34,3 +34,17 @@ export function isSafeHref(value: string, options: { allowAnchor?: boolean; allo
 export function isExternalHref(value: string): boolean {
   return /^https?:\/\//i.test(value.trim());
 }
+
+/**
+ * Anchor attrs for a nav item flagged `is_external` in the admin
+ * (nav_items.is_external — see lib/data/navigation.ts) — spread onto a
+ * `<Link>`/`<a>` so an external item opens in a new tab without a
+ * `rel="opener"` reverse-tabnabbing hole. Deliberately keyed off the
+ * stored boolean, not re-derived from the href via isExternalHref: an
+ * editor might legitimately want an internal-looking or protocol-
+ * relative-ish link to open in a new tab (or vice versa), and the admin
+ * form already captures that choice explicitly.
+ */
+export function externalLinkAttrs(isExternal: boolean): { target?: "_blank"; rel?: string } {
+  return isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {};
+}
