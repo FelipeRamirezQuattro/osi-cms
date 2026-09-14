@@ -11,6 +11,8 @@ import {
   updateNavItem,
 } from "@/lib/data/navigation";
 import type { Tables } from "@/lib/db/database.types";
+import { formatZodError } from "@/lib/validation/common";
+import { navItemCreateSchema, navItemUpdateSchema } from "@/lib/validation/navigation";
 
 export type NavMenuKey = Tables<"nav_menus">["key"];
 
@@ -35,7 +37,9 @@ export async function createNavItemAction(input: {
   is_external: boolean;
 }): Promise<void> {
   await requireCapability("manage_navigation");
-  await createNavItem(input);
+  const parsed = navItemCreateSchema.safeParse(input);
+  if (!parsed.success) throw new Error(formatZodError(parsed.error).message);
+  await createNavItem(parsed.data);
 }
 
 export async function updateNavItemAction(
@@ -43,7 +47,9 @@ export async function updateNavItemAction(
   input: { label: string; href: string; badge?: string | null; is_external: boolean; parent_id: string | null },
 ): Promise<void> {
   await requireCapability("manage_navigation");
-  await updateNavItem(id, input);
+  const parsed = navItemUpdateSchema.safeParse(input);
+  if (!parsed.success) throw new Error(formatZodError(parsed.error).message);
+  await updateNavItem(id, parsed.data);
 }
 
 export async function deleteNavItemAction(id: string): Promise<void> {

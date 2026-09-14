@@ -68,7 +68,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     mockRequirePublish.mockResolvedValue(undefined);
     mockSaveProduct.mockResolvedValue("p1");
 
-    const result = await saveProductAction("p1", { name: "Widget", status: "published" });
+    const result = await saveProductAction("p1", { name: "Widget", slug: "widget", category_id: "cat-1", status: "published" });
 
     expect(mockGetEntityRow).toHaveBeenCalledWith("products", "p1");
     expect(mockRequirePublish).toHaveBeenCalledWith("draft", "published");
@@ -80,9 +80,9 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
     mockRequirePublish.mockRejectedValue(new Error("REDIRECT:/admin?error=not-authorized"));
 
-    await expect(saveProductAction("p1", { name: "Widget", status: "published" })).rejects.toThrow(
-      "REDIRECT:/admin?error=not-authorized",
-    );
+    await expect(
+      saveProductAction("p1", { name: "Widget", slug: "widget", category_id: "cat-1", status: "published" }),
+    ).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
     expect(mockSaveProduct).not.toHaveBeenCalled();
   });
 
@@ -91,7 +91,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     mockRequirePublish.mockResolvedValue(undefined);
     mockSaveProduct.mockResolvedValue("p1");
 
-    await saveProductAction("p1", { name: "Renamed Widget", status: "published" });
+    await saveProductAction("p1", { name: "Renamed Widget", slug: "widget", category_id: "cat-1", status: "published" });
 
     expect(mockRequirePublish).toHaveBeenCalledWith("published", "published");
     expect(mockSaveProduct).toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     mockListEntityRows.mockResolvedValue([]);
     mockRequirePublish.mockResolvedValue(undefined);
 
-    const result = await saveProductAction(null, { name: "Widget", status: "draft" });
+    const result = await saveProductAction(null, { name: "Widget", slug: "widget", status: "draft" });
 
     expect(mockGetEntityRow).not.toHaveBeenCalled();
     expect(mockRequirePublish).toHaveBeenCalledWith(null, "draft");
@@ -112,9 +112,30 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
   it("rejects an editor session creating a brand-new product directly as published", async () => {
     mockRequirePublish.mockRejectedValue(new Error("REDIRECT:/admin?error=not-authorized"));
 
-    await expect(saveProductAction(null, { name: "Widget", status: "published" })).rejects.toThrow(
-      "REDIRECT:/admin?error=not-authorized",
-    );
+    await expect(
+      saveProductAction(null, { name: "Widget", slug: "widget", category_id: "cat-1", status: "published" }),
+    ).rejects.toThrow("REDIRECT:/admin?error=not-authorized");
+    expect(mockSaveProduct).not.toHaveBeenCalled();
+  });
+
+  it("rejects publishing a product with no category (its canonical URL depends on the category slug)", async () => {
+    mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
+
+    const result = await saveProductAction("p1", { name: "Widget", slug: "widget", status: "published" });
+
+    expect(result).toEqual({
+      status: "error",
+      message: expect.stringContaining("Category is required"),
+      field: "category_id",
+    });
+    expect(mockRequirePublish).not.toHaveBeenCalled();
+    expect(mockSaveProduct).not.toHaveBeenCalled();
+  });
+
+  it("rejects a blank slug with a field-scoped error", async () => {
+    const result = await saveProductAction(null, { name: "Widget", slug: "", status: "draft" });
+
+    expect(result).toEqual({ status: "error", message: expect.stringContaining("Slug is required"), field: "slug" });
     expect(mockSaveProduct).not.toHaveBeenCalled();
   });
 
@@ -125,6 +146,7 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
 
     await saveProductAction("p1", {
       name: "Widget",
+      slug: "widget",
       status: "draft",
       benefits: [{ title: "Fast" }],
       stages: [{ title: "Stage 1" }],
@@ -133,12 +155,15 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
       applications: ["app-1"],
     });
 
+    // productSaveInputSchema (lib/validation/products.ts) normalizes every
+    // omitted optional field to `null` rather than leaving it undefined —
+    // benefits/stages/specs item shapes included.
     expect(mockSaveProduct).toHaveBeenCalledWith(
       "p1",
       expect.objectContaining({ name: "Widget", status: "draft" }),
-      [{ title: "Fast" }],
-      [{ title: "Stage 1" }],
-      [{ label: "Weight", value: "10kg" }],
+      [{ title: "Fast", body: null, icon_key: null }],
+      [{ title: "Stage 1", body: null, image_url: null }],
+      [{ label: "Weight", value: "10kg", unit: null }],
       ["ind-1"],
       ["app-1"],
     );

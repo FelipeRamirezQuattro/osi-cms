@@ -3,12 +3,13 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
-  headline: z.string(),
-  ctaLabel: z.string(),
-  ctaHref: z.string().default("#"),
+  headline: requiredString("Headline"),
+  ctaLabel: requiredString("CTA label"),
+  ctaHref: safeHrefSchema({ allowAnchor: true, label: "CTA link" }),
 });
 
 type Data = z.infer<typeof schema>;
@@ -44,6 +45,9 @@ export const ctaBandBlock = defineBlock({
   category: "layout",
   schema,
   adminFields,
-  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", headline: "", ctaLabel: "", ctaHref: "#" },
+  // "#" used to be the placeholder default here, but that's exactly the
+  // dead-link pattern safeHrefSchema now rejects — a freshly-added block
+  // needs a real (if generic) destination until the editor sets its own.
+  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", headline: "", ctaLabel: "", ctaHref: "/contact" },
   Render,
 });

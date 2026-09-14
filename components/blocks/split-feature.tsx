@@ -4,16 +4,19 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
-const linkSchema = z.object({ label: z.string(), href: z.string().default("#") });
+const linkSchema = z.object({ label: requiredString("Link label"), href: safeHrefSchema({ allowAnchor: true, label: "Link" }) });
 
 const schema = blockCommonSchema.extend({
-  title: z.string(),
+  title: requiredString("Title"),
   body: z.string().optional(),
   links: z.array(linkSchema).max(8).default([]),
   imageUrl: z.string().optional(),
-  cta: z.object({ label: z.string(), href: z.string() }).optional(),
+  cta: z
+    .object({ label: requiredString("CTA label"), href: safeHrefSchema({ allowAnchor: true, label: "CTA link" }) })
+    .optional(),
 });
 
 type Data = z.infer<typeof schema>;

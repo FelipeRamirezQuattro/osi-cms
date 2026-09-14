@@ -14,6 +14,8 @@ import {
   type EntityRow,
 } from "@/lib/data/admin-entities";
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
+import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
+import { validateEntityInput } from "@/lib/validation/entities";
 
 export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]> {
   await requireCapability("edit_drafts");
@@ -58,7 +60,9 @@ function coerceValues(entity: EntityKey, values: Record<string, unknown>): Recor
   return out;
 }
 
-export type SaveEntityResult = { status: "success"; id: string } | { status: "error"; message: string };
+export type SaveEntityResult =
+  | { status: "success"; id: string }
+  | { status: "error"; message: string; field?: string };
 
 export async function saveEntityAction(
   entity: EntityKey,
@@ -67,7 +71,14 @@ export async function saveEntityAction(
 ): Promise<SaveEntityResult> {
   await requireCapability("edit_drafts");
   const config = ENTITY_CONFIGS[entity];
-  const payload = coerceValues(entity, values);
+  const coerced = coerceValues(entity, values);
+
+  const parsed = validateEntityInput(entity, coerced);
+  if (!parsed.success) {
+    const { message, field } = formatZodError(parsed.error);
+    return { status: "error", message, field };
+  }
+  const payload: Record<string, unknown> = { ...parsed.data };
 
   // Same reasoning as saveProductAction: edit_drafts covers ordinary
   // create/edit, but flipping `status` to/from "published" needs the
@@ -95,6 +106,9 @@ export async function saveEntityAction(
     const row = await insertEntityRow(config.table, payload);
     return { status: "success", id: row.id as string };
   } catch (err) {
+    if (isUniqueViolationError(err)) {
+      return { status: "error", message: "That slug or name is already in use — choose a different one." };
+    }
     return { status: "error", message: err instanceof Error ? err.message : "Save failed." };
   }
 }

@@ -104,7 +104,7 @@ export default async function ProductDetailPage({
           spacingBottom: "md",
           title: "How does it work?",
           body: product.summary ?? undefined,
-          pdfUrl: product.brochure_pdf_url ?? undefined,
+          pdfUrl: product.brochure_pdf_url ?? null,
           show3d: true,
         }}
       />

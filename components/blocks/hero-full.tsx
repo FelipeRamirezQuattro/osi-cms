@@ -5,11 +5,12 @@ import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { GradientText } from "@/components/ui/gradient-text";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const ctaSchema = z.object({
-  label: z.string(),
-  href: z.string(),
+  label: requiredString("CTA label"),
+  href: safeHrefSchema({ allowAnchor: true, label: "CTA link" }),
   variant: z.enum(["outline-light", "outline-dark", "solid-gold", "ghost-arrow"]).default("outline-light"),
 });
 

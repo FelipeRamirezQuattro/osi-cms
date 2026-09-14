@@ -6,6 +6,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { listLocations } from "@/lib/data/locations";
+import { safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
@@ -17,7 +18,7 @@ const schema = blockCommonSchema.extend({
   // block still works as a pill list when no image is set.
   mapImageUrl: z.string().optional(),
   ctaLabel: z.string().default("Find a distributor"),
-  ctaHref: z.string().default("/locations"),
+  ctaHref: safeHrefSchema({ allowAnchor: true, label: "CTA link", defaultValue: "/locations" }),
 });
 
 type Data = z.infer<typeof schema>;

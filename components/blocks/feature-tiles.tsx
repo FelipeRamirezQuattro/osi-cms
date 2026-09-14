@@ -4,12 +4,13 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const tileSchema = z.object({
-  title: z.string(),
+  title: requiredString("Tile title"),
   body: z.string().optional(),
-  href: z.string().default("#"),
+  href: safeHrefSchema({ allowAnchor: true, label: "Tile link" }),
   imageUrl: z.string().optional(),
 });
 

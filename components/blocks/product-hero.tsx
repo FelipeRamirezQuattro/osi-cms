@@ -7,15 +7,16 @@ import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { GradientText } from "@/components/ui/gradient-text";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 export const productHeroSchema = blockCommonSchema.extend({
   eyebrow: z.string().optional(),
-  title: z.string(),
+  title: requiredString("Title"),
   paragraphs: z.array(z.string()).max(3).default([]),
   diagramImageUrl: z.string().optional(),
   ctaLabel: z.string().default("Find a distributor"),
-  ctaHref: z.string().default("/contact"),
+  ctaHref: safeHrefSchema({ allowAnchor: true, label: "CTA link", defaultValue: "/contact" }),
 });
 
 export type ProductHeroData = z.infer<typeof productHeroSchema>;

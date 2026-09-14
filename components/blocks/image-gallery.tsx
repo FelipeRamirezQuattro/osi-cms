@@ -4,9 +4,14 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
+import { safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
-const imageSchema = z.object({ url: z.string(), alt: z.string().optional() });
+// `url` is picked via the media library (adminFields marks it "image"),
+// so it's a media asset in practice — but it also doubles as a real
+// `<a href target="_blank">` below (open full-size), so it gets the same
+// link safety net rather than being treated as a pure <img src>.
+const imageSchema = z.object({ url: safeHrefSchema({ label: "Image" }), alt: z.string().optional() });
 
 const schema = blockCommonSchema.extend({
   title: z.string().optional(),

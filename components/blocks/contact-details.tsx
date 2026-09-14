@@ -3,10 +3,14 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { getSiteSettings } from "@/lib/data/settings";
+import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
-  mapEmbedUrl: z.string().optional(),
+  // Rendered directly as an <iframe src> below — not a click-navigable
+  // link, but the same isSafeHref net is trivial to apply and rules out
+  // a stray `javascript:`/`data:` value ending up in an iframe's src.
+  mapEmbedUrl: optionalSafeHrefSchema({ label: "Map embed URL" }),
   showSocial: z.boolean().default(true),
 });
 
@@ -78,6 +82,6 @@ export const contactDetailsBlock = defineBlock({
   category: "content",
   schema,
   adminFields,
-  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", showSocial: true },
+  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", mapEmbedUrl: null, showSocial: true },
   Render,
 });

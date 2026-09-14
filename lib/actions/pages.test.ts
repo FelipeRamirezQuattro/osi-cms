@@ -163,7 +163,9 @@ describe("navigation mutations require the manage_navigation capability", () => 
     mockCreateNavItem.mockResolvedValue(undefined);
 
     await createNavItemAction(input);
-    expect(mockCreateNavItem).toHaveBeenCalledWith(input);
+    // navItemCreateSchema (lib/validation/navigation.ts) normalizes the
+    // absent optional `badge` to `null` rather than leaving it undefined.
+    expect(mockCreateNavItem).toHaveBeenCalledWith({ ...input, badge: null });
   });
 });
 

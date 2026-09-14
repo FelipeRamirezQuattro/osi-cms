@@ -8,13 +8,14 @@ import { listProductCategories, listIndustries, listApplications } from "@/lib/d
 import { listPagesUnderSlug } from "@/lib/data/pages";
 import { listProductsWithCategorySlug } from "@/lib/data/products";
 import { pageHref } from "@/lib/routes";
+import { safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("Products"),
   subtitle: z.string().optional(),
   ctaLabel: z.string().default("Connect with a specialist"),
-  ctaHref: z.string().default("/contact"),
+  ctaHref: safeHrefSchema({ allowAnchor: true, label: "CTA link", defaultValue: "/contact" }),
 });
 
 type Data = z.infer<typeof schema>;

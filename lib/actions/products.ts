@@ -13,6 +13,8 @@ import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow } from
 import { PRODUCT_RELATIONS } from "@/lib/admin/product-fields";
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables } from "@/lib/db/database.types";
+import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
+import { productSaveInputSchema } from "@/lib/validation/products";
 
 export async function listProductsAction(): Promise<Tables<"products">[]> {
   await requireCapability("edit_drafts");
@@ -37,7 +39,9 @@ export async function moveProductAction(id: string, direction: "up" | "down"): P
   await moveEntityRow("products", id, direction);
 }
 
-export type SaveProductResult = { status: "success"; id: string } | { status: "error"; message: string };
+export type SaveProductResult =
+  | { status: "success"; id: string }
+  | { status: "error"; message: string; field?: string };
 
 // The product form's flat values, as produced by FieldRenderer against
 // PRODUCT_FIELDS (lib/admin/product-fields.ts) — untyped for the same
@@ -46,14 +50,14 @@ export type SaveProductResult = { status: "success"; id: string } | { status: "e
 export async function saveProductAction(id: string | null, values: any): Promise<SaveProductResult> {
   await requireCapability("edit_drafts");
 
-  const { benefits, stages, specs, industries, applications, ...rest } = values;
+  const parsed = productSaveInputSchema.safeParse(values);
+  if (!parsed.success) {
+    const { message, field } = formatZodError(parsed.error);
+    return { status: "error", message, field };
+  }
+  const { benefits, stages, specs, industries, applications, ...rest } = parsed.data;
 
-  const meta: Record<string, unknown> = {
-    ...rest,
-    category_id: rest.category_id || null,
-    badge: rest.badge === "none" ? null : rest.badge,
-    locale: "en",
-  };
+  const meta: Record<string, unknown> = { ...rest, locale: "en" };
 
   // edit_drafts alone covers creating/editing a product's fields;
   // flipping its status to/from "published" needs the publish
@@ -85,6 +89,9 @@ export async function saveProductAction(id: string | null, values: any): Promise
 
     return { status: "success", id: productId };
   } catch (err) {
+    if (isUniqueViolationError(err)) {
+      return { status: "error", message: "That slug is already in use by another product — choose a different one.", field: "slug" };
+    }
     return { status: "error", message: err instanceof Error ? err.message : "Save failed." };
   }
 }

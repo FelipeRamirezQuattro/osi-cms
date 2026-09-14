@@ -15,10 +15,12 @@ import {
   type BlockInput,
   type PageMeta,
 } from "@/lib/data/pages";
+import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
+import { newPageSlugSchema, pageMetaSchema } from "@/lib/validation/pages";
 
 export type SaveResult =
   | { status: "success"; newVersion: number }
-  | { status: "error"; message: string; blockIndex?: number; conflict?: boolean };
+  | { status: "error"; message: string; blockIndex?: number; field?: string; conflict?: boolean };
 
 /** Prefers the SQL function's own user-facing message; falls back if the thrown value is shaped unexpectedly. */
 function conflictResult(error: unknown, fallbackMessage: string): SaveResult {
@@ -38,22 +40,34 @@ function validateBlocks(blocks: BlockInput[]): SaveResult | null {
     }
     const parsed = definition.schema.safeParse(blocks[i].data);
     if (!parsed.success) {
+      const { message, field } = formatZodError(parsed.error);
       return {
         status: "error",
-        message: `${definition.label}: ${parsed.error.issues[0]?.message ?? "invalid data"}`,
+        message: `Block ${i + 1} (${definition.label}): ${message}`,
         blockIndex: i,
+        field,
       };
     }
   }
   return null;
 }
 
-export async function createPageAction(input: PageMeta): Promise<{ id: string } | { error: string }> {
+export async function createPageAction(input: PageMeta): Promise<{ id: string } | { error: string; field?: string }> {
   await requireCapability("edit_drafts");
+
+  const parsed = pageMetaSchema.safeParse(input);
+  if (!parsed.success) {
+    const { message, field } = formatZodError(parsed.error);
+    return { error: message, field };
+  }
+
   try {
-    const page = await createPage(input);
+    const page = await createPage(parsed.data);
     return { id: page.id };
-  } catch {
+  } catch (error) {
+    if (isUniqueViolationError(error)) {
+      return { error: "That slug is already in use — choose a different one.", field: "slug" };
+    }
     return { error: "Could not create the page — check the slug isn't already used." };
   }
 }
@@ -66,15 +80,24 @@ export async function saveDraftAction(
 ): Promise<SaveResult> {
   await requireCapability("edit_drafts");
 
+  const parsedMeta = pageMetaSchema.safeParse(meta);
+  if (!parsedMeta.success) {
+    const { message, field } = formatZodError(parsedMeta.error);
+    return { status: "error", message, field };
+  }
+
   const validationError = validateBlocks(blocks);
   if (validationError) return validationError;
 
   try {
-    const newVersion = await savePageDraft(pageId, meta, blocks, expectedVersion);
+    const newVersion = await savePageDraft(pageId, parsedMeta.data, blocks, expectedVersion);
     return { status: "success", newVersion };
   } catch (error) {
     if (isVersionConflictError(error)) {
       return conflictResult(error, "This page was changed by another editor. Refresh before saving.");
+    }
+    if (isUniqueViolationError(error)) {
+      return { status: "error", message: "That slug is already in use by another page.", field: "slug" };
     }
     return { status: "error", message: "Save failed. Please try again." };
   }
@@ -108,12 +131,24 @@ export async function deletePageAction(pageId: string): Promise<void> {
   redirect("/admin/pages");
 }
 
-export async function duplicatePageAction(pageId: string, newSlug: string): Promise<{ id: string } | { error: string }> {
+export async function duplicatePageAction(
+  pageId: string,
+  newSlug: string,
+): Promise<{ id: string } | { error: string; field?: string }> {
   await requireCapability("edit_drafts");
+
+  const parsed = newPageSlugSchema.safeParse(newSlug);
+  if (!parsed.success) {
+    return { error: formatZodError(parsed.error).message, field: "slug" };
+  }
+
   try {
-    const page = await duplicatePage(pageId, newSlug);
+    const page = await duplicatePage(pageId, parsed.data);
     return { id: page.id };
-  } catch {
+  } catch (error) {
+    if (isUniqueViolationError(error)) {
+      return { error: "That slug is already in use — choose a different one.", field: "slug" };
+    }
     return { error: "Could not duplicate — check the new slug isn't already used." };
   }
 }

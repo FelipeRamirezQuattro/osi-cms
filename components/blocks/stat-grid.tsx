@@ -5,12 +5,13 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { HairlineGrid } from "@/components/ui/hairline-grid";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
+import { optionalSafeHrefSchema, requiredString } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const statSchema = z.object({
-  value: z.string(),
-  label: z.string(),
-  href: z.string().optional(),
+  value: requiredString("Stat value"),
+  label: requiredString("Stat label"),
+  href: optionalSafeHrefSchema({ allowAnchor: true, label: "Stat link" }),
 });
 
 const schema = blockCommonSchema.extend({

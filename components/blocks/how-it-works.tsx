@@ -2,12 +2,15 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 export const howItWorksSchema = blockCommonSchema.extend({
   title: z.string().default("How does it work?"),
   body: z.string().optional(),
-  pdfUrl: z.string().optional(),
+  // Rendered as a real `<a href>` ("Download PDF") below, not just a
+  // stored reference — same safety net as any other clickable link.
+  pdfUrl: optionalSafeHrefSchema({ label: "PDF URL" }),
   show3d: z.boolean().default(true),
 });
 
@@ -77,6 +80,6 @@ export const howItWorksBlock = defineBlock({
   category: "commerce",
   schema: howItWorksSchema,
   adminFields,
-  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "How does it work?", show3d: true },
+  defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "How does it work?", pdfUrl: null, show3d: true },
   Render: HowItWorksRender,
 });

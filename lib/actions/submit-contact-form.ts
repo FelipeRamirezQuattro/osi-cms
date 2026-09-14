@@ -2,9 +2,9 @@
 
 import { headers } from "next/headers";
 import { createHash } from "node:crypto";
-import { z } from "zod";
 import { countRecentSubmissionsByIp, insertFormSubmission } from "@/lib/data/forms";
 import { sendContactNotification } from "@/lib/email";
+import { contactFormSchema } from "@/lib/validation/forms";
 
 // Not persisted anywhere, not exposed to the client — just enough to
 // rate-limit by IP without storing a raw IP address in the DB.
@@ -19,20 +19,6 @@ async function hashClientIp(): Promise<string> {
 
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MINUTES = 10;
-
-const contactFormSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  company: z.string().optional(),
-  phone: z.string().min(1),
-  companyNumber: z.string().optional(),
-  message: z.string().min(1),
-  pageSlug: z.string().optional(),
-  // Honeypot: real users never fill this (it's visually hidden). Bots
-  // that fill every field trip it.
-  website: z.string().max(0).optional(),
-});
 
 export type ContactFormState = { status: "idle" | "success" | "error"; message?: string };
 

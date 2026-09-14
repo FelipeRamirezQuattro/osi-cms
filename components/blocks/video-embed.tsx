@@ -2,11 +2,15 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
+import { safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().optional(),
-  videoUrl: z.string(),
+  // Falls straight into an <iframe src> when it isn't recognized as a
+  // YouTube/Vimeo URL (see toEmbedUrl in video-embed-client.tsx) — the
+  // same safety net as any other embed/link field.
+  videoUrl: safeHrefSchema({ label: "Video URL" }),
   posterImageUrl: z.string().optional(),
 });
 

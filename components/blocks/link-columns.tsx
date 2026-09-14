@@ -3,11 +3,14 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
+import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const columnSchema = z.object({
   heading: z.string().optional(),
-  links: z.array(z.object({ label: z.string(), href: z.string().default("#") })),
+  links: z.array(
+    z.object({ label: requiredString("Link label"), href: safeHrefSchema({ allowAnchor: true, label: "Link" }) }),
+  ),
 });
 
 const schema = blockCommonSchema.extend({

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
+import { tiptapDocSchema } from "@/lib/validation/rich-text";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 // Minimal reader for Tiptap's JSON doc format, restricted to the
@@ -74,7 +75,7 @@ function renderNode(node: TiptapNode, key: number): React.ReactNode {
 }
 
 const schema = blockCommonSchema.extend({
-  content: z.any(),
+  content: tiptapDocSchema,
 });
 
 type Data = z.infer<typeof schema>;
