@@ -1,11 +1,21 @@
 import { createServerDbClient } from "@/lib/db/client";
+import type { PageMeta } from "@/lib/data/pages";
 
 /**
  * Site-wide search (master prompt §9 Phase 6) — Postgres full-text via
- * the generated `search_vector` columns from migration 0016, no external
- * search service. Each searchable table is queried independently (its
- * own `.textSearch()` call — Supabase JS has no cross-table FTS union)
- * and the results are normalized into one flat, ranked list.
+ * the generated `search_vector` columns from migration 0016 (products)
+ * and migration 0017 (page_publications), no external search service.
+ * Each searchable table is queried independently (its own
+ * `.textSearch()` call — Supabase JS has no cross-table FTS union) and
+ * the results are normalized into one flat, ranked list.
+ *
+ * Pages are searched via `page_publications`, not `pages` — migration
+ * 0017 removed public SELECT access to `pages` entirely (see CLAUDE.md
+ * "Admin CMS" section), so an anonymous search request against `pages`
+ * would silently return zero page results regardless of query. See that
+ * migration's own search_vector column (mirrors this file's original
+ * title/seo_description weighting, sourced from the jsonb snapshot since
+ * there's no plain title column on page_publications).
  *
  * Scoped to `pages` and `products` only, NOT `news_posts`/`services`
  * despite the master prompt naming all four (§9: "search over
@@ -37,9 +47,8 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
 
   const [pages, products] = await Promise.all([
     db
-      .from("pages")
-      .select("slug, title, seo_description")
-      .eq("status", "published")
+      .from("page_publications")
+      .select("slug, snapshot")
       .textSearch("search_vector", tsQuery, { type: "plain", config: "english" })
       .limit(RESULTS_PER_TABLE),
     db
@@ -55,8 +64,9 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
   for (const row of pages.data ?? []) {
     // The `home` page's route is `/`, not `/home` — every other slug
     // (including `products`/`contact`, also is_system) maps 1:1.
+    const meta = (row.snapshot as unknown as { meta: PageMeta }).meta;
     const href = row.slug === "home" ? "/" : `/${row.slug}`;
-    results.push({ type: "page", title: row.title, excerpt: row.seo_description, href });
+    results.push({ type: "page", title: meta.title, excerpt: meta.seo_description, href });
   }
   for (const row of products.data ?? []) {
     const categorySlug = (row.product_categories as { slug: string } | null)?.slug;

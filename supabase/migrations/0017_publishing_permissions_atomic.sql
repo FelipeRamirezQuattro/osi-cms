@@ -28,6 +28,21 @@ create policy "admins manage page publications"
   using (public.is_admin())
   with check (public.is_admin());
 
+-- lib/data/search.ts and lib/data/sitemap.ts queried `pages` directly
+-- (status = 'published') for anonymous requests; the RLS rewrite below
+-- removes all public SELECT access to `pages`, which would silently
+-- zero out both features. page_publications is the public-safe stand-in,
+-- so it needs its own search_vector mirroring migration 0016's pattern
+-- for `pages` (title weighted 'A', seo_description weighted 'B') —
+-- sourced from the jsonb snapshot since there's no plain title column
+-- here.
+alter table page_publications add column search_vector tsvector
+  generated always as (
+    setweight(to_tsvector('english', coalesce(snapshot->'meta'->>'title', '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(snapshot->'meta'->>'seo_description', '')), 'B')
+  ) stored;
+create index page_publications_search_vector_idx on page_publications using gin (search_vector);
+
 -- Backfill the currently published state before anonymous access to the
 -- mutable authoring tables is removed.
 insert into page_publications (page_id, slug, locale, snapshot, published_at)

@@ -551,6 +551,7 @@ export type Database = {
           locale: string;
           page_id: string;
           published_at: string;
+          search_vector: unknown;
           slug: string;
           snapshot: Json;
           updated_at: string;
@@ -559,6 +560,7 @@ export type Database = {
           locale?: string;
           page_id: string;
           published_at?: string;
+          search_vector?: unknown;
           slug: string;
           snapshot: Json;
           updated_at?: string;
@@ -567,6 +569,7 @@ export type Database = {
           locale?: string;
           page_id?: string;
           published_at?: string;
+          search_vector?: unknown;
           slug?: string;
           snapshot?: Json;
           updated_at?: string;
