@@ -21,12 +21,31 @@
 -- bypass the capability model, every gated Server Action, and every
 -- hidden Delete button entirely. Part 2 fixes that: DELETE-only policy
 -- swaps (INSERT/UPDATE stay editor-writable, untouched) on every
--- products/taxonomy-entity table (delete_content), media_assets +
--- the `media` storage bucket's storage.objects delete policy
--- (delete_media — matches the existing distinct capability), and
--- form_submissions (delete_content — no dedicated "delete submissions"
--- capability exists, and no admin UI exposes deleting a submission
--- today, so this is pure defense-in-depth against a direct API call).
+-- independently-deletable products/taxonomy-entity table
+-- (delete_content), media_assets + the `media` storage bucket's
+-- storage.objects delete policy (delete_media — matches the existing
+-- distinct capability), and form_submissions (delete_content — no
+-- dedicated "delete submissions" capability exists, and no admin UI
+-- exposes deleting a submission today, so this is pure defense-in-depth
+-- against a direct API call).
+--
+-- Explicitly EXCLUDED from Part 2 (a second review round caught this):
+-- product_benefits, product_stages, product_specs, product_industries,
+-- product_applications. These 5 tables aren't independently deletable
+-- content — lib/data/products.ts's saveProductChildren does a
+-- delete-then-reinsert on all 5 as part of every ordinary product save
+-- (called from saveProductAction, gated only on edit_drafts, which
+-- editors have), using the editor's own session client, and never
+-- checks the delete's error result. Locking their DELETE to
+-- delete_content would make every editor product save RLS-silently skip
+-- the delete on these 5 tables, then hit their re-insert: 3 of them
+-- (product_benefits/stages/specs) have `primary key (id)`, so the
+-- unfiltered delete failing quietly would duplicate every row on every
+-- subsequent save; the other 2 have a composite PK, so the re-insert
+-- would raise a duplicate-key error corrupting the other 3 tables first
+-- (no transaction wraps this). The parent `products` row's own DELETE
+-- is correctly admin-only below — that's the real content boundary;
+-- these 5 child tables stay at today's is_staff() DELETE, unchanged.
 --
 -- Exact current policy names confirmed via `pg_policies` (Supabase MCP
 -- execute_sql, read-only) before writing this migration — do NOT guess
@@ -40,12 +59,15 @@
 --   site_settings:   "read site_settings" (select, using true — untouched),
 --                     "staff insert site_settings", "staff update site_settings",
 --                     "staff delete site_settings"
---   DELETE-only, standard "staff delete <table>" name, qual is_staff():
---     products, product_benefits, product_stages, product_specs,
---     product_industries, product_applications, product_related,
---     product_categories, industries, applications, news_posts,
---     resources, locations, directory_contacts, redirects, services,
---     media_assets
+--   DELETE-only, standard "staff delete <table>" name, qual is_staff()
+--   — locked to delete_content/delete_media below:
+--     products, product_categories, product_related, industries,
+--     applications, news_posts, resources, locations,
+--     directory_contacts, redirects, services, media_assets
+--   Same standard pattern, but deliberately LEFT AS is_staff() (see the
+--   "Explicitly EXCLUDED" note above — product-save child tables):
+--     product_benefits, product_stages, product_specs,
+--     product_industries, product_applications
 --   form_submissions:  "staff can delete submissions" (delete, is_staff())
 --     — irregular name, doesn't follow the "staff delete <table>" pattern
 --   storage.objects:   "staff can delete from media bucket" (delete,
@@ -112,15 +134,17 @@ create policy "admins delete site_settings"
 -- media_assets. Every one of these tables' current DELETE policy is
 -- named "staff delete <table>" with qual is_staff() — confirmed live,
 -- not guessed. INSERT/UPDATE policies on these tables are untouched.
+-- product_benefits/product_stages/product_specs/product_industries/
+-- product_applications are deliberately NOT in this array — see the
+-- "Explicitly EXCLUDED" note above.
 do $$
 declare
   t text;
 begin
   foreach t in array array[
-    'products', 'product_benefits', 'product_stages', 'product_specs',
-    'product_industries', 'product_applications', 'product_related',
-    'product_categories', 'industries', 'applications', 'news_posts',
-    'resources', 'locations', 'directory_contacts', 'redirects', 'services'
+    'products', 'product_related', 'product_categories', 'industries',
+    'applications', 'news_posts', 'resources', 'locations',
+    'directory_contacts', 'redirects', 'services'
   ]
   loop
     execute format('drop policy if exists %I on %I', 'staff delete ' || t, t);
