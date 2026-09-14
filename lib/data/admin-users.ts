@@ -1,4 +1,5 @@
 import { createServerDbClient, createServiceRoleDbClient } from "@/lib/db/client";
+import { recordAudit } from "@/lib/data/audit";
 import type { Tables } from "@/lib/db/database.types";
 
 export type AdminUserRow = Tables<"admin_profiles"> & { email: string };
@@ -118,6 +119,10 @@ export async function inviteAdminUser(email: string, role: "admin" | "editor", f
     .from("admin_profiles")
     .upsert({ user_id: userId, role, full_name: fullName ?? null, is_active: true }, { onConflict: "user_id" });
   if (upsertError) throw upsertError;
+
+  // Email/role/name only — never a password or token (invites never set
+  // one here; Supabase's own invite email handles that).
+  await recordAudit("invite", "admin_user", userId, { email, role });
 }
 
 /**
@@ -151,4 +156,10 @@ export async function updateAdminUserRow(
 
   const { error } = await db.from("admin_profiles").update(values).eq("user_id", userId);
   if (error) throw error;
+
+  // `values` is already narrowed to role/is_active by this function's own
+  // signature — never anything else off the admin_profiles row (no
+  // email, no auth data), per Task 5's "log only the changed fields"
+  // ruling for user-role/active-status changes.
+  await recordAudit("update", "admin_user", userId, { ...values });
 }

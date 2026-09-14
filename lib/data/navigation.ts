@@ -1,4 +1,5 @@
 import { createServerDbClient } from "@/lib/db/client";
+import { recordAudit } from "@/lib/data/audit";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
 
 export type NavItemNode = Tables<"nav_items"> & { children: NavItemNode[] };
@@ -76,6 +77,7 @@ export async function createNavItem(input: TablesInsert<"nav_items">): Promise<T
   const db = createServerDbClient();
   const { data, error } = await db.from("nav_items").insert(input).select("*").single();
   if (error) throw error;
+  await recordAudit("create", "nav_item", data.id, { label: data.label, href: data.href });
   return data;
 }
 
@@ -83,15 +85,26 @@ export async function updateNavItem(id: string, input: TablesUpdate<"nav_items">
   const db = createServerDbClient();
   const { error } = await db.from("nav_items").update(input).eq("id", id);
   if (error) throw error;
+  await recordAudit("update", "nav_item", id, { label: input.label, href: input.href });
 }
 
 export async function deleteNavItem(id: string): Promise<void> {
   const db = createServerDbClient();
+  const { data: existing } = await db.from("nav_items").select("label, href").eq("id", id).maybeSingle();
   const { error } = await db.from("nav_items").delete().eq("id", id);
   if (error) throw error;
+  await recordAudit("delete", "nav_item", id, { label: existing?.label, href: existing?.href });
 }
 
-/** Swaps `position` with the next/previous sibling (same menu + same parent). */
+/**
+ * Swaps `position` with the next/previous sibling (same menu + same
+ * parent). The sibling lookup here is necessarily a separate read, but
+ * the actual swap goes through swap_nav_item_position
+ * (0022_product_and_reorder_atomic.sql) rather than two sequential
+ * updateNavItem calls — a transaction, plus one audit entry, instead of
+ * two unguarded updates and (if it went through updateNavItem) two
+ * spurious "update" audit rows for what is really one reorder.
+ */
 export async function moveNavItem(id: string, direction: "up" | "down"): Promise<void> {
   const db = createServerDbClient();
   const { data: item, error } = await db.from("nav_items").select("*").eq("id", id).maybeSingle();
@@ -114,6 +127,6 @@ export async function moveNavItem(id: string, direction: "up" | "down"): Promise
 
   const a = siblings![index];
   const b = siblings![swapIndex];
-  await updateNavItem(a.id, { position: b.position });
-  await updateNavItem(b.id, { position: a.position });
+  const { error: swapError } = await db.rpc("swap_nav_item_position", { p_id_a: a.id, p_id_b: b.id });
+  if (swapError) throw swapError;
 }

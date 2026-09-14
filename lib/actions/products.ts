@@ -3,18 +3,16 @@
 import { redirect } from "next/navigation";
 import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import {
-  createProductRow,
-  deleteProductRow,
+  deleteProduct,
   getProductByIdAdmin,
   listAllProducts,
-  saveProductChildren,
-  updateProductRow,
+  saveProduct,
   type ProductAdminDetail,
 } from "@/lib/data/products";
 import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow } from "@/lib/data/admin-entities";
 import { PRODUCT_RELATIONS } from "@/lib/admin/product-fields";
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
-import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
+import type { Tables } from "@/lib/db/database.types";
 
 export async function listProductsAction(): Promise<Tables<"products">[]> {
   await requireCapability("edit_drafts");
@@ -70,18 +68,14 @@ export async function saveProductAction(id: string | null, values: any): Promise
   await requirePublishCapabilityForStatusChange(currentStatus, meta.status as string | null | undefined);
 
   try {
-    let productId = id;
-    if (productId) {
-      await updateProductRow(productId, meta as TablesUpdate<"products">);
-    } else {
+    if (!id) {
       const existing = await listEntityRows("products", [{ column: "position", ascending: false }]);
       meta.position = existing.length > 0 ? Number(existing[0].position ?? 0) + 1 : 0;
-      const created = await createProductRow(meta as TablesInsert<"products">);
-      productId = created.id;
     }
 
-    await saveProductChildren(
-      productId,
+    const productId = await saveProduct(
+      id,
+      meta,
       benefits ?? [],
       stages ?? [],
       specs ?? [],
@@ -97,6 +91,6 @@ export async function saveProductAction(id: string | null, values: any): Promise
 
 export async function deleteProductAction(id: string): Promise<void> {
   await requireCapability("delete_content");
-  await deleteProductRow(id);
+  await deleteProduct(id);
   redirect("/admin/products");
 }

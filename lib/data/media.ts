@@ -1,4 +1,5 @@
 import { createServerDbClient } from "@/lib/db/client";
+import { recordAudit } from "@/lib/data/audit";
 import type { Tables } from "@/lib/db/database.types";
 
 export type MediaAsset = Tables<"media_assets">;
@@ -44,6 +45,9 @@ export async function uploadMediaAsset(file: File, alt?: string): Promise<MediaA
     .select("*")
     .single();
   if (error) throw error;
+  // Filename/mime/alt only — never the file's bytes, which is the only
+  // thing in this upload that could conceivably be sensitive.
+  await recordAudit("upload", "media_asset", data.id, { title: data.title, mime: data.mime });
   return data;
 }
 
@@ -64,4 +68,5 @@ export async function deleteMediaAsset(id: string): Promise<void> {
 
   const { error } = await db.from("media_assets").delete().eq("id", id);
   if (error) throw error;
+  await recordAudit("delete", "media_asset", id, { url: asset.url });
 }

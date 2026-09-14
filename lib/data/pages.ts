@@ -231,19 +231,3 @@ export function isVersionConflictError(error: unknown): error is { code: string;
     (error as { code?: unknown }).code === "40001"
   );
 }
-
-export async function recordAudit(
-  action: string,
-  entity: string,
-  entityId?: string,
-  diff?: Json,
-): Promise<void> {
-  const db = createServerDbClient();
-  const { error } = await db.rpc("record_audit", {
-    p_action: action,
-    p_entity: entity,
-    p_entity_id: entityId,
-    p_diff: diff,
-  });
-  if (error) throw error;
-}

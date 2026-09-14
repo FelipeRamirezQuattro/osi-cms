@@ -1,5 +1,5 @@
 import { createServerDbClient } from "@/lib/db/client";
-import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
+import type { Json, Tables } from "@/lib/db/database.types";
 
 export type ProductDetail = Tables<"products"> & {
   product_benefits: Tables<"product_benefits">[];
@@ -126,77 +126,56 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
   };
 }
 
-export async function createProductRow(meta: TablesInsert<"products">): Promise<Tables<"products">> {
-  const db = createServerDbClient();
-  const { data, error } = await db.from("products").insert(meta).select("*").single();
-  if (error) throw error;
-  return data;
-}
-
-export async function updateProductRow(id: string, meta: TablesUpdate<"products">): Promise<void> {
-  const db = createServerDbClient();
-  const { error } = await db.from("products").update(meta).eq("id", id);
-  if (error) throw error;
-}
-
-export async function deleteProductRow(id: string): Promise<void> {
-  const db = createServerDbClient();
-  const { error } = await db.from("products").delete().eq("id", id);
-  if (error) throw error;
-}
-
 type BenefitInput = { title: string; body?: string | null; icon_key?: string | null };
 type StageInput = { title: string; body?: string | null; image_url?: string | null };
 type SpecInput = { label: string; value: string; unit?: string | null };
 
-/** Delete-then-insert for every child/junction table — same pattern as savePageDraft's blocks. */
-export async function saveProductChildren(
-  productId: string,
+/**
+ * Atomically creates (p_product_id: null) or updates a product row and
+ * fully replaces all 5 child/junction tables (product_benefits/
+ * product_stages/product_specs/product_industries/product_applications)
+ * inside one `security definer` SQL function body — see
+ * supabase/migrations/0022_product_and_reorder_atomic.sql. Replaces the
+ * old createProductRow/updateProductRow/saveProductChildren trio, which
+ * did the same work as separate, unguarded statements on the caller's
+ * own session client (flagged in Task 4's review: a failure partway
+ * through, or an RLS change alone, could leave a product with some
+ * children deleted and never reinserted). The RPC checks
+ * has_capability('edit_drafts') and calls record_audit itself, so no
+ * separate recordAudit call is needed at this call site.
+ */
+export async function saveProduct(
+  productId: string | null,
+  meta: Record<string, unknown>,
   benefits: BenefitInput[],
   stages: StageInput[],
   specs: SpecInput[],
   industryIds: string[],
   applicationIds: string[],
-): Promise<void> {
+): Promise<string> {
   const db = createServerDbClient();
+  const { data, error } = await db.rpc("save_product_atomic", {
+    p_product_id: productId,
+    p_meta: meta as unknown as Json,
+    p_benefits: benefits as unknown as Json,
+    p_stages: stages as unknown as Json,
+    p_specs: specs as unknown as Json,
+    p_industry_ids: industryIds as unknown as Json,
+    p_application_ids: applicationIds as unknown as Json,
+  });
+  if (error) throw error;
+  return data;
+}
 
-  await db.from("product_benefits").delete().eq("product_id", productId);
-  if (benefits.length > 0) {
-    const { error } = await db
-      .from("product_benefits")
-      .insert(benefits.map((b, i) => ({ ...b, product_id: productId, position: i })));
-    if (error) throw error;
-  }
-
-  await db.from("product_stages").delete().eq("product_id", productId);
-  if (stages.length > 0) {
-    const { error } = await db
-      .from("product_stages")
-      .insert(stages.map((s, i) => ({ ...s, product_id: productId, position: i })));
-    if (error) throw error;
-  }
-
-  await db.from("product_specs").delete().eq("product_id", productId);
-  if (specs.length > 0) {
-    const { error } = await db
-      .from("product_specs")
-      .insert(specs.map((s, i) => ({ ...s, product_id: productId, position: i })));
-    if (error) throw error;
-  }
-
-  await db.from("product_industries").delete().eq("product_id", productId);
-  if (industryIds.length > 0) {
-    const { error } = await db
-      .from("product_industries")
-      .insert(industryIds.map((industry_id) => ({ product_id: productId, industry_id })));
-    if (error) throw error;
-  }
-
-  await db.from("product_applications").delete().eq("product_id", productId);
-  if (applicationIds.length > 0) {
-    const { error } = await db
-      .from("product_applications")
-      .insert(applicationIds.map((application_id) => ({ product_id: productId, application_id })));
-    if (error) throw error;
-  }
+/**
+ * Atomically deletes a product row (its child/junction tables cascade —
+ * ON DELETE CASCADE, migration 0003 — already made that part a single,
+ * inherently atomic statement) and records the audit entry in the same
+ * transaction, checking has_capability('delete_content') independently
+ * of RLS — same pattern as delete_page_atomic.
+ */
+export async function deleteProduct(id: string): Promise<void> {
+  const db = createServerDbClient();
+  const { error } = await db.rpc("delete_product_atomic", { p_product_id: id });
+  if (error) throw error;
 }
