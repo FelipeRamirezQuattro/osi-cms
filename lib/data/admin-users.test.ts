@@ -1,0 +1,96 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { updateAdminUserRow } from "@/lib/data/admin-users";
+
+/**
+ * Task 4's last-admin protection: updateAdminUserRow must refuse a
+ * role/active-status change that would leave zero active admins
+ * (deactivating the last admin, or demoting the last admin to editor).
+ * Shape-tested against a fake Supabase-shaped client (same pattern as
+ * lib/data/pages.test.ts), not a live DB — see the Task 1 brief's ruling
+ * on why a full round-trip is out of scope here.
+ */
+const { mockCreateServerDbClient } = vi.hoisted(() => ({ mockCreateServerDbClient: vi.fn() }));
+vi.mock("@/lib/db/client", () => ({
+  createServerDbClient: mockCreateServerDbClient,
+  createServiceRoleDbClient: vi.fn(),
+}));
+
+/**
+ * A minimal fake query builder: every chained method (`select`, `eq`,
+ * `neq`, `update`, `order`) returns the same chain object, so it works
+ * whether the real code terminates the chain with `.maybeSingle()` /
+ * `.single()` (consumes the next queued response immediately) or just
+ * awaits the builder directly, the way supabase-js's builder is itself
+ * thenable (the fake's own `.then()` consumes the next queued response).
+ */
+function createFakeDbClient(responses: unknown[]) {
+  const queue = [...responses];
+  const chain: Record<string, unknown> = {};
+  for (const method of ["select", "eq", "neq", "update", "order"]) {
+    chain[method] = () => chain;
+  }
+  chain.maybeSingle = async () => queue.shift();
+  chain.single = async () => queue.shift();
+  chain.then = (resolve: (v: unknown) => void, reject?: (e: unknown) => void) => {
+    Promise.resolve(queue.shift()).then(resolve, reject);
+  };
+
+  return { from: () => chain };
+}
+
+describe("updateAdminUserRow — last-admin protection", () => {
+  beforeEach(() => {
+    mockCreateServerDbClient.mockReset();
+  });
+
+  it("rejects deactivating the last active admin", async () => {
+    const fake = createFakeDbClient([
+      { data: { role: "admin", is_active: true }, error: null }, // current row lookup
+      { count: 0, error: null }, // other active admins
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    await expect(updateAdminUserRow("admin-1", { is_active: false })).rejects.toThrow(/last active admin/i);
+  });
+
+  it("rejects demoting the last active admin to editor", async () => {
+    const fake = createFakeDbClient([
+      { data: { role: "admin", is_active: true }, error: null },
+      { count: 0, error: null },
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    await expect(updateAdminUserRow("admin-1", { role: "editor" })).rejects.toThrow(/last active admin/i);
+  });
+
+  it("allows deactivating an admin when another active admin remains", async () => {
+    const fake = createFakeDbClient([
+      { data: { role: "admin", is_active: true }, error: null },
+      { count: 1, error: null }, // one other active admin
+      { error: null }, // the update itself
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    await expect(updateAdminUserRow("admin-1", { is_active: false })).resolves.toBeUndefined();
+  });
+
+  it("allows deactivating an editor without ever checking the admin count", async () => {
+    const fake = createFakeDbClient([
+      { data: { role: "editor", is_active: true }, error: null },
+      { error: null }, // the update itself — no count query in between
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    await expect(updateAdminUserRow("editor-1", { is_active: false })).resolves.toBeUndefined();
+  });
+
+  it("allows re-activating or promoting a user without checking the admin count", async () => {
+    const fake = createFakeDbClient([
+      { data: { role: "editor", is_active: false }, error: null },
+      { error: null },
+    ]);
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    await expect(updateAdminUserRow("user-1", { role: "admin", is_active: true })).resolves.toBeUndefined();
+  });
+});

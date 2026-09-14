@@ -53,11 +53,62 @@ export async function inviteAdminUser(email: string, role: "admin" | "editor", f
   if (upsertError) throw upsertError;
 }
 
+/**
+ * Counts active admins other than `excludeUserId` — the "how many admins
+ * are left if this row's change goes through" query that
+ * updateAdminUserRow guards every role/active-status change with. Kept
+ * here (not a separate helper module) since this is the one place that
+ * needs it.
+ */
+async function countOtherActiveAdmins(excludeUserId: string): Promise<number> {
+  const db = createServerDbClient();
+  const { count, error } = await db
+    .from("admin_profiles")
+    .select("*", { count: "exact", head: true })
+    .eq("role", "admin")
+    .eq("is_active", true)
+    .neq("user_id", excludeUserId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
+/**
+ * Updates an admin_profiles row's role/active status, refusing a change
+ * that would leave zero active admins (deactivating the last admin, or
+ * demoting the last admin to editor) — nothing enforced this before,
+ * so an admin could accidentally lock every admin out of /admin/users
+ * with no way back in short of a direct DB edit. Defense-in-depth lives
+ * here in the data layer (not just the Server Action) since this is the
+ * one function every admin-mutating caller goes through.
+ */
 export async function updateAdminUserRow(
   userId: string,
   values: { role?: "admin" | "editor"; is_active?: boolean },
 ): Promise<void> {
   const db = createServerDbClient();
+
+  const { data: current, error: currentError } = await db
+    .from("admin_profiles")
+    .select("role, is_active")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (currentError) throw currentError;
+  if (!current) throw new Error("User not found.");
+
+  const wasActiveAdmin = current.role === "admin" && current.is_active;
+  const proposedRole = values.role ?? current.role;
+  const proposedIsActive = values.is_active ?? current.is_active;
+  const willBeActiveAdmin = proposedRole === "admin" && proposedIsActive;
+
+  if (wasActiveAdmin && !willBeActiveAdmin) {
+    const remaining = await countOtherActiveAdmins(userId);
+    if (remaining === 0) {
+      throw new Error(
+        "Can't do that — this is the last active admin. Promote or activate another admin first.",
+      );
+    }
+  }
+
   const { error } = await db.from("admin_profiles").update(values).eq("user_id", userId);
   if (error) throw error;
 }
