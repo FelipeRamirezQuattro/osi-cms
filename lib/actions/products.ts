@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireCapability } from "@/lib/auth";
 import {
   createProductRow,
   deleteProductRow,
@@ -17,17 +17,17 @@ import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
 
 export async function listProductsAction(): Promise<Tables<"products">[]> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   return listAllProducts();
 }
 
 export async function getProductAction(id: string): Promise<ProductAdminDetail | null> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   return getProductByIdAdmin(id);
 }
 
 export async function getProductRelationOptionsAction(): Promise<RelationOptionsMap> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   const entries = await Promise.all(
     PRODUCT_RELATIONS.map(async (r) => [r.key, await listRelationOptions(r.table, r.valueColumn, r.labelColumn)] as const),
   );
@@ -35,7 +35,7 @@ export async function getProductRelationOptionsAction(): Promise<RelationOptions
 }
 
 export async function moveProductAction(id: string, direction: "up" | "down"): Promise<void> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   await moveEntityRow("products", id, direction);
 }
 
@@ -46,7 +46,7 @@ export type SaveProductResult = { status: "success"; id: string } | { status: "e
 // reason page-editor.tsx's form is untyped (see CLAUDE.md).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function saveProductAction(id: string | null, values: any): Promise<SaveProductResult> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
 
   const { benefits, stages, specs, industries, applications, ...rest } = values;
 
@@ -84,7 +84,7 @@ export async function saveProductAction(id: string | null, values: any): Promise
 }
 
 export async function deleteProductAction(id: string): Promise<void> {
-  await requireAdmin();
+  await requireCapability("delete_content");
   await deleteProductRow(id);
   redirect("/admin/products");
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireCapability } from "@/lib/auth";
 import { getBlockDefinition } from "@/lib/blocks/registry";
 import {
   createPage,
@@ -49,7 +49,7 @@ function validateBlocks(blocks: BlockInput[]): SaveResult | null {
 }
 
 export async function createPageAction(input: PageMeta): Promise<{ id: string } | { error: string }> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   try {
     const page = await createPage(input);
     return { id: page.id };
@@ -64,7 +64,7 @@ export async function saveDraftAction(
   blocks: BlockInput[],
   expectedVersion: number,
 ): Promise<SaveResult> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
 
   const validationError = validateBlocks(blocks);
   if (validationError) return validationError;
@@ -81,7 +81,7 @@ export async function saveDraftAction(
 }
 
 export async function publishPageAction(pageId: string, expectedVersion: number): Promise<SaveResult> {
-  await requireAdmin();
+  await requireCapability("publish");
   try {
     await publishPage(pageId, expectedVersion);
     // publish_page_atomic doesn't bump draft_version (it only flips
@@ -98,18 +98,18 @@ export async function publishPageAction(pageId: string, expectedVersion: number)
 }
 
 export async function unpublishPageAction(pageId: string): Promise<void> {
-  await requireAdmin();
+  await requireCapability("publish");
   await unpublishPage(pageId);
 }
 
 export async function deletePageAction(pageId: string): Promise<void> {
-  await requireAdmin();
+  await requireCapability("delete_content");
   await deletePage(pageId);
   redirect("/admin/pages");
 }
 
 export async function duplicatePageAction(pageId: string, newSlug: string): Promise<{ id: string } | { error: string }> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   try {
     const page = await duplicatePage(pageId, newSlug);
     return { id: page.id };
@@ -123,7 +123,7 @@ export async function restoreRevisionAction(
   revisionId: string,
   expectedVersion: number,
 ): Promise<SaveResult> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   try {
     const newVersion = await restorePageRevision(pageId, revisionId, expectedVersion);
     return { status: "success", newVersion };

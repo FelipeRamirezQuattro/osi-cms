@@ -1,10 +1,10 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth";
+import { requireCapability } from "@/lib/auth";
 import { listMediaAssets, uploadMediaAsset, deleteMediaAsset, type MediaAsset } from "@/lib/data/media";
 
 export async function listMediaAction(search?: string): Promise<MediaAsset[]> {
-  await requireAdmin();
+  await requireCapability("upload_media");
   return listMediaAssets(search);
 }
 
@@ -14,7 +14,7 @@ export async function uploadMediaAction(
   _prevState: UploadMediaState,
   formData: FormData,
 ): Promise<UploadMediaState> {
-  await requireAdmin();
+  await requireCapability("upload_media");
 
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
@@ -39,6 +39,6 @@ export async function uploadMediaAction(
 }
 
 export async function deleteMediaActionFn(id: string): Promise<void> {
-  await requireAdmin();
+  await requireCapability("delete_media");
   await deleteMediaAsset(id);
 }

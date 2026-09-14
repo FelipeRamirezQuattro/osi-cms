@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireCapability } from "@/lib/auth";
 import { ENTITY_CONFIGS, type EntityKey } from "@/lib/admin/entity-config";
 import {
   deleteEntityRow,
@@ -16,7 +16,7 @@ import {
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 
 export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   const config = ENTITY_CONFIGS[entity];
   const orderBy = config.hasPosition
     ? [{ column: "position", ascending: true }]
@@ -25,12 +25,12 @@ export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]
 }
 
 export async function getEntityAction(entity: EntityKey, id: string): Promise<EntityRow | null> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   return getEntityRow(ENTITY_CONFIGS[entity].table, id);
 }
 
 export async function getRelationOptionsAction(entity: EntityKey): Promise<RelationOptionsMap> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   const config = ENTITY_CONFIGS[entity];
   if (!config.relations) return {};
   const entries = await Promise.all(
@@ -65,7 +65,7 @@ export async function saveEntityAction(
   id: string | null,
   values: Record<string, unknown>,
 ): Promise<SaveEntityResult> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   const config = ENTITY_CONFIGS[entity];
   const payload = coerceValues(entity, values);
 
@@ -86,12 +86,12 @@ export async function saveEntityAction(
 }
 
 export async function deleteEntityAction(entity: EntityKey, id: string): Promise<void> {
-  await requireAdmin();
+  await requireCapability("delete_content");
   await deleteEntityRow(ENTITY_CONFIGS[entity].table, id);
   redirect(`/admin/${entity}`);
 }
 
 export async function moveEntityAction(entity: EntityKey, id: string, direction: "up" | "down"): Promise<void> {
-  await requireAdmin();
+  await requireCapability("edit_drafts");
   await moveEntityRow(ENTITY_CONFIGS[entity].table, id, direction);
 }

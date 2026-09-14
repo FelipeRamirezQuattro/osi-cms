@@ -1,11 +1,11 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth";
+import { requireCapability } from "@/lib/auth";
 import { getSiteSettings, updateSiteSettings } from "@/lib/data/settings";
 import type { Tables } from "@/lib/db/database.types";
 
 export async function getSettingsAction(): Promise<Tables<"site_settings">> {
-  await requireAdmin();
+  await requireCapability("manage_settings");
   return getSiteSettings();
 }
 
@@ -13,7 +13,7 @@ export type SaveSettingsResult = { status: "success" } | { status: "error"; mess
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function saveSettingsAction(values: any): Promise<SaveSettingsResult> {
-  await requireAdmin();
+  await requireCapability("manage_settings");
   try {
     await updateSiteSettings({
       ...values,
