@@ -1,5 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { saveProductAction } from "@/lib/actions/products";
+import { saveProductAction, deleteProductAction } from "@/lib/actions/products";
+
+const { mockRedirect } = vi.hoisted(() => ({ mockRedirect: vi.fn() }));
+vi.mock("next/navigation", () => ({
+  redirect: mockRedirect,
+}));
 
 /**
  * Task 4 review finding fix: saveProductAction must run every status
@@ -34,18 +39,16 @@ vi.mock("@/lib/data/admin-entities", () => ({
   moveEntityRow: vi.fn(),
 }));
 
-const { mockUpdateProductRow, mockCreateProductRow, mockSaveProductChildren } = vi.hoisted(() => ({
-  mockUpdateProductRow: vi.fn(),
-  mockCreateProductRow: vi.fn(),
-  mockSaveProductChildren: vi.fn(),
+const { mockSaveProduct, mockDeleteProduct } = vi.hoisted(() => ({
+  mockSaveProduct: vi.fn(),
+  mockDeleteProduct: vi.fn(),
 }));
 vi.mock("@/lib/data/products", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/data/products")>();
   return {
     ...actual,
-    updateProductRow: mockUpdateProductRow,
-    createProductRow: mockCreateProductRow,
-    saveProductChildren: mockSaveProductChildren,
+    saveProduct: mockSaveProduct,
+    deleteProduct: mockDeleteProduct,
   };
 });
 
@@ -54,20 +57,22 @@ const adminSession = { userId: "admin-1", email: "admin@example.com", role: "adm
 beforeEach(() => {
   vi.clearAllMocks();
   mockRequireCapability.mockResolvedValue(adminSession);
-  mockSaveProductChildren.mockResolvedValue(undefined);
+  mockRedirect.mockImplementation((url: string) => {
+    throw new Error(`REDIRECT:${url}`);
+  });
 });
 
 describe("saveProductAction gates status transitions via requirePublishCapabilityForStatusChange", () => {
   it("checks the transition using the existing row's pre-save status, and proceeds when it resolves", async () => {
     mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
     mockRequirePublish.mockResolvedValue(undefined);
-    mockUpdateProductRow.mockResolvedValue(undefined);
+    mockSaveProduct.mockResolvedValue("p1");
 
     const result = await saveProductAction("p1", { name: "Widget", status: "published" });
 
     expect(mockGetEntityRow).toHaveBeenCalledWith("products", "p1");
     expect(mockRequirePublish).toHaveBeenCalledWith("draft", "published");
-    expect(mockUpdateProductRow).toHaveBeenCalled();
+    expect(mockSaveProduct).toHaveBeenCalled();
     expect(result).toEqual({ status: "success", id: "p1" });
   });
 
@@ -78,22 +83,22 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     await expect(saveProductAction("p1", { name: "Widget", status: "published" })).rejects.toThrow(
       "REDIRECT:/admin?error=not-authorized",
     );
-    expect(mockUpdateProductRow).not.toHaveBeenCalled();
+    expect(mockSaveProduct).not.toHaveBeenCalled();
   });
 
   it("still gates a save that edits an already-published row's other fields (no-op inside the guard, but still checked)", async () => {
     mockGetEntityRow.mockResolvedValue({ id: "p1", status: "published" });
     mockRequirePublish.mockResolvedValue(undefined);
-    mockUpdateProductRow.mockResolvedValue(undefined);
+    mockSaveProduct.mockResolvedValue("p1");
 
     await saveProductAction("p1", { name: "Renamed Widget", status: "published" });
 
     expect(mockRequirePublish).toHaveBeenCalledWith("published", "published");
-    expect(mockUpdateProductRow).toHaveBeenCalled();
+    expect(mockSaveProduct).toHaveBeenCalled();
   });
 
   it("passes null as the current status for a brand-new product (no pre-existing row to read)", async () => {
-    mockCreateProductRow.mockResolvedValue({ id: "new-id" });
+    mockSaveProduct.mockResolvedValue("new-id");
     mockListEntityRows.mockResolvedValue([]);
     mockRequirePublish.mockResolvedValue(undefined);
 
@@ -110,6 +115,43 @@ describe("saveProductAction gates status transitions via requirePublishCapabilit
     await expect(saveProductAction(null, { name: "Widget", status: "published" })).rejects.toThrow(
       "REDIRECT:/admin?error=not-authorized",
     );
-    expect(mockCreateProductRow).not.toHaveBeenCalled();
+    expect(mockSaveProduct).not.toHaveBeenCalled();
+  });
+
+  it("calls saveProduct with the product id (null for create) and all 5 child arrays, in the atomic RPC's shape", async () => {
+    mockRequirePublish.mockResolvedValue(undefined);
+    mockSaveProduct.mockResolvedValue("p1");
+    mockGetEntityRow.mockResolvedValue({ id: "p1", status: "draft" });
+
+    await saveProductAction("p1", {
+      name: "Widget",
+      status: "draft",
+      benefits: [{ title: "Fast" }],
+      stages: [{ title: "Stage 1" }],
+      specs: [{ label: "Weight", value: "10kg" }],
+      industries: ["ind-1"],
+      applications: ["app-1"],
+    });
+
+    expect(mockSaveProduct).toHaveBeenCalledWith(
+      "p1",
+      expect.objectContaining({ name: "Widget", status: "draft" }),
+      [{ title: "Fast" }],
+      [{ title: "Stage 1" }],
+      [{ label: "Weight", value: "10kg" }],
+      ["ind-1"],
+      ["app-1"],
+    );
+  });
+});
+
+describe("deleteProductAction", () => {
+  it("requires delete_content and calls deleteProduct (the atomic RPC wrapper) before redirecting", async () => {
+    mockDeleteProduct.mockResolvedValue(undefined);
+
+    await expect(deleteProductAction("p1")).rejects.toThrow("REDIRECT:/admin/products");
+
+    expect(mockRequireCapability).toHaveBeenCalledWith("delete_content");
+    expect(mockDeleteProduct).toHaveBeenCalledWith("p1");
   });
 });

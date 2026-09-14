@@ -24,6 +24,13 @@ vi.mock("@/lib/db/client", () => ({
   createServiceRoleDbClient: mockCreateServiceRoleDbClient,
 }));
 
+// Task 5 added a recordAudit() call after every successful admin-user
+// mutation — mocked out here so these tests keep isolating the
+// last-admin-protection logic (assertDoesNotOrphanAdmins) from audit
+// logging, which has its own coverage.
+const { mockRecordAudit } = vi.hoisted(() => ({ mockRecordAudit: vi.fn() }));
+vi.mock("@/lib/data/audit", () => ({ recordAudit: mockRecordAudit }));
+
 /**
  * A minimal fake query builder: every chained method (`select`, `eq`,
  * `neq`, `update`, `order`) returns the same chain object, so it works
@@ -68,6 +75,7 @@ function createFakeServiceClient(opts: {
 describe("updateAdminUserRow — last-admin protection", () => {
   beforeEach(() => {
     mockCreateServerDbClient.mockReset();
+    mockRecordAudit.mockReset().mockResolvedValue(undefined);
   });
 
   it("rejects deactivating the last active admin", async () => {
@@ -126,6 +134,7 @@ describe("inviteAdminUser — shares the same last-admin guard", () => {
   beforeEach(() => {
     mockCreateServerDbClient.mockReset();
     mockCreateServiceRoleDbClient.mockReset();
+    mockRecordAudit.mockReset().mockResolvedValue(undefined);
   });
 
   it("rejects re-inviting the last active admin's own email as editor", async () => {
