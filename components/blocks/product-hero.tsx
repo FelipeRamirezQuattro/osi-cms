@@ -37,9 +37,9 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
             <p className="mb-2 text-xs uppercase">
               {data.background === "navy" ? (
                 // Navy is the ONLY background GradientText is safe on
-                // (see gradient-text.tsx). "image"/"transparent" render
+                // (see gradient-text.tsx). "transparent" renders
                 // `bg-transparent`, letting the cream page body through,
-                // so they take the solid gold-700 fallback alongside
+                // so it takes the solid gold-700 fallback alongside
                 // "cream" — that is the single WCAG-safe gold there, and
                 // there is no two-stop sweep to run with one colour.
                 <GradientText>{data.eyebrow}</GradientText>

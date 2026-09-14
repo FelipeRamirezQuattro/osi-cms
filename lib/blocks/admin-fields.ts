@@ -49,7 +49,7 @@ export const COMMON_ADMIN_FIELDS: FieldSpec[] = [
     key: "background",
     label: "Background",
     type: "select",
-    options: ["navy", "cream", "image", "transparent"],
+    options: ["navy", "cream", "transparent"],
   },
   { key: "spacingTop", label: "Spacing (top)", type: "select", options: ["sm", "md", "lg"] },
   { key: "spacingBottom", label: "Spacing (bottom)", type: "select", options: ["sm", "md", "lg"] },

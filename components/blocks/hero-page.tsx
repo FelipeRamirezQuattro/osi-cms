@@ -29,10 +29,9 @@ function Render({ data }: { data: Data }) {
             <p className="mb-2 font-display text-small-label tracking-wide-label uppercase">
               {data.background === "navy" ? (
                 // Navy is the ONLY background GradientText is safe on
-                // (see gradient-text.tsx) — `background` also allows
-                // "image" and "transparent", both of which render
-                // `bg-transparent` and let the cream page body through,
-                // so they take the solid fallback too. No opacity dim:
+                // (see gradient-text.tsx) — "transparent" renders
+                // `bg-transparent` and lets the cream page body through,
+                // so it takes the solid fallback too. No opacity dim:
                 // compositing the gold-500 stop at 70% onto navy drops
                 // this 12px label to ~3.9:1, under the 4.5:1 AA floor.
                 <GradientText>{data.eyebrow}</GradientText>
