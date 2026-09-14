@@ -23,10 +23,25 @@ create policy "public can read page publications"
   on page_publications for select
   using (true);
 
-create policy "admins manage page publications"
-  on page_publications for all
+-- insert/update/delete only, as three separate policies — Postgres's
+-- `FOR` clause takes exactly one command, not a list — rather than one
+-- `for all`. "public can read page publications" above (using (true))
+-- already covers every SELECT an admin would need, and a second
+-- permissive SELECT policy on the same table is exactly what CLAUDE.md's
+-- RLS convention forbids (Supabase's performance advisor flags "multiple
+-- permissive policies").
+create policy "admins can create page publications"
+  on page_publications for insert
+  with check (public.is_admin());
+
+create policy "admins can update page publications"
+  on page_publications for update
   using (public.is_admin())
   with check (public.is_admin());
+
+create policy "admins can delete page publications"
+  on page_publications for delete
+  using (public.is_admin());
 
 -- lib/data/search.ts and lib/data/sitemap.ts queried `pages` directly
 -- (status = 'published') for anonymous requests; the RLS rewrite below
@@ -92,10 +107,24 @@ create policy "staff can view draft blocks"
   on page_blocks for select
   using (public.is_staff());
 
-create policy "admins can manage draft blocks"
-  on page_blocks for all
+-- Same reasoning as page_publications above: three single-command
+-- policies, not `for all` — "staff can view draft blocks" (using
+-- is_staff()) already covers every row an admin can see, since
+-- is_admin() is strictly is_staff() + role = 'admin' (0001_helpers_and_
+-- admin.sql), so an `is_admin()` SELECT grant here would be a second
+-- permissive policy over the same rows.
+create policy "admins can create draft blocks"
+  on page_blocks for insert
+  with check (public.is_admin());
+
+create policy "admins can update draft blocks"
+  on page_blocks for update
   using (public.is_admin())
   with check (public.is_admin());
+
+create policy "admins can delete draft blocks"
+  on page_blocks for delete
+  using (public.is_admin());
 
 create or replace function public.has_capability(capability text)
 returns boolean
