@@ -27,6 +27,7 @@ const NAV_ITEMS: { href: string; label: string; capability: Capability | null }[
   { href: "/admin/redirects", label: "Redirects", capability: "edit_drafts" },
   { href: "/admin/settings", label: "Settings", capability: "manage_settings" },
   { href: "/admin/users", label: "Users", capability: "manage_users" },
+  { href: "/admin/audit-log", label: "Audit log", capability: "view_audit" },
 ];
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
