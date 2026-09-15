@@ -45,6 +45,22 @@ describe("buildSubmissionsCsv", () => {
     expect(csv).toContain(expectedEscaped);
   });
 
+  it("prefixes a formula-injection-shaped page_slug with a single quote", () => {
+    const csv = buildSubmissionsCsv([submission({ page_slug: "=HYPERLINK(\"https://evil.test\",\"Click\")" })]);
+    const [, dataLine] = csv.trim().split("\r\n");
+    // The value's embedded quotes also trigger RFC 4180 wrapping/doubling
+    // on top of the formula-injection prefix — both protections apply.
+    expect(dataLine).toContain('\'=HYPERLINK(""https://evil.test"",""Click"")');
+  });
+
+  it("prefixes a page_slug starting with +, -, @, or a tab the same way", () => {
+    for (const dangerous of ["+1", "-1", "@SUM(A1)", "\ttabbed"]) {
+      const csv = buildSubmissionsCsv([submission({ page_slug: dangerous })]);
+      const [, dataLine] = csv.trim().split("\r\n");
+      expect(dataLine).toContain(`'${dangerous}`);
+    }
+  });
+
   it("renders a null page_slug as an empty field", () => {
     const csv = buildSubmissionsCsv([submission({ page_slug: null })]);
     const [, dataLine] = csv.trim().split("\r\n");

@@ -94,15 +94,38 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+declare current_status text;
 begin
   if not public.has_capability('edit_drafts') then raise exception 'Not authorized'; end if;
-  update pages set status = 'draft', updated_by = auth.uid() where id = p_page_id;
+
+  select status into current_status from pages where id = p_page_id for update;
   if not found then raise exception 'Page not found'; end if;
+  -- Restore is only ever valid from 'archived' — without this check, a
+  -- caller could invoke this RPC directly on a still-published page
+  -- (bypassing the `publish` capability archiving/unpublishing normally
+  -- requires) and flip it to 'draft' while page_publications is never
+  -- touched here, leaving the page live on the public site under a
+  -- status the admin UI reports as draft/archived. Requiring 'archived'
+  -- first means that state is unreachable: archiving a published page
+  -- already deletes its publication row before this function can ever
+  -- run.
+  if current_status <> 'archived' then
+    raise exception 'Only an archived page can be restored';
+  end if;
+
+  update pages set status = 'draft', updated_by = auth.uid() where id = p_page_id;
   perform public.record_audit('restore', 'page', p_page_id, null);
 end;
 $$;
 
 revoke all on function public.archive_page_atomic(uuid) from public;
 revoke all on function public.restore_page_atomic(uuid) from public;
+
+-- Supabase grants EXECUTE to anon/authenticated as a bootstrap-time default
+-- privilege independent of the `revoke all ... from public` above (see 0019) —
+-- revoke it from anon explicitly so only staff sessions can ever call these.
+revoke execute on function public.archive_page_atomic(uuid) from anon;
+revoke execute on function public.restore_page_atomic(uuid) from anon;
+
 grant execute on function public.archive_page_atomic(uuid) to authenticated;
 grant execute on function public.restore_page_atomic(uuid) to authenticated;

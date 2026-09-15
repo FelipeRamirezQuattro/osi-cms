@@ -211,6 +211,16 @@ export async function restoreEntityAction(entity: EntityKey, id: string): Promis
   const config = ENTITY_CONFIGS[entity];
   if (!config.allowArchive) return { status: "error", message: `${config.label} can't be restored.` };
 
+  // Restore is only ever valid from 'archived' — without this check,
+  // calling this action directly on a published row would flip it to
+  // 'draft' (un-publishing it) with only edit_drafts, bypassing the
+  // `publish` capability requirePublishCapabilityForStatusChange
+  // normally requires for any published<->other transition.
+  const current = await getEntityRow(config.table, id);
+  if (current?.status !== "archived") {
+    return { status: "error", message: `${config.label} is not archived.` };
+  }
+
   try {
     await updateEntityRow(config.table, id, { status: "draft" });
     return { status: "success" };

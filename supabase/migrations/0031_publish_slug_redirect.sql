@@ -98,4 +98,13 @@ end;
 $$;
 
 revoke all on function public.publish_page_atomic(uuid, bigint, boolean, integer) from public;
+
+-- Supabase grants EXECUTE to anon/authenticated as a bootstrap-time default
+-- privilege independent of the `revoke all ... from public` above (see 0019).
+-- The old 2-arg publish_page_atomic had this revoke applied in 0019; dropping
+-- and recreating it under this new 4-arg signature (see the `drop function`
+-- above) creates a brand new privilege set that needs the same revoke again —
+-- otherwise this migration silently re-opens a gap 0019 already closed.
+revoke execute on function public.publish_page_atomic(uuid, bigint, boolean, integer) from anon;
+
 grant execute on function public.publish_page_atomic(uuid, bigint, boolean, integer) to authenticated;

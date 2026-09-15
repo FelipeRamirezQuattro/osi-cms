@@ -147,6 +147,15 @@ export async function archiveProductAction(id: string): Promise<ArchiveProductRe
 
 export async function restoreProductAction(id: string): Promise<ArchiveProductResult> {
   await requireCapability("edit_drafts");
+  // Restore is only ever valid from 'archived' — without this check,
+  // calling this action directly on a published product would flip it
+  // to 'draft' (un-publishing it) with only edit_drafts, bypassing the
+  // `publish` capability requirePublishCapabilityForStatusChange
+  // normally requires for any published<->other transition.
+  const current = await getEntityRow("products", id);
+  if (current?.status !== "archived") {
+    return { status: "error", message: "Product is not archived." };
+  }
   try {
     await updateEntityRow("products", id, { status: "draft" });
     return { status: "success" };

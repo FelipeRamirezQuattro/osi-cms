@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { deleteEntityAction, saveEntityAction } from "@/lib/actions/entities";
+import { deleteEntityAction, restoreEntityAction, saveEntityAction } from "@/lib/actions/entities";
 
 /**
  * Task 4 review finding fix: saveEntityAction must run every status
@@ -154,5 +154,42 @@ describe("deleteEntityAction", () => {
     const result = await deleteEntityAction("product-categories", "cat-1");
 
     expect(result).toEqual({ status: "error", message: "db exploded" });
+  });
+});
+
+/**
+ * Task 15 review finding fix: restoreEntityAction must refuse to run on
+ * anything but an already-'archived' row. Without this guard, calling it
+ * directly on a published row (a Server Action is a network endpoint,
+ * not just the button that happens to be hidden for non-archived rows in
+ * the UI) would flip status to 'draft' with only edit_drafts, un-
+ * publishing it without the `publish` capability that transition
+ * normally requires.
+ */
+describe("restoreEntityAction", () => {
+  it("refuses to restore a row that isn't archived, without writing anything", async () => {
+    mockGetEntityRow.mockResolvedValue({ id: "n1", status: "published" });
+
+    const result = await restoreEntityAction("news", "n1");
+
+    expect(result).toEqual({ status: "error", message: "News post is not archived." });
+    expect(mockUpdateEntityRow).not.toHaveBeenCalled();
+  });
+
+  it("restores an archived row to draft", async () => {
+    mockGetEntityRow.mockResolvedValue({ id: "n1", status: "archived" });
+    mockUpdateEntityRow.mockResolvedValue({ id: "n1" });
+
+    const result = await restoreEntityAction("news", "n1");
+
+    expect(mockUpdateEntityRow).toHaveBeenCalledWith("news_posts", "n1", { status: "draft" });
+    expect(result).toEqual({ status: "success" });
+  });
+
+  it("rejects an entity type that doesn't allow archiving, before even checking status", async () => {
+    const result = await restoreEntityAction("industries", "ind-1");
+
+    expect(result).toEqual({ status: "error", message: "Industry can't be restored." });
+    expect(mockGetEntityRow).not.toHaveBeenCalled();
   });
 });

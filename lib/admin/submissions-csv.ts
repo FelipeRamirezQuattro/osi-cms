@@ -14,12 +14,27 @@ import type { Tables } from "@/lib/db/database.types";
  */
 const COLUMNS = ["id", "form_key", "status", "page_slug", "created_at", "payload"] as const;
 
+/**
+ * CSV/formula-injection guard: a cell opened by Excel/Sheets whose first
+ * character is one of these triggers formula evaluation (e.g.
+ * `=HYPERLINK(...)`) regardless of RFC 4180 quoting — quoting only
+ * protects against the delimiter/newline, not against the spreadsheet
+ * app's own formula parser. `page_slug` is attacker-controlled (it comes
+ * straight from a public form's hidden-page-context field, only
+ * trimmed/leading-slash-stripped — see lib/actions/submit-form.ts), so
+ * this isn't hypothetical. Prefixing with a single quote is the standard
+ * mitigation: Excel/Sheets both render it as literal text, not part of
+ * the value.
+ */
+const FORMULA_INJECTION_PREFIX = /^[=+\-@\t\r]/;
+
 /** RFC 4180 field escaping: wrap in quotes and double any embedded quote whenever the value contains a comma, quote, or newline. */
 function csvField(value: string): string {
-  if (/[",\n\r]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
+  const safeValue = FORMULA_INJECTION_PREFIX.test(value) ? `'${value}` : value;
+  if (/[",\n\r]/.test(safeValue)) {
+    return `"${safeValue.replace(/"/g, '""')}"`;
   }
-  return value;
+  return safeValue;
 }
 
 export function buildSubmissionsCsv(rows: Tables<"form_submissions">[]): string {

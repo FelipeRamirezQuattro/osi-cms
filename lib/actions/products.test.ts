@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { saveProductAction, deleteProductAction } from "@/lib/actions/products";
+import { saveProductAction, deleteProductAction, restoreProductAction } from "@/lib/actions/products";
 
 const { mockRedirect } = vi.hoisted(() => ({ mockRedirect: vi.fn() }));
 vi.mock("next/navigation", () => ({
@@ -28,15 +28,17 @@ vi.mock("@/lib/auth", () => ({
   requirePublishCapabilityForStatusChange: mockRequirePublish,
 }));
 
-const { mockGetEntityRow, mockListEntityRows } = vi.hoisted(() => ({
+const { mockGetEntityRow, mockListEntityRows, mockUpdateEntityRow } = vi.hoisted(() => ({
   mockGetEntityRow: vi.fn(),
   mockListEntityRows: vi.fn(),
+  mockUpdateEntityRow: vi.fn(),
 }));
 vi.mock("@/lib/data/admin-entities", () => ({
   getEntityRow: mockGetEntityRow,
   listEntityRows: mockListEntityRows,
   listRelationOptions: vi.fn(),
   moveEntityRow: vi.fn(),
+  updateEntityRow: mockUpdateEntityRow,
 }));
 
 const { mockSaveProduct, mockDeleteProduct } = vi.hoisted(() => ({
@@ -204,5 +206,35 @@ describe("deleteProductAction", () => {
 
     expect(mockRequireCapability).toHaveBeenCalledWith("delete_content");
     expect(mockDeleteProduct).toHaveBeenCalledWith("p1");
+  });
+});
+
+/**
+ * Task 15 review finding fix: restoreProductAction must refuse to run on
+ * anything but an already-'archived' row. Without this guard, calling it
+ * directly on a published product (a Server Action is a network
+ * endpoint, not just the button that happens to be hidden for non-
+ * archived rows in the UI) would flip status to 'draft' with only
+ * edit_drafts, un-publishing it without the `publish` capability that
+ * transition normally requires.
+ */
+describe("restoreProductAction", () => {
+  it("refuses to restore a product that isn't archived, without writing anything", async () => {
+    mockGetEntityRow.mockResolvedValue({ id: "p1", status: "published" });
+
+    const result = await restoreProductAction("p1");
+
+    expect(result).toEqual({ status: "error", message: "Product is not archived." });
+    expect(mockUpdateEntityRow).not.toHaveBeenCalled();
+  });
+
+  it("restores an archived product to draft", async () => {
+    mockGetEntityRow.mockResolvedValue({ id: "p1", status: "archived" });
+    mockUpdateEntityRow.mockResolvedValue(undefined);
+
+    const result = await restoreProductAction("p1");
+
+    expect(mockUpdateEntityRow).toHaveBeenCalledWith("products", "p1", { status: "draft" });
+    expect(result).toEqual({ status: "success" });
   });
 });
