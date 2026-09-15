@@ -1226,6 +1226,123 @@ export type Database = {
         };
         Relationships: [];
       };
+      site_branding: {
+        Row: {
+          config: Json;
+          config_version: number;
+          draft_version: number;
+          id: boolean;
+          primary_logo_media_id: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          config: Json;
+          config_version?: number;
+          draft_version?: number;
+          id?: boolean;
+          primary_logo_media_id?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          config?: Json;
+          config_version?: number;
+          draft_version?: number;
+          id?: boolean;
+          primary_logo_media_id?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "site_branding_primary_logo_media_id_fkey";
+            columns: ["primary_logo_media_id"];
+            isOneToOne: false;
+            referencedRelation: "media_assets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      site_branding_publications: {
+        Row: {
+          config: Json;
+          config_version: number;
+          id: boolean;
+          primary_logo_media_id: string | null;
+          published_at: string;
+          published_by: string | null;
+          published_version: number;
+          updated_at: string;
+        };
+        Insert: {
+          config: Json;
+          config_version?: number;
+          id?: boolean;
+          primary_logo_media_id?: string | null;
+          published_at?: string;
+          published_by?: string | null;
+          published_version: number;
+          updated_at?: string;
+        };
+        Update: {
+          config?: Json;
+          config_version?: number;
+          id?: boolean;
+          primary_logo_media_id?: string | null;
+          published_at?: string;
+          published_by?: string | null;
+          published_version?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "site_branding_publications_primary_logo_media_id_fkey";
+            columns: ["primary_logo_media_id"];
+            isOneToOne: false;
+            referencedRelation: "media_assets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      site_branding_revisions: {
+        Row: {
+          config: Json;
+          config_version: number;
+          created_at: string;
+          id: string;
+          primary_logo_media_id: string | null;
+          published_by: string | null;
+          version: number;
+        };
+        Insert: {
+          config: Json;
+          config_version: number;
+          created_at?: string;
+          id?: string;
+          primary_logo_media_id?: string | null;
+          published_by?: string | null;
+          version: number;
+        };
+        Update: {
+          config?: Json;
+          config_version?: number;
+          created_at?: string;
+          id?: string;
+          primary_logo_media_id?: string | null;
+          published_by?: string | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "site_branding_revisions_primary_logo_media_id_fkey";
+            columns: ["primary_logo_media_id"];
+            isOneToOne: false;
+            referencedRelation: "media_assets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       site_settings: {
         Row: {
           address_lines: string[] | null;
@@ -1299,6 +1416,10 @@ export type Database = {
       has_capability: { Args: { capability: string }; Returns: boolean };
       is_admin: { Args: never; Returns: boolean };
       is_staff: { Args: never; Returns: boolean };
+      publish_branding_atomic: {
+        Args: { p_expected_version: number };
+        Returns: undefined;
+      };
       publish_page_atomic: {
         Args: {
           p_create_redirect?: boolean;
@@ -1321,7 +1442,19 @@ export type Database = {
         };
         Returns: undefined;
       };
+      reset_branding_draft_to_published_atomic: {
+        Args: { p_expected_version: number };
+        Returns: number;
+      };
+      restore_branding_revision_to_draft_atomic: {
+        Args: { p_expected_version: number; p_revision_id: string };
+        Returns: number;
+      };
       restore_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
+      save_branding_draft_atomic: {
+        Args: { p_config: Json; p_expected_version: number };
+        Returns: number;
+      };
       save_page_draft_atomic: {
         Args: {
           p_blocks: Json;
