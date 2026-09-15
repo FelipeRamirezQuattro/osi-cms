@@ -8,10 +8,14 @@ items get struck through with the resolution, not deleted.
 
 - **No PDF/file URLs anywhere in the scrape.** Zero brochure, datasheet,
   certificate, or download links were captured, despite the mockup
-  showing "DOWNLOAD PDF" (product pages), "OSI Brochure" (footer), and
-  the SG-SST page's own text referencing a downloadable complaint form.
-  Every download CTA site-wide needs a placeholder + a client ask for
-  the actual file.
+  showing "DOWNLOAD PDF" (product pages), ~~"OSI Brochure" (footer)~~,
+  and the SG-SST page's own text referencing a downloadable complaint
+  form. Every download CTA site-wide needs a placeholder + a client ask
+  for the actual file. **"OSI Brochure" resolved (2026-09-15): removed
+  the footer nav item entirely** (`scripts/seed-navigation.ts`) rather
+  than ship a dead `href="#"` link — a verification pass found it live
+  in production with no real file backing it. Re-add once a real
+  brochure PDF exists.
 - **World map country coverage is thinner than it looks.** The mockup
   pins 15 countries (Canada, US, Mexico, Colombia, Ecuador, Brazil,
   Argentina, England, Romania, Egypt, Oman, Saudi Arabia, China,

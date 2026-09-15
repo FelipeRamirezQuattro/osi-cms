@@ -30,21 +30,38 @@
  * column there, add it here too.
  */
 import { createServiceRoleDbClient } from "../lib/db/client";
-import { extractInternalLinkCandidates, findBrokenPaths, isIgnorableCandidate } from "../lib/data/link-audit";
+import {
+  extractInternalLinkCandidates,
+  findBrokenNavLinks,
+  findBrokenPaths,
+  isIgnorableCandidate,
+  type NavItemRow,
+} from "../lib/data/link-audit";
 import { validateAltRequirement } from "../lib/validation/media";
 
 type Db = ReturnType<typeof createServiceRoleDbClient>;
 
+/**
+ * Published-only: unlike lib/data/link-audit.ts's own buildKnownPathSet
+ * (the admin dashboard's version, which deliberately treats a link to a
+ * still-draft page/product as "not broken yet" — an editor's own
+ * in-progress work, resolvable via preview), this CLI's whole purpose is
+ * "what does the public actually see right now, before I publish
+ * something new" — so a draft page must NOT count as a known-good
+ * target here. A verification pass found this script previously
+ * treated any status as valid, which could report zero broken links
+ * while a nav item pointed at a page that 404s for every real visitor.
+ */
 async function buildKnownPathSet(db: Db): Promise<Set<string>> {
   const known = new Set<string>(["/", "/products", "/news", "/resources", "/search", "/contact"]);
 
   const [pages, categories, products, industries, applications, news, redirects] = await Promise.all([
-    db.from("pages").select("slug"),
+    db.from("pages").select("slug").eq("status", "published"),
     db.from("product_categories").select("id, slug"),
-    db.from("products").select("slug, category_id"),
-    db.from("industries").select("slug"),
-    db.from("applications").select("slug"),
-    db.from("news_posts").select("slug"),
+    db.from("products").select("slug, category_id").eq("status", "published"),
+    db.from("industries").select("slug").eq("status", "published"),
+    db.from("applications").select("slug").eq("status", "published"),
+    db.from("news_posts").select("slug").eq("status", "published"),
     db.from("redirects").select("from_path"),
   ]);
   for (const q of [pages, categories, products, industries, applications, news, redirects]) {
@@ -92,6 +109,16 @@ async function findBrokenLinks(db: Db, knownPaths: Set<string>): Promise<BrokenL
     for (const href of findBrokenPaths(extractInternalLinkCandidates(block.data), knownPaths)) {
       results.push({ source, href });
     }
+  }
+
+  // Header/footer/utility nav — never a block, so never covered by the
+  // two scans above. A verification pass found production nav items
+  // (/esp-packages, /locations, a bare "#") this report had never
+  // looked at.
+  const { data: navItems, error: navError } = await db.from("nav_items").select("id, parent_id, label, href, is_external");
+  if (navError) throw navError;
+  for (const item of findBrokenNavLinks((navItems ?? []) as NavItemRow[], knownPaths)) {
+    results.push({ source: `"${item.label}" — navigation link`, href: item.href });
   }
 
   return results.filter((r) => !isIgnorableCandidate(r.href));
@@ -144,6 +171,28 @@ async function reportMedia(db: Db) {
   return { total: rows.length, missingAlt, orphaned };
 }
 
+/**
+ * Supabase's `sb_secret_*` API keys are exchanged server-side for a
+ * short-lived JWT before reaching PostgREST; a verification pass hit
+ * `PGRST303: JWT issued at future` on an otherwise-correct local
+ * `.env.local` service-role key — a transient clock-skew condition
+ * between whatever minted that token and PostgREST's own clock, not
+ * anything this script's code controls (re-running immediately without
+ * any change succeeded). Retrying a couple of times with a short delay
+ * turns that one-off infrastructure hiccup into "the report just works"
+ * instead of a hard failure the operator has to notice is spurious and
+ * re-run by hand right before a publish.
+ */
+function isTransientAuthClockError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  const code = (error as { code?: string } | null)?.code;
+  return code === "PGRST303" || /jwt issued at future/i.test(message);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function main() {
   const db = createServiceRoleDbClient();
 
@@ -176,7 +225,25 @@ async function main() {
   }
 }
 
-main().catch((error) => {
+const MAX_ATTEMPTS = 3;
+
+async function runWithRetries() {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      await main();
+      return;
+    } catch (error) {
+      if (attempt === MAX_ATTEMPTS || !isTransientAuthClockError(error)) throw error;
+      const delayMs = attempt * 2000;
+      console.warn(
+        `Transient auth error (${(error as { code?: string }).code ?? "clock skew"}) — retrying in ${delayMs}ms (attempt ${attempt}/${MAX_ATTEMPTS})...`,
+      );
+      await sleep(delayMs);
+    }
+  }
+}
+
+runWithRetries().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

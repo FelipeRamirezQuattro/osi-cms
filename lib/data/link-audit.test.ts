@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import {
   countBrokenLinks,
   extractInternalLinkCandidates,
+  findBrokenNavLinks,
   findBrokenPaths,
   isIgnorableCandidate,
   listBrokenLinks,
@@ -35,9 +36,13 @@ describe("extractInternalLinkCandidates", () => {
     expect(extractInternalLinkCandidates({ src: "/uploads/2026/photo.jpg" })).toEqual([]);
   });
 
-  it("ignores an anchor and a mailto link", () => {
+  it("ignores an in-page anchor and a mailto link, but catches a bare '#' placeholder", () => {
     expect(extractInternalLinkCandidates({ href: "#contact" })).toEqual([]);
     expect(extractInternalLinkCandidates({ href: "mailto:info@example.com" })).toEqual([]);
+    // A verification pass found a real "OSI Brochure" nav link shipped
+    // to production with href="#" (never fixed up to a real path) —
+    // this must be caught, not silently ignored the way "#contact" is.
+    expect(extractInternalLinkCandidates({ href: "#" })).toEqual(["#"]);
   });
 
   it("returns an empty array for null/empty data", () => {
@@ -81,6 +86,42 @@ describe("findBrokenPaths", () => {
   });
 });
 
+describe("findBrokenNavLinks", () => {
+  const known = new Set(["/about-us"]);
+
+  it("flags a leaf item with a broken path", () => {
+    const items = [{ id: "n1", parent_id: null, label: "Old Page", href: "/no-such-page", is_external: false }];
+    expect(findBrokenNavLinks(items, known)).toEqual(items);
+  });
+
+  it("flags a leaf item whose href is the bare placeholder '#'", () => {
+    const items = [{ id: "n1", parent_id: null, label: "OSI Brochure", href: "#", is_external: false }];
+    expect(findBrokenNavLinks(items, known)).toEqual(items);
+  });
+
+  it("does not flag a parent item with children even if its own href is '#' — it's a dropdown trigger, never rendered as a link", () => {
+    const items = [
+      { id: "parent", parent_id: null, label: "Sand Control", href: "#", is_external: false },
+      { id: "child", parent_id: "parent", label: "SRP Sand Lift", href: "/products/sand-control/srp-sand-lift", is_external: false },
+    ];
+    // The child resolves against knownPaths in the real usage, but this
+    // unit test only cares whether the parent itself gets (correctly)
+    // skipped — pass a known set that includes the child's path too.
+    const withChild = new Set([...known, "/products/sand-control/srp-sand-lift"]);
+    expect(findBrokenNavLinks(items, withChild)).toEqual([]);
+  });
+
+  it("does not flag an external item regardless of its href shape", () => {
+    const items = [{ id: "n1", parent_id: null, label: "OSI Designer", href: "#", is_external: true }];
+    expect(findBrokenNavLinks(items, known)).toEqual([]);
+  });
+
+  it("does not flag a leaf item that resolves against real content", () => {
+    const items = [{ id: "n1", parent_id: null, label: "About", href: "/about-us", is_external: false }];
+    expect(findBrokenNavLinks(items, known)).toEqual([]);
+  });
+});
+
 // --- listBrokenLinks / countBrokenLinks: thin data-layer wrapper --------
 
 const { mockCreateServerDbClient } = vi.hoisted(() => ({ mockCreateServerDbClient: vi.fn() }));
@@ -103,12 +144,13 @@ vi.mock("@/lib/data/admin-entities", () => ({
   }),
 }));
 
-function fakeDb(pageBlocks: unknown[], sharedSectionBlocks: unknown[]) {
+function fakeDb(pageBlocks: unknown[], sharedSectionBlocks: unknown[], navItems: unknown[] = []) {
   return {
     from: (table: string) => ({
       select: () => {
         if (table === "page_blocks") return Promise.resolve({ data: pageBlocks, error: null });
         if (table === "shared_section_blocks") return Promise.resolve({ data: sharedSectionBlocks, error: null });
+        if (table === "nav_items") return Promise.resolve({ data: navItems, error: null });
         throw new Error(`unexpected table ${table}`);
       },
     }),
@@ -179,5 +221,29 @@ describe("listBrokenLinks / countBrokenLinks", () => {
       ),
     );
     expect(await listBrokenLinks()).toHaveLength(1);
+  });
+
+  it("also scans nav_items — a broken leaf link and a placeholder '#' are flagged, a dropdown-trigger parent is not", async () => {
+    mockCreateServerDbClient.mockReturnValue(
+      fakeDb(
+        [],
+        [],
+        [
+          { id: "esp", parent_id: null, label: "ESP Packages", href: "/esp-packages", is_external: false },
+          { id: "brochure", parent_id: null, label: "OSI Brochure", href: "#", is_external: false },
+          { id: "parent", parent_id: null, label: "Sand Control", href: "#", is_external: false },
+          { id: "child", parent_id: "parent", label: "SRP Sand Lift", href: "/products/artificial-lift/gas-release-system", is_external: false },
+        ],
+      ),
+    );
+
+    const links = await listBrokenLinks();
+    expect(links).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ sourceLabel: '"ESP Packages" — navigation link', href: "/esp-packages" }),
+        expect.objectContaining({ sourceLabel: '"OSI Brochure" — navigation link', href: "#" }),
+      ]),
+    );
+    expect(links).toHaveLength(2);
   });
 });

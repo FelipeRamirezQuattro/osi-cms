@@ -28,7 +28,13 @@ import { adminHref, applicationHref, industryHref, newsHref, pageHref, productHr
 // with "http", not "/"), and a protocol-relative URL (the second
 // character has to be lowercase-alphanumeric, so "//cdn...." can't
 // match).
-const CANDIDATE_PATTERN = /"(\/[a-z0-9][a-z0-9-]*(?:\/[a-z0-9-]+)*)"/g;
+//
+// The bare `#` alternative catches the other real placeholder-link shape
+// found in production (a nav/CTA href left as "#" instead of a real
+// path or removed entirely) — a verification pass found this exact
+// pattern shipped live (an "OSI Brochure" footer link) undetected,
+// because the leading-`/`-only pattern above never matches a lone "#".
+const CANDIDATE_PATTERN = /"(\/[a-z0-9][a-z0-9-]*(?:\/[a-z0-9-]+)*|#)"/g;
 
 export function extractInternalLinkCandidates(data: unknown): string[] {
   const json = JSON.stringify(data ?? null) ?? "";
@@ -119,8 +125,34 @@ type SharedSectionBlockJoinRow = {
   data: unknown;
   shared_sections: { id: string; title: string } | null;
 };
+export type NavItemRow = { id: string; parent_id: string | null; label: string; href: string; is_external: boolean };
 
-/** Every broken-looking internal link found across page_blocks and shared_section_blocks, with enough context to jump to the offending block's editor. Dedupes identical (source, href) pairs. */
+/**
+ * Header/footer/utility nav links, checked separately from block/section
+ * scanning above — a verification pass found production nav items
+ * (`/esp-packages`, `/locations`, a bare `#`) that this scan previously
+ * never looked at, since `nav_items` isn't a block-driven table.
+ *
+ * A parent item with children (a mega-menu column heading like "Sand
+ * Control") legitimately has `href: "#"` — it's rendered as a plain
+ * `<h3>` heading in `mega-menu-client.tsx`, never as an `<a>`, purely to
+ * host a dropdown. Only leaf items (no children) render as a real link
+ * everywhere they appear (utility bar, mega-menu children, all four
+ * footer columns — see `components/layout/*.tsx`), so only leaf items
+ * are checked here. External items go through `externalLinkAttrs`, not
+ * this internal-path checker, and are skipped.
+ */
+export function findBrokenNavLinks(items: NavItemRow[], knownPaths: ReadonlySet<string>): NavItemRow[] {
+  const parentIds = new Set(items.filter((i) => i.parent_id).map((i) => i.parent_id));
+  return items.filter((item) => {
+    if (item.is_external) return false;
+    if (parentIds.has(item.id)) return false; // has children — a dropdown trigger, never rendered as <a>
+    if (item.href === "#") return true;
+    return findBrokenPaths([item.href], knownPaths).length > 0;
+  });
+}
+
+/** Every broken-looking internal link found across page_blocks, shared_section_blocks, and nav_items, with enough context to jump to the offending editor. Dedupes identical (source, href) pairs. */
 export async function listBrokenLinks(): Promise<BrokenLinkEntry[]> {
   const [knownPaths, db] = [await buildKnownPathSet(), createServerDbClient()];
   const entries: BrokenLinkEntry[] = [];
@@ -159,6 +191,12 @@ export async function listBrokenLinks(): Promise<BrokenLinkEntry[]> {
         href,
       );
     }
+  }
+
+  const { data: navItems, error: navError } = await db.from("nav_items").select("id, parent_id, label, href, is_external");
+  if (navError) throw navError;
+  for (const item of findBrokenNavLinks((navItems ?? []) as NavItemRow[], knownPaths)) {
+    record(`"${item.label}" — navigation link`, adminHref("navigation"), item.href);
   }
 
   return entries;

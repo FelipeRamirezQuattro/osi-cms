@@ -85,7 +85,13 @@ const FOOTER_COLUMNS: Record<string, ItemInput[]> = {
     // "ESP Packages" (/esp-packages) removed alongside the utility bar's
     // copy above — same reasoning, same broken link, two places it was
     // seeded.
-    { label: "OSI Brochure", href: "#" },
+    //
+    // "OSI Brochure" (href: "#") removed — a verification pass found it
+    // still live in production with a dead placeholder href. No real
+    // brochure/datasheet PDF exists anywhere in the legacy scrape (see
+    // docs/CONTENT-GAPS.md); inventing a URL would violate CLAUDE.md's
+    // "never fabricate client content" rule. Re-add once a real file
+    // exists, pointing at it directly.
     { label: "Services", href: "/services" },
   ],
   "footer-2": [
