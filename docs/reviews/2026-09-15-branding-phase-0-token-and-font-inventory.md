@@ -25,14 +25,19 @@ build from. It does not change any code, schema, or config.
 - `git status` at the start of this phase: clean, on `main`, HEAD `2071d44`
   (see recent-commits list in the launching agent's git-status snapshot).
 
-## 1. Visual baselines (deferred capture, cited from existing docs)
+## 1. Visual baselines (disclosed deferral — no new screenshots captured)
 
-Per this phase's brief, no new Playwright/screenshot capture was run here
-(no dev server or browser tooling available to this agent, and it would
-duplicate work the branding module's own Phase 9 QA must redo anyway
-against a build that actually has branding wired in). The two redesign
-review docs already establish the final pre-branding visual state in
-enough detail to serve as the written baseline:
+**This section is a written citation of existing prose documentation, not
+a literal image/screenshot capture.** Per this phase's brief, no new
+Playwright/screenshot capture was run here (no dev server or browser
+tooling available to this agent, and it would duplicate work the
+branding module's own Phase 9 QA must redo anyway against a build that
+actually has branding wired in). This phase's actual Acceptance line
+("A checked token migration matrix exists and every public color/font
+use is classified...") does not require a literal capture — only §§2–6
+below are load-bearing for that. The two redesign review docs already
+establish the final pre-branding visual state in enough prose detail to
+serve as the written baseline this section cites in its place:
 
 - `docs/reviews/2026-09-15-public-ui-motion-redesign-handoff.md` — outcome
   summary, main changes per surface (foundation, shell/nav, discovery,
@@ -75,7 +80,7 @@ distinct token or usage pattern, classified `structural` /
 | Token | Value | Classification | Notes |
 | --- | --- | --- | --- |
 | `--color-osi-navy-900` | `#001b33` | semantic | Primary dark surface / "on-surface-dark" ink. Level-1 fallback value for the "Dark surface" semantic role. |
-| `--color-osi-navy-800` | `#001c34` | semantic | Near-duplicate of navy-900 (1 step lighter); no distinct current usage found outside the token table itself — candidate for the branding module to fold into a single "primary dark" swatch or keep as a documented near-black variant. Flag for Phase 1 to confirm actual call sites before seeding. |
+| `--color-osi-navy-800` | `#001c34` | semantic | Near-duplicate of navy-900 (1 step lighter) **on the public site** — but not dead: `app/admin/admin.css`'s `.admin-root` block (line 49) aliases `--color-osi-navy-800: var(--admin-primary)`, and three not-yet-migrated admin auth pages (`app/admin/login/login-form.tsx:18`, `app/admin/forgot-password/forgot-password-form.tsx:21,32`, `app/admin/reset-password/reset-password-form.tsx:91,110`) apply `bg-osi-navy-800` directly, relying on that alias to render the admin's own primary-blue tone rather than the real OSI navy hex — see §6 for the full admin-aliasing picture. Candidate for the *public* branding module to fold into a single "primary dark" swatch (it has no distinct public-site call site), but must stay declared in `app/globals.css` regardless, since the admin's compatibility bridge depends on the token existing. Flag for Phase 1 to confirm there is still no distinct *public* call site before excluding it from the public swatch set. |
 | `--color-osi-navy-700` | `#04243d` | semantic | Secondary dark surface (DuotoneImage overlay `to-osi-navy-700`, hero scrim, label-plate-card image fallback gradient). Maps to "Secondary" role. |
 | `--color-osi-navy-600` | `#133752` | semantic | Card/panel surface on navy (`benefits-cards.tsx`'s `bg-osi-navy-600/40`). Maps to a "surface preset" background, not a top-level role. |
 | `--color-osi-steel-500` | `#234e7b` | semantic | Accent/structural-line color — hover glow rings (mission-cards, news-feed), hairline grid rule color, focus ring on product-grid search input, spec-table border tint via steel opacity. Maps to "Accent" or a secondary accent role. |
@@ -83,7 +88,7 @@ distinct token or usage pattern, classified `structural` /
 | `--color-osi-slate-300` | `#576979` | semantic | "Muted text on light" role — used everywhere `data.background === "cream"` branches to the light-safe muted color (global-map, hero-full, product-hero, split-feature, quote-testimonial, spec-table `dt`, section lede, label-plate-card body, resource cards, footer/contact fallbacks where light). |
 | `--color-osi-slate-200` | `#818f9b` | semantic | "Muted text on dark" role — the navy-safe counterpart to slate-300 (WCAG fix documented in the token comment itself). Used in the mirrored branch everywhere slate-300 is used on cream. |
 | `--color-osi-cream-100` | `#f2e9de` | semantic | "Light surface" / page background. `.site-shell`'s `--site-surface` and the `background === "cream"` branch of `Section`. |
-| `--color-osi-cream-200` | `#efe8dd` | semantic | Declared but no direct call site found in components searched — likely reserved for a future light-surface variant. Flag for Phase 1 to confirm before seeding as a distinct swatch vs. dropping. |
+| `--color-osi-cream-200` | `#efe8dd` | semantic | No direct `bg-osi-cream-200`/`text-osi-cream-200` utility-class usage found in any component searched (public or admin) — but not an orphaned declaration: `app/admin/admin.css`'s `.admin-root` block (line 46) aliases `--color-osi-cream-200: var(--admin-surface-muted)`, repurposing the token itself as the admin's compatibility-bridge alias target even though no markup applies it as a class — see §6. Likely still reserved for a future public light-surface variant on top of that. Flag for Phase 1 to confirm before seeding as a distinct *public* swatch vs. dropping (dropping it from the public palette would still require updating/removing the admin alias line separately, since that alias would otherwise point at a token no longer declared). |
 | `--color-osi-sand-300` | `#d0c0a7` | semantic | Secondary neutral accent — pill border in global-map's country list, MediaFrame's placeholder background, image-gallery thumbnail placeholder background. |
 | `--color-osi-gold-500` | `#e2902a` | semantic | "Accent" role, navy-safe only (see contrast comment in globals.css). Universal CTA color (`solid-gold` button variant, breakout bar, focus-within ring on search field, active-route underline, footer column headings, hero eyebrow gradient stop). |
 | `--color-osi-gold-400` | `#f0a93d` | semantic | Gold hover/lighter step, navy-safe. `solid-gold` hover state, `GradientText`'s second gradient stop, announcement-bar link hover, mega-menu active-route gold. |
@@ -241,15 +246,27 @@ after the branding module ships.
 | `osi-gold-400` | Signal gold (hover, on dark) | `#F0A93D` | `--color-osi-gold-400` |
 | `osi-gold-700` | Signal gold (on light) | `#885619` | `--color-osi-gold-700` |
 
-Deliberately excluded from the 12-swatch active palette (per §2.1's
-flags) pending Phase 1 confirmation of real call sites: `osi-navy-800`
-(`#001c34`, near-duplicate of navy-900) and `osi-cream-200`
-(`#efe8dd`, no confirmed call site). `osi-white` (`#ffffff`) and the
-raised-surface `#fffaf4` are recommended as *derived* values (a "Text on
-dark" role resolving to pure white; a "Light surface raised" role
-resolving to the near-white) rather than counted against the 12-swatch
-cap, since the cap's purpose (per the plan) is keeping *selection*
-usable, not counting every derived value.
+Deliberately excluded from the 12-swatch active *public branding*
+palette (per §2.1's flags): `osi-navy-800` (`#001c34`, no distinct
+public-site call site — a near-duplicate of navy-900) and `osi-cream-200`
+(`#efe8dd`, no direct utility-class call site anywhere). **Correction from
+this document's first draft**: neither token is actually dead — both are
+referenced today, deliberately, by `app/admin/admin.css`'s `.admin-root`
+compatibility-bridge aliasing (`--color-osi-navy-800: var(--admin-primary)`,
+`--color-osi-cream-200: var(--admin-surface-muted)`), and `osi-navy-800`
+is additionally applied directly by three not-yet-migrated admin auth
+pages (see §2.1's rows and §6). That usage is an *admin-internal*
+styling mechanism, not a public-brand role, so the recommendation to
+exclude both from the public 12-swatch palette still holds — but
+`app/globals.css` must keep declaring both tokens (with their current
+values) regardless of whether the branding module ever exposes them as
+selectable public swatches, since removing the underlying CSS variable
+would break the admin's alias target, not just an unused public token.
+`osi-white` (`#ffffff`) and the raised-surface `#fffaf4` are recommended
+as *derived* values (a "Text on dark" role resolving to pure white; a
+"Light surface raised" role resolving to the near-white) rather than
+counted against the 12-swatch cap, since the cap's purpose (per the
+plan) is keeping *selection* usable, not counting every derived value.
 
 ### 4.2 Semantic role → swatch mapping (Level 1 seed)
 
@@ -379,17 +396,81 @@ Notes:
   Framer Motion variants), and the two `REVEAL_VIEWPORT*` intersection-
   observer configs. Out of scope for the branding module entirely, as
   expected.
-- **Admin isolation, confirmed**: `app/admin/admin.css`'s `.admin-root`
-  block unconditionally redefines `--font-display`, `--font-editorial`,
-  `--font-display-soft`, and `--font-body` to a single `--admin-font`
-  system stack, and `font-family: var(--admin-font)` on `.admin-root`
-  itself. This is a hard CSS-variable override, not a convention — any
-  future public theme compiler emitting different values into `:root`
-  cannot leak into `/admin/*` because the admin's own more-specific rule
-  always wins for anything rendered inside `.admin-root`. No admin file
-  was found referencing any `--color-osi-*` token or `bg-osi-*`/
-  `text-osi-*` utility class in the components searched for this
-  inventory.
+- **Admin isolation — font: complete. Color: partial, and worth a closer
+  look than this document's first draft gave it.** `app/admin/admin.css`'s
+  `.admin-root` block unconditionally redefines `--font-display`,
+  `--font-editorial`, `--font-display-soft`, and `--font-body` to a single
+  `--admin-font` system stack, and `font-family: var(--admin-font)` on
+  `.admin-root` itself. That part is a hard, total CSS-variable override:
+  any future public theme compiler emitting different font values into
+  `:root` cannot leak into `/admin/*`, because the admin's own
+  more-specific rule always wins for anything rendered inside
+  `.admin-root`.
+
+  Color is a different picture. **This document's first draft claimed "no
+  admin file was found referencing any `--color-osi-*` token or
+  `bg-osi-*`/`text-osi-*` utility class" — that claim was wrong** (caught
+  in task review, not by this document's own self-review sweep, which
+  had scoped itself to `components/ui/*` and `app/(site)/**/*.tsx` and
+  never swept `app/admin/*` — see §8.1's corrected scope note). A repo-wide
+  sweep of `app/admin/**/*.tsx` finds `osi-*`-prefixed Tailwind utility
+  classes used extensively — not just in the three auth pages, but across
+  most of the admin's older dashboard screens (`navigation/`,
+  `audit-log/`, `submissions/`, `users/`, `shared-sections/`,
+  `pages/[id]/page-editor.tsx`, `media/media-library.tsx`), applying
+  `bg-osi-navy-900`/`-800`, `border-osi-sand-300`, `text-osi-slate-400`,
+  `bg-osi-gold-500`, `text-osi-white`, `border-osi-steel-500`,
+  `outline-osi-gold-500`, and `font-display`/`tracking-wide-display`/
+  `tracking-wide-label` directly, all still wrapped in `.admin-root` via
+  `app/admin/layout.tsx`.
+
+  What actually protects the admin from those classes rendering real
+  public brand colors is `admin.css`'s own comment: "Compatibility bridge
+  while individual editors move to semantic admin primitives. Existing
+  Tailwind utilities resolve through these scoped variables, so none of
+  these changes leak into the public site." Concretely, `.admin-root`
+  (lines 45–54) redefines exactly **10** `--color-osi-*` tokens to the
+  admin's native palette — `cream-100`→`--admin-canvas`,
+  `cream-200`→`--admin-surface-muted`, `sand-300`→`--admin-border`,
+  `navy-900`→`--admin-primary`, `navy-800`→`--admin-primary`,
+  `navy-700`→`--admin-primary-hover`, `slate-400`/`slate-300`→
+  `--admin-ink-secondary`, `slate-200`→a literal `#c7d2dc`, and
+  `gold-700`→`--admin-accent`. Every admin `osi-*` class built on one of
+  those 10 tokens renders admin-native colors today, not real OSI brand
+  hex — the bridge works as documented for those.
+
+  **But `--color-osi-gold-500`, `--color-osi-gold-400`,
+  `--color-osi-steel-500`, and `--color-osi-white` are *not* among the
+  10 aliased tokens.** `bg-osi-gold-500`/`text-osi-white`/
+  `border-osi-steel-500`/`outline-osi-gold-500` classes used in admin
+  markup — the login/forgot-password/reset-password gold submit buttons
+  and steel input borders, the page-editor's and shared-section-editor's
+  gold "Publish" buttons (`bg-osi-gold-500 ... text-osi-navy-900`) —
+  render the real, literal public brand values (`#E2902A`, `#F0A93D`,
+  `#234E7B`, `#FFFFFF`) inside `.admin-root` **today**, because nothing
+  in `admin.css` redefines those four variables for admin scope. This is
+  a pre-existing state, not something this branding module introduces,
+  and fixing the admin's own remaining raw-utility screens is squarely
+  the admin-ui-motion-redesign plan's territory (its own phases 7–10 are
+  "not started" per the branding plan's status section) — not this
+  document's job to remediate. It matters here because of what it implies
+  for **this** plan's Phase 2/3 runtime-theme work: those four variables
+  are declared once, globally, in `app/globals.css`'s `@theme` block —
+  not scoped to `.public-site` today. If Phase 2's theme compiler resolves
+  a published brand change by overwriting `--color-osi-gold-500`/etc. at
+  that same global scope (rather than emitting brand values only inside a
+  `.public-site` boundary, per the plan's own "Runtime theme architecture"
+  requirement), an administrator publishing a different accent color
+  would silently recolor the admin's own gold Publish buttons and steel
+  borders too — a direct violation of the plan's non-goal ("Recoloring or
+  re-fonting the admin interface from public branding settings"). **Flag
+  for Phase 2/3: either (a) confirm the theme compiler's output is
+  actually scoped under `.public-site` (or equivalent) rather than
+  `:root`, which would make this a non-issue regardless of admin.css's
+  aliasing gaps, or (b) if any global-scope `--color-osi-*` overwrite is
+  used anywhere, extend admin.css's alias list to cover
+  gold-500/gold-400/steel-500/white the same way the other 10 tokens are
+  covered, before Phase 2 ships.**
 
 ## 7. Summary counts
 
@@ -413,9 +494,14 @@ Notes:
   background-unaware accent/muted-text color (§3.1 #2), 1 recurring
   "technical plate" surface pattern spanning 4 blocks (§3.1 #1), 2 blocks
   whose `background`/`accent` fields don't behave like a free surface
-  swap today (§3.1 #3), 2 tokens flagged for confirm-before-seed
-  (navy-800, cream-200), and 1 real gap (no existing warning/information
-  tone to preserve — net-new territory for Phase 1).
+  swap today (§3.1 #3), 2 tokens excluded from the public 12-swatch
+  palette but confirmed to be actively used by the admin's own
+  compatibility-bridge aliasing (navy-800, cream-200 — §2.1/§4.1/§6), a
+  partial (not total) admin/public **color** isolation gap covering 4
+  un-aliased tokens (gold-500, gold-400, steel-500, white — §6) with a
+  direct implication for Phase 2/3's theme-compiler scoping, and 1 real
+  gap (no existing warning/information tone to preserve — net-new
+  territory for Phase 1).
 
 ## 8. What's explicitly deferred
 
@@ -423,10 +509,13 @@ Notes:
   branding module's own Phase 9 QA pass, per this phase's brief; §1 above
   cites the existing written baseline from the two prior redesign review
   docs instead of re-capturing it.
-- **Confirming `osi-navy-800` and `osi-cream-200` have zero real call
-  sites** beyond the `@theme` declaration — flagged in §2.1/§4.1 for
-  Phase 1 to verify with a repo-wide search before deciding whether to
-  seed them as distinct swatches or drop them.
+- **Confirming `osi-navy-800` and `osi-cream-200` have zero *public-site*
+  call sites** (both are now confirmed to have real *admin-internal*
+  usage via `admin.css`'s compatibility-bridge aliasing — see §2.1/§4.1/§6,
+  corrected after task review) — flagged for Phase 1 to verify with a
+  repo-wide search of `app/(site)/**` and `components/**` specifically
+  (not `app/admin/**`, which is now confirmed non-empty for both) before
+  deciding whether to seed either as a distinct *public* swatch.
 - **Verifying exact OFL license text** for the four newly-proposed
   catalog fonts (Rajdhani, Fraunces, Source Sans 3, Inter) — flagged in
   §5; this document asserts their license status from well-established
@@ -441,6 +530,22 @@ Notes:
   `osi-steel-500`, `osi-gold-500`/`gold-400`. No new token found there.)
 
 ### 8.1 Self-review sweep (acceptance check)
+
+**Scope boundary (stated explicitly after task review — this was left
+implicit in the first draft, which is exactly how the §6 admin-isolation
+error below went undetected by this section):** the sweep described here
+covered only `components/ui/*` and `app/(site)/**/*.tsx` — it did **not**
+include `app/admin/**`. That gap is what let the original, incorrect
+"no admin file references any `--color-osi-*` token" claim in §6 stand
+uncorrected until task review caught it with a direct `app/admin/**`
+grep (see §6's corrected text and §2.1's `osi-navy-800`/`osi-cream-200`
+rows for what that admin-scoped sweep actually found). A separate,
+dedicated `app/admin/**/*.tsx` + `app/admin/admin.css` sweep was run as
+part of this fix and is reflected in the corrected §2.1/§4.1/§6 text —
+that sweep, unlike this one, intentionally *is* about admin files,
+specifically to characterize the admin/public isolation boundary itself,
+not because admin markup is otherwise in scope for a *public* token
+migration matrix.
 
 Beyond the files read in depth for §§2–6, a final grep pass was run
 across every remaining `components/ui/*` primitive not yet individually
@@ -458,8 +563,8 @@ file not already read (`loading.tsx`, `resources/page.tsx`,
 to a token already classified in §2.1/§2.2 (`osi-navy-900`,
 `osi-gold-500`/`400`/`700`, `osi-slate-200`/`300`, `osi-sand-300`,
 `osi-steel-500`, `font-editorial`) — no additional distinct color or
-font token exists in the routes/primitives outside what §§2–6 already
-document. `components/ui/social-icon.tsx`, `external-link-icon.tsx`,
-`tilt-card.tsx`, `animated-group.tsx`, `animated-section.tsx`, and
-`reveal-section.tsx` returned zero matches (pure structural/motion, no
-color or font decisions of their own).
+font token exists in the *public* routes/primitives outside what §§2–6
+already document. `components/ui/social-icon.tsx`,
+`external-link-icon.tsx`, `tilt-card.tsx`, `animated-group.tsx`,
+`animated-section.tsx`, and `reveal-section.tsx` returned zero matches
+(pure structural/motion, no color or font decisions of their own).
