@@ -108,59 +108,77 @@ test.describe("public route smoke matrix", () => {
     // dev-mode/Turbopack SSR-streaming quirk, not a real defect — reading
     // the response body directly sidesteps it without weakening what's
     // actually being verified (the server sent the right content).
+    //
+    // As of Task 8, this specific request never reaches Next's page
+    // pipeline at all — proxy.ts's soft-404 fix intercepts it and serves
+    // a standalone 404 document directly (see that file's top comment).
+    // Its body still contains "Page not found" by design, so this
+    // assertion is unchanged, but it's no longer exercising not-found.tsx
+    // for this exact path — see the status-code test below for the
+    // proxy-level check, and the "known content/route gaps" section of
+    // navigation-links.spec.ts for a case that still goes through the
+    // real not-found.tsx (a product detail 404, left out of proxy's
+    // scope — see proxy.ts's comment).
     const response = await page.goto("/this-page-does-not-exist");
     const body = (await response?.text()) ?? "";
     expect(body).toContain("Page not found");
   });
 
-  // Discovered while verifying this task (not one of the plan's known
-  // defects): app/(site)/[...slug]/page.tsx's notFound() call renders
-  // app/(site)/not-found.tsx's content correctly, but the HTTP response
-  // status is 200, not 404 — confirmed with `pnpm build && pnpm start`
-  // (not just `next dev`, so it isn't a dev-only quirk) and with a plain
-  // curl against the running server. That's exactly the soft-404 CLAUDE.md
-  // warns about ("public 404s must not be soft-404s, so check response
-  // status too"). Filed as a real, currently-failing regression via
-  // test.fail() (Playwright's equivalent of Vitest's test.fails()) rather
-  // than silently dropping the status assertion — see task-1-report.md
-  // for the full writeup. Remove test.fail() once the route returns a
-  // real 404 status.
-  test("nonexistent path returns a real 404 status, not a soft-404 (known defect)", async ({ page }) => {
-    test.fail();
+  // Fixed in Task 8 — see proxy.ts's top comment for the root cause
+  // (app/(site)/loading.tsx's ambient Suspense boundary makes the
+  // response start streaming as 200 before [...slug]/page.tsx's
+  // notFound() ever runs) and the fix (a proxy-level existence check
+  // that returns a genuine 404 before Next starts rendering at all, for
+  // real top-level document requests). Previously filed as a known
+  // defect via test.fail() (see git history) — now a normal, must-pass
+  // assertion.
+  test("nonexistent path returns a real 404 status, not a soft-404", async ({ page }) => {
     const response = await page.goto("/this-page-does-not-exist");
     expect(response?.status()).toBe(404);
   });
 });
 
-test.describe("not-yet-built routes (Task 8)", () => {
-  // These are real plan requirements (route smoke-test matrix must cover
-  // news/resources/locations/industries/applications) that don't have
-  // routes yet — only a [...slug] catch-all serving `pages` rows exists
-  // today. test.fixme() documents the requirement without failing the
-  // suite; Task 8 should un-skip each as its route lands.
-
-  // TODO(Task 8): un-fixme once app/(site)/news exists.
-  test.fixme("news listing renders", async ({ page }) => {
+test.describe("Task 8 routes", () => {
+  // app/(site)/news/page.tsx now exists — renders unconditionally
+  // (empty-state copy when news_posts has no published rows, which is
+  // true live right now; see task-8-report.md).
+  test("news listing renders", async ({ page }) => {
     await expectRenderedSitePage(page, "/news");
   });
 
-  // TODO(Task 8): un-fixme once app/(site)/resources exists.
-  test.fixme("resources listing renders", async ({ page }) => {
+  // app/(site)/resources/page.tsx now exists — same reasoning, renders
+  // regardless of the resources table's content (0 rows live).
+  test("resources listing renders", async ({ page }) => {
     await expectRenderedSitePage(page, "/resources");
   });
 
-  // TODO(Task 8): un-fixme once app/(site)/industries/[slug] exists.
+  // app/(site)/industries/[slug] and app/(site)/applications/[slug] now
+  // exist as routes, but every industry row live is status='draft' and
+  // the applications table has zero rows at all (confirmed via read-only
+  // query — see task-8-report.md) — a genuine content gap (CLAUDE.md
+  // "never fabricate client content" bars seeding a fake published one
+  // just to exercise this test), not a routing gap. Left as fixme rather
+  // than pointed at a slug that can only ever 404 today; un-fixme with a
+  // real published slug once the client provides industry/application
+  // copy to publish.
   test.fixme("industry detail renders", async ({ page }) => {
     await expectRenderedSitePage(page, "/industries/some-slug");
   });
 
-  // TODO(Task 8): un-fixme once app/(site)/applications/[slug] exists.
   test.fixme("application detail renders", async ({ page }) => {
     await expectRenderedSitePage(page, "/applications/some-slug");
   });
 
-  // TODO(Task 8): un-fixme once app/(site)/locations exists.
-  test.fixme("locations listing renders", async ({ page }) => {
+  // /locations is served by the existing [...slug] catch-all (no new
+  // route file needed — same mechanism as /directory), but the `pages`
+  // row scripts/seed-locations.ts creates hasn't been run against the
+  // live project yet (this plan's implementers never run seed/publish
+  // scripts against the only environment — see task-8-report.md).
+  // test.fail() documents the intended end state without masking a
+  // regression in the rest of this file; flip to a plain test() once the
+  // controller runs `pnpm seed:locations`.
+  test("locations listing renders (pending scripts/seed-locations.ts being run)", async ({ page }) => {
+    test.fail();
     await expectRenderedSitePage(page, "/locations");
   });
 });

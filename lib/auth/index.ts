@@ -80,6 +80,32 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
   return response;
 }
 
+/**
+ * Answers "does a `pages` row or a `redirects` row exist for this
+ * catch-all slug" — the existence check behind proxy.ts's soft-404 fix
+ * (see that file's top comment for the full mechanism). Lives here, not
+ * lib/data/ (constraint 2's "all DB access lives in lib/data/*.ts"),
+ * for the exact same reason guardAdminRequest above does: proxy.ts runs
+ * in a context that can't use next/headers' cookies(), so it needs its
+ * own request-cookie-bound client, and this is the one file already
+ * carved out for that. Read-only (never writes cookies) — no session
+ * refresh needed for an anonymous existence check.
+ */
+export async function publicSlugIsResolvable(request: NextRequest, slug: string): Promise<boolean> {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} } },
+  );
+
+  const [page, redirect] = await Promise.all([
+    supabase.from("page_publications").select("slug", { head: true, count: "exact" }).eq("slug", slug).eq("locale", "en"),
+    supabase.from("redirects").select("id", { head: true, count: "exact" }).eq("from_path", `/${slug}`),
+  ]);
+
+  return (page.count ?? 0) > 0 || (redirect.count ?? 0) > 0;
+}
+
 export async function signInWithPassword(email: string, password: string) {
   const db = createServerDbClient();
   return db.auth.signInWithPassword({ email, password });
