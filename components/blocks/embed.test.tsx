@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { embedBlock, toEmbedSrc } from "@/components/blocks/embed";
+import { embedBlock, isAllowedHost, toEmbedSrc } from "@/components/blocks/embed";
 
 /**
  * Task 9's highest-scrutiny item — and the subject of a real security
@@ -107,6 +107,41 @@ describe("embed block schema — host gating (security review finding)", () => {
       url: "https://www.google.co.uk/maps/embed?pb=1",
     });
     expect(result.success).toBe(true);
+  });
+});
+
+/**
+ * Second security-review pass: the first host-gating fix's Google Maps
+ * branch used /^(?:www\.)?google\.[a-z.]{2,}$/ — an open character
+ * class that happily matches "google.evil.com" ("evil.com" is itself a
+ * valid [a-z.]{2,} string), so any attacker who owns any domain could
+ * name a subdomain "google.<their-domain>" and pass. isAllowedHost's
+ * google_maps branch is now exact-match against a fixed, enumerated
+ * list (GOOGLE_MAPS_HOSTS) the same way youtube/vimeo always were —
+ * these tests exercise that function directly, not just through the
+ * schema, so a future regression back to a pattern would fail here even
+ * if some other schema-level check happened to still catch that
+ * specific case.
+ */
+describe("isAllowedHost — google_maps exact-match allowlist (2nd review finding)", () => {
+  it("rejects an attacker-owned domain named 'google.<their-domain>'", () => {
+    expect(isAllowedHost("google_maps", "google.evil.com")).toBe(false);
+    expect(isAllowedHost("google_maps", "google.attacker.example")).toBe(false);
+  });
+
+  it("rejects a 'www.'-prefixed attacker-owned domain too", () => {
+    expect(isAllowedHost("google_maps", "www.google.evil.com")).toBe(false);
+  });
+
+  it("still accepts the real hosts editors actually use", () => {
+    expect(isAllowedHost("google_maps", "google.com")).toBe(true);
+    expect(isAllowedHost("google_maps", "www.google.com")).toBe(true);
+    expect(isAllowedHost("google_maps", "maps.google.com")).toBe(true);
+  });
+
+  it("still accepts a real ccTLD variant", () => {
+    expect(isAllowedHost("google_maps", "google.co.uk")).toBe(true);
+    expect(isAllowedHost("google_maps", "www.google.de")).toBe(true);
   });
 });
 

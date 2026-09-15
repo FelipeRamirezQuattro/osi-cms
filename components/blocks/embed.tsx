@@ -21,6 +21,76 @@ export type EmbedProvider = (typeof EMBED_PROVIDERS)[number];
 // after Task 9's initial pass shipped exactly that dead option.
 const ASPECT_RATIOS = ["16:9", "4:3", "1:1"] as const;
 
+// Real, hand-picked Google ccTLD suffixes for the Maps host allowlist
+// below — NOT an open-ended pattern. A second security-review pass
+// caught that this list's first version used
+// /^(?:www\.)?google\.[a-z.]{2,}$/, an open character class that
+// accepts *any* attacker-owned domain named "google.<anything>" (e.g.
+// "google.evil.com" — "evil.com" itself matches [a-z.]{2,}` fine). Every
+// entry here is a specific, real Google-operated domain suffix, so an
+// arbitrary attacker-registered domain can never satisfy this list no
+// matter what it's named — "evil.com"/"attacker.example" simply aren't
+// in it, there's no shape for them to accidentally match. Not
+// exhaustive (Google operates ccTLDs this omits); extend by adding the
+// missing suffix to this array, never by widening the matching rule
+// back into a pattern.
+const GOOGLE_MAPS_TLD_SUFFIXES = [
+  "com",
+  "co.uk",
+  "de",
+  "fr",
+  "it",
+  "es",
+  "nl",
+  "be",
+  "ch",
+  "at",
+  "ie",
+  "pt",
+  "gr",
+  "se",
+  "no",
+  "dk",
+  "fi",
+  "pl",
+  "ru",
+  "ca",
+  "com.mx",
+  "com.br",
+  "com.ar",
+  "com.co",
+  "com.pe",
+  "cl",
+  "co.jp",
+  "co.kr",
+  "com.hk",
+  "com.tw",
+  "co.in",
+  "com.sg",
+  "com.my",
+  "co.th",
+  "com.ph",
+  "com.vn",
+  "co.id",
+  "com.au",
+  "co.nz",
+  "co.za",
+  "com.ng",
+  "com.eg",
+  "co.ke",
+  "com.tr",
+  "co.il",
+  "ae",
+  "com.sa",
+  "co.ve",
+] as const;
+
+// google.<tld>, www.google.<tld>, and maps.google.<tld> are all real
+// forms Google itself uses for a Maps embed/share link.
+const GOOGLE_MAPS_HOSTS = new Set<string>(
+  GOOGLE_MAPS_TLD_SUFFIXES.flatMap((tld) => [`google.${tld}`, `www.google.${tld}`, `maps.google.${tld}`]),
+);
+
 /**
  * Per-provider hostname allowlist, checked against the *parsed* URL's
  * hostname — never a substring match against the raw URL string. This
@@ -35,9 +105,12 @@ const ASPECT_RATIOS = ["16:9", "4:3", "1:1"] as const;
  * third-party embed is never same-origin); a `google.com/maps`
  * substring anywhere in the URL (e.g. inside an unrelated query
  * parameter) no longer counts as "a Maps URL" either, since this checks
- * `new URL(url).hostname` specifically.
+ * `new URL(url).hostname` specifically. Every branch below is exact-
+ * match against a fixed, enumerated set — YouTube/Vimeo always were;
+ * Google Maps now is too (see GOOGLE_MAPS_HOSTS's own comment for why
+ * that one needed a second fix).
  */
-function isAllowedHost(provider: EmbedProvider, hostname: string): boolean {
+export function isAllowedHost(provider: EmbedProvider, hostname: string): boolean {
   const host = hostname.toLowerCase();
   if (provider === "youtube") {
     return host === "youtube.com" || host === "www.youtube.com" || host === "youtu.be";
@@ -45,10 +118,7 @@ function isAllowedHost(provider: EmbedProvider, hostname: string): boolean {
   if (provider === "vimeo") {
     return host === "vimeo.com" || host === "player.vimeo.com";
   }
-  // Google Maps embeds are legitimately served from any country-code
-  // Google domain (google.com, google.co.uk, google.de, ...) or its
-  // "maps." subdomain — not a fixed list of TLDs.
-  return /^(?:www\.)?google\.[a-z.]{2,}$/.test(host) || /^maps\.google\.[a-z.]{2,}$/.test(host);
+  return GOOGLE_MAPS_HOSTS.has(host);
 }
 
 const PROVIDER_LABEL: Record<EmbedProvider, string> = {
