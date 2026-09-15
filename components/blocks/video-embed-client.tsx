@@ -43,6 +43,12 @@ export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
             title={data.title ?? "Video"}
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
+            // Same sandbox value as the new `embed` block's youtube/vimeo
+            // providers (components/blocks/embed.tsx) — allow-scripts +
+            // allow-same-origin for the player itself, allow-popups for
+            // its share/"watch on YouTube" links, allow-presentation for
+            // Chromecast/AirPlay casting from the player UI.
+            sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
             className="absolute inset-0 h-full w-full"
           />
         ) : (

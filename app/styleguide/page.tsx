@@ -11,6 +11,7 @@ import { GradientText } from "@/components/ui/gradient-text";
 import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 import { imageBlock } from "@/components/blocks/image";
+import { embedBlock } from "@/components/blocks/embed";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -250,6 +251,36 @@ export default function StyleguidePage() {
           credit: "Odessa Separator Inc.",
         })}
       />
+
+      <Section bg="cream">
+        <Heading>New blocks — Embed (sandboxed iframes)</Heading>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <embedBlock.Render
+            data={embedBlock.schema.parse({
+              provider: "youtube",
+              url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              title: "YouTube embed example",
+              aspectRatio: "16:9",
+            })}
+          />
+          <embedBlock.Render
+            data={embedBlock.schema.parse({
+              provider: "vimeo",
+              url: "https://vimeo.com/76979871",
+              title: "Vimeo embed example",
+              aspectRatio: "16:9",
+            })}
+          />
+          <embedBlock.Render
+            data={embedBlock.schema.parse({
+              provider: "google_maps",
+              url: "https://www.google.com/maps?q=Odessa,+TX&output=embed",
+              title: "Google Maps embed example",
+              aspectRatio: "1:1",
+            })}
+          />
+        </div>
+      </Section>
 
       <Section bg="navy">
         <Heading>Scroll reveal</Heading>

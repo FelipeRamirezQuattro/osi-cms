@@ -36,7 +36,19 @@ async function Render({ data }: { data: Data }) {
     >
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
         {mapUrl ? (
-          <iframe src={mapUrl} title="Map" className="h-56 w-full border-0" loading="lazy" />
+          // Sandboxed to the same minimal Google Maps value the new
+          // `embed` block uses (components/blocks/embed.tsx) — same risk
+          // class (an editor-configurable iframe src), same fix. Maps
+          // needs allow-scripts + allow-same-origin to render/navigate
+          // internally, and allow-popups for its own "open in new tab"
+          // controls.
+          <iframe
+            src={mapUrl}
+            title="Map"
+            className="h-56 w-full border-0"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
         ) : (
           <div
             className={`flex h-56 w-full items-center justify-center text-sm ${
