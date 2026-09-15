@@ -40,6 +40,22 @@ export function AdminShell({
     drawerRef.current?.close();
   }, [pathname]);
 
+  // The drawer's `<dialog>` stays modal (top layer, rest of the document
+  // marked inert) purely because of `showModal()` — that state has
+  // nothing to do with `lg:hidden` making it invisible above the `lg`
+  // (1024px) breakpoint. Without this, rotating a tablet from portrait
+  // (768px) to landscape (≥1024px) while the drawer is open leaves the
+  // whole admin invisible-but-inert: the desktop sidebar renders
+  // underneath, but every click is swallowed by the still-modal dialog.
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    function handleChange(event: MediaQueryListEvent) {
+      if (event.matches) drawerRef.current?.close();
+    }
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, []);
+
   function openDrawer() {
     drawerRef.current?.showModal();
     setDrawerOpen(true);

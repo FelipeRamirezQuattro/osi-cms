@@ -76,6 +76,15 @@ describe("FormBlockClient", () => {
     expect(screen.getByRole("button", { name: "Send request" })).toBeInTheDocument();
   });
 
+  it("gives every visible field a real accessible name, not just a placeholder", () => {
+    render(<FormBlockClient data={blockData} definition={definition} />);
+
+    expect(screen.getByLabelText("Full name")).toHaveAttribute("type", "text");
+    expect(screen.getByLabelText("Work email")).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText("Notes").tagName).toBe("TEXTAREA");
+    expect(screen.getByLabelText("Topic").tagName).toBe("SELECT");
+  });
+
   it("fills the hidden-page-context field from the current pathname, not left blank for the visitor", () => {
     const { container } = render(<FormBlockClient data={blockData} definition={definition} />);
     const hidden = container.querySelector('input[name="source_page"]');

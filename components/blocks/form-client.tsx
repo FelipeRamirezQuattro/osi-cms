@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 import { usePathname } from "next/navigation";
 import { Section } from "@/components/ui/section";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 import { submitFormAction, type FormBlockState } from "@/lib/actions/submit-form";
 import { formFieldDefinitionSchema, type FormFieldDefinition } from "@/lib/validation/forms";
 import type { FormBlockData } from "@/components/blocks/form";
@@ -15,6 +16,11 @@ const fieldClass =
   "w-full rounded-full border border-current bg-transparent px-5 py-3 text-sm placeholder:opacity-60 focus:outline-2 focus:outline-offset-2 focus:outline-osi-gold-500";
 const textareaClass =
   "w-full rounded-2xl border border-current bg-transparent px-5 py-3 text-sm placeholder:opacity-60 focus:outline-2 focus:outline-offset-2 focus:outline-osi-gold-500";
+// Same small-caption visible-label treatment as contact-form-client.tsx —
+// this block's fields were placeholder-only with no accessible name at
+// all (axe's "label" rule, critical impact); every field already carries
+// a real admin-authored `label`, so no content is invented.
+const labelClass = "mb-1 block text-xs uppercase tracking-wide-label opacity-70";
 
 const initialState: FormBlockState = { status: "idle" };
 
@@ -40,6 +46,9 @@ export function FormBlockClient({
   const fields = parseFieldDefinitions(definition.fields);
   const action = submitFormAction.bind(null, data.formKey);
   const [state, formAction, pending] = useActionState(action, initialState);
+  // Unique per rendered instance (two `form` blocks — or the same one
+  // rendered twice via a shared section — must not emit duplicate ids).
+  const idPrefix = useId();
 
   return (
     <Section
@@ -65,9 +74,16 @@ export function FormBlockClient({
             aria-hidden
           />
           {fields.map((field) => (
-            <FormFieldInput key={field.key} field={field} pathname={pathname} />
+            <FormFieldInput key={field.key} field={field} pathname={pathname} idPrefix={idPrefix} />
           ))}
-          {state.status === "error" && <p className="text-sm text-red-400">{state.message}</p>}
+          {/* red-600 (AsyncMessage's default "light" variant) reads fine on
+              cream/white but too close in luminance to a navy background —
+              same cream-vs-navy accent-color branch CLAUDE.md documents for
+              gold/slate elsewhere (grep `data.background === "cream"`). */}
+          <AsyncMessage
+            variant={data.background === "cream" ? "light" : "dark"}
+            message={state.status === "error" ? { kind: "error", text: state.message ?? "Something went wrong." } : null}
+          />
           <button
             type="submit"
             disabled={pending}
@@ -81,32 +97,49 @@ export function FormBlockClient({
   );
 }
 
-function FormFieldInput({ field, pathname }: { field: FormFieldDefinition; pathname: string }) {
+function FormFieldInput({
+  field,
+  pathname,
+  idPrefix,
+}: {
+  field: FormFieldDefinition;
+  pathname: string;
+  idPrefix: string;
+}) {
+  const id = `${idPrefix}-${field.key}`;
+
   switch (field.type) {
     case "hidden-page-context":
       return <input type="hidden" name={field.key} value={pathname.replace(/^\/+/, "")} />;
     case "textarea":
       return (
-        <textarea
-          name={field.key}
-          placeholder={field.placeholder || field.label}
-          required={field.required}
-          rows={5}
-          className={textareaClass}
-        />
+        <label htmlFor={id}>
+          <span className={labelClass}>{field.label}</span>
+          <textarea
+            id={id}
+            name={field.key}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
+            rows={5}
+            className={textareaClass}
+          />
+        </label>
       );
     case "select":
       return (
-        <select name={field.key} required={field.required} defaultValue="" className={fieldClass}>
-          <option value="" disabled>
-            {field.placeholder || field.label}
-          </option>
-          {field.options.map((option) => (
-            <option key={option} value={option}>
-              {option}
+        <label htmlFor={id}>
+          <span className={labelClass}>{field.label}</span>
+          <select id={id} name={field.key} required={field.required} defaultValue="" className={fieldClass}>
+            <option value="" disabled>
+              {field.placeholder || field.label}
             </option>
-          ))}
-        </select>
+            {field.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
       );
     case "checkbox-consent":
       return (
@@ -117,34 +150,52 @@ function FormFieldInput({ field, pathname }: { field: FormFieldDefinition; pathn
       );
     case "email":
       return (
-        <input
-          type="email"
-          name={field.key}
-          placeholder={field.placeholder || field.label}
-          required={field.required}
-          className={fieldClass}
-        />
+        <label htmlFor={id}>
+          <span className={labelClass}>{field.label}</span>
+          <input
+            id={id}
+            type="email"
+            name={field.key}
+            inputMode="email"
+            autoComplete="email"
+            spellCheck={false}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
+            className={fieldClass}
+          />
+        </label>
       );
     case "tel":
       return (
-        <input
-          type="tel"
-          name={field.key}
-          placeholder={field.placeholder || field.label}
-          required={field.required}
-          className={fieldClass}
-        />
+        <label htmlFor={id}>
+          <span className={labelClass}>{field.label}</span>
+          <input
+            id={id}
+            type="tel"
+            name={field.key}
+            inputMode="tel"
+            autoComplete="tel"
+            spellCheck={false}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
+            className={fieldClass}
+          />
+        </label>
       );
     case "text":
     default:
       return (
-        <input
-          type="text"
-          name={field.key}
-          placeholder={field.placeholder || field.label}
-          required={field.required}
-          className={fieldClass}
-        />
+        <label htmlFor={id}>
+          <span className={labelClass}>{field.label}</span>
+          <input
+            id={id}
+            type="text"
+            name={field.key}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
+            className={fieldClass}
+          />
+        </label>
       );
   }
 }
