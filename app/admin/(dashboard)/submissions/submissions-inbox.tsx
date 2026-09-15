@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { updateSubmissionStatusAction } from "@/lib/actions/submissions";
+import { exportSubmissionsCsvAction, updateSubmissionStatusAction } from "@/lib/actions/submissions";
 import type { Tables } from "@/lib/db/database.types";
 
 type Submission = Tables<"form_submissions">;
@@ -32,9 +32,39 @@ export function SubmissionsInbox({ submissions }: { submissions: Submission[] })
     });
   }
 
+  // Task 15 submissions export: the Server Action returns CSV text (no
+  // file-response path for a Server Action), so the download itself is a
+  // plain client-side Blob + temporary <a download> — same technique any
+  // "export to CSV" button uses without a dedicated route handler.
+  const [isExporting, startExport] = useTransition();
+  function exportCsv() {
+    startExport(async () => {
+      const csv = await exportSubmissionsCsvAction();
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `submissions-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-lg tracking-wide-display uppercase">Submissions</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-lg tracking-wide-display uppercase">Submissions</h1>
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={isExporting}
+          className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
+        >
+          {isExporting ? "Exporting…" : "Export CSV"}
+        </button>
+      </div>
 
       <div className="flex gap-2 border-b border-osi-sand-300 pb-3">
         {TABS.map((t) => (

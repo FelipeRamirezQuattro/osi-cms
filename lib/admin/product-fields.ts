@@ -28,7 +28,11 @@ export const PRODUCT_FIELDS: FieldSpec[] = [
   { key: "video_url", label: "Video URL", type: "text", optional: true },
   { key: "brochure_pdf_url", label: "Brochure PDF URL", type: "text", optional: true },
   { key: "model_3d_url", label: "3D model URL", type: "text", optional: true },
-  { key: "status", label: "Status", type: "select", options: ["draft", "published"] },
+  // Task 15: products are one of the 4 archive-scoped tables (see
+  // lib/admin/entity-config.ts's allowArchive comment) — 'archived' is a
+  // manually-selectable option here too, on top of the dedicated
+  // Archive/Restore buttons in products-list.tsx.
+  { key: "status", label: "Status", type: "select", options: ["draft", "published", "archived"] },
   { key: "seo_title", label: "SEO title", type: "text", optional: true },
   { key: "seo_description", label: "SEO description", type: "textarea", optional: true },
   {

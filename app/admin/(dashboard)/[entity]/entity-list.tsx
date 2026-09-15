@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useTransition } from "react";
 import type { EntityConfig, EntityKey } from "@/lib/admin/entity-config";
-import { deleteEntityAction, moveEntityAction } from "@/lib/actions/entities";
+import { archiveEntityAction, deleteEntityAction, moveEntityAction, restoreEntityAction } from "@/lib/actions/entities";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { EntityRow } from "@/lib/data/admin-entities";
@@ -29,6 +29,7 @@ export function EntityList({
   role: AdminRole;
 }) {
   const canDelete = hasCapability(role, "delete_content");
+  const canEditDrafts = hasCapability(role, "edit_drafts");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { confirm, dialog } = useConfirmDialog();
@@ -77,6 +78,34 @@ export function EntityList({
       if (result?.status === "error") {
         await confirm({ title: "Can't delete", message: result.message, hideCancel: true, confirmLabel: "OK" });
       }
+    });
+  }
+
+  async function archive(row: EntityRow) {
+    const ok = await confirm({
+      title: `Archive this ${config.label.toLowerCase()}?`,
+      message: "Archived content is hidden from the public site but not deleted — restore it anytime.",
+      confirmLabel: "Archive",
+    });
+    if (!ok) return;
+    startTransition(async () => {
+      const result = await archiveEntityAction(entity, row.id);
+      if (result.status === "error") {
+        await confirm({ title: "Can't archive", message: result.message, hideCancel: true, confirmLabel: "OK" });
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  function restore(row: EntityRow) {
+    startTransition(async () => {
+      const result = await restoreEntityAction(entity, row.id);
+      if (result.status === "error") {
+        await confirm({ title: "Can't restore", message: result.message, hideCancel: true, confirmLabel: "OK" });
+        return;
+      }
+      router.refresh();
     });
   }
 
@@ -129,12 +158,26 @@ export function EntityList({
       key: "actions",
       header: "",
       cellClassName: "text-right",
-      render: (row: EntityRow) =>
-        canDelete && (
-          <RowActionButton onClick={() => remove(row)} disabled={isPending} tone="danger">
-            Delete
-          </RowActionButton>
-        ),
+      render: (row: EntityRow) => (
+        <span className="inline-flex gap-3">
+          {config.allowArchive &&
+            canEditDrafts &&
+            (row.status === "archived" ? (
+              <RowActionButton onClick={() => restore(row)} disabled={isPending}>
+                Restore
+              </RowActionButton>
+            ) : (
+              <RowActionButton onClick={() => archive(row)} disabled={isPending}>
+                Archive
+              </RowActionButton>
+            ))}
+          {canDelete && (
+            <RowActionButton onClick={() => remove(row)} disabled={isPending} tone="danger">
+              Delete
+            </RowActionButton>
+          )}
+        </span>
+      ),
     },
   ];
 
@@ -159,7 +202,9 @@ export function EntityList({
             searchPlaceholder={`Search ${config.pluralLabel.toLowerCase()}…`}
             statusValue={query.status}
             onStatusChange={config.hasStatus ? query.setStatus : undefined}
-            statusOptions={config.hasStatus ? ["draft", "published"] : undefined}
+            statusOptions={
+              config.hasStatus ? (config.allowArchive ? ["draft", "published", "archived"] : ["draft", "published"]) : undefined
+            }
             sortValue={query.sort}
             sortDirection={query.direction}
             onSortChange={query.setSort}

@@ -7,6 +7,14 @@ describe("validateEntityInput — industries/applications", () => {
     expect(validateEntityInput("industries", { name: "", slug: "oil-gas", status: "draft" }).success).toBe(false);
     expect(validateEntityInput("applications", { name: "Lift", slug: "", status: "draft" }).success).toBe(false);
   });
+
+  // Task 15 scope check: industries/applications are deliberately NOT
+  // archive-scoped (only pages/products/news_posts/resources are).
+  it("does not accept 'archived' as a status", () => {
+    expect(validateEntityInput("industries", { name: "Oil & Gas", slug: "oil-gas", status: "archived" }).success).toBe(
+      false,
+    );
+  });
 });
 
 describe("validateEntityInput — news", () => {
@@ -52,6 +60,15 @@ describe("validateEntityInput — news", () => {
   it("rejects an unparsable event_date", () => {
     expect(validateEntityInput("news", baseNews({ event_date: "not-a-date" })).success).toBe(false);
   });
+
+  // Task 15: news is one of the 4 archive-scoped tables.
+  it("accepts 'archived' as a status", () => {
+    expect(validateEntityInput("news", baseNews({ status: "archived" })).success).toBe(true);
+  });
+
+  it("rejects a status outside draft/published/archived", () => {
+    expect(validateEntityInput("news", baseNews({ status: "deleted" })).success).toBe(false);
+  });
 });
 
 describe("validateEntityInput — resources", () => {
@@ -71,6 +88,17 @@ describe("validateEntityInput — resources", () => {
       status: "draft",
     });
     expect(unsafe.success).toBe(false);
+  });
+
+  // Task 15: resources is one of the 4 archive-scoped tables.
+  it("accepts 'archived' as a status", () => {
+    const result = validateEntityInput("resources", {
+      title: "Datasheet",
+      kind: "datasheet",
+      file_url: "https://osi.example/datasheet.pdf",
+      status: "archived",
+    });
+    expect(result.success).toBe(true);
   });
 });
 
@@ -98,5 +126,15 @@ describe("validateEntityInput — redirects", () => {
 
   it("only accepts the four real redirect status codes", () => {
     expect(validateEntityInput("redirects", { from_path: "/a", to_path: "/b", status_code: 418 }).success).toBe(false);
+  });
+
+  // Task 15: the one-step self-loop case this schema alone can catch —
+  // multi-hop chain/loop rejection needs the other existing redirect
+  // rows, which is lib/validation/redirects.ts's findRedirectChainIssue
+  // (see its own test file), called separately in
+  // lib/actions/entities.ts's saveEntityAction.
+  it("rejects a redirect whose from_path and to_path are the same", () => {
+    const result = validateEntityInput("redirects", { from_path: "/a", to_path: "/a", status_code: 301 });
+    expect(result.success).toBe(false);
   });
 });

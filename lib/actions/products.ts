@@ -9,7 +9,7 @@ import {
   saveProduct,
   type ProductAdminDetail,
 } from "@/lib/data/products";
-import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow } from "@/lib/data/admin-entities";
+import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow, updateEntityRow } from "@/lib/data/admin-entities";
 import { PRODUCT_RELATIONS } from "@/lib/admin/product-fields";
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables } from "@/lib/db/database.types";
@@ -119,4 +119,38 @@ export async function deleteProductAction(id: string): Promise<void> {
   await requireCapability("delete_content");
   await deleteProduct(id);
   redirect("/admin/products");
+}
+
+export type ArchiveProductResult = { status: "success" } | { status: "error"; message: string };
+
+/**
+ * Task 15 archive/restore. `products`' UPDATE RLS policy is still the
+ * original "staff manage products" `for all using (is_staff())` grant
+ * (unlike `pages`, never locked down to admin-only — see
+ * lib/data/pages.ts's archivePage comment), so a plain updateEntityRow
+ * status flip works for any staff session without a new RPC. Only the
+ * parent row's status changes — benefits/stages/specs/relations are left
+ * untouched, unlike saveProductAction's full save_product_atomic
+ * round-trip, which isn't needed for a bare status flip.
+ */
+export async function archiveProductAction(id: string): Promise<ArchiveProductResult> {
+  await requireCapability("edit_drafts");
+  const current = await getEntityRow("products", id);
+  await requirePublishCapabilityForStatusChange((current?.status as string | null | undefined) ?? null, "archived");
+  try {
+    await updateEntityRow("products", id, { status: "archived" });
+    return { status: "success" };
+  } catch (err) {
+    return { status: "error", message: err instanceof Error ? err.message : "Archive failed." };
+  }
+}
+
+export async function restoreProductAction(id: string): Promise<ArchiveProductResult> {
+  await requireCapability("edit_drafts");
+  try {
+    await updateEntityRow("products", id, { status: "draft" });
+    return { status: "success" };
+  } catch (err) {
+    return { status: "error", message: err instanceof Error ? err.message : "Restore failed." };
+  }
 }

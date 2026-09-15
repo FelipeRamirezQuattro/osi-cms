@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useTransition } from "react";
 import Link from "next/link";
-import { deleteProductAction, moveProductAction } from "@/lib/actions/products";
+import { archiveProductAction, deleteProductAction, moveProductAction, restoreProductAction } from "@/lib/actions/products";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { Tables } from "@/lib/db/database.types";
@@ -34,6 +34,7 @@ export function ProductsList({
   role: AdminRole;
 }) {
   const canDelete = hasCapability(role, "delete_content");
+  const canEditDrafts = hasCapability(role, "edit_drafts");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { confirm, dialog } = useConfirmDialog();
@@ -72,6 +73,34 @@ export function ProductsList({
     if (!ok) return;
     startTransition(async () => {
       await deleteProductAction(product.id);
+    });
+  }
+
+  async function archive(product: Product) {
+    const ok = await confirm({
+      title: `Archive "${product.name}"?`,
+      message: "Archived products are hidden from the public site but not deleted — restore them anytime.",
+      confirmLabel: "Archive",
+    });
+    if (!ok) return;
+    startTransition(async () => {
+      const result = await archiveProductAction(product.id);
+      if (result.status === "error") {
+        await confirm({ title: "Can't archive", message: result.message, hideCancel: true, confirmLabel: "OK" });
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  function restore(product: Product) {
+    startTransition(async () => {
+      const result = await restoreProductAction(product.id);
+      if (result.status === "error") {
+        await confirm({ title: "Can't restore", message: result.message, hideCancel: true, confirmLabel: "OK" });
+        return;
+      }
+      router.refresh();
     });
   }
 
@@ -116,12 +145,25 @@ export function ProductsList({
       key: "actions",
       header: "",
       cellClassName: "text-right",
-      render: (product) =>
-        canDelete && (
-          <RowActionButton onClick={() => remove(product)} disabled={isPending} tone="danger">
-            Delete
-          </RowActionButton>
-        ),
+      render: (product) => (
+        <span className="inline-flex gap-3">
+          {canEditDrafts &&
+            (product.status === "archived" ? (
+              <RowActionButton onClick={() => restore(product)} disabled={isPending}>
+                Restore
+              </RowActionButton>
+            ) : (
+              <RowActionButton onClick={() => archive(product)} disabled={isPending}>
+                Archive
+              </RowActionButton>
+            ))}
+          {canDelete && (
+            <RowActionButton onClick={() => remove(product)} disabled={isPending} tone="danger">
+              Delete
+            </RowActionButton>
+          )}
+        </span>
+      ),
     },
   ];
 
@@ -141,7 +183,7 @@ export function ProductsList({
             searchPlaceholder="Search products…"
             statusValue={query.status}
             onStatusChange={query.setStatus}
-            statusOptions={["draft", "published"]}
+            statusOptions={["draft", "published", "archived"]}
             sortValue={query.sort}
             sortDirection={query.direction}
             onSortChange={query.setSort}

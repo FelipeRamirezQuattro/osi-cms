@@ -79,7 +79,27 @@ indicator before you go.
 
 Changing the **Slug** field changes the page's web address — do this
 carefully, since anything linking to the old address will break unless
-you also add a redirect (see **Redirects**, below).
+you also add a redirect (see **Redirects**, below). You don't have to
+remember to do that yourself: if you change the slug and click
+**Publish**, the editor notices the address is about to change and asks
+whether to create that redirect for you, right there, before it
+publishes.
+
+A **Publish preflight** panel above the block list lets you click **Check
+for issues** any time — it flags things like a link that doesn't point
+anywhere real, an image missing alt text, or two blocks sharing the same
+jump-to link, so you can see the impact before you publish. None of these
+block Publish by themselves (only genuinely broken block content does,
+the same "fix this before saving" check you may already have seen) — the
+panel is there to tell you what to double-check, not to stop you.
+
+**Archive** (next to Publish/Unpublish) takes a page off the public site
+without deleting it — use it for something seasonal or no-longer-relevant
+that you might bring back later. An archived page shows up in the
+**Pages** list's status filter as `archived`; open it and click
+**Restore** to bring it back as a draft. This is different from **Delete
+page** in the Danger zone below, which is permanent and only available to
+admins.
 
 ## Shared sections
 
@@ -148,6 +168,14 @@ Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
 publish it later.
 
+**Products, News, and Resources** can also be **archived** — a reversible
+way to take something off the public site without deleting it (a
+discontinued product, an old news post). Each of those list screens has
+an **Archive** link per row, an `archived` option in the status filter,
+and a **Restore** link once something's archived. Deleting is still
+there, still permanent, and still admin-only — archiving is the
+in-between option for "not live, but don't throw it away."
+
 **Product categories** (its own sidebar section, separate from
 Products) is the short list of category names products are grouped
 under — the same name/order pattern as Industries/Applications, but with
@@ -202,7 +230,10 @@ marked **New**; open one to see the full message and mark it **Read** or
 **Archive** it. If email notifications have been set up (for the contact
 form, or for a specific form under **Forms**), you'll also get an email
 for each new submission — but the inbox here is the reliable record
-either way.
+either way. **Export CSV**, at the top, downloads every submission (every
+status, every form) as a spreadsheet file — useful for handing a batch of
+leads to someone outside the admin, or for your own records outside the
+site.
 
 ## Settings
 
@@ -219,7 +250,11 @@ everyone, even people who dismissed the old wording.
 
 **Redirects** sends visitors from an old web address to a new one — use
 this any time you change a page's slug or remove a page that other sites
-might still link to.
+might still link to. Two things it won't let you save: a redirect that
+points to itself, and one that would chain more than 3 hops deep through
+other existing redirects (an old-address-to-old-address-to-old-address
+pileup) — either one gets a clear error message explaining why, so you
+can fix the chain instead.
 
 ## Users
 

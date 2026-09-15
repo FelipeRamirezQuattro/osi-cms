@@ -1,20 +1,25 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireCapability } from "@/lib/auth";
+import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import { getBlockPalette } from "@/lib/blocks/registry";
 import {
+  archivePage,
   createPage,
   deletePage,
   duplicatePage,
   isVersionConflictError,
   publishPage,
+  restorePage,
   restorePageRevision,
   savePageDraft,
   unpublishPage,
   type BlockInput,
   type PageMeta,
 } from "@/lib/data/pages";
+import { getEntityRow } from "@/lib/data/admin-entities";
+import { runPagePreflight } from "@/lib/data/publish-preflight";
+import type { PreflightSummary } from "@/lib/validation/preflight";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { validateBlockList } from "@/lib/validation/blocks";
 import { newPageSlugSchema, pageMetaSchema, type PageTemplate } from "@/lib/validation/pages";
@@ -137,10 +142,14 @@ export async function saveDraftAction(
   }
 }
 
-export async function publishPageAction(pageId: string, expectedVersion: number): Promise<SaveResult> {
+export async function publishPageAction(
+  pageId: string,
+  expectedVersion: number,
+  options?: { createRedirect?: boolean },
+): Promise<SaveResult> {
   await requireCapability("publish");
   try {
-    await publishPage(pageId, expectedVersion);
+    await publishPage(pageId, expectedVersion, { createRedirect: options?.createRedirect ?? false });
     // publish_page_atomic doesn't bump draft_version (it only flips
     // status/published_at) — the version the editor already holds is
     // still correct, so it's threaded back through unchanged for a
@@ -157,6 +166,49 @@ export async function publishPageAction(pageId: string, expectedVersion: number)
 export async function unpublishPageAction(pageId: string): Promise<void> {
   await requireCapability("publish");
   await unpublishPage(pageId);
+}
+
+/**
+ * Archive/restore (Task 15) — "reversible, not the destructive
+ * delete_content action". Read the pre-change status first (same
+ * requirePublishCapabilityForStatusChange pattern as saveProductAction/
+ * saveEntityAction): archiving a *published* page also needs `publish`
+ * (it unpublishes as part of archiving — see archive_page_atomic),
+ * archiving a draft is plain `edit_drafts` work. Must run outside the
+ * try/catch below — redirect() thrown inside a catch would be swallowed
+ * (same reasoning as every other requireCapability call site).
+ */
+export async function archivePageAction(pageId: string): Promise<SaveResult> {
+  await requireCapability("edit_drafts");
+  const current = await getEntityRow("pages", pageId);
+  await requirePublishCapabilityForStatusChange((current?.status as string | null | undefined) ?? null, "archived");
+  try {
+    await archivePage(pageId);
+    return { status: "success", newVersion: 0 };
+  } catch {
+    return { status: "error", message: "Archive failed. Please try again." };
+  }
+}
+
+export async function restorePageAction(pageId: string): Promise<SaveResult> {
+  await requireCapability("edit_drafts");
+  try {
+    await restorePage(pageId);
+    return { status: "success", newVersion: 0 };
+  } catch {
+    return { status: "error", message: "Restore failed. Please try again." };
+  }
+}
+
+/**
+ * Task 15's publish preflight — "communicate impact, don't block"
+ * (invalid blocks are the one exception; see lib/data/publish-preflight
+ * .ts's top comment). Read-only: `edit_drafts` is enough, the same
+ * capability that already lets an editor view/save this page's blocks.
+ */
+export async function runPagePreflightAction(blocks: BlockInput[]): Promise<PreflightSummary> {
+  await requireCapability("edit_drafts");
+  return runPagePreflight(blocks);
 }
 
 export async function deletePageAction(pageId: string): Promise<void> {

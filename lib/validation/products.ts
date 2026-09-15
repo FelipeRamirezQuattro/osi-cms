@@ -67,7 +67,9 @@ export const productSaveInputSchema = z
     // Rendered as a real `<a href>` on the product detail page (via
     // HowItWorksRender's model3dUrl) — same pattern as brochure_pdf_url.
     model_3d_url: optionalSafeHrefSchema({ label: "3D model URL" }),
-    status: z.enum(["draft", "published"]),
+    // Task 15: products are archive-scoped (lib/admin/entity-config.ts's
+    // allowArchive comment lists the 4 tables).
+    status: z.enum(["draft", "published", "archived"]),
     seo_title: optionalNullableString(),
     seo_description: optionalNullableString(),
     benefits: z.array(productBenefitSchema).default([]),

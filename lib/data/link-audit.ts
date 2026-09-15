@@ -76,7 +76,14 @@ export function findBrokenPaths(candidates: string[], knownPaths: ReadonlySet<st
  * lib/data/* repository functions per this task's ruling, not raw
  * queries — see each import site.
  */
-async function buildKnownPathSet(): Promise<Set<string>> {
+/**
+ * Exported for lib/data/publish-preflight.ts (Task 15) — the publish
+ * preflight's "missing category/routes" check reuses this exact known-
+ * path universe rather than re-deriving it, so a page/product/etc. that
+ * resolves for the broken-link dashboard also resolves the same way in
+ * the preflight banner.
+ */
+export async function buildKnownPathSet(): Promise<Set<string>> {
   const [pages, products, categories, industries, applications, news, redirects] = await Promise.all([
     listAllPages(),
     listAllProducts(),

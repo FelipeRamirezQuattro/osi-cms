@@ -19,7 +19,8 @@
     "seed:locations": "tsx --env-file=.env.local scripts/seed-locations.ts",
     "migrate:legacy": "tsx --env-file=.env.local scripts/migrate-legacy.ts",
     "migrate:directory": "tsx --env-file=.env.local scripts/migrate-directory.ts",
-    "create-admin": "tsx --env-file=.env.local scripts/create-admin-user.ts"
+    "create-admin": "tsx --env-file=.env.local scripts/create-admin-user.ts",
+    "report:content-integrity": "tsx --env-file=.env.local scripts/report-content-integrity.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

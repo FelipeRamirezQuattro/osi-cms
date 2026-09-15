@@ -38,6 +38,17 @@ export type EntityConfig = {
   listColumns: { key: string; label: string }[];
   hasPosition: boolean;
   hasStatus: boolean;
+  /**
+   * Task 15: whether this entity's status can also be 'archived', on top
+   * of the usual draft/published. Scoped to exactly the 4 tables the
+   * task-15 brief named (pages, products, news_posts, resources) —
+   * industries/applications/locations/directory_contacts deliberately
+   * keep draft/published only, since expanding archive scope wasn't
+   * asked for. Products/pages aren't in this map at all (bespoke
+   * editors, not the generic [entity] admin), so this only matters for
+   * "news" and "resources" here.
+   */
+  allowArchive?: boolean;
   defaults: Record<string, unknown>;
   relations?: EntityRelation[];
 };
@@ -106,6 +117,7 @@ export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
     pluralLabel: "News",
     hasPosition: false,
     hasStatus: true,
+    allowArchive: true,
     listColumns: [
       { key: "title", label: "Title" },
       { key: "kind", label: "Kind" },
@@ -132,6 +144,7 @@ export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
     pluralLabel: "Resources",
     hasPosition: true,
     hasStatus: true,
+    allowArchive: true,
     listColumns: [
       { key: "title", label: "Title" },
       { key: "kind", label: "Kind" },
@@ -220,11 +233,19 @@ export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
   },
 };
 
-// Every hasStatus entity gets the same draft/published field appended
-// once here, rather than repeated by hand in each `fields` array above.
+// Every hasStatus entity gets the same status field appended once here,
+// rather than repeated by hand in each `fields` array above — with
+// 'archived' as a third option only for entities that opted into it
+// (Task 15's allowArchive).
 const STATUS_FIELD: FieldSpec = { key: "status", label: "Status", type: "select", options: ["draft", "published"] };
+const ARCHIVABLE_STATUS_FIELD: FieldSpec = {
+  key: "status",
+  label: "Status",
+  type: "select",
+  options: ["draft", "published", "archived"],
+};
 for (const config of Object.values(ENTITY_CONFIGS)) {
-  if (config.hasStatus) config.fields.push(STATUS_FIELD);
+  if (config.hasStatus) config.fields.push(config.allowArchive ? ARCHIVABLE_STATUS_FIELD : STATUS_FIELD);
 }
 
 export function isEntityKey(value: string): value is EntityKey {

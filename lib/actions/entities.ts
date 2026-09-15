@@ -16,6 +16,7 @@ import {
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { validateEntityInput } from "@/lib/validation/entities";
+import { findRedirectChainIssue, type RedirectEdge } from "@/lib/validation/redirects";
 import { countProductsByCategory } from "@/lib/data/products";
 
 export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]> {
@@ -80,6 +81,27 @@ export async function saveEntityAction(
     return { status: "error", message, field };
   }
   const payload: Record<string, unknown> = { ...parsed.data };
+
+  // Task 15: redirect loop/chain rejection, special-cased to the
+  // `redirects` entity — the self-loop case is already caught by
+  // redirectSchema's own refine above; this needs every *other* existing
+  // redirect row, which only the data layer (not a synchronous Zod
+  // schema) can provide. Walks the chain at save time rather than
+  // relying solely on the DB (which can only ever see the one-step
+  // self-loop case via redirects_no_self_loop_check, migration 0030).
+  if (entity === "redirects") {
+    const existingRows = await listEntityRows("redirects", [{ column: "from_path" }]);
+    const existingEdges: RedirectEdge[] = existingRows.map((row) => ({
+      id: row.id,
+      from_path: String(row.from_path),
+      to_path: String(row.to_path),
+    }));
+    const issue = findRedirectChainIssue(
+      { id: id ?? undefined, from_path: payload.from_path as string, to_path: payload.to_path as string },
+      existingEdges,
+    );
+    if (issue) return { status: "error", message: issue, field: "to_path" };
+  }
 
   // Same reasoning as saveProductAction: edit_drafts covers ordinary
   // create/edit, but flipping `status` to/from "published" needs the
@@ -151,4 +173,48 @@ export async function deleteEntityAction(entity: EntityKey, id: string): Promise
 export async function moveEntityAction(entity: EntityKey, id: string, direction: "up" | "down"): Promise<void> {
   await requireCapability("edit_drafts");
   await moveEntityRow(ENTITY_CONFIGS[entity].table, id, direction);
+}
+
+export type ArchiveEntityResult = { status: "success" } | { status: "error"; message: string };
+
+/**
+ * Task 15 archive/restore — scoped to entities with `allowArchive: true`
+ * (news, resources; see lib/admin/entity-config.ts). Unlike pages, these
+ * tables' UPDATE RLS policy is still the original "staff manage <table>"
+ * `for all using (is_staff())` grant (never locked down the way pages
+ * was in migration 0017), so a plain updateEntityRow call already
+ * succeeds for any staff session — no new RPC needed here. The
+ * publish-capability gate still applies the same way saveEntityAction's
+ * own status-field edits do: archiving a *published* row needs
+ * `publish` (see requirePublishCapabilityForStatusChange), archiving a
+ * draft is plain `edit_drafts` work, and restoring only ever lands back
+ * in 'draft'.
+ */
+export async function archiveEntityAction(entity: EntityKey, id: string): Promise<ArchiveEntityResult> {
+  await requireCapability("edit_drafts");
+  const config = ENTITY_CONFIGS[entity];
+  if (!config.allowArchive) return { status: "error", message: `${config.label} can't be archived.` };
+
+  const current = await getEntityRow(config.table, id);
+  await requirePublishCapabilityForStatusChange((current?.status as string | null | undefined) ?? null, "archived");
+
+  try {
+    await updateEntityRow(config.table, id, { status: "archived" });
+    return { status: "success" };
+  } catch (err) {
+    return { status: "error", message: err instanceof Error ? err.message : "Archive failed." };
+  }
+}
+
+export async function restoreEntityAction(entity: EntityKey, id: string): Promise<ArchiveEntityResult> {
+  await requireCapability("edit_drafts");
+  const config = ENTITY_CONFIGS[entity];
+  if (!config.allowArchive) return { status: "error", message: `${config.label} can't be restored.` };
+
+  try {
+    await updateEntityRow(config.table, id, { status: "draft" });
+    return { status: "success" };
+  } catch (err) {
+    return { status: "error", message: err instanceof Error ? err.message : "Restore failed." };
+  }
 }

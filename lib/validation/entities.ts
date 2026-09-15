@@ -26,6 +26,12 @@ import { tiptapDocSchema } from "@/lib/validation/rich-text";
 
 const statusSchema = z.enum(["draft", "published"]);
 
+// Task 15: news_posts and resources are 2 of the 4 tables scoped for
+// archive/soft-delete (see lib/admin/entity-config.ts's allowArchive) —
+// industries/applications/locations/directory keep the plain
+// draft/published statusSchema above unchanged.
+const archivableStatusSchema = z.enum(["draft", "published", "archived"]);
+
 const productCategorySchema = z.object({
   name: requiredString("Name"),
   slug: slugSchema("Slug"),
@@ -73,7 +79,7 @@ const newsSchema = z
     cta_label: optionalNullableString(),
     cta_url: optionalSafeHrefSchema({ label: "CTA link" }),
     is_featured: z.boolean().default(false),
-    status: statusSchema,
+    status: archivableStatusSchema,
   })
   // A conference/event post's date is the entire point of publishing it —
   // nothing renders it yet (see CLAUDE.md's known content gaps), but the
@@ -101,7 +107,7 @@ const resourceSchema = z.object({
   thumbnail_url: optionalNullableString(),
   product_id: z.preprocess(emptyStringToNull, z.string().nullable().default(null)),
   category: optionalNullableString(),
-  status: statusSchema,
+  status: archivableStatusSchema,
 });
 
 const LOCATION_KINDS = ["hq", "office", "distributor", "plant"] as const;
@@ -138,15 +144,29 @@ const directorySchema = z.object({
 
 const REDIRECT_STATUS_CODES = [301, 302, 307, 308] as const;
 
-const redirectSchema = z.object({
-  from_path: z
-    .string()
-    .trim()
-    .min(1, "From path is required")
-    .regex(/^\/\S*$/, 'From path must start with "/" and contain no spaces'),
-  to_path: safeHrefSchema({ label: "To path" }),
-  status_code: z.union(REDIRECT_STATUS_CODES.map((code) => z.literal(code)) as [z.ZodLiteral<number>, ...z.ZodLiteral<number>[]]),
-});
+const redirectSchema = z
+  .object({
+    from_path: z
+      .string()
+      .trim()
+      .min(1, "From path is required")
+      .regex(/^\/\S*$/, 'From path must start with "/" and contain no spaces'),
+    to_path: safeHrefSchema({ label: "To path" }),
+    status_code: z.union(
+      REDIRECT_STATUS_CODES.map((code) => z.literal(code)) as [z.ZodLiteral<number>, ...z.ZodLiteral<number>[]],
+    ),
+  })
+  // The one-step self-loop case (`from_path === to_path`) is checked here
+  // (and, as a DB-level backstop, by redirects_no_self_loop_check —
+  // migration 0030) since it needs no other rows to detect. Multi-hop
+  // chain/loop rejection needs the *other* existing redirect rows, which
+  // this synchronous schema has no access to — that's
+  // lib/validation/redirects.ts's findRedirectChainIssue, called
+  // separately from lib/actions/entities.ts's saveEntityAction.
+  .refine((data) => data.from_path !== data.to_path, {
+    message: "A redirect can't point to itself — \"From\" and \"To\" are the same path.",
+    path: ["to_path"],
+  });
 
 const ENTITY_SCHEMAS = {
   "product-categories": productCategorySchema,

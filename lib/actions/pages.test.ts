@@ -148,7 +148,10 @@ describe("publish/unpublish require the publish capability", () => {
 
     const result = await publishPageAction("page-1", 1);
     expect(result).toEqual({ status: "success", newVersion: 1 });
-    expect(mockPublishPage).toHaveBeenCalledWith("page-1", 1);
+    // Task 15: publishPageAction now always threads a createRedirect
+    // flag through to publishPage (defaulting to false when the caller,
+    // like the pre-existing publish flow being tested here, doesn't pass one).
+    expect(mockPublishPage).toHaveBeenCalledWith("page-1", 1, { createRedirect: false });
   });
 });
 

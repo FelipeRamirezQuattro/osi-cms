@@ -71,7 +71,7 @@ export function PagesList({ pages }: { pages: PageRow[] }) {
             searchPlaceholder="Search pages…"
             statusValue={query.status}
             onStatusChange={query.setStatus}
-            statusOptions={["draft", "published"]}
+            statusOptions={["draft", "published", "archived"]}
             sortValue={query.sort}
             sortDirection={query.direction}
             onSortChange={query.setSort}

@@ -101,6 +101,27 @@ export async function countMissingAltMedia(): Promise<number> {
   return (data ?? []).filter((row) => validateAltRequirement("image", row.alt ?? "", row.decorative) !== null).length;
 }
 
+/**
+ * Bulk URL -> alt/decorative lookup for the publish preflight's
+ * "missing media metadata" check (lib/data/publish-preflight.ts, Task
+ * 15) — given every image URL a page's blocks reference, which of those
+ * are tracked media_assets rows missing required alt text. A URL with no
+ * matching row (a legacy image resolved via lib/media.ts, never uploaded
+ * through the admin) is simply absent from the result — per CLAUDE.md's
+ * alt-text section, enforcement is scoped to the media library's upload
+ * chokepoint, not every image reference site-wide, so an untracked
+ * legacy URL isn't flagged here either.
+ */
+export async function listMediaAssetsByUrls(
+  urls: string[],
+): Promise<Pick<MediaAsset, "url" | "alt" | "decorative">[]> {
+  if (urls.length === 0) return [];
+  const db = createServerDbClient();
+  const { data, error } = await db.from("media_assets").select("url, alt, decorative").in("url", urls);
+  if (error) throw error;
+  return data ?? [];
+}
+
 /** Distinct folder names in use, for the library/picker's folder filter dropdown. Fine to scan client-side at this table's size. */
 export async function listMediaFolders(): Promise<string[]> {
   const db = createServerDbClient();

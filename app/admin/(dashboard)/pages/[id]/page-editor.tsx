@@ -23,10 +23,13 @@ import { BlockFieldsForm } from "@/components/admin/block-fields-form";
 import { BlockPalettePicker } from "@/components/admin/block-palette-picker";
 import { MediaPicker } from "@/components/admin/media-picker";
 import {
+  archivePageAction,
   deletePageAction,
   duplicatePageAction,
   publishPageAction,
+  restorePageAction,
   restoreRevisionAction,
+  runPagePreflightAction,
   saveDraftAction,
   unpublishPageAction,
 } from "@/lib/actions/pages";
@@ -35,6 +38,7 @@ import type { AdminRole } from "@/lib/auth";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import type { PageWithBlocks } from "@/lib/data/pages";
 import type { Tables } from "@/lib/db/database.types";
+import type { PreflightSummary } from "@/lib/validation/preflight";
 import { PAGE_TEMPLATES } from "@/lib/validation/pages";
 import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
@@ -82,6 +86,14 @@ export function PageEditor({
     null,
   );
   const { confirm, prompt, dialog } = useConfirmDialog();
+  // Task 15: publish preflight — populated by a "Check for issues" click
+  // or automatically right before Publish (see onPublish). Always a
+  // warning-only display (blocks the banner shows, never the Publish
+  // button itself) except `errors` (invalid block data), which
+  // saveDraftAction/onSaveDraft below already hard-blocks on its own —
+  // this is shown for visibility, not as a second enforcement path.
+  const [preflight, setPreflight] = useState<PreflightSummary | null>(null);
+  const [isCheckingPreflight, startPreflightCheck] = useTransition();
 
   // Declared up front (used by onSaveDraft/onPublish below, and by the
   // debounced autosave block further down) — see that block's comment for
@@ -236,8 +248,41 @@ export function PageEditor({
     });
   });
 
+  /**
+   * Task 15 publish preflight — runs the registry/link-audit/media/
+   * duplicate-anchor checks (lib/data/publish-preflight.ts) against the
+   * form's current (possibly unsaved) blocks. Callable directly from a
+   * "Check for issues" click, and always run once more inside onPublish
+   * so the banner reflects exactly what's about to be published.
+   */
+  function checkPreflight() {
+    startPreflightCheck(async () => {
+      const result = await runPagePreflightAction(getValues("blocks"));
+      setPreflight(result);
+    });
+  }
+
   const onPublish = handleSubmit((values) => {
     startPublishing(async () => {
+      const preflightResult = await runPagePreflightAction(values.blocks);
+      setPreflight(preflightResult);
+
+      // Task 15 slug-change redirect: compare against the slug this page
+      // is *currently published* under (page.publishedSlug — distinct
+      // from page.slug, which is the draft's pre-edit value), not
+      // against what was loaded when the form opened. `null` means this
+      // page has never been published before, which is never a "change".
+      let createRedirect = false;
+      const previousSlug = page.publishedSlug ?? null;
+      if (previousSlug && previousSlug !== values.slug) {
+        createRedirect = await confirm({
+          title: "This page's slug is changing",
+          message: `Publishing will move this page from "/${previousSlug}" to "/${values.slug}". Create a redirect from the old path so existing links and bookmarks keep working?`,
+          confirmLabel: "Create redirect",
+          cancelLabel: "Don't create one",
+        });
+      }
+
       const saveResult = await saveDraft(values);
       if (saveResult.status === "error") {
         setBanner({ kind: "error", message: saveResult.message, conflict: saveResult.conflict });
@@ -248,13 +293,16 @@ export function PageEditor({
       form.reset(values, { keepValues: true, keepDirty: false });
       setLastFailedAutosaveValue(null);
       setAutosaveOutcome("saved");
-      const publishResult = await publishPageAction(page.id, saveResult.newVersion);
+      const publishResult = await publishPageAction(page.id, saveResult.newVersion, { createRedirect });
       if (publishResult.status === "error") {
         setBanner({ kind: "error", message: publishResult.message, conflict: publishResult.conflict });
         return;
       }
       setStatus("published");
-      setBanner({ kind: "success", message: "Published." });
+      setBanner({
+        kind: "success",
+        message: createRedirect ? `Published. Redirect created from "/${previousSlug}".` : "Published.",
+      });
       router.refresh();
     });
   });
@@ -263,6 +311,38 @@ export function PageEditor({
     startPublishing(async () => {
       await unpublishPageAction(page.id);
       setStatus("draft");
+      router.refresh();
+    });
+  }
+
+  /**
+   * Archive/restore (Task 15) — a reversible status flip, not the
+   * destructive delete_content action below. Uses `isPublishing`'s
+   * transition (not a new one) since it's mutually exclusive with
+   * publish/unpublish in the same header button group.
+   */
+  function onArchive() {
+    startPublishing(async () => {
+      const result = await archivePageAction(page.id);
+      if (result.status === "error") {
+        setBanner({ kind: "error", message: result.message });
+        return;
+      }
+      setStatus("archived");
+      setBanner({ kind: "success", message: "Archived." });
+      router.refresh();
+    });
+  }
+
+  function onRestore() {
+    startPublishing(async () => {
+      const result = await restorePageAction(page.id);
+      if (result.status === "error") {
+        setBanner({ kind: "error", message: result.message });
+        return;
+      }
+      setStatus("draft");
+      setBanner({ kind: "success", message: "Restored to draft." });
       router.refresh();
     });
   }
@@ -567,6 +647,31 @@ export function PageEditor({
                     {isPublishing ? "Publishing…" : "Publish"}
                   </button>
                 ))}
+              {/* Task 15: archive/restore — reversible, edit_drafts-gated
+                  the same way unpublish is (archiving a published page
+                  also needs `publish`, since it unpublishes as part of
+                  archiving; a draft only needs edit_drafts). */}
+              {status === "archived"
+                ? canEditDrafts && (
+                    <button
+                      type="button"
+                      onClick={onRestore}
+                      disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
+                      className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
+                    >
+                      Restore
+                    </button>
+                  )
+                : (status === "published" ? canPublish : canEditDrafts) && (
+                    <button
+                      type="button"
+                      onClick={onArchive}
+                      disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
+                      className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
+                    >
+                      Archive
+                    </button>
+                  )}
             </>
           }
         />
@@ -585,6 +690,8 @@ export function PageEditor({
             )
           }
         />
+
+        <PreflightPanel preflight={preflight} isChecking={isCheckingPreflight} onCheck={checkPreflight} />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="space-y-4">
@@ -743,6 +850,53 @@ function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
     >
       {text}
     </span>
+  );
+}
+
+/**
+ * Task 15's publish preflight banner — "communicate impact, don't
+ * block": every listed item is informational, the editor can publish
+ * through all of them. `errors` (invalid block data) is the one
+ * exception in principle, but it's already unreachable in practice by
+ * the time this shows anything, since onSaveDraft/onPublish's own
+ * saveDraftAction call runs the identical validateBlockList check and
+ * refuses to save first — shown here anyway for visibility/symmetry.
+ */
+function PreflightPanel({
+  preflight,
+  isChecking,
+  onCheck,
+}: {
+  preflight: PreflightSummary | null;
+  isChecking: boolean;
+  onCheck: () => void;
+}) {
+  const hasIssues = preflight && (preflight.errors.length > 0 || preflight.warnings.length > 0);
+  return (
+    <section className="space-y-2 rounded border border-osi-sand-300 bg-osi-white p-4 text-sm">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">Publish preflight</h2>
+        <button
+          type="button"
+          onClick={onCheck}
+          disabled={isChecking}
+          className="rounded border border-osi-sand-300 px-2 py-1 text-xs uppercase tracking-wide-label disabled:opacity-50"
+        >
+          {isChecking ? "Checking…" : "Check for issues"}
+        </button>
+      </div>
+      {preflight && !hasIssues && <p className="text-xs text-green-700">No issues found.</p>}
+      {preflight?.errors.map((issue, i) => (
+        <p key={`error-${i}`} role="alert" className="text-xs text-red-600">
+          {issue.message}
+        </p>
+      ))}
+      {preflight?.warnings.map((issue, i) => (
+        <p key={`warning-${i}`} className="text-xs text-osi-slate-400">
+          ⚠ {issue.message}
+        </p>
+      ))}
+    </section>
   );
 }
 

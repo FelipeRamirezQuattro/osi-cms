@@ -1,7 +1,19 @@
 import { createServerDbClient } from "@/lib/db/client";
 import type { Json, Tables } from "@/lib/db/database.types";
 
-export type PageWithBlocks = Tables<"pages"> & { blocks: Tables<"page_blocks">[] };
+export type PageWithBlocks = Tables<"pages"> & {
+  blocks: Tables<"page_blocks">[];
+  /**
+   * The slug this page is currently *published* under (page_publications.
+   * slug), as distinct from `slug` above (the draft's current value,
+   * which may already differ if the editor changed it without publishing
+   * yet). `null` if the page has never been published. Task 15's slug-
+   * change redirect warning (page-editor.tsx's onPublish) compares the
+   * form's slug against this, not against `page.slug`, since that's
+   * always the pre-edit draft value and would never show a change.
+   */
+  publishedSlug?: string | null;
+};
 
 type PublishedSnapshot = {
   meta: Tables<"pages">;
@@ -17,6 +29,7 @@ function publicationToPage(
     status: "published",
     published_at: publication.published_at,
     blocks: snapshot.blocks.filter((block) => block.is_visible).sort((a, b) => a.position - b.position),
+    publishedSlug: snapshot.meta.slug,
   };
 }
 
@@ -101,14 +114,14 @@ export async function getPageById(id: string): Promise<PageWithBlocks | null> {
   if (error) throw error;
   if (!page) return null;
 
-  const { data: blocks, error: blocksError } = await db
-    .from("page_blocks")
-    .select("*")
-    .eq("page_id", page.id)
-    .order("position", { ascending: true });
+  const [{ data: blocks, error: blocksError }, { data: publication, error: publicationError }] = await Promise.all([
+    db.from("page_blocks").select("*").eq("page_id", page.id).order("position", { ascending: true }),
+    db.from("page_publications").select("slug").eq("page_id", page.id).maybeSingle(),
+  ]);
   if (blocksError) throw blocksError;
+  if (publicationError) throw publicationError;
 
-  return { ...page, blocks: blocks ?? [] };
+  return { ...page, blocks: blocks ?? [], publishedSlug: publication?.slug ?? null };
 }
 
 export type PageMeta = Pick<
@@ -161,11 +174,17 @@ export async function savePageDraft(
   return data;
 }
 
-export async function publishPage(id: string, expectedVersion: number): Promise<void> {
+export async function publishPage(
+  id: string,
+  expectedVersion: number,
+  options?: { createRedirect?: boolean; redirectStatusCode?: number },
+): Promise<void> {
   const db = createServerDbClient();
   const { error } = await db.rpc("publish_page_atomic", {
     p_page_id: id,
     p_expected_version: expectedVersion,
+    p_create_redirect: options?.createRedirect ?? false,
+    p_redirect_status_code: options?.redirectStatusCode ?? 301,
   });
   if (error) throw error;
 }
@@ -173,6 +192,27 @@ export async function publishPage(id: string, expectedVersion: number): Promise<
 export async function unpublishPage(id: string): Promise<void> {
   const db = createServerDbClient();
   const { error } = await db.rpc("unpublish_page_atomic", { p_page_id: id });
+  if (error) throw error;
+}
+
+/**
+ * Archive/restore (Task 15) — see supabase/migrations/
+ * 0029_archived_status.sql's archive_page_atomic/restore_page_atomic for
+ * why these go through SECURITY DEFINER RPCs rather than a plain
+ * `.update()` the way products/news/resources archive does: `pages`'
+ * UPDATE RLS policy is admin-only (migration 0017), so an editor
+ * archiving a draft page needs the same has_capability()-checked-inside-
+ * the-function pattern publish/unpublish already use.
+ */
+export async function archivePage(id: string): Promise<void> {
+  const db = createServerDbClient();
+  const { error } = await db.rpc("archive_page_atomic", { p_page_id: id });
+  if (error) throw error;
+}
+
+export async function restorePage(id: string): Promise<void> {
+  const db = createServerDbClient();
+  const { error } = await db.rpc("restore_page_atomic", { p_page_id: id });
   if (error) throw error;
 }
 

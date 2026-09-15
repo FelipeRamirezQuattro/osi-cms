@@ -1005,3 +1005,117 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   widths. `ConfirmDialog`'s async resolve/cancel/validate/Escape
   behavior is covered in a real (if jsdom-simulated) test environment by
   `confirm-dialog.test.tsx`, not a live browser.
+
+## Task 15 — content integrity and operational safeguards
+
+- **Archive/soft-delete scope is exactly 4 tables: `pages`, `products`,
+  `news_posts`, `resources`** (migration 0029_archived_status.sql) — the
+  task-15 brief's own list, not extended to industries/applications/
+  locations/directory_contacts (those keep draft/published only). Public
+  reads already filter to `status = 'published'`, so an archived row is
+  automatically excluded with zero read-path changes.
+  - **Retention: archived content is retained indefinitely until an
+    admin explicitly hard-deletes it.** No automated purge/cron job was
+    built — this stack has no scheduled-job infrastructure (no Edge
+    Functions, no external cron), and building one from scratch is
+    disproportionate scope for "add an archive status." If a real
+    retention window is ever wanted, it would need either a scheduled
+    Vercel Cron route or a Supabase pg_cron job (available on paid
+    Supabase tiers — this project is currently on Free, see the backup
+    finding below), neither of which exists today.
+  - **`pages` archive/restore goes through new SECURITY DEFINER RPCs**
+    (`archive_page_atomic`/`restore_page_atomic`) rather than a plain
+    `.update()`, because `pages`' UPDATE RLS policy was locked down to
+    admin-only back in migration 0017 (Task 3) — an editor's regular
+    client can't update that table directly at all, draft or not.
+    `products`/`news_posts`/`resources` never got that same lockdown
+    (their UPDATE policy is still the original "staff manage `<table>`"
+    `for all using (is_staff())` grant), so their archive/restore is a
+    plain `updateEntityRow(table, id, { status })` call — no new RPC
+    needed for those three.
+  - Archiving a *published* row also needs the `publish` capability (it
+    un-publishes as part of archiving, for pages that means deleting its
+    `page_publications` row) — restoring only ever lands back in
+    `draft`, never straight back to `published`, so restore is always
+    plain `edit_drafts` work. Same `requirePublishCapabilityForStatusChange`
+    rule already used for every other status-touching save.
+
+- **Redirect chain limit: 3 hops** (`lib/validation/redirects.ts`'s
+  `MAX_REDIRECT_CHAIN_HOPS`) — the task-15 brief left the exact number to
+  the implementer. Chosen because the legacy site being migrated never
+  had more than one redirect hop for any real URL, and because a chain
+  that long is itself a sign the redirects table needs tidying, not a
+  case worth silently supporting forever. The check only walks *forward*
+  from the new/edited redirect's own `to_path` — it does not re-check
+  every other existing redirect's chain on every save (that's unbounded
+  work as the table grows); this catches the realistic case (an editor
+  extending a chain they can see) without a full-table re-validation on
+  every write. A DB-level `check (from_path <> to_path)` constraint
+  (migration 0030, mirroring `product_related`'s existing
+  `product_id <> related_product_id` precedent) backs up the one-step
+  self-loop case specifically; the multi-hop cases are necessarily
+  app-level only (a CHECK constraint can't see other rows).
+
+- **Publish preflight (`lib/data/publish-preflight.ts`) is
+  warning-only except invalid block data**, which is a hard error —
+  matching `validateBlockList`'s existing save-time behavior rather than
+  inventing a second notion of "invalid." Broken links, missing alt
+  text, unsafe URLs, and duplicate anchor ids are all surfaced in a
+  banner in the page editor and never block Publish — "communicate
+  impact," not "prevent publishing until perfect," per the task's own
+  acceptance criterion. Missing-alt detection is scoped to *tracked*
+  media-library uploads referenced by URL in the page's own blocks —
+  a legacy image with no `media_assets` row (resolved via
+  `lib/media.ts` per constraint 3) isn't flagged, consistent with how
+  alt-text enforcement is already scoped everywhere else in this
+  codebase.
+
+- **Slug-change redirect creation is atomic with publish, not a
+  follow-up call** — `publish_page_atomic` (migration
+  0031_publish_slug_redirect.sql) gained two new optional, defaulted
+  trailing parameters (`p_create_redirect`, `p_redirect_status_code`)
+  rather than a second RPC the app calls right after publishing, so the
+  redirect row is written in the exact same transaction as the publish
+  itself. Scoped to `pages` only, per the brief's own "products are a
+  stretch goal" note — products don't have an equivalent slug-change
+  flow in this task; extending the same pattern to `saveProductAction`
+  would need its own atomic-RPC change and was cut for time.
+
+- **Submissions CSV export is approved scope** (the brief's own "decide
+  ... implement CSV export only if approved" — the controller's dispatch
+  for this task treated it as pre-approved). Implemented as a
+  `view_submissions`-gated Server Action returning CSV text (no schema
+  change), downloaded client-side via a Blob + temporary `<a download>`
+  link — there's no file-response mechanism for a Server Action to
+  return directly. Retention: same "no automated purge" policy as
+  archived content; a manual delete already exists at the DB level via
+  the existing "staff can delete submissions" RLS policy, so no new
+  deletion UI was added.
+
+- **`scripts/report-content-integrity.ts` duplicates a little query
+  logic instead of calling `listBrokenLinks()`/`findMediaAssetUsages()`
+  directly** — every `lib/data/*.ts` function goes through
+  `lib/db/client.ts`'s `createServerDbClient()`, which calls
+  `next/headers`' `cookies()` and throws outside an actual Next.js
+  request context (which a plain `tsx` script is not). Every existing
+  script in this repo hits the same wall and works around it the same
+  way (`createServiceRoleDbClient()` instead) — this script follows that
+  established convention for its own reads, while still importing every
+  *pure*, DB-independent piece those two files already export
+  (`extractInternalLinkCandidates`/`isIgnorableCandidate`/
+  `findBrokenPaths`, `validateAltRequirement`) so the actual
+  "is this broken/missing" logic isn't duplicated, only the DB access
+  shape is.
+
+- **Backup/restore: this project's Supabase organization is on the Free
+  plan** (confirmed via the Supabase MCP's `get_organization` — plan:
+  `"free"`), which means **no automated daily backups and no
+  point-in-time recovery are provisioned today** — both are paid-tier
+  Supabase features. See `docs/BACKUP-RESTORE.md` for the full writeup,
+  including the honest limitation that the page-revision-restore flow
+  was verified by reading the code and adding a targeted test, not by a
+  live, authenticated click-through in `/admin` — this implementer
+  environment has no seeded admin account and the remediation plan's
+  standing rules forbid running `create-admin`/seed scripts (the exact
+  same wall Task 14 hit for its own authenticated-admin axe tests,
+  documented the same way there).
