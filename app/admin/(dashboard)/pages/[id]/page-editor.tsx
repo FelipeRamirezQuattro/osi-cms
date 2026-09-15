@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Controller, FormProvider, useFieldArray, useForm, useFormContext, useWatch } from "react-hook-form";
+import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form";
 import {
   DndContext,
   KeyboardSensor,
@@ -41,18 +41,23 @@ import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { AsyncMessage, type AsyncMessageState } from "@/components/admin/ui/async-message";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 import { ReorderButtons } from "@/components/admin/ui/row-actions";
-import { cloneBlockForDuplicate, decideAutosave, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
-import { useDebouncedCallback } from "@/lib/admin/use-debounced-callback";
+import {
+  cloneBlockForDuplicate,
+  decideAutosave,
+  deriveAutosaveDisplayStatus,
+  isManualSaveActionBlocked,
+  resolveBlockFocusTarget,
+  shouldTrackFailedAutosaveValue,
+  type AutosaveStatus,
+} from "@/lib/admin/block-editor-helpers";
 
 // The page form mixes fixed page metadata with a `blocks` array whose
 // `data` shape varies per block type (see FieldRenderer's comment) — no
 // static type covers that, so the form itself is untyped here too.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/** Debounced autosave fires this long after the last edit — see lib/admin/use-debounced-callback.ts and decideAutosave. */
+/** Debounced autosave fires this long after the last edit — see lib/admin/block-editor-helpers.ts's decideAutosave. */
 const AUTOSAVE_DELAY_MS = 4000;
-
-type AutosaveStatus = "idle" | "dirty" | "saving" | "saved" | "error";
 
 export function PageEditor({
   page,
@@ -214,7 +219,7 @@ export function PageEditor({
       if (result.status === "error") {
         setBanner({ kind: "error", message: result.message, conflict: result.conflict });
         revealValidationTarget(result);
-        if (!result.conflict) setLastFailedAutosaveValue(JSON.stringify(values));
+        if (shouldTrackFailedAutosaveValue(result)) setLastFailedAutosaveValue(JSON.stringify(values));
       } else {
         setVersion(result.newVersion);
         setBanner({ kind: "success", message: "Draft saved." });
@@ -315,14 +320,31 @@ export function PageEditor({
     append({ type: entry.type, is_visible: true, data: entry.defaults });
   }
 
-  /** Duplicate-near-source (brief item 2): inserted right after the source, never appended to the end. */
+  /**
+   * Duplicate-near-source (brief item 2): inserted right after the source,
+   * never appended to the end.
+   *
+   * Reads the source via `getValues()`, not `fields[index]` — `fields` is
+   * useFieldArray's own snapshot, only refreshed by field-array actions
+   * (insert/remove/move/etc.), NOT by the user typing into a registered
+   * input elsewhere in the form. Reading `fields[index]` here would
+   * silently duplicate the block's pre-edit content whenever the user had
+   * just typed into it without triggering some other field-array action
+   * first (fix-round Finding 3).
+   */
   function duplicateBlockAt(index: number) {
-    const source = fields[index] as any;
+    const source = getValues(`blocks.${index}`) as any;
     // Built explicitly (type/is_visible/data only) rather than spreading
     // `source` — react-hook-form's own `id` key on the field-array entry
     // gets overwritten either way when it computes `fields`, but there's
     // no reason to carry it into the new block's stored value at all.
     insert(index + 1, cloneBlockForDuplicate({ type: source.type, is_visible: source.is_visible, data: source.data }));
+  }
+
+  /** Same stale-`fields[index]` bug as duplicateBlockAt above, same fix — see that comment. */
+  function toggleBlockVisible(index: number) {
+    const current = getValues(`blocks.${index}`) as any;
+    update(index, { ...current, is_visible: !current.is_visible });
   }
 
   // --- Unsaved-changes guard (brief item 4) --------------------------------
@@ -378,42 +400,75 @@ export function PageEditor({
   // save code path. See decideAutosave's doc comment for what "only when
   // it passes client-side validation" means in a registry where block
   // schemas are deliberately never shipped to the client.
-  const watchedValues = useWatch({ control });
-  const serializedValues = JSON.stringify(watchedValues);
+  //
+  // fix-round Finding 4: this used to detect "content changed" via
+  // `useWatch({ control })` + `JSON.stringify` on every render, which
+  // re-renders this whole component (and therefore every unmemoized
+  // SortableBlockRow and any open block's field subtree) on every single
+  // keystroke. `form.subscribe` (react-hook-form 7.87+) fires the same
+  // "form updated" signal without going through React state/render at
+  // all, so the debounce timer and change-tracking below live in refs,
+  // not state — only an actual save attempt (rare relative to keystrokes)
+  // touches state.
 
-  // Purely derived, not stored — "Unsaved changes" the instant a keystroke
-  // makes the form dirty again, "Saving…" while a request is in flight,
-  // otherwise whatever the last attempt (manual or auto) actually
-  // concluded. No effect needed to keep this in sync.
-  const autosaveDisplayStatus: AutosaveStatus = isAutosaving ? "saving" : isDirty ? "dirty" : autosaveOutcome;
-
-  const autosaveDecision = decideAutosave({
-    enabled: canEditDrafts && !isSaving && !isPublishing && !isAutosaving,
+  // Always-fresh snapshot of the render-time values the subscribe
+  // callback/timer (which live outside the render cycle) need to read.
+  // Updated via a plain effect (no deps) so it reflects the latest render
+  // after every commit — same pattern as useDebouncedCallback's
+  // `callbackRef`.
+  const autosaveInputsRef = useRef({
+    canEditDrafts,
+    isSaving,
+    isPublishing,
+    isAutosaving,
     isDirty,
-    serializedValue: serializedValues,
-    lastFailedValue: lastFailedAutosaveValue,
+    lastFailedAutosaveValue,
+    autosaveOutcome,
+  });
+  useEffect(() => {
+    autosaveInputsRef.current = {
+      canEditDrafts,
+      isSaving,
+      isPublishing,
+      isAutosaving,
+      isDirty,
+      lastFailedAutosaveValue,
+      autosaveOutcome,
+    };
   });
 
-  useDebouncedCallback({
-    watchKey: serializedValues,
-    delayMs: AUTOSAVE_DELAY_MS,
-    enabled: autosaveDecision === "attempt",
-    callback: () => {
+  const runAutosaveAttemptRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    runAutosaveAttemptRef.current = () => {
+      const inputs = autosaveInputsRef.current;
       const values = getValues();
-      const serializedAtAttempt = serializedValues;
+      const serializedAtAttempt = JSON.stringify(values);
+      const decision = decideAutosave({
+        enabled: inputs.canEditDrafts && !inputs.isSaving && !inputs.isPublishing && !inputs.isAutosaving,
+        isDirty: inputs.isDirty,
+        serializedValue: serializedAtAttempt,
+        lastFailedValue: inputs.lastFailedAutosaveValue,
+      });
+      if (decision !== "attempt") return;
       setIsAutosaving(true);
       void (async () => {
         const result = await saveDraft(values);
         setIsAutosaving(false);
         if (result.status === "error") {
-          setLastFailedAutosaveValue(serializedAtAttempt);
-          if (result.conflict) {
-            // The conflict banner is the canonical "something went wrong"
-            // surface for this — defer to it instead of duplicating the
-            // message in the small status indicator too.
-            setBanner({ kind: "error", message: result.message, conflict: true });
-          } else {
+          if (shouldTrackFailedAutosaveValue(result)) {
+            setLastFailedAutosaveValue(serializedAtAttempt);
             setAutosaveOutcome("error");
+          } else {
+            // fix-round Finding 5: a conflict must NOT be recorded into
+            // the "already failed, skip retrying this content" tracking —
+            // symmetric with the manual-save path above, which also never
+            // records a conflict there. Otherwise a single conflict
+            // permanently disables autosave for that content even after
+            // the user reloads and the conflict is resolved. The conflict
+            // banner is the canonical "something went wrong" surface for
+            // this — defer to it instead of duplicating the message in
+            // the small status indicator too.
+            setBanner({ kind: "error", message: result.message, conflict: true });
           }
         } else {
           setLastFailedAutosaveValue(null);
@@ -422,8 +477,42 @@ export function PageEditor({
           setAutosaveOutcome("saved");
         }
       })();
-    },
+    };
   });
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = form.subscribe({
+      formState: { values: true },
+      callback: () => {
+        // fix-round Finding 2: clear a stale "Autosave failed" outcome the
+        // instant the content actually diverges from whatever last
+        // failed, rather than only on the next attempt's success — a
+        // no-op ref read on every other keystroke, so this doesn't
+        // reintroduce the per-keystroke re-render Finding 4 removed.
+        const inputs = autosaveInputsRef.current;
+        if (inputs.autosaveOutcome === "error") {
+          const current = JSON.stringify(getValues());
+          if (current !== inputs.lastFailedAutosaveValue) {
+            setAutosaveOutcome("idle");
+          }
+        }
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => runAutosaveAttemptRef.current(), AUTOSAVE_DELAY_MS);
+      },
+    });
+    return () => {
+      unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+    // `form` is a stable reference for the component's lifetime (react-hook-form memoizes it) — this subscribes once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
+
+  // Purely derived from state, not stored — see deriveAutosaveDisplayStatus
+  // (fix-round Finding 2) for why the error outcome must be checked before
+  // `isDirty`. No effect needed to keep this in sync.
+  const autosaveDisplayStatus: AutosaveStatus = deriveAutosaveDisplayStatus({ isAutosaving, isDirty, autosaveOutcome });
 
   const bannerMessage: AsyncMessageState = banner ? { kind: banner.kind, text: banner.message } : null;
 
@@ -451,17 +540,20 @@ export function PageEditor({
               <button
                 type="button"
                 onClick={onSaveDraft}
-                disabled={isSaving}
+                // fix-round Finding 1 (CRITICAL) — see
+                // isManualSaveActionBlocked's doc comment: a manual save
+                // must never fire while an autosave is already in flight.
+                disabled={isManualSaveActionBlocked({ actionInFlight: isSaving, isAutosaving })}
                 className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
               >
-                {isSaving ? "Saving…" : "Save draft"}
+                {isSaving || isAutosaving ? "Saving…" : "Save draft"}
               </button>
               {canPublish &&
                 (status === "published" ? (
                   <button
                     type="button"
                     onClick={onUnpublish}
-                    disabled={isPublishing}
+                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
                     className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
                   >
                     Unpublish
@@ -470,7 +562,7 @@ export function PageEditor({
                   <button
                     type="button"
                     onClick={onPublish}
-                    disabled={isPublishing}
+                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
                     className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
                   >
                     {isPublishing ? "Publishing…" : "Publish"}
@@ -511,7 +603,7 @@ export function PageEditor({
                     isVisible={(field as any).is_visible}
                     isOpen={openIds.has(field.id)}
                     onToggleOpen={() => toggleOpen(field.id)}
-                    onToggleVisible={() => update(index, { ...(field as any), is_visible: !(field as any).is_visible })}
+                    onToggleVisible={() => toggleBlockVisible(index)}
                     onRemove={() => remove(index)}
                     onDuplicate={() => duplicateBlockAt(index)}
                     onMoveUp={() => move(index, index - 1)}

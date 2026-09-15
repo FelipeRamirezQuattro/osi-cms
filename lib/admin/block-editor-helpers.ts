@@ -76,6 +76,65 @@ function cssEscape(value: string): string {
   return value.replace(/["\\]/g, "\\$&");
 }
 
+export type AutosaveStatus = "idle" | "dirty" | "saving" | "saved" | "error";
+
+/**
+ * The small persistent status line's derived state (fix-round Finding 2).
+ * An error/failed autosave outcome must take priority over the generic
+ * "dirty" state: a failed autosave deliberately never resets the form (you
+ * don't want to blow away the user's unsaved edits on a failure), so
+ * `isDirty` stays `true` forever after a failure — checking it *before*
+ * `autosaveOutcome` in the ternary chain made the `"error"` outcome
+ * permanently unreachable, silently hiding a real, repeated save failure
+ * behind a generic "Unsaved changes" label. `isAutosaving` still wins over
+ * everything (a request is actually in flight right now).
+ */
+export function deriveAutosaveDisplayStatus(input: {
+  isAutosaving: boolean;
+  isDirty: boolean;
+  autosaveOutcome: "idle" | "saved" | "error";
+}): AutosaveStatus {
+  if (input.isAutosaving) return "saving";
+  if (input.autosaveOutcome === "error") return "error";
+  if (input.isDirty) return "dirty";
+  return input.autosaveOutcome;
+}
+
+/**
+ * Whether a manual Save draft / Publish / Unpublish action must stay
+ * disabled (fix-round Finding 1, CRITICAL). Both the manual action and a
+ * debounced autosave attempt read the same `version`/`expected_version`
+ * and call the same optimistic-concurrency save action — if a manual save
+ * fires while an autosave is already in flight, one of the two loses that
+ * race and comes back as a false "changed by another editor" conflict,
+ * even though it was this same user's own autosave, and the conflict UI's
+ * "Reload page" button is destructive (`window.location.reload()`).
+ * `decideAutosave`'s own `enabled` check already blocks autosave from
+ * starting while a manual action is in flight — this is the other,
+ * previously-missing half of that mutual-exclusion guard.
+ */
+export function isManualSaveActionBlocked(input: { actionInFlight: boolean; isAutosaving: boolean }): boolean {
+  return input.actionInFlight || input.isAutosaving;
+}
+
+/**
+ * Whether a failed save/autosave attempt's content should be recorded into
+ * `lastFailedAutosaveValue` (decideAutosave's "already failed this exact
+ * content, don't retry" tracking) — fix-round Finding 5. A version
+ * conflict never qualifies, on both the manual-save and autosave paths:
+ * a conflict means *someone* saved over this content first (quite possibly
+ * this same session's own in-flight autosave — see Finding 1), not that
+ * the content itself is invalid. Treating a conflict like a real
+ * validation failure would permanently disable future autosave attempts
+ * for content that was never actually shown to be bad, even after the
+ * conflict is resolved (e.g. by the user reloading). The manual-save path
+ * already got this right before the fix round; autosave did not, which
+ * was the asymmetry Finding 5 flagged.
+ */
+export function shouldTrackFailedAutosaveValue(result: { conflict?: boolean }): boolean {
+  return !result.conflict;
+}
+
 export type AutosaveDecision = "skip-disabled" | "skip-clean" | "skip-unchanged-failure" | "attempt";
 
 /**

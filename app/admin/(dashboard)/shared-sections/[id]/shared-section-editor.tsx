@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import {
   DndContext,
   KeyboardSensor,
@@ -35,8 +35,15 @@ import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { AsyncMessage, type AsyncMessageState } from "@/components/admin/ui/async-message";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 import { ReorderButtons } from "@/components/admin/ui/row-actions";
-import { cloneBlockForDuplicate, decideAutosave, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
-import { useDebouncedCallback } from "@/lib/admin/use-debounced-callback";
+import {
+  cloneBlockForDuplicate,
+  decideAutosave,
+  deriveAutosaveDisplayStatus,
+  isManualSaveActionBlocked,
+  resolveBlockFocusTarget,
+  shouldTrackFailedAutosaveValue,
+  type AutosaveStatus,
+} from "@/lib/admin/block-editor-helpers";
 
 // Same reasoning as page-editor.tsx: `blocks` mixes fixed shape (type,
 // is_visible) with a per-block-type `data` shape no static type covers.
@@ -44,8 +51,6 @@ import { useDebouncedCallback } from "@/lib/admin/use-debounced-callback";
 
 /** Same debounce window as page-editor.tsx — see that file's AUTOSAVE_DELAY_MS comment. */
 const AUTOSAVE_DELAY_MS = 4000;
-
-type AutosaveStatus = "idle" | "dirty" | "saving" | "saved" | "error";
 
 export function SharedSectionEditor({
   section,
@@ -158,7 +163,7 @@ export function SharedSectionEditor({
       if (result.status === "error") {
         setBanner({ kind: "error", message: result.message, conflict: result.conflict });
         revealValidationTarget(result);
-        if (!result.conflict) setLastFailedAutosaveValue(JSON.stringify(values));
+        if (shouldTrackFailedAutosaveValue(result)) setLastFailedAutosaveValue(JSON.stringify(values));
       } else {
         setVersion(result.newVersion);
         setBanner({ kind: "success", message: "Draft saved." });
@@ -220,10 +225,22 @@ export function SharedSectionEditor({
     append({ type: entry.type, is_visible: true, data: entry.defaults });
   }
 
-  /** Duplicate-near-source — see page-editor.tsx's identical handler for the full rationale. */
+  /**
+   * Duplicate-near-source — see page-editor.tsx's identical handler for the
+   * full rationale. Reads the source via `getValues()`, not `fields[index]`
+   * — `fields` is only refreshed by field-array actions, not by typing into
+   * a registered input, so reading it here would silently duplicate the
+   * block's pre-edit content (fix-round Finding 3).
+   */
   function duplicateBlockAt(index: number) {
-    const source = fields[index] as any;
+    const source = getValues(`blocks.${index}`) as any;
     insert(index + 1, cloneBlockForDuplicate({ type: source.type, is_visible: source.is_visible, data: source.data }));
+  }
+
+  /** Same stale-`fields[index]` bug as duplicateBlockAt above, same fix — see that comment. */
+  function toggleBlockVisible(index: number) {
+    const current = getValues(`blocks.${index}`) as any;
+    update(index, { ...current, is_visible: !current.is_visible });
   }
 
   // --- Unsaved-changes guard — see page-editor.tsx's identical block for the in-app-navigation boundary note.
@@ -249,38 +266,62 @@ export function SharedSectionEditor({
     if (ok) router.push("/admin/shared-sections");
   }
 
-  // --- Debounced autosave — see page-editor.tsx's identical block for the full rationale
-  // (no separate preview route exists for shared sections, so only the
-  // save-path half of that file's Task 13b work applies here).
-  const watchedValues = useWatch({ control });
-  const serializedValues = JSON.stringify(watchedValues);
-
-  const autosaveDisplayStatus: AutosaveStatus = isAutosaving ? "saving" : isDirty ? "dirty" : autosaveOutcome;
-
-  const autosaveDecision = decideAutosave({
-    enabled: canEditDrafts && !isSaving && !isPublishing && !isAutosaving,
+  // --- Debounced autosave — see page-editor.tsx's identical block for the
+  // full rationale (no separate preview route exists for shared sections,
+  // so only the save-path half of that file's Task 13b work applies here),
+  // including the fix-round Finding 2/4/5 rework: `form.subscribe` instead
+  // of `useWatch`+`JSON.stringify` (Finding 4 — avoids re-rendering this
+  // whole component, and every unmemoized SortableBlockRow under it, on
+  // every keystroke), the reordered status ternary and stale-error reset
+  // (Finding 2), and never recording a conflict into the skip-retry
+  // tracking (Finding 5).
+  const autosaveInputsRef = useRef({
+    canEditDrafts,
+    isSaving,
+    isPublishing,
+    isAutosaving,
     isDirty,
-    serializedValue: serializedValues,
-    lastFailedValue: lastFailedAutosaveValue,
+    lastFailedAutosaveValue,
+    autosaveOutcome,
+  });
+  useEffect(() => {
+    autosaveInputsRef.current = {
+      canEditDrafts,
+      isSaving,
+      isPublishing,
+      isAutosaving,
+      isDirty,
+      lastFailedAutosaveValue,
+      autosaveOutcome,
+    };
   });
 
-  useDebouncedCallback({
-    watchKey: serializedValues,
-    delayMs: AUTOSAVE_DELAY_MS,
-    enabled: autosaveDecision === "attempt",
-    callback: () => {
+  const runAutosaveAttemptRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    runAutosaveAttemptRef.current = () => {
+      const inputs = autosaveInputsRef.current;
       const values = getValues();
-      const serializedAtAttempt = serializedValues;
+      const serializedAtAttempt = JSON.stringify(values);
+      const decision = decideAutosave({
+        enabled: inputs.canEditDrafts && !inputs.isSaving && !inputs.isPublishing && !inputs.isAutosaving,
+        isDirty: inputs.isDirty,
+        serializedValue: serializedAtAttempt,
+        lastFailedValue: inputs.lastFailedAutosaveValue,
+      });
+      if (decision !== "attempt") return;
       setIsAutosaving(true);
       void (async () => {
         const result = await saveDraft(values);
         setIsAutosaving(false);
         if (result.status === "error") {
-          setLastFailedAutosaveValue(serializedAtAttempt);
-          if (result.conflict) {
-            setBanner({ kind: "error", message: result.message, conflict: true });
-          } else {
+          if (shouldTrackFailedAutosaveValue(result)) {
+            setLastFailedAutosaveValue(serializedAtAttempt);
             setAutosaveOutcome("error");
+          } else {
+            // fix-round Finding 5: never record a conflict into the
+            // "already failed, skip retrying this content" tracking —
+            // symmetric with the manual-save path above.
+            setBanner({ kind: "error", message: result.message, conflict: true });
           }
         } else {
           setLastFailedAutosaveValue(null);
@@ -289,8 +330,38 @@ export function SharedSectionEditor({
           setAutosaveOutcome("saved");
         }
       })();
-    },
+    };
   });
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = form.subscribe({
+      formState: { values: true },
+      callback: () => {
+        // fix-round Finding 2: clear a stale "Autosave failed" outcome the
+        // instant content diverges from whatever last failed.
+        const inputs = autosaveInputsRef.current;
+        if (inputs.autosaveOutcome === "error") {
+          const current = JSON.stringify(getValues());
+          if (current !== inputs.lastFailedAutosaveValue) {
+            setAutosaveOutcome("idle");
+          }
+        }
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => runAutosaveAttemptRef.current(), AUTOSAVE_DELAY_MS);
+      },
+    });
+    return () => {
+      unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+    // `form` is a stable reference for the component's lifetime — this subscribes once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
+
+  // See deriveAutosaveDisplayStatus (fix-round Finding 2) for why the
+  // error outcome must be checked before `isDirty`.
+  const autosaveDisplayStatus: AutosaveStatus = deriveAutosaveDisplayStatus({ isAutosaving, isDirty, autosaveOutcome });
 
   const bannerMessage: AsyncMessageState = banner ? { kind: banner.kind, text: banner.message } : null;
 
@@ -310,17 +381,20 @@ export function SharedSectionEditor({
               <button
                 type="button"
                 onClick={onSaveDraft}
-                disabled={isSaving}
+                // fix-round Finding 1 (CRITICAL) — see
+                // isManualSaveActionBlocked's doc comment: a manual save
+                // must never fire while an autosave is already in flight.
+                disabled={isManualSaveActionBlocked({ actionInFlight: isSaving, isAutosaving })}
                 className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
               >
-                {isSaving ? "Saving…" : "Save draft"}
+                {isSaving || isAutosaving ? "Saving…" : "Save draft"}
               </button>
               {canPublish &&
                 (status === "published" ? (
                   <button
                     type="button"
                     onClick={onUnpublish}
-                    disabled={isPublishing}
+                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
                     className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
                   >
                     Unpublish
@@ -329,7 +403,7 @@ export function SharedSectionEditor({
                   <button
                     type="button"
                     onClick={onPublish}
-                    disabled={isPublishing}
+                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
                     className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
                   >
                     {isPublishing ? "Publishing…" : "Publish"}
@@ -370,7 +444,7 @@ export function SharedSectionEditor({
                     isVisible={(field as any).is_visible}
                     isOpen={openIds.has(field.id)}
                     onToggleOpen={() => toggleOpen(field.id)}
-                    onToggleVisible={() => update(index, { ...(field as any), is_visible: !(field as any).is_visible })}
+                    onToggleVisible={() => toggleBlockVisible(index)}
                     onRemove={() => remove(index)}
                     onDuplicate={() => duplicateBlockAt(index)}
                     onMoveUp={() => move(index, index - 1)}

@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { cloneBlockForDuplicate, decideAutosave, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
+import {
+  cloneBlockForDuplicate,
+  decideAutosave,
+  deriveAutosaveDisplayStatus,
+  isManualSaveActionBlocked,
+  resolveBlockFocusTarget,
+  shouldTrackFailedAutosaveValue,
+} from "@/lib/admin/block-editor-helpers";
 
 describe("cloneBlockForDuplicate (Task 13b — duplicate-near-source)", () => {
   it("copies type/is_visible and deep-clones data", () => {
@@ -107,6 +114,96 @@ describe("decideAutosave (Task 13b — autosave gating)", () => {
   });
 });
 
+describe("isManualSaveActionBlocked (fix-round Finding 1 — CRITICAL)", () => {
+  it("is not blocked when neither a manual action nor an autosave is in flight", () => {
+    expect(isManualSaveActionBlocked({ actionInFlight: false, isAutosaving: false })).toBe(false);
+  });
+
+  it("is blocked while the action's own transition (isSaving/isPublishing) is in flight", () => {
+    expect(isManualSaveActionBlocked({ actionInFlight: true, isAutosaving: false })).toBe(true);
+  });
+
+  it("is blocked while an autosave is in flight, even if the manual action itself isn't running yet — the collision this finding fixes", () => {
+    expect(isManualSaveActionBlocked({ actionInFlight: false, isAutosaving: true })).toBe(true);
+  });
+
+  it("is blocked when both are in flight", () => {
+    expect(isManualSaveActionBlocked({ actionInFlight: true, isAutosaving: true })).toBe(true);
+  });
+});
+
+describe("shouldTrackFailedAutosaveValue (fix-round Finding 5 — symmetric conflict handling)", () => {
+  it("does not track a version conflict as a failure worth skip-retrying", () => {
+    expect(shouldTrackFailedAutosaveValue({ conflict: true })).toBe(false);
+  });
+
+  it("tracks a real validation failure", () => {
+    expect(shouldTrackFailedAutosaveValue({ conflict: false })).toBe(true);
+    expect(shouldTrackFailedAutosaveValue({})).toBe(true);
+  });
+
+  it("end-to-end with decideAutosave: a conflict never gets recorded, so the very next attempt against the same content still fires instead of being permanently skipped", () => {
+    const conflictResult = { status: "error" as const, conflict: true };
+    // Mirrors the autosave attempt handler: only record into
+    // lastFailedAutosaveValue when shouldTrackFailedAutosaveValue says so.
+    const lastFailedAutosaveValue = shouldTrackFailedAutosaveValue(conflictResult)
+      ? '{"title":"A"}'
+      : null;
+    expect(lastFailedAutosaveValue).toBeNull();
+
+    const decision = decideAutosave({
+      enabled: true,
+      isDirty: true,
+      serializedValue: '{"title":"A"}',
+      lastFailedValue: lastFailedAutosaveValue,
+    });
+    expect(decision).toBe("attempt");
+  });
+
+  it("contrast: a real (non-conflict) validation failure IS recorded and does skip-retry the same unchanged content", () => {
+    const validationFailure = { status: "error" as const, conflict: false };
+    const lastFailedAutosaveValue = shouldTrackFailedAutosaveValue(validationFailure) ? '{"title":"A"}' : null;
+    expect(lastFailedAutosaveValue).toBe('{"title":"A"}');
+
+    const decision = decideAutosave({
+      enabled: true,
+      isDirty: true,
+      serializedValue: '{"title":"A"}',
+      lastFailedValue: lastFailedAutosaveValue,
+    });
+    expect(decision).toBe("skip-unchanged-failure");
+  });
+});
+
+describe("deriveAutosaveDisplayStatus (fix-round Finding 2 — error state must actually be reachable)", () => {
+  it("shows 'saving' while an autosave is in flight, regardless of dirty/outcome", () => {
+    expect(deriveAutosaveDisplayStatus({ isAutosaving: true, isDirty: true, autosaveOutcome: "error" })).toBe(
+      "saving",
+    );
+  });
+
+  it("shows 'error' even though the form is still dirty — the bug: isDirty stays true forever after a failed autosave (it deliberately never resets the form), so checking isDirty before autosaveOutcome made 'error' unreachable", () => {
+    expect(deriveAutosaveDisplayStatus({ isAutosaving: false, isDirty: true, autosaveOutcome: "error" })).toBe(
+      "error",
+    );
+  });
+
+  it("shows 'dirty' when there's no error and the form has unsaved changes", () => {
+    expect(deriveAutosaveDisplayStatus({ isAutosaving: false, isDirty: true, autosaveOutcome: "idle" })).toBe(
+      "dirty",
+    );
+  });
+
+  it("falls back to the raw outcome once the form is clean again", () => {
+    expect(deriveAutosaveDisplayStatus({ isAutosaving: false, isDirty: false, autosaveOutcome: "saved" })).toBe(
+      "saved",
+    );
+    expect(deriveAutosaveDisplayStatus({ isAutosaving: false, isDirty: false, autosaveOutcome: "idle" })).toBe(
+      "idle",
+    );
+  });
+});
+
 describe("duplicate-near-source against real react-hook-form insert() (Task 13b)", () => {
   // Exercises the exact mechanism page-editor.tsx/shared-section-editor.tsx
   // use (react-hook-form's own useFieldArray.insert), not just the pure
@@ -118,9 +215,9 @@ describe("duplicate-near-source against real react-hook-form insert() (Task 13b)
 
   function setup(initialBlocks: Block[]) {
     return renderHook(() => {
-      const { control } = useForm<{ blocks: Block[] }>({ defaultValues: { blocks: initialBlocks } });
+      const { control, getValues, setValue } = useForm<{ blocks: Block[] }>({ defaultValues: { blocks: initialBlocks } });
       const { fields, insert } = useFieldArray({ control, name: "blocks" });
-      return { fields, insert };
+      return { fields, insert, getValues, setValue };
     });
   }
 
@@ -170,5 +267,32 @@ describe("duplicate-near-source against real react-hook-form insert() (Task 13b)
     });
 
     expect(result.current.fields.map((f) => f.data.n)).toEqual([1, 2, 2, 3]);
+  });
+
+  it("fix-round Finding 3: fields[index] is stale after a plain field edit, while getValues() is fresh — this is exactly why duplicateBlockAt/toggleBlockVisible must read via getValues()", () => {
+    const { result } = setup([{ type: "rich_text", is_visible: true, data: { body: "original" } }]);
+
+    // Simulates the user typing into the block's registered input — a
+    // plain value change, not a field-array action (insert/remove/move),
+    // so useFieldArray's `fields` snapshot is never told to refresh.
+    act(() => {
+      result.current.setValue("blocks.0.data.body", "edited by the user");
+    });
+
+    // The bug: reading the "live" content via the stale fields snapshot
+    // still shows the pre-edit value.
+    expect((result.current.fields[0].data as { body: string }).body).toBe("original");
+
+    // The fix: getValues() always reflects the form's actual current state.
+    expect((result.current.getValues("blocks.0") as Block).data.body).toBe("edited by the user");
+
+    // Duplicating from the stale snapshot (the pre-fix behavior) would
+    // silently discard the edit into the copy.
+    const staleSource = result.current.fields[0] as unknown as Block;
+    expect(cloneBlockForDuplicate(staleSource).data.body).toBe("original");
+
+    // Duplicating from getValues() (the fix) carries the live edit over.
+    const liveSource = result.current.getValues("blocks.0") as Block;
+    expect(cloneBlockForDuplicate(liveSource).data.body).toBe("edited by the user");
   });
 });
