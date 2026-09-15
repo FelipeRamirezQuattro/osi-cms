@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireCapability } from "@/lib/auth";
-import { getBlockDefinition, getBlockPalette } from "@/lib/blocks/registry";
+import { getBlockPalette } from "@/lib/blocks/registry";
 import {
   createPage,
   deletePage,
@@ -16,6 +16,7 @@ import {
   type PageMeta,
 } from "@/lib/data/pages";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
+import { validateBlockList } from "@/lib/validation/blocks";
 import { newPageSlugSchema, pageMetaSchema, type PageTemplate } from "@/lib/validation/pages";
 
 /**
@@ -45,25 +46,17 @@ function conflictResult(error: unknown, fallbackMessage: string): SaveResult {
   return { status: "error", message, conflict: true };
 }
 
-/** Validates every block's data against its registered Zod schema before writing. */
+/**
+ * Validates every block's data against its registered Zod schema before
+ * writing — the shared implementation (lib/validation/blocks.ts) also
+ * backs lib/actions/shared-sections.ts, since a shared section's blocks
+ * go through the exact same registry-driven validation as a page's. Not
+ * defined inline here as an exported function: a "use server" module may
+ * only export async functions (every export becomes a Server Action
+ * reference), and this is a plain synchronous helper.
+ */
 function validateBlocks(blocks: BlockInput[]): SaveResult | null {
-  for (let i = 0; i < blocks.length; i++) {
-    const definition = getBlockDefinition(blocks[i].type);
-    if (!definition) {
-      return { status: "error", message: `Unknown block type "${blocks[i].type}"`, blockIndex: i };
-    }
-    const parsed = definition.schema.safeParse(blocks[i].data);
-    if (!parsed.success) {
-      const { message, field } = formatZodError(parsed.error);
-      return {
-        status: "error",
-        message: `Block ${i + 1} (${definition.label}): ${message}`,
-        blockIndex: i,
-        field,
-      };
-    }
-  }
-  return null;
+  return validateBlockList(blocks);
 }
 
 export async function createPageAction(input: PageMeta): Promise<{ id: string } | { error: string; field?: string }> {

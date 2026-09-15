@@ -60,3 +60,69 @@ export async function updateSubmissionStatus(
   const { error } = await db.from("form_submissions").update({ status }).eq("id", id);
   if (error) throw error;
 }
+
+// --- Task 10: generic form definitions ---
+
+/**
+ * Public read path for the generic `form` block
+ * (components/blocks/form.tsx) — filtered to published, mirroring every
+ * other public content read (form_definitions' RLS SELECT policy already
+ * enforces `status = 'published' OR is_staff()`; this query narrows to
+ * published explicitly so a staff session previewing the public site
+ * doesn't accidentally render a draft-in-progress form).
+ */
+export async function getPublishedFormDefinitionByKey(formKey: string): Promise<Tables<"form_definitions"> | null> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("form_definitions")
+    .select("*")
+    .eq("form_key", formKey)
+    .eq("status", "published")
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+// --- Admin ---
+
+export async function listFormDefinitions(): Promise<Tables<"form_definitions">[]> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("form_definitions")
+    .select("*")
+    .order("updated_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getFormDefinitionById(id: string): Promise<Tables<"form_definitions"> | null> {
+  const db = createServerDbClient();
+  const { data, error } = await db.from("form_definitions").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export type FormDefinitionInputRow = Omit<TablesInsert<"form_definitions">, "id" | "created_at" | "updated_at" | "updated_by">;
+
+export async function createFormDefinition(input: FormDefinitionInputRow): Promise<Tables<"form_definitions">> {
+  const db = createServerDbClient();
+  const { data, error } = await db.from("form_definitions").insert(input).select("*").single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateFormDefinition(
+  id: string,
+  input: FormDefinitionInputRow,
+): Promise<Tables<"form_definitions">> {
+  const db = createServerDbClient();
+  const { data, error } = await db.from("form_definitions").update(input).eq("id", id).select("*").single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteFormDefinition(id: string): Promise<void> {
+  const db = createServerDbClient();
+  const { error } = await db.from("form_definitions").delete().eq("id", id);
+  if (error) throw error;
+}

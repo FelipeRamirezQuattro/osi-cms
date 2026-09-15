@@ -188,6 +188,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      form_definitions: {
+        Row: {
+          created_at: string;
+          fields: Json;
+          form_key: string;
+          id: string;
+          name: string;
+          notification_email: string | null;
+          status: string;
+          submit_label: string;
+          success_message: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          fields?: Json;
+          form_key: string;
+          id?: string;
+          name: string;
+          notification_email?: string | null;
+          status?: string;
+          submit_label?: string;
+          success_message?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          fields?: Json;
+          form_key?: string;
+          id?: string;
+          name?: string;
+          notification_email?: string | null;
+          status?: string;
+          submit_label?: string;
+          success_message?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
       industries: {
         Row: {
           created_at: string;
@@ -287,15 +329,32 @@ export type Database = {
         };
         Relationships: [];
       };
+      // Task 11 (CMS remediation): caption/credit/tags/decorative/
+      // filename/file_size/replaced_by/replaced_at are hand-added ahead
+      // of the migration's application (0026_media_assets_metadata.sql)
+      // — this file is normally regenerated via the Supabase MCP
+      // generate_typescript_types tool after a migration is *applied*
+      // (CLAUDE.md), but no implementer in this remediation plan may
+      // apply a migration (standing rule). Regenerate for real once the
+      // controller applies 0026 — this hand-edit should then be a no-op
+      // diff (or reveal a mismatch to fix).
       media_assets: {
         Row: {
           alt: string | null;
+          caption: string | null;
           created_at: string;
+          credit: string | null;
+          decorative: boolean;
+          file_size: number | null;
+          filename: string | null;
           folder: string | null;
           height: number | null;
           id: string;
           mime: string | null;
+          replaced_at: string | null;
+          replaced_by: string | null;
           source: string;
+          tags: string[];
           title: string | null;
           updated_at: string;
           url: string;
@@ -303,12 +362,20 @@ export type Database = {
         };
         Insert: {
           alt?: string | null;
+          caption?: string | null;
           created_at?: string;
+          credit?: string | null;
+          decorative?: boolean;
+          file_size?: number | null;
+          filename?: string | null;
           folder?: string | null;
           height?: number | null;
           id?: string;
           mime?: string | null;
+          replaced_at?: string | null;
+          replaced_by?: string | null;
           source?: string;
+          tags?: string[];
           title?: string | null;
           updated_at?: string;
           url: string;
@@ -316,18 +383,34 @@ export type Database = {
         };
         Update: {
           alt?: string | null;
+          caption?: string | null;
           created_at?: string;
+          credit?: string | null;
+          decorative?: boolean;
+          file_size?: number | null;
+          filename?: string | null;
           folder?: string | null;
           height?: number | null;
           id?: string;
           mime?: string | null;
+          replaced_at?: string | null;
+          replaced_by?: string | null;
           source?: string;
+          tags?: string[];
           title?: string | null;
           updated_at?: string;
           url?: string;
           width?: number | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "media_assets_replaced_by_fkey";
+            columns: ["replaced_by"];
+            isOneToOne: false;
+            referencedRelation: "media_assets";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       nav_items: {
         Row: {
@@ -1041,6 +1124,115 @@ export type Database = {
           },
         ];
       };
+      shared_section_blocks: {
+        Row: {
+          created_at: string;
+          data: Json;
+          id: string;
+          is_visible: boolean;
+          position: number;
+          section_id: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          data?: Json;
+          id?: string;
+          is_visible?: boolean;
+          position?: number;
+          section_id: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          id?: string;
+          is_visible?: boolean;
+          position?: number;
+          section_id?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "shared_section_blocks_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "shared_sections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      shared_section_publications: {
+        Row: {
+          key: string;
+          published_at: string;
+          section_id: string;
+          snapshot: Json;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          published_at?: string;
+          section_id: string;
+          snapshot: Json;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          published_at?: string;
+          section_id?: string;
+          snapshot?: Json;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "shared_section_publications_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: true;
+            referencedRelation: "shared_sections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      shared_sections: {
+        Row: {
+          created_at: string;
+          draft_version: number;
+          id: string;
+          key: string;
+          published_at: string | null;
+          status: string;
+          title: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          draft_version?: number;
+          id?: string;
+          key: string;
+          published_at?: string | null;
+          status?: string;
+          title: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          draft_version?: number;
+          id?: string;
+          key?: string;
+          published_at?: string | null;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
       site_settings: {
         Row: {
           address_lines: string[] | null;
@@ -1102,6 +1294,10 @@ export type Database = {
         Args: { p_product_id: string };
         Returns: undefined;
       };
+      delete_shared_section_atomic: {
+        Args: { p_section_id: string };
+        Returns: undefined;
+      };
       duplicate_page_atomic: {
         Args: { p_new_slug: string; p_page_id: string };
         Returns: string;
@@ -1111,6 +1307,10 @@ export type Database = {
       is_staff: { Args: never; Returns: boolean };
       publish_page_atomic: {
         Args: { p_expected_version: number; p_page_id: string };
+        Returns: undefined;
+      };
+      publish_shared_section_atomic: {
+        Args: { p_expected_version: number; p_section_id: string };
         Returns: undefined;
       };
       record_audit: {
@@ -1144,6 +1344,15 @@ export type Database = {
         };
         Returns: string;
       };
+      save_shared_section_draft_atomic: {
+        Args: {
+          p_blocks: Json;
+          p_expected_version: number;
+          p_section_id: string;
+          p_title: string;
+        };
+        Returns: number;
+      };
       swap_entity_position: {
         Args: { p_id_a: string; p_id_b: string; p_table: string };
         Returns: undefined;
@@ -1154,6 +1363,10 @@ export type Database = {
       };
       unpublish_page_atomic: {
         Args: { p_page_id: string };
+        Returns: undefined;
+      };
+      unpublish_shared_section_atomic: {
+        Args: { p_section_id: string };
         Returns: undefined;
       };
     };

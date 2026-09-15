@@ -14,6 +14,8 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 const NAV_ITEMS: { href: string; label: string; capability: Capability | null }[] = [
   { href: "/admin", label: "Dashboard", capability: null },
   { href: "/admin/pages", label: "Pages", capability: "edit_drafts" },
+  { href: "/admin/shared-sections", label: "Shared sections", capability: "edit_drafts" },
+  { href: "/admin/forms", label: "Forms", capability: "edit_drafts" },
   { href: "/admin/products", label: "Products", capability: "edit_drafts" },
   { href: "/admin/product-categories", label: "Product categories", capability: "edit_drafts" },
   { href: "/admin/news", label: "News", capability: "edit_drafts" },

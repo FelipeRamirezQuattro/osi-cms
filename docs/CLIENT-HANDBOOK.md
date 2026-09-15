@@ -53,6 +53,37 @@ Changing the **Slug** field changes the page's web address — do this
 carefully, since anything linking to the old address will break unless
 you also add a redirect (see **Redirects**, below).
 
+## Shared sections
+
+**Shared sections** are block sequences you build once and reuse across
+several pages — a footer call-to-action, say, that should look and read
+the same everywhere it appears. Build one here, then add a **Shared
+section** block to any page and give it that section's **key**.
+
+Editing works exactly like editing a page: **Save draft**, then
+**Publish** when you're happy with it — and here it matters even more,
+because publishing updates *every* page that references it at once.
+Nothing changes on the live site until you click Publish, so it's safe
+to make changes and preview them first. A shared section's **key** is
+set when you create it and can't be changed afterward, since every page
+referencing it depends on that key staying put.
+
+## Forms
+
+**Forms** lets you build a new form — a quote request, a newsletter
+signup, whatever you need — without asking a developer. Give it a name
+and a **form key**, add fields (name, email, phone, a dropdown, a
+consent checkbox — pick from the list), write the submit button label
+and the message shown after someone submits, and optionally a
+**Notification email** to be emailed for each new submission. Set
+**Status** to `published`, then add a **Form** block to any page using
+that same form key.
+
+Every submission — from any form, including the site's dedicated
+Contact form — lands in the same **Submissions** inbox (see below).
+The site's main contact form is managed separately, as its own
+**Contact form** block; you don't need to rebuild it here.
+
 ## Choosing images
 
 Wherever you see a **Choose image** button, it opens the media library.
@@ -114,18 +145,32 @@ shows a small ↗ mark so visitors know it's leaving the site.
 
 ## Media library
 
-**Media** is the full library of every image on the site — search it,
-upload new images (alt text required, same as above), or delete ones
-that are no longer used. Deleting an image that's still used somewhere
-will leave a broken image there, so double-check first.
+**Media** is the full library of every image (and PDF document) on the
+site. Search it, filter by folder or tag, upload new files, or delete
+ones no longer needed. Uploading a purely decorative image (a background
+texture, say) can be marked **Decorative** instead of typing a fake alt
+description — everything else still needs real alt text.
+
+You can edit an asset's title, alt text, caption/credit, folder, and tags
+at any time from its **Edit** link — no need to re-upload just to fix a
+typo or add a tag.
+
+Deleting an asset that's still used somewhere on the site is blocked —
+you'll see exactly where it's used (which page, product, or other
+record), with a link to each one. To delete it anyway, choose a
+replacement image from that same panel; every one of those uses is
+swapped to the replacement automatically, and the delete button then
+goes through.
 
 ## Submissions
 
-**Submissions** is the inbox for the contact form. New ones are marked
-**New**; open one to see the full message and mark it **Read** or
-**Archive** it. If email notifications have been set up, you'll also get
-an email for each new submission — but the inbox here is the reliable
-record either way.
+**Submissions** is the inbox for every form on the site — the main
+Contact form and any form you've built under **Forms**. New ones are
+marked **New**; open one to see the full message and mark it **Read** or
+**Archive** it. If email notifications have been set up (for the contact
+form, or for a specific form under **Forms**), you'll also get an email
+for each new submission — but the inbox here is the reliable record
+either way.
 
 ## Settings
 

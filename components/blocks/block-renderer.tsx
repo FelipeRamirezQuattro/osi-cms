@@ -6,12 +6,33 @@ function DevDiagnostic({ children }: { children: React.ReactNode }) {
   return <div className="bg-red-600 p-4 font-mono text-sm text-white">{children}</div>;
 }
 
+/** Structurally satisfied by both Tables<"page_blocks"> and Tables<"shared_section_blocks"> rows. */
+export type RenderableBlock = Pick<Tables<"page_blocks">, "id" | "type" | "data">;
+
+const EMPTY_VISITED_KEYS: ReadonlySet<string> = new Set();
+
 /**
- * Renders a page's blocks. An unknown type or data that fails its Zod
- * schema never crashes the page — silently skipped in production, a
+ * Renders a list of blocks — a page's or (recursively, via the
+ * `shared_section` reference block, see components/blocks/shared-section.tsx)
+ * a published shared section's. An unknown type or data that fails its
+ * Zod schema never crashes the page — silently skipped in production, a
  * loud diagnostic in development (see master prompt §6).
+ *
+ * `visitedSharedSectionKeys`/`sharedSectionDepth` (Task 10) exist purely
+ * to carry shared-section cycle/depth state through recursive calls to
+ * this same component; every ordinary block ignores both (ordinary
+ * Render components only destructure `{ data }`) — see
+ * lib/blocks/types.ts's BlockRenderExtras.
  */
-export function BlockRenderer({ blocks }: { blocks: Tables<"page_blocks">[] }) {
+export function BlockRenderer({
+  blocks,
+  visitedSharedSectionKeys = EMPTY_VISITED_KEYS,
+  sharedSectionDepth = 0,
+}: {
+  blocks: RenderableBlock[];
+  visitedSharedSectionKeys?: ReadonlySet<string>;
+  sharedSectionDepth?: number;
+}) {
   return (
     <>
       {blocks.map((block) => {
@@ -32,7 +53,14 @@ export function BlockRenderer({ blocks }: { blocks: Tables<"page_blocks">[] }) {
         }
 
         const Render = definition.Render;
-        return <Render key={block.id} data={parsed.data} />;
+        return (
+          <Render
+            key={block.id}
+            data={parsed.data}
+            visitedSharedSectionKeys={visitedSharedSectionKeys}
+            sharedSectionDepth={sharedSectionDepth}
+          />
+        );
       })}
     </>
   );

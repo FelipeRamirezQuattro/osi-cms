@@ -31,6 +31,8 @@ import { columnsBlock } from "@/components/blocks/columns";
 import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 import { buttonGroupBlock } from "@/components/blocks/button-group";
 import { resourceListBlock } from "@/components/blocks/resource-list";
+import { sharedSectionBlock } from "@/components/blocks/shared-section";
+import { formBlock } from "@/components/blocks/form";
 
 /**
  * The block registry (see CLAUDE.md / master prompt §6). Adding a block
@@ -69,6 +71,8 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   quote_testimonial: quoteTestimonialBlock,
   button_group: buttonGroupBlock,
   resource_list: resourceListBlock,
+  shared_section: sharedSectionBlock,
+  form: formBlock,
 };
 
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {

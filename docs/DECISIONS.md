@@ -465,3 +465,95 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   mainly invite inconsistent visual hacks (arbitrary-height blank bands,
   ad hoc rule styling) rather than solve a real gap — confirmed absent
   from the registry both before and after this task.
+- **No hosted video support added to the media library** (Task 11, CMS
+  remediation plan). The brief gates it behind "only after defining
+  file-size, bandwidth, and provider limits" — nobody has defined those
+  (max upload size against Supabase Storage's own limits, whether
+  Vercel's bandwidth/edge-caching story is even suitable for serving
+  video, whether a real provider like Mux/Cloudflare Stream should be
+  used instead of raw Storage objects). Building upload support ahead of
+  that decision would lock in a shape (plain Storage object, like images)
+  that's likely wrong once those limits actually get defined. `lib/blocks/
+  admin-fields.ts`'s `FieldSpec` union does reserve `accept: "video"` at
+  the type level (so a future field can declare the requirement), but
+  nothing implements it — `MediaBrowser`/`MediaPicker` only handle
+  `"image"` and `"file"` (PDF) today. External video stays embed-only via
+  the existing `embed`/`video_embed` blocks, unchanged by this task.
+- **Media asset "documents" means PDF only, for now** (Task 11). The one
+  real document use case in this codebase is `resources.file_url`
+  (brochures/datasheets, admin-entered as a plain URL — see
+  `lib/admin/entity-config.ts`), and CLAUDE.md's content-gaps note says no
+  legacy PDF/brochure/datasheet URLs exist anywhere in the scrape, so
+  there's no back-compat surface pushing a wider allowlist. Widening
+  `ALLOWED_DOCUMENT_MIME_TYPES`/`ALLOWED_DOCUMENT_EXTENSIONS`
+  (`lib/validation/media.ts`) is a one-line change if a real second
+  document type shows up. SVG was deliberately left off the *image*
+  allowlist for the same upload path — an uploaded SVG can carry a
+  `<script>`, and nothing here sanitizes SVG markup before serving it
+  back as `image/svg+xml`.
+- **The media library's usage search is a live scan, not a maintained
+  tracking table** (Task 11, controller ruling #3). `findMediaAssetUsages`
+  (`lib/data/media.ts`) fetches every `page_blocks` row and checks its
+  jsonb `data` for the URL via `JSON.stringify(...).includes(url)`,
+  because the URL can live under any key depending on block type — there's
+  no single column path to filter on server-side, and PostgREST has no
+  generic "find this string anywhere in this jsonb column" filter that
+  would work across ~30 differently-shaped block schemas. Direct columns
+  (`products.hero_image_url`/`diagram_image_url`, `product_stages.image_url`,
+  `news_posts.cover_image_url`, `directory_contacts.photo_url`,
+  `resources.thumbnail_url`, `pages.og_image_url`,
+  `site_settings.default_og_image`) are checked with a plain `eq`. This is
+  an MVP-scale search appropriate to the current handful of pages/blocks,
+  not an indexed usage-tracking table kept in sync on every write —
+  revisit if the page/block count grows enough to make the full-table scan
+  slow.
+- **Reusable sections have no revision history/restore** (Task 10, CMS
+  remediation plan). Pages' `page_revisions` + restore exists because a
+  page's blocks *are* the whole page; a shared section is a small
+  reusable fragment referenced by key, and the task's acceptance
+  criterion ("updating a published shared section updates all references
+  only through its explicit Publish action") doesn't need a revision
+  browser to satisfy. Everything else about the draft/publish model
+  (`shared_sections`/`shared_section_blocks` draft tables,
+  `shared_section_publications` snapshot table, atomic
+  save/publish/unpublish/delete RPCs gated by `has_capability(...)`,
+  `record_audit(...)` on every mutation) mirrors pages' 0017 model
+  exactly. Add revisions later the same way if editors ask for undo.
+- **A shared section's `key` is immutable after creation** (Task 10). Set
+  once via `createSharedSectionAction`; `save_shared_section_draft_atomic`
+  only ever updates `title`/blocks. Every `shared_section` reference block
+  on any page stores that key, and — unlike a page's slug — there's no
+  `redirects`-style mechanism for a stale shared-section reference, so
+  letting it drift would silently break every page pointing at it.
+- **`form_definitions` uses the plain content-table status pattern, not a
+  second atomic draft/publish system** (Task 10). Unlike pages, a form
+  has no SEO/preview surface that would leak from an in-place edit before
+  a deliberate "publish" moment — the risk the pages/shared-sections
+  atomic model exists to close. `saveFormDefinitionAction` still requires
+  the `publish` capability for any draft↔published transition via the
+  existing `requirePublishCapabilityForStatusChange` (same helper
+  products/entities use), so an editor still can't be the one who makes a
+  new form live.
+- **`contact_form` was left as its own hardcoded block**, not
+  re-expressed as a `form_definitions` row (Task 10 controller ruling #6
+  explicitly left this as an implementer's choice). Rewriting it onto the
+  generic engine risked changing the live contact form's admin fields or
+  public behavior for no functional gain — the ruling only required a
+  *working compatibility preset*, which the untouched block already is.
+  `lib/actions/submit-contact-form.ts` now calls the same shared
+  honeypot/rate-limit/insert/notify pipeline
+  (`lib/actions/form-submission-pipeline.ts`) the generic engine's
+  `submitFormAction` uses, so the two don't duplicate that logic even
+  though they stay separate at the block/schema level.
+- **No submissions export/retention feature was built** (Task 10). The
+  task list's "and export/retention decisions" bullet is noted here as a
+  flagged gap, not resolved: `form_submissions` still has no CSV export
+  and no retention/deletion policy (the existing `admins delete
+  form_submissions` RLS policy from Task 4 is defense-in-depth against a
+  direct API call, not a feature backed by any admin UI action). No
+  controller ruling for this task called for building one, and the
+  existing `SubmissionsInbox` (`app/admin/(dashboard)/submissions/
+  submissions-inbox.tsx`) already works unmodified for every form key —
+  it renders `form_key` and the full jsonb `payload` generically, so it
+  needed no changes to support the new generic engine's submissions
+  alongside the contact form's.
