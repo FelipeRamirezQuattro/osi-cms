@@ -13,6 +13,7 @@ import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
 import { columnsBlock } from "@/components/blocks/columns";
+import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -293,6 +294,17 @@ export default function StyleguidePage() {
             { type: "image", imageUrl: "https://www.odessaseparator.com/images/esp-chem-screen.jpg", imageAlt: "ESP Chem Screen" },
             { type: "cta", ctaLabel: "Contact us", ctaHref: "/contact" },
           ],
+        })}
+      />
+
+      <Section bg="navy">
+        <Heading>New blocks — Quote / testimonial</Heading>
+      </Section>
+      <quoteTestimonialBlock.Render
+        data={quoteTestimonialBlock.schema.parse({
+          quote: "Odessa Separator's equipment has never let us down in twenty years of field service.",
+          attributionName: "Jane Doe",
+          roleCompany: "Field Operations Manager, Example Energy",
         })}
       />
 

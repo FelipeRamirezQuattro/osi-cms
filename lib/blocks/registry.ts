@@ -28,6 +28,7 @@ import { specTableBlock } from "@/components/blocks/spec-table";
 import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
 import { columnsBlock } from "@/components/blocks/columns";
+import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 
 /**
  * The block registry (see CLAUDE.md / master prompt §6). Adding a block
@@ -63,6 +64,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   image: imageBlock,
   embed: embedBlock,
   columns: columnsBlock,
+  quote_testimonial: quoteTestimonialBlock,
 };
 
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {
