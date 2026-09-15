@@ -15,11 +15,20 @@ import { embedBlock } from "@/components/blocks/embed";
 import { columnsBlock } from "@/components/blocks/columns";
 import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 import { buttonGroupBlock } from "@/components/blocks/button-group";
+import { resourceListBlock } from "@/components/blocks/resource-list";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
   robots: { index: false, follow: false },
 };
+
+// The resource_list preview below calls lib/data/resources.ts, which
+// (like every lib/data/* repository) goes through
+// createServerDbClient() — that always touches cookies() (see
+// CLAUDE.md's "Every route under app/(site)/..." note), so this route
+// needs the same force-dynamic escape hatch or Next's static prerender
+// fails the build the moment that call runs.
+export const dynamic = "force-dynamic";
 
 const COLORS = [
   ["osi-navy-900", "#001B33"],
@@ -320,6 +329,17 @@ export default function StyleguidePage() {
           ],
           alignment: "center",
         })}
+      />
+
+      <Section bg="cream">
+        <Heading>New blocks — Resource list</Heading>
+        <p className="mb-6 max-w-xl text-xs text-osi-slate-400">
+          Real data fetch against `resources` — renders its genuine empty state below since that table
+          has 0 published rows in this environment (see CLAUDE.md&rsquo;s Known content gaps).
+        </p>
+      </Section>
+      <resourceListBlock.Render
+        data={resourceListBlock.schema.parse({ title: "Resources" })}
       />
 
       <Section bg="navy">
