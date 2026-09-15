@@ -1,6 +1,8 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5";
   };
@@ -155,39 +157,6 @@ export type Database = {
           },
         ];
       };
-      form_submissions: {
-        Row: {
-          created_at: string;
-          form_key: string;
-          id: string;
-          ip_hash: string | null;
-          page_slug: string | null;
-          payload: Json;
-          status: string;
-          user_agent: string | null;
-        };
-        Insert: {
-          created_at?: string;
-          form_key: string;
-          id?: string;
-          ip_hash?: string | null;
-          page_slug?: string | null;
-          payload: Json;
-          status?: string;
-          user_agent?: string | null;
-        };
-        Update: {
-          created_at?: string;
-          form_key?: string;
-          id?: string;
-          ip_hash?: string | null;
-          page_slug?: string | null;
-          payload?: Json;
-          status?: string;
-          user_agent?: string | null;
-        };
-        Relationships: [];
-      };
       form_definitions: {
         Row: {
           created_at: string;
@@ -227,6 +196,39 @@ export type Database = {
           success_message?: string;
           updated_at?: string;
           updated_by?: string | null;
+        };
+        Relationships: [];
+      };
+      form_submissions: {
+        Row: {
+          created_at: string;
+          form_key: string;
+          id: string;
+          ip_hash: string | null;
+          page_slug: string | null;
+          payload: Json;
+          status: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          form_key: string;
+          id?: string;
+          ip_hash?: string | null;
+          page_slug?: string | null;
+          payload: Json;
+          status?: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          form_key?: string;
+          id?: string;
+          ip_hash?: string | null;
+          page_slug?: string | null;
+          payload?: Json;
+          status?: string;
+          user_agent?: string | null;
         };
         Relationships: [];
       };
@@ -329,15 +331,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      // Task 11 (CMS remediation): caption/credit/tags/decorative/
-      // filename/file_size/replaced_by/replaced_at are hand-added ahead
-      // of the migration's application (0026_media_assets_metadata.sql)
-      // — this file is normally regenerated via the Supabase MCP
-      // generate_typescript_types tool after a migration is *applied*
-      // (CLAUDE.md), but no implementer in this remediation plan may
-      // apply a migration (standing rule). Regenerate for real once the
-      // controller applies 0026 — this hand-edit should then be a no-op
-      // diff (or reveal a mismatch to fix).
       media_assets: {
         Row: {
           alt: string | null;
@@ -1361,10 +1354,7 @@ export type Database = {
         Args: { p_id_a: string; p_id_b: string };
         Returns: undefined;
       };
-      unpublish_page_atomic: {
-        Args: { p_page_id: string };
-        Returns: undefined;
-      };
+      unpublish_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
       unpublish_shared_section_atomic: {
         Args: { p_section_id: string };
         Returns: undefined;
