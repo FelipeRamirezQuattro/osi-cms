@@ -1,6 +1,29 @@
 import Link from "next/link";
 import { listAllPages } from "@/lib/data/pages";
 import { countNewSubmissions } from "@/lib/data/forms";
+import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import type { Tables } from "@/lib/db/database.types";
+
+type PageRow = Tables<"pages">;
+
+const columns: AdminDataTableColumn<PageRow>[] = [
+  {
+    key: "title",
+    header: "Title",
+    render: (page) => (
+      <Link href={`/admin/pages/${page.id}`} className="hover:underline">
+        {page.title}
+      </Link>
+    ),
+  },
+  { key: "slug", header: "Slug", render: (page) => <span className="opacity-70">/{page.slug}</span> },
+  { key: "status", header: "Status", render: (page) => <span className="capitalize opacity-70">{page.status}</span> },
+  {
+    key: "updated_at",
+    header: "Updated",
+    render: (page) => <span className="opacity-70">{new Date(page.updated_at).toLocaleString()}</span>,
+  },
+];
 
 export default async function AdminDashboardPage() {
   const [pages, newSubmissions] = await Promise.all([listAllPages(), countNewSubmissions()]);
@@ -28,30 +51,13 @@ export default async function AdminDashboardPage() {
       </div>
 
       <h2 className="mb-4 font-display text-lg tracking-wide-display uppercase">Recently edited pages</h2>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-osi-sand-300 text-left opacity-60">
-            <th className="py-2 font-normal">Title</th>
-            <th className="font-normal">Slug</th>
-            <th className="font-normal">Status</th>
-            <th className="font-normal">Updated</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recentPages.map((p) => (
-            <tr key={p.id} className="border-b border-osi-sand-300/50">
-              <td className="py-2">
-                <Link href={`/admin/pages/${p.id}`} className="hover:underline">
-                  {p.title}
-                </Link>
-              </td>
-              <td className="opacity-70">/{p.slug}</td>
-              <td className="capitalize opacity-70">{p.status}</td>
-              <td className="opacity-70">{new Date(p.updated_at).toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <AdminDataTable
+        columns={columns}
+        rows={recentPages}
+        getRowKey={(page) => page.id}
+        variant="plain"
+        emptyMessage="No pages yet."
+      />
     </div>
   );
 }

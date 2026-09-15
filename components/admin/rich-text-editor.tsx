@@ -3,6 +3,7 @@
 import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Restricted to the reader in components/blocks/rich-text.tsx: paragraph,
 // heading (h2/h3), bulletList, orderedList, listItem, text with
@@ -95,11 +96,21 @@ export function RichTextEditor({
     },
   });
 
+  const { prompt, dialog } = useConfirmDialog();
+
   if (!editor) return null;
 
-  function setLink() {
+  async function setLink() {
     const previous = editor!.getAttributes("link").href as string | undefined;
-    const url = window.prompt("Link URL", previous ?? "https://");
+    // Empty string is a valid, non-cancelled answer here — it removes the
+    // link, matching window.prompt's original "OK with a blank field"
+    // behavior — so only `null` (Cancel/Escape) is treated as "do nothing".
+    const url = await prompt({
+      title: "Link",
+      label: "Link URL",
+      defaultValue: previous ?? "https://",
+      placeholder: "https://",
+    });
     if (url === null) return;
     if (url === "") {
       editor!.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -158,6 +169,7 @@ export function RichTextEditor({
         </ToolbarButton>
       </div>
       <EditorContent editor={editor} />
+      {dialog}
     </div>
   );
 }

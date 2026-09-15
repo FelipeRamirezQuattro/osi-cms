@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import {
@@ -25,6 +24,10 @@ import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import type { SharedSectionWithBlocks } from "@/lib/data/shared-sections";
+import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
+import { StatusBadge } from "@/components/admin/ui/status-badge";
+import { AsyncMessage, type AsyncMessageState } from "@/components/admin/ui/async-message";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Same reasoning as page-editor.tsx: `blocks` mixes fixed shape (type,
 // is_visible) with a per-block-type `data` shape no static type covers.
@@ -50,6 +53,7 @@ export function SharedSectionEditor({
     null,
   );
   const [addType, setAddType] = useState(palette[0]?.type ?? "");
+  const { confirm, dialog } = useConfirmDialog();
 
   const paletteByType = Object.fromEntries(palette.map((p) => [p.type, p]));
 
@@ -118,8 +122,14 @@ export function SharedSectionEditor({
     });
   }
 
-  function onDelete() {
-    if (!window.confirm(`Delete "${section.title}"? This cannot be undone.`)) return;
+  async function onDelete() {
+    const ok = await confirm({
+      title: `Delete "${section.title}"?`,
+      message: "This cannot be undone.",
+      tone: "danger",
+      confirmLabel: "Delete",
+    });
+    if (!ok) return;
     startSaving(async () => {
       await deleteSharedSectionAction(section.id);
     });
@@ -131,64 +141,55 @@ export function SharedSectionEditor({
     append({ type: entry.type, is_visible: true, data: entry.defaults });
   }
 
+  const bannerMessage: AsyncMessageState = banner ? { kind: banner.kind, text: banner.message } : null;
+
   return (
     <FormProvider {...form}>
       <div className="space-y-6 pb-24">
-        <div className="flex items-center justify-between">
-          <div>
-            <Link href="/admin/shared-sections" className="text-xs opacity-60 hover:underline">
-              ← Shared sections
-            </Link>
-            <h1 className="font-display text-lg tracking-wide-display uppercase">{section.title}</h1>
-            <p className="text-xs opacity-50">key: {section.key}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={
-                status === "published"
-                  ? "rounded bg-green-100 px-2 py-0.5 text-xs text-green-800"
-                  : "rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs opacity-70"
-              }
-            >
-              {status}
-            </span>
-            <button
-              type="button"
-              onClick={onSaveDraft}
-              disabled={isSaving}
-              className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
-            >
-              {isSaving ? "Saving…" : "Save draft"}
-            </button>
-            {canPublish &&
-              (status === "published" ? (
-                <button
-                  type="button"
-                  onClick={onUnpublish}
-                  disabled={isPublishing}
-                  className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-                >
-                  Unpublish
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={onPublish}
-                  disabled={isPublishing}
-                  className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
-                >
-                  {isPublishing ? "Publishing…" : "Publish"}
-                </button>
-              ))}
-          </div>
-        </div>
+        <AdminPageHeader
+          backHref="/admin/shared-sections"
+          backLabel="Shared sections"
+          title={section.title}
+          subtitle={`key: ${section.key}`}
+          actions={
+            <>
+              <StatusBadge label={status} />
+              <button
+                type="button"
+                onClick={onSaveDraft}
+                disabled={isSaving}
+                className="rounded border border-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label disabled:opacity-50"
+              >
+                {isSaving ? "Saving…" : "Save draft"}
+              </button>
+              {canPublish &&
+                (status === "published" ? (
+                  <button
+                    type="button"
+                    onClick={onUnpublish}
+                    disabled={isPublishing}
+                    className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
+                  >
+                    Unpublish
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onPublish}
+                    disabled={isPublishing}
+                    className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
+                  >
+                    {isPublishing ? "Publishing…" : "Publish"}
+                  </button>
+                ))}
+            </>
+          }
+        />
 
-        {banner && (
-          <div className="flex items-center gap-3">
-            <p className={banner.kind === "error" ? "text-sm text-red-600" : "text-sm text-green-700"}>
-              {banner.message}
-            </p>
-            {banner.conflict && (
+        <AsyncMessage
+          message={bannerMessage}
+          action={
+            banner?.conflict && (
               <button
                 type="button"
                 onClick={() => window.location.reload()}
@@ -196,9 +197,9 @@ export function SharedSectionEditor({
               >
                 Reload page
               </button>
-            )}
-          </div>
-        )}
+            )
+          }
+        />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="space-y-4">
@@ -281,6 +282,7 @@ export function SharedSectionEditor({
           </aside>
         </div>
       </div>
+      {dialog}
     </FormProvider>
   );
 }

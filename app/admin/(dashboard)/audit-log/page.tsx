@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireCapability } from "@/lib/auth";
 import { listAuditFiltersAction, listAuditLogAction } from "@/lib/actions/audit";
-import type { AuditLogFilters } from "@/lib/data/audit";
+import type { AuditLogEntry, AuditLogFilters } from "@/lib/data/audit";
+import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -22,6 +24,35 @@ function DiffPreview({ diff }: { diff: unknown }) {
     </code>
   );
 }
+
+const columns: AdminDataTableColumn<AuditLogEntry>[] = [
+  {
+    key: "created_at",
+    header: "Date",
+    cellClassName: "whitespace-nowrap text-xs opacity-70",
+    render: (entry) => new Date(entry.created_at).toLocaleString(),
+  },
+  {
+    key: "actor",
+    header: "Actor",
+    render: (entry) => entry.actorEmail ?? <span className="opacity-40">Unknown</span>,
+  },
+  {
+    key: "action",
+    header: "Action",
+    render: (entry) => (
+      <span className="rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs uppercase tracking-wide-label">{entry.action}</span>
+    ),
+  },
+  { key: "entity", header: "Entity", render: (entry) => entry.entity },
+  {
+    key: "entity_id",
+    header: "Entity ID",
+    cellClassName: "font-mono text-xs opacity-60",
+    render: (entry) => entry.entity_id ?? "—",
+  },
+  { key: "diff", header: "Diff", render: (entry) => <DiffPreview diff={entry.diff} /> },
+];
 
 export default async function AuditLogPage({ searchParams }: PageProps<"/admin/audit-log">) {
   await requireCapability("view_audit");
@@ -44,10 +75,10 @@ export default async function AuditLogPage({ searchParams }: PageProps<"/admin/a
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-lg tracking-wide-display uppercase">Audit log</h1>
-        <p className="text-xs opacity-50">Showing the {entries.length} most recent matching entries</p>
-      </div>
+      <AdminPageHeader
+        title="Audit log"
+        actions={<p className="text-xs opacity-50">Showing the {entries.length} most recent matching entries</p>}
+      />
 
       <form
         method="get"
@@ -111,43 +142,14 @@ export default async function AuditLogPage({ searchParams }: PageProps<"/admin/a
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded border border-osi-sand-300 bg-osi-white">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-osi-cream-100 text-xs uppercase tracking-wide-label opacity-70">
-            <tr>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Actor</th>
-              <th className="px-4 py-2">Action</th>
-              <th className="px-4 py-2">Entity</th>
-              <th className="px-4 py-2">Entity ID</th>
-              <th className="px-4 py-2">Diff</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => (
-              <tr key={entry.id} className="border-t border-osi-sand-300 align-top">
-                <td className="whitespace-nowrap px-4 py-2 text-xs opacity-70">{new Date(entry.created_at).toLocaleString()}</td>
-                <td className="px-4 py-2">{entry.actorEmail ?? <span className="opacity-40">Unknown</span>}</td>
-                <td className="px-4 py-2">
-                  <span className="rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs uppercase tracking-wide-label">{entry.action}</span>
-                </td>
-                <td className="px-4 py-2">{entry.entity}</td>
-                <td className="px-4 py-2 font-mono text-xs opacity-60">{entry.entity_id ?? "—"}</td>
-                <td className="px-4 py-2">
-                  <DiffPreview diff={entry.diff} />
-                </td>
-              </tr>
-            ))}
-            {entries.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-6 text-center opacity-50">
-                  No audit entries match these filters.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AdminDataTable
+        columns={columns}
+        rows={entries}
+        getRowKey={(entry) => entry.id}
+        overflow="auto"
+        rowClassName="align-top"
+        emptyMessage="No audit entries match these filters."
+      />
     </div>
   );
 }

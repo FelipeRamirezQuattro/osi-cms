@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { inviteUserAction, setUserActiveAction, setUserRoleAction } from "@/lib/actions/users";
 import type { AdminUserRow } from "@/lib/data/admin-users";
+import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { StatusBadge } from "@/components/admin/ui/status-badge";
+import { RowActionButton } from "@/components/admin/ui/row-actions";
 
 export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
   const router = useRouter();
@@ -41,6 +44,41 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
       router.refresh();
     });
   }
+
+  const columns: AdminDataTableColumn<AdminUserRow>[] = [
+    { key: "name", header: "Name", render: (user) => user.full_name ?? "—" },
+    { key: "email", header: "Email", cellClassName: "opacity-70", render: (user) => user.email },
+    {
+      key: "role",
+      header: "Role",
+      render: (user) => (
+        <select
+          value={user.role}
+          onChange={(e) => changeRole(user, e.target.value as "admin" | "editor")}
+          disabled={isPending}
+          className="rounded border border-osi-sand-300 px-2 py-1 text-xs"
+        >
+          <option value="editor">editor</option>
+          <option value="admin">admin</option>
+        </select>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (user) => <StatusBadge label={user.is_active ? "active" : "disabled"} />,
+    },
+    {
+      key: "actions",
+      header: "",
+      cellClassName: "text-right",
+      render: (user) => (
+        <RowActionButton onClick={() => toggleActive(user)} disabled={isPending}>
+          {user.is_active ? "Disable" : "Enable"}
+        </RowActionButton>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -86,59 +124,7 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
         {error && <span className="text-sm text-red-600">{error}</span>}
       </form>
 
-      <div className="overflow-hidden rounded border border-osi-sand-300 bg-osi-white">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-osi-cream-100 text-xs uppercase tracking-wide-label opacity-70">
-            <tr>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Role</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.user_id} className="border-t border-osi-sand-300">
-                <td className="px-4 py-2">{user.full_name ?? "—"}</td>
-                <td className="px-4 py-2 opacity-70">{user.email}</td>
-                <td className="px-4 py-2">
-                  <select
-                    value={user.role}
-                    onChange={(e) => changeRole(user, e.target.value as "admin" | "editor")}
-                    disabled={isPending}
-                    className="rounded border border-osi-sand-300 px-2 py-1 text-xs"
-                  >
-                    <option value="editor">editor</option>
-                    <option value="admin">admin</option>
-                  </select>
-                </td>
-                <td className="px-4 py-2">
-                  <span
-                    className={
-                      user.is_active
-                        ? "rounded bg-green-100 px-2 py-0.5 text-xs text-green-800"
-                        : "rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs opacity-70"
-                    }
-                  >
-                    {user.is_active ? "active" : "disabled"}
-                  </span>
-                </td>
-                <td className="px-4 py-2 text-right">
-                  <button
-                    type="button"
-                    onClick={() => toggleActive(user)}
-                    disabled={isPending}
-                    className="text-xs hover:underline"
-                  >
-                    {user.is_active ? "Disable" : "Enable"}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AdminDataTable columns={columns} rows={users} getRowKey={(user) => user.user_id} />
     </div>
   );
 }

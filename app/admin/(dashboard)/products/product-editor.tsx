@@ -10,6 +10,9 @@ import { PRODUCT_DEFAULTS, PRODUCT_FIELDS } from "@/lib/admin/product-fields";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { ProductAdminDetail } from "@/lib/data/products";
+import { FormCard, SubmitButton } from "@/components/admin/ui/form-card";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Same reasoning as page-editor.tsx / entity-editor.tsx.
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -27,6 +30,7 @@ export function ProductEditor({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
 
   const form = useForm<any>({
     defaultValues: product
@@ -51,9 +55,15 @@ export function ProductEditor({
     });
   }
 
-  function onDelete() {
+  async function onDelete() {
     if (!product) return;
-    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) return;
+    const ok = await confirm({
+      title: `Delete "${product.name}"?`,
+      message: "This cannot be undone.",
+      tone: "danger",
+      confirmLabel: "Delete",
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteProductAction(product.id);
     });
@@ -62,37 +72,20 @@ export function ProductEditor({
   return (
     <FormProvider {...form}>
       <RelationOptionsProvider options={relationOptions}>
-        <div className="max-w-3xl space-y-6 pb-16">
-          <div className="flex items-center justify-between">
-            <h1 className="font-display text-lg tracking-wide-display uppercase">
-              {product ? `Edit ${product.name}` : "New product"}
-            </h1>
-            {product && canDelete && (
-              <button type="button" onClick={onDelete} className="text-xs text-red-600 hover:underline">
-                Delete
-              </button>
-            )}
-          </div>
+        <FormCard
+          title={product ? `Edit ${product.name}` : "New product"}
+          onDelete={product && canDelete ? onDelete : undefined}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          {PRODUCT_FIELDS.map((field) => (
+            <FieldRenderer key={field.key} spec={field} name={field.key} />
+          ))}
 
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 rounded border border-osi-sand-300 bg-osi-white p-5"
-          >
-            {PRODUCT_FIELDS.map((field) => (
-              <FieldRenderer key={field.key} spec={field} name={field.key} />
-            ))}
+          <AsyncMessage message={error ? { kind: "error", text: error } : null} />
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-            >
-              {isPending ? "Saving…" : "Save"}
-            </button>
-          </form>
-        </div>
+          <SubmitButton pending={isPending} />
+        </FormCard>
+        {dialog}
       </RelationOptionsProvider>
     </FormProvider>
   );

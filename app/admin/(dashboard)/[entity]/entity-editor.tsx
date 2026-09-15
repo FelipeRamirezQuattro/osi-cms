@@ -10,6 +10,9 @@ import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { EntityConfig, EntityKey } from "@/lib/admin/entity-config";
 import type { EntityRow } from "@/lib/data/admin-entities";
+import { FormCard, SubmitButton } from "@/components/admin/ui/form-card";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Same reasoning as field-renderer.tsx / page-editor.tsx: the form shape
 // is a different flat object per entity, described at runtime by
@@ -33,6 +36,7 @@ export function EntityEditor({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
 
   const form = useForm<any>({
     defaultValues: row ?? config.defaults,
@@ -51,9 +55,15 @@ export function EntityEditor({
     });
   }
 
-  function onDelete() {
+  async function onDelete() {
     if (!row) return;
-    if (!window.confirm(`Delete this ${config.label.toLowerCase()}? This cannot be undone.`)) return;
+    const ok = await confirm({
+      title: `Delete this ${config.label.toLowerCase()}?`,
+      message: "This cannot be undone.",
+      tone: "danger",
+      confirmLabel: "Delete",
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteEntityAction(entity, row.id);
     });
@@ -62,34 +72,21 @@ export function EntityEditor({
   return (
     <FormProvider {...form}>
       <RelationOptionsProvider options={relationOptions}>
-        <div className="max-w-2xl space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="font-display text-lg tracking-wide-display uppercase">
-              {row ? `Edit ${config.label.toLowerCase()}` : `New ${config.label.toLowerCase()}`}
-            </h1>
-            {row && canDelete && (
-              <button type="button" onClick={onDelete} className="text-xs text-red-600 hover:underline">
-                Delete
-              </button>
-            )}
-          </div>
+        <FormCard
+          title={row ? `Edit ${config.label.toLowerCase()}` : `New ${config.label.toLowerCase()}`}
+          onDelete={row && canDelete ? onDelete : undefined}
+          maxWidth="max-w-2xl"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          {config.fields.map((field) => (
+            <FieldRenderer key={field.key} spec={field} name={field.key} />
+          ))}
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 rounded border border-osi-sand-300 bg-osi-white p-5">
-            {config.fields.map((field) => (
-              <FieldRenderer key={field.key} spec={field} name={field.key} />
-            ))}
+          <AsyncMessage message={error ? { kind: "error", text: error } : null} />
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-            >
-              {isPending ? "Saving…" : "Save"}
-            </button>
-          </form>
-        </div>
+          <SubmitButton pending={isPending} />
+        </FormCard>
+        {dialog}
       </RelationOptionsProvider>
     </FormProvider>
   );

@@ -9,6 +9,7 @@ import {
   updateNavItemAction,
 } from "@/lib/actions/navigation";
 import type { Tables } from "@/lib/db/database.types";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 type NavItem = Tables<"nav_items">;
 
@@ -21,6 +22,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
   const [isPending, startTransition] = useTransition();
   const [addingUnder, setAddingUnder] = useState<string | null | undefined>(undefined);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
 
   const topLevel = items.filter((i) => !i.parent_id);
   const childrenOf = (parentId: string) => items.filter((i) => i.parent_id === parentId);
@@ -36,8 +38,9 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
     });
   }
 
-  function remove(id: string) {
-    if (!window.confirm("Delete this nav item?")) return;
+  async function remove(id: string) {
+    const ok = await confirm({ title: "Delete this nav item?", tone: "danger", confirmLabel: "Delete" });
+    if (!ok) return;
     startTransition(async () => {
       await deleteNavItemAction(id);
       refresh();
@@ -173,6 +176,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
           + Add top-level item
         </button>
       )}
+      {dialog}
     </div>
   );
 }

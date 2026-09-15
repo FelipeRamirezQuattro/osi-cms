@@ -572,3 +572,31 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   edge case (a form's fields rarely change once submissions exist).
   Revisit if a form with meaningful submission volume needs its fields
   edited.
+- **No standalone `Pagination` primitive was built (Task 12).** The task
+  brief listed one among the "as time allows" primitives, but none of the
+  seven admin list screens consolidated onto `AdminDataTable` actually
+  paginate today (`MediaBrowser`'s Prev/Next, the only paginated admin UI,
+  is its own Task 11 component with server-driven offset state that
+  doesn't map onto a generic reusable control without a real second
+  caller to design against). Building a presentational-only pagination
+  component with no caller — and per this plan's own testing bar, no real
+  caller to write a meaningful behavior test against either — was
+  deprioritized under the time budget in favor of the ConfirmDialog
+  accessibility fix and the table/editor-shell consolidation the
+  acceptance criterion actually requires. Revisit when an admin list grows
+  large enough to need paging.
+- **`AdminDataTable` gained a `variant="plain"` mode for the dashboard's
+  "recently edited pages" table (Task 12).** That table never had the
+  bordered-box/cream-header look every other admin list uses — consolidating
+  it onto the same shared component while preserving its existing, simpler
+  look (thin bottom-border header, no wrapping box) avoided an unrequested
+  visual change to a screen the task's acceptance criterion didn't ask to
+  redesign.
+- **Verified, not just assumed, that Task 11 already fixed the "render-time
+  setState in the standalone media library" item on the Task 12 brief
+  (`app/admin/(dashboard)/media/media-library.tsx` and
+  `components/admin/media/media-browser.tsx`).** Every `setState` call in
+  both files runs inside an event handler, a `useEffect`, a
+  `useTransition` callback, or `useActionState`'s reducer — none during
+  the render pass itself. No fix was needed; this is recorded so the
+  brief's bullet isn't mistaken for still-open in a future pass.

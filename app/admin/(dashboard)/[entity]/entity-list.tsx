@@ -8,6 +8,11 @@ import { deleteEntityAction, moveEntityAction } from "@/lib/actions/entities";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { EntityRow } from "@/lib/data/admin-entities";
+import { AdminPageHeader, AdminNewLinkButton } from "@/components/admin/ui/admin-page-header";
+import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { StatusBadge } from "@/components/admin/ui/status-badge";
+import { ReorderButtons, RowActionButton } from "@/components/admin/ui/row-actions";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 export function EntityList({
   entity,
@@ -23,6 +28,7 @@ export function EntityList({
   const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { confirm, dialog } = useConfirmDialog();
 
   function move(id: string, direction: "up" | "down") {
     startTransition(async () => {
@@ -31,8 +37,14 @@ export function EntityList({
     });
   }
 
-  function remove(row: EntityRow) {
-    if (!window.confirm(`Delete this ${config.label.toLowerCase()}? This cannot be undone.`)) return;
+  async function remove(row: EntityRow) {
+    const ok = await confirm({
+      title: `Delete this ${config.label.toLowerCase()}?`,
+      message: "This cannot be undone.",
+      tone: "danger",
+      confirmLabel: "Delete",
+    });
+    if (!ok) return;
     startTransition(async () => {
       // A successful delete redirects server-side and never resolves this
       // promise with a value — only the error path (e.g. the
@@ -44,110 +56,72 @@ export function EntityList({
     });
   }
 
+  const columns: AdminDataTableColumn<EntityRow>[] = [
+    ...config.listColumns.map((col, colIndex) => ({
+      key: col.key,
+      header: col.label,
+      render: (row: EntityRow) =>
+        colIndex === 0 ? (
+          <Link href={`/admin/${entity}/${row.id}`} className="font-medium hover:underline">
+            {String(row[col.key] ?? "")}
+          </Link>
+        ) : (
+          <span className="opacity-70">{String(row[col.key] ?? "")}</span>
+        ),
+    })),
+    ...(config.hasStatus
+      ? [
+          {
+            key: "status",
+            header: "Status",
+            render: (row: EntityRow) => <StatusBadge label={String(row.status)} />,
+          },
+        ]
+      : []),
+    ...(config.hasPosition
+      ? [
+          {
+            key: "order",
+            header: "Order",
+            render: (row: EntityRow, index: number) => (
+              <ReorderButtons
+                onMoveUp={() => move(row.id, "up")}
+                onMoveDown={() => move(row.id, "down")}
+                disabled={isPending}
+                disableUp={index === 0}
+                disableDown={index === initialRows.length - 1}
+              />
+            ),
+          },
+        ]
+      : []),
+    {
+      key: "actions",
+      header: "",
+      cellClassName: "text-right",
+      render: (row: EntityRow) =>
+        canDelete && (
+          <RowActionButton onClick={() => remove(row)} disabled={isPending} tone="danger">
+            Delete
+          </RowActionButton>
+        ),
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-lg tracking-wide-display uppercase">{config.pluralLabel}</h1>
-        <Link
-          href={`/admin/${entity}/new`}
-          className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white"
-        >
-          New {config.label.toLowerCase()}
-        </Link>
-      </div>
+      <AdminPageHeader
+        title={config.pluralLabel}
+        actions={<AdminNewLinkButton href={`/admin/${entity}/new`}>New {config.label.toLowerCase()}</AdminNewLinkButton>}
+      />
 
-      <div className="overflow-hidden rounded border border-osi-sand-300 bg-osi-white">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-osi-cream-100 text-xs uppercase tracking-wide-label opacity-70">
-            <tr>
-              {config.listColumns.map((col) => (
-                <th key={col.key} className="px-4 py-2">
-                  {col.label}
-                </th>
-              ))}
-              {config.hasStatus && <th className="px-4 py-2">Status</th>}
-              {config.hasPosition && <th className="px-4 py-2">Order</th>}
-              <th className="px-4 py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {initialRows.map((row, index) => (
-              <tr key={row.id} className="border-t border-osi-sand-300">
-                {config.listColumns.map((col) => (
-                  <td key={col.key} className="px-4 py-2">
-                    {col.key === config.listColumns[0].key ? (
-                      <Link href={`/admin/${entity}/${row.id}`} className="font-medium hover:underline">
-                        {String(row[col.key] ?? "")}
-                      </Link>
-                    ) : (
-                      <span className="opacity-70">{String(row[col.key] ?? "")}</span>
-                    )}
-                  </td>
-                ))}
-                {config.hasStatus && (
-                  <td className="px-4 py-2">
-                    <span
-                      className={
-                        row.status === "published"
-                          ? "rounded bg-green-100 px-2 py-0.5 text-xs text-green-800"
-                          : "rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs opacity-70"
-                      }
-                    >
-                      {String(row.status)}
-                    </span>
-                  </td>
-                )}
-                {config.hasPosition && (
-                  <td className="px-4 py-2">
-                    <div className="flex gap-2 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => move(row.id, "up")}
-                        disabled={isPending || index === 0}
-                        className="disabled:opacity-30"
-                        aria-label="Move up"
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => move(row.id, "down")}
-                        disabled={isPending || index === initialRows.length - 1}
-                        className="disabled:opacity-30"
-                        aria-label="Move down"
-                      >
-                        ↓
-                      </button>
-                    </div>
-                  </td>
-                )}
-                <td className="px-4 py-2 text-right">
-                  {canDelete && (
-                    <button
-                      type="button"
-                      onClick={() => remove(row)}
-                      disabled={isPending}
-                      className="text-xs text-red-600 hover:underline disabled:opacity-40"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {initialRows.length === 0 && (
-              <tr>
-                <td
-                  colSpan={config.listColumns.length + (config.hasStatus ? 1 : 0) + (config.hasPosition ? 1 : 0) + 1}
-                  className="px-4 py-6 text-center opacity-50"
-                >
-                  No {config.pluralLabel.toLowerCase()} yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AdminDataTable
+        columns={columns}
+        rows={initialRows}
+        getRowKey={(row) => row.id}
+        emptyMessage={`No ${config.pluralLabel.toLowerCase()} yet.`}
+      />
+      {dialog}
     </div>
   );
 }

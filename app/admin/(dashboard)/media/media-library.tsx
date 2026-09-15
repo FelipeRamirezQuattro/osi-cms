@@ -6,6 +6,7 @@ import { MediaPicker } from "@/components/admin/media-picker";
 import { deleteMediaActionFn, replaceMediaAssetAction, type MediaAsset, type MediaUsage } from "@/lib/actions/media";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
+import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 /**
  * Standalone browse/upload/delete page — same MediaBrowser (grid/search/
@@ -20,9 +21,16 @@ export function MediaLibrary({ role }: { role: AdminRole }) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [isBusy, startBusy] = useTransition();
   const [accept, setAccept] = useState<MediaBrowserAccept>("image");
+  const { confirm, dialog } = useConfirmDialog();
 
-  function attemptDelete(asset: MediaAsset, refresh: () => void) {
-    if (!window.confirm(`Delete "${asset.title ?? asset.filename ?? asset.url}"? This can't be undone.`)) return;
+  async function attemptDelete(asset: MediaAsset, refresh: () => void) {
+    const ok = await confirm({
+      title: `Delete "${asset.title ?? asset.filename ?? asset.url}"?`,
+      message: "This can't be undone.",
+      tone: "danger",
+      confirmLabel: "Delete",
+    });
+    if (!ok) return;
     setActionError(null);
     startBusy(async () => {
       const result = await deleteMediaActionFn(asset.id);
@@ -134,6 +142,7 @@ export function MediaLibrary({ role }: { role: AdminRole }) {
           );
         }}
       />
+      {dialog}
     </div>
   );
 }
