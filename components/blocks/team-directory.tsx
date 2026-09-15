@@ -75,6 +75,7 @@ export const teamDirectoryBlock = defineBlock({
   type: "team_directory",
   label: "Team directory",
   category: "content",
+  description: "Auto-pulls every published directory_contacts row grouped by department — one per site (e.g. a staff/directory page), not for a curated subset of people.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md" },

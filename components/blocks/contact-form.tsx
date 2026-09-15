@@ -24,6 +24,7 @@ export const contactFormBlock = defineBlock({
   type: "contact_form",
   label: "Contact form",
   category: "forms",
+  description: "The site's honeypot + rate-limited contact form, wired to the real submission pipeline — use exactly once per page that needs a contact form, not a generic form builder.",
   schema,
   adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "Leave us a message", submitLabel: "Submit message" },

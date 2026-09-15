@@ -286,33 +286,41 @@ export function PageEditor({
               </p>
             )}
 
-            <div className="flex items-center gap-2 rounded border border-osi-sand-300 bg-osi-white p-3">
-              <select
-                value={addType}
-                onChange={(e) => setAddType(e.target.value)}
-                className="rounded border border-osi-sand-300 px-3 py-2 text-sm"
-              >
-                {["hero", "content", "commerce", "media", "forms", "layout"].map((category) => {
-                  const entries = palette.filter((p) => p.category === category);
-                  if (entries.length === 0) return null;
-                  return (
-                    <optgroup key={category} label={category}>
-                      {entries.map((entry) => (
-                        <option key={entry.type} value={entry.type}>
-                          {entry.label}
-                        </option>
-                      ))}
-                    </optgroup>
-                  );
-                })}
-              </select>
-              <button
-                type="button"
-                onClick={addBlock}
-                className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white"
-              >
-                + Add block
-              </button>
+            <div className="rounded border border-osi-sand-300 bg-osi-white p-3">
+              <div className="flex items-center gap-2">
+                <select
+                  value={addType}
+                  onChange={(e) => setAddType(e.target.value)}
+                  className="rounded border border-osi-sand-300 px-3 py-2 text-sm"
+                >
+                  {["hero", "content", "commerce", "media", "forms", "layout"].map((category) => {
+                    const entries = palette.filter((p) => p.category === category);
+                    if (entries.length === 0) return null;
+                    return (
+                      <optgroup key={category} label={category}>
+                        {entries.map((entry) => (
+                          <option key={entry.type} value={entry.type} title={entry.description}>
+                            {entry.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
+                </select>
+                <button
+                  type="button"
+                  onClick={addBlock}
+                  className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white"
+                >
+                  + Add block
+                </button>
+              </div>
+              {/* Trivial helper text, not a redesigned/searchable picker —
+                  see BlockDefinition's `description` comment (Task 9). A
+                  full picker UI overhaul is a later task's scope. */}
+              {paletteByType[addType]?.description && (
+                <p className="mt-2 text-xs text-osi-slate-400">{paletteByType[addType].description}</p>
+              )}
             </div>
           </div>
 

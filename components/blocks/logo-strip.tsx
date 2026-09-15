@@ -71,6 +71,7 @@ export const logoStripBlock = defineBlock({
   type: "logo_strip",
   label: "Logo strip",
   category: "layout",
+  description: "Grayscale marquee of partner/client logos (falls back to a name label per item with no image) — use for a trust-bar/partners strip.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "sm", spacingBottom: "sm", logos: [] },

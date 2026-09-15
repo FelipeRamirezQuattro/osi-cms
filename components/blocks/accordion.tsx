@@ -62,6 +62,7 @@ export const accordionBlock = defineBlock({
   type: "accordion",
   label: "Accordion",
   category: "content",
+  description: "Native <details>/<summary> expand-collapse list of title/body items — use for FAQs or any content better collapsed by default.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", items: [] },

@@ -43,6 +43,7 @@ export const ctaBandBlock = defineBlock({
   type: "cta_band",
   label: "CTA band",
   category: "layout",
+  description: "Full-width headline-plus-single-gold-button banner — use as a page-ending call to action; for 1-3 lighter-weight buttons with no headline, use Button group instead.",
   schema,
   adminFields,
   // "#" used to be the placeholder default here, but that's exactly the

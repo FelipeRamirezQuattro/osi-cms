@@ -94,6 +94,7 @@ export const globalMapBlock = defineBlock({
   type: "global_map",
   label: "Global map",
   category: "content",
+  description: "Static world map graphic plus a live-generated pill list of countries with published locations and a CTA to /locations — one per site, not for a per-page location list.",
   schema,
   adminFields,
   defaults: {

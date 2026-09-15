@@ -100,6 +100,7 @@ export const splitFeatureBlock = defineBlock({
   type: "split_feature",
   label: "Split feature",
   category: "content",
+  description: "Two-column text-plus-image feature with an optional link list and breakout CTA — use for a substantial single-topic section, e.g. an about/history block.",
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "lg", title: "", links: [] },
   Render,

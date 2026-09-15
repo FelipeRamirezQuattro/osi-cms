@@ -90,6 +90,7 @@ export const howItWorksBlock = defineBlock({
   type: "how_it_works",
   label: "How it works",
   category: "commerce",
+  description: "Title/body plus PDF-download and 3D-model links (each a disabled placeholder until a real URL is set) — used by the product detail page template.",
   schema: howItWorksSchema,
   adminFields,
   defaults: {

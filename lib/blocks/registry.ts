@@ -70,12 +70,20 @@ export type BlockPaletteEntry = {
   type: string;
   label: string;
   category: BlockDefinition<unknown>["category"];
+  description: BlockDefinition<unknown>["description"];
   adminFields: BlockDefinition<unknown>["adminFields"];
   defaults: unknown;
 };
 
 export function getBlockPalette(): BlockPaletteEntry[] {
   return Object.values(blockRegistry)
-    .map((def) => ({ type: def.type, label: def.label, category: def.category, adminFields: def.adminFields, defaults: def.defaults }))
+    .map((def) => ({
+      type: def.type,
+      label: def.label,
+      category: def.category,
+      description: def.description,
+      adminFields: def.adminFields,
+      defaults: def.defaults,
+    }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }

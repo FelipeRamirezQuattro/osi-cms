@@ -64,6 +64,7 @@ export const benefitsCardsBlock = defineBlock({
   type: "benefits_cards",
   label: "Benefits cards",
   category: "commerce",
+  description: "1-6 clipped-corner benefit cards (title + body) on a navy panel — used by the product detail page template for a benefits/advantages list.",
   schema: benefitsCardsSchema,
   adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "Benefits", items: [] },

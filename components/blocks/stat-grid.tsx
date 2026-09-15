@@ -96,6 +96,7 @@ export const statGridBlock = defineBlock({
   type: "stat_grid",
   label: "Stat grid",
   category: "content",
+  description: "2-6 headline numbers with short labels in a hairline-grid band — use to call out key metrics (years in business, wells serviced, etc.).",
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", stats: [] },
   Render,

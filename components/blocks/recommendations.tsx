@@ -53,6 +53,7 @@ export const recommendationsBlock = defineBlock({
   type: "recommendations",
   label: "Recommendations",
   category: "commerce",
+  description: "Personalized \"based on your browsing history\" product strip, backed by recently-viewed localStorage with a catalog fallback — use near the bottom of a product or content page.",
   schema,
   adminFields,
   defaults: {

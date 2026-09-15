@@ -38,6 +38,7 @@ export const stagesCarouselBlock = defineBlock({
   type: "stages_carousel",
   label: "Stages carousel",
   category: "commerce",
+  description: "Swipeable/paged carousel of process stages (title, body, image) — used by the product detail page template for step-by-step process content.",
   schema: stagesCarouselSchema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", title: "Stages", stages: [] },

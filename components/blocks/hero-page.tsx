@@ -63,6 +63,7 @@ export const heroPageBlock = defineBlock({
   type: "hero_page",
   label: "Page hero",
   category: "hero",
+  description: "Compact title-and-eyebrow banner for an interior page (not a full-bleed photo hero) — use at the top of most migrated or new interior pages.",
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", title: "" },
   Render,

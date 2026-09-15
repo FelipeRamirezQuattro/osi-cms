@@ -457,3 +457,11 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   the real `app/(site)/` directory listing) — product/news/industry/
   application detail pages have the same theoretical soft-404 exposure
   but are pre-existing and out of this fix's explicit scope.
+- **No divider/spacer block added** (Task 9, CMS remediation plan). With
+  the new `columns` block landing in the same task and every block
+  already carrying its own configurable `spacingTop`/`spacingBottom`
+  (`blockCommonSchema`), a dedicated divider/spacer block would just
+  duplicate spacing control that already exists per-block, and would
+  mainly invite inconsistent visual hacks (arbitrary-height blank bands,
+  ad hoc rule styling) rather than solve a real gap — confirmed absent
+  from the registry both before and after this task.

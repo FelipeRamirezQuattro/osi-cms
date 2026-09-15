@@ -33,6 +33,7 @@ export const videoEmbedBlock = defineBlock({
   type: "video_embed",
   label: "Video embed",
   category: "media",
+  description: "Click-to-play YouTube/Vimeo video behind a poster image — use for a single featured video; for a generic iframe embed (maps, other providers) use the Embed block instead.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", videoUrl: null },

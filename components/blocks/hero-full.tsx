@@ -120,6 +120,7 @@ export const heroFullBlock = defineBlock({
   type: "hero_full",
   label: "Full-bleed hero",
   category: "hero",
+  description: "Full-bleed photo hero with a headline, optional subhead, and up to two CTAs — use for the homepage or a top-of-funnel landing page.",
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "lg", headline: "", ctas: [] },
   Render,

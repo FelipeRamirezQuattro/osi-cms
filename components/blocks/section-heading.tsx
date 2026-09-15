@@ -44,6 +44,7 @@ export const sectionHeadingBlock = defineBlock({
   type: "section_heading",
   label: "Section heading",
   category: "content",
+  description: "A standalone title plus optional lede paragraph to introduce a new section mid-page — not a page-top hero.",
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "sm", title: "", align: "left" },
   Render,

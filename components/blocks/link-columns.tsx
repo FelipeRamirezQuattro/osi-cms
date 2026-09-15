@@ -85,6 +85,7 @@ export const linkColumnsBlock = defineBlock({
   type: "link_columns",
   label: "Link columns",
   category: "layout",
+  description: "1-4 columns of plain text links under an optional heading — use for a sitemap-style list of links, not for buttons/CTAs.",
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", columns: [] },
   Render,

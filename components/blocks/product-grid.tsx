@@ -68,6 +68,7 @@ export const productGridBlock = defineBlock({
   type: "product_grid",
   label: "Product grid",
   category: "commerce",
+  description: "Tabbed products/industries/applications/services browser, auto-fetched from the catalog — the single block used on the /products listing page, not for a curated product subset.",
   schema,
   adminFields,
   defaults: {

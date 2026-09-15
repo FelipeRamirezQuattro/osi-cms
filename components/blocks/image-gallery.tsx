@@ -72,6 +72,7 @@ export const imageGalleryBlock = defineBlock({
   type: "image_gallery",
   label: "Image gallery",
   category: "media",
+  description: "Grid of images that each open full-size in a new tab — use for a multi-photo gallery (e.g. Machine Shop); for a single feature image use the Image block instead.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", images: [] },

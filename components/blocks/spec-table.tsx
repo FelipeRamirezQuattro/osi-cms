@@ -61,6 +61,7 @@ export const specTableBlock = defineBlock({
   type: "spec_table",
   label: "Spec table",
   category: "commerce",
+  description: "Label/value/unit rows for technical specifications — used by the product detail page template for a spec sheet.",
   schema: specTableSchema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", specs: [] },

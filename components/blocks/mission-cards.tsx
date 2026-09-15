@@ -71,6 +71,7 @@ export const missionCardsBlock = defineBlock({
   type: "mission_cards",
   label: "Mission cards",
   category: "content",
+  description: "1-3 simple title/body/link cards with a soft-display heading font — use for mission/values statements or a short set of pitch cards.",
   schema,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", cards: [] },
   Render,

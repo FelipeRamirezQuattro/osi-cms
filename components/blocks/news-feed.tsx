@@ -92,6 +92,7 @@ const adminFields: FieldSpec[] = [
 
 export const newsFeedBlock = defineBlock({
   type: "news_feed",
+  description: "Auto-pulls the latest published news/press posts (one featured + a grid) — no manual entry, so use it wherever the page should stay current with /news automatically.",
   label: "News feed",
   category: "content",
   schema,

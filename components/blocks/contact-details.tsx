@@ -80,6 +80,7 @@ export const contactDetailsBlock = defineBlock({
   type: "contact_details",
   label: "Contact details",
   category: "content",
+  description: "Map iframe plus site-wide phone/address/social links pulled from Settings (with a per-instance map URL override) — use on the contact page or anywhere a compact contact panel is needed.",
   schema,
   adminFields,
   defaults: { background: "navy", spacingTop: "md", spacingBottom: "md", mapEmbedUrl: null, showSocial: true },

@@ -68,6 +68,7 @@ export const featureTilesBlock = defineBlock({
   type: "feature_tiles",
   label: "Feature tiles",
   category: "content",
+  description: "1-8 label-plate tiles (image, title, body, link) in a grid — use for a set of feature/topic links, e.g. a services or capabilities overview.",
   schema,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", tiles: [], showLoadMore: false },
   Render,

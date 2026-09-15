@@ -107,6 +107,7 @@ export const richTextBlock = defineBlock({
   type: "rich_text",
   label: "Rich text",
   category: "content",
+  description: "Tiptap-authored prose (paragraphs, H2/H3, lists, bold/italic/links) — the default block for migrated legacy page copy and any free-form written content.",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", content: { type: "doc", content: [] } },

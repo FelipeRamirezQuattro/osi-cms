@@ -102,6 +102,7 @@ export const productHeroBlock = defineBlock({
   type: "product_hero",
   label: "Product hero",
   category: "commerce",
+  description: "Product detail's own hero (title, paragraphs, diagram image, CTA) — used directly by the product detail page template, not selectable in the generic page-block picker for other pages.",
   schema: productHeroSchema,
   adminFields,
   defaults: {
