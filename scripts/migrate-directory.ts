@@ -436,7 +436,16 @@ async function main() {
     if (error) throw error;
   }
 
-  // /directory page
+  // /directory page — status is "published" here (not "draft" as this
+  // script originally seeded it) because the live page has since been
+  // published for real through the admin UI (confirmed via a read-only
+  // query for Task 8: pages.status = 'published', with a matching
+  // page_publications row) — a re-run of this idempotent script must not
+  // silently regress that back to draft. Note this only touches `pages`,
+  // not `page_publications`: it doesn't (re-)publish the page itself
+  // (see scripts/seed-locations.ts's header comment for why a
+  // service-role script can't call publish_page_atomic), it just keeps
+  // this column truthful about the page's real, already-published state.
   const { data: pageRow, error: pageError } = await db
     .from("pages")
     .upsert(
@@ -446,7 +455,7 @@ async function main() {
         title: "Directory",
         template: "standard",
         seo_title: "Directory | Odessa Separator Inc",
-        status: "draft",
+        status: "published",
       },
       { onConflict: "slug,locale" },
     )
