@@ -408,16 +408,33 @@ export const blockAppearanceDefaultsSchema = z.object({
 export type BlockAppearanceDefaults = z.infer<typeof blockAppearanceDefaultsSchema>;
 
 /**
- * Exactly the current registry's 34 block types, both ways (`.strict()`
- * rejects an unrecognized/typo'd key, and every key being non-optional
- * rejects a config that's missing one) — this is what backs the test
- * matrix's "invalid block key" case.
+ * Every key is drawn from the current registry's 34 block types, and
+ * `.strict()` rejects any key outside that set (an unrecognized/typo'd
+ * block type) — this is what backs the test matrix's "invalid block key"
+ * case. Each key is `.optional()`, NOT required: a missing key means
+ * "this block type inherits the site-wide/global defaults" (Level 1 of
+ * the cascade), not an error. This matters because the block registry
+ * has already grown once (26 -> 34 block types, per the Phase 0
+ * inventory doc) and will again — a required-key shape would mean every
+ * previously-saved draft/publication/revision stops parsing the moment a
+ * new block type is registered, which is exactly the "never a broken
+ * public page" failure the plan's block-inheritance rules forbid
+ * ("Unknown/deleted token or font references fall back deterministically
+ * ... never a broken public page"). `.strict()` is kept specifically so
+ * the "invalid block key" test still means something once keys are
+ * optional — without it, an unrecognized key would just be silently
+ * accepted as extra data instead of rejected.
  */
 export const blockDefaultsSchema = z
-  .object(Object.fromEntries(BLOCK_TYPE_KEYS.map((key) => [key, blockAppearanceDefaultsSchema])) as Record<BlockTypeKey, typeof blockAppearanceDefaultsSchema>)
+  .object(
+    Object.fromEntries(BLOCK_TYPE_KEYS.map((key) => [key, blockAppearanceDefaultsSchema.optional()])) as Record<
+      BlockTypeKey,
+      z.ZodOptional<typeof blockAppearanceDefaultsSchema>
+    >,
+  )
   .strict();
 
-export type BlockDefaults = Record<BlockTypeKey, BlockAppearanceDefaults>;
+export type BlockDefaults = Partial<Record<BlockTypeKey, BlockAppearanceDefaults>>;
 
 // ---------------------------------------------------------------------
 // Primary logo
@@ -540,6 +557,17 @@ export const brandingConfigV1Schema = z
     checkTextContrast("mutedTextOnLight", lightBg);
     checkTextContrast("textOnDark", darkBg);
     checkTextContrast("mutedTextOnDark", darkBg);
+    // Status tones (error/success/warning/info) render as ordinary text on
+    // a light surface today (StatusMessage's bg-*-50 treatments) — checked
+    // against lightSurface for the same reason textOnLight/mutedTextOnLight
+    // are: a status message IS body text, not a decorative accent. This is
+    // what catches a seed value like a too-light "warning" amber failing
+    // AA on cream before it ever ships (a real bug an earlier version of
+    // this seed had — see docs/DECISIONS.md).
+    checkTextContrast("error", lightBg);
+    checkTextContrast("success", lightBg);
+    checkTextContrast("warning", lightBg);
+    checkTextContrast("info", lightBg);
     // borderOnLight/borderOnDark are deliberately NOT contrast-checked here:
     // they model the existing translucent hairline dividers (Phase 0
     // inventory §2.3 classifies `--site-border`/`--site-border-on-dark` as
@@ -597,6 +625,10 @@ export const brandingConfigV1Schema = z
     // --- Block-type defaults: preset/swatch references + per-slot font validity ---
     for (const blockType of BLOCK_TYPE_KEYS) {
       const defaults = config.blockDefaults[blockType];
+      // A missing entry means "inherit the site-wide/global defaults" —
+      // nothing to validate for this block type (see blockDefaultsSchema's
+      // top comment for why keys are optional).
+      if (!defaults) continue;
       if (defaults.surfacePresetId !== null && !presetIds.has(defaults.surfacePresetId)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

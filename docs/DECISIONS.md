@@ -1119,3 +1119,27 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   standing rules forbid running `create-admin`/seed scripts (the exact
   same wall Task 14 hit for its own authenticated-admin axe tests,
   documented the same way there).
+
+- **Branding module's seeded "warning" status color: `#92400E`, chosen
+  for WCAG AA contrast, not migrated from any existing pixel** — the
+  branding Phase 1 brief (`.superpowers/sdd/2026-09-15-branding-module-
+  and-block-theming/`) required seeding a semantic "warning" role
+  alongside error/success/info, but no warning tone exists anywhere in
+  the pre-branding codebase (`StatusMessage`'s `tone` union
+  — `components/ui/public-primitives.tsx` — is only `"info" | "success" |
+  "error"`), so there was no real value to preserve here; this is new
+  territory, not a migration. An initial pick of `#B45309` (Tailwind
+  amber-700) shipped in the first branding-module commit but only
+  reached 4.18:1 contrast against the seeded light surface
+  (`osi-cream-100` / `#F2E9DE`) — below the 4.5:1 WCAG AA normal-text
+  threshold `lib/branding/schema.ts`'s own contrast validator enforces
+  for every other text-bearing role, an oversight caught because that
+  validator didn't yet check the four status roles at all. Corrected to
+  `#92400E`, which clears both light surfaces the seed defines with
+  margin: 5.90:1 against `osi-cream-100`, 6.83:1 against the "technical
+  plate" raised surface (`#FFFAF4`). `lib/branding/schema.ts`'s
+  `brandingConfigV1Schema` now contrast-checks `error`/`success`/
+  `warning`/`info` against `lightSurface` the same way it already
+  checked `textOnLight`/`mutedTextOnLight`, so a future seed change that
+  reintroduces a too-light status color fails validation immediately
+  instead of shipping silently.

@@ -3,6 +3,7 @@
 import { requireCapability } from "@/lib/auth";
 import {
   getBrandingDraft,
+  getBrandingDraftUnvalidated,
   getPublishedBranding,
   listBrandingRevisions,
   publishBranding,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/data/branding";
 import { isVersionConflictError } from "@/lib/data/pages";
 import { brandingConfigSchema } from "@/lib/branding/schema";
+import type { z } from "zod";
 
 /**
  * Server Actions for the branding module's data layer (Phase 1 — schema/
@@ -47,6 +49,15 @@ function conflictResult(error: unknown, fallbackMessage: string): BrandingSaveRe
   return { status: "error", message, conflict: true };
 }
 
+/** Shared by saveBrandingDraftAction and publishBrandingAction's pre-publish revalidation. */
+function zodErrorResult(error: z.ZodError, fallbackMessage: string): BrandingSaveResult {
+  const issue = error.issues[0];
+  if (!issue) return { status: "error", message: fallbackMessage };
+  const field = issue.path.length > 0 ? issue.path.join(".") : undefined;
+  const message = field ? `${field}: ${issue.message}` : issue.message;
+  return { status: "error", message, field };
+}
+
 export async function getBrandingDraftAction(): Promise<BrandingDraft> {
   await requireCapability("manage_settings");
   return getBrandingDraft();
@@ -74,10 +85,7 @@ export async function saveBrandingDraftAction(rawConfig: unknown, expectedVersio
 
   const parsed = brandingConfigSchema.safeParse(rawConfig);
   if (!parsed.success) {
-    const issue = parsed.error.issues[0];
-    const field = issue?.path.length ? issue.path.join(".") : undefined;
-    const message = issue ? (field ? `${field}: ${issue.message}` : issue.message) : "Invalid branding configuration.";
-    return { status: "error", message, field };
+    return zodErrorResult(parsed.error, "Invalid branding configuration.");
   }
 
   try {
@@ -92,18 +100,37 @@ export async function saveBrandingDraftAction(rawConfig: unknown, expectedVersio
 }
 
 /**
- * Publishing re-validates nothing extra here beyond what saveBrandingDraftAction
- * already enforced on the row being published — the draft row in the
- * database is already known-valid at rest (every write to it goes
- * through saveBrandingDraftAction's Zod gate), so publish_branding_atomic
- * only needs to re-check optimistic concurrency, not re-run schema
- * validation. This mirrors publishPageAction, which likewise does not
- * re-validate block schemas at publish time (that already happened at
- * save time).
+ * Publishing re-validates the CURRENT draft row against the real schema
+ * before ever calling publish_branding_atomic — the plan's own rule
+ * ("Publishing validates the entire palette, surface presets, font keys,
+ * role assignments, logo reference, and block-type defaults again on the
+ * server"). This is NOT redundant with saveBrandingDraftAction's Zod
+ * gate: the draft can become invalid without ever going through that
+ * gate again — restoreBrandingRevisionToDraftAction copies an arbitrary
+ * historical revision into the draft, and resetBrandingDraftToPublishedAction
+ * copies the current publication, neither of which re-validates. A
+ * revision written when a font catalog entry was still "available" (or
+ * before a block type existed) is a concrete way an old, once-valid
+ * snapshot can fail today's schema. Using `getBrandingDraftUnvalidated`
+ * (not `getBrandingDraft`, which throws on an invalid row) plus
+ * `safeParse` here means a bad draft is reported as a clean, actionable
+ * error instead of an uncaught exception, and — critically — publish_
+ * branding_atomic is never even called, so an invalid config can never
+ * reach the public site.
  */
 export async function publishBrandingAction(expectedVersion: number): Promise<BrandingSaveResult> {
   await requireCapability("manage_settings");
+
   try {
+    const draftRow = await getBrandingDraftUnvalidated();
+    const parsed = brandingConfigSchema.safeParse(draftRow.config);
+    if (!parsed.success) {
+      return zodErrorResult(
+        parsed.error,
+        "The current draft failed validation and cannot be published. Fix it (or use Reset to Published) before trying again.",
+      );
+    }
+
     await publishBranding(expectedVersion);
     // publish_branding_atomic doesn't bump draft_version (it only writes
     // the revision + publication rows) — the version the caller already

@@ -32,6 +32,7 @@ vi.mock("@/lib/auth", () => ({
 
 const {
   mockGetBrandingDraft,
+  mockGetBrandingDraftUnvalidated,
   mockGetPublishedBranding,
   mockListBrandingRevisions,
   mockSaveBrandingDraft,
@@ -40,6 +41,7 @@ const {
   mockResetBrandingDraftToPublished,
 } = vi.hoisted(() => ({
   mockGetBrandingDraft: vi.fn(),
+  mockGetBrandingDraftUnvalidated: vi.fn(),
   mockGetPublishedBranding: vi.fn(),
   mockListBrandingRevisions: vi.fn(),
   mockSaveBrandingDraft: vi.fn(),
@@ -49,6 +51,7 @@ const {
 }));
 vi.mock("@/lib/data/branding", () => ({
   getBrandingDraft: mockGetBrandingDraft,
+  getBrandingDraftUnvalidated: mockGetBrandingDraftUnvalidated,
   getPublishedBranding: mockGetPublishedBranding,
   listBrandingRevisions: mockListBrandingRevisions,
   saveBrandingDraft: mockSaveBrandingDraft,
@@ -56,6 +59,16 @@ vi.mock("@/lib/data/branding", () => ({
   restoreBrandingRevisionToDraft: mockRestoreBrandingRevisionToDraft,
   resetBrandingDraftToPublished: mockResetBrandingDraftToPublished,
 }));
+
+const validDraftRow = {
+  id: true,
+  config: OSI_SEED_BRANDING_CONFIG,
+  config_version: 1,
+  primary_logo_media_id: null,
+  draft_version: 7,
+  updated_at: "now",
+  updated_by: null,
+};
 
 const editorSession = { userId: "editor-1", email: "editor@example.com", role: "editor" as const, fullName: "Edie Tor" };
 const adminSession = { userId: "admin-1", email: "admin@example.com", role: "admin" as const, fullName: "Ada Min" };
@@ -156,6 +169,7 @@ describe("saveBrandingDraftAction", () => {
 describe("publishBrandingAction", () => {
   beforeEach(() => {
     mockRequireCapability.mockImplementation(requireCapabilityAs(adminSession));
+    mockGetBrandingDraftUnvalidated.mockResolvedValue(validDraftRow);
   });
 
   it("threads the caller's version back through on success (publish doesn't bump draft_version)", async () => {
@@ -174,5 +188,25 @@ describe("publishBrandingAction", () => {
     const result = await publishBrandingAction(7);
 
     expect(result).toEqual({ status: "error", message: "stale", conflict: true });
+  });
+
+  /**
+   * Important finding fix: publishing must re-validate the CURRENT draft
+   * row (not trust that it's already valid just because saveBrandingDraftAction
+   * validated it once) — restoreBrandingRevisionToDraftAction and
+   * resetBrandingDraftToPublishedAction both bypass that Zod gate entirely,
+   * so an invalid draft can exist at publish time. A stale/deprecated
+   * reference (simulated here with a dangling swatch reference, the same
+   * shape a deprecated-font or removed-block-type drift would produce)
+   * must block the publish RPC from ever being called.
+   */
+  it("rejects publishing an invalid draft without ever calling publish_branding_atomic", async () => {
+    const invalidDraft = { ...validDraftRow, config: { ...OSI_SEED_BRANDING_CONFIG, swatches: [] } };
+    mockGetBrandingDraftUnvalidated.mockResolvedValue(invalidDraft);
+
+    const result = await publishBrandingAction(7);
+
+    expect(result.status).toBe("error");
+    expect(mockPublishBranding).not.toHaveBeenCalled();
   });
 });

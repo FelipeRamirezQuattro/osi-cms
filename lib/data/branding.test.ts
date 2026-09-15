@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import {
   getBrandingDraft,
+  getBrandingDraftUnvalidated,
   getPublishedBranding,
   listBrandingRevisions,
   publishBranding,
@@ -160,5 +161,18 @@ describe("branding config parsing", () => {
     mockCreateServerDbClient.mockReturnValue(fake);
 
     await expect(getBrandingDraft()).rejects.toThrow();
+  });
+
+  it("getBrandingDraftUnvalidated returns a malformed config unparsed instead of throwing", async () => {
+    const malformed = { not: "a valid branding config" };
+    const fake = createFakeDbClient({
+      singleData: { id: true, config: malformed, config_version: 1, primary_logo_media_id: null, draft_version: 1, updated_at: "now", updated_by: null },
+    });
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    const raw = await getBrandingDraftUnvalidated();
+
+    expect(fake.fromCalls).toEqual(["site_branding"]);
+    expect(raw.config).toEqual(malformed);
   });
 });

@@ -44,7 +44,7 @@ const swatches: BrandingConfigV1["swatches"] = [
   { id: "osi-focus-fixed", name: "Focus indicator (fixed)", hex: "#0066FF", category: "system", note: "Universal focus ring — never brand-selectable.", isCustom: false },
   { id: "osi-status-error", name: "Status: error", hex: "#B91C1C", category: "system", note: "Matches StatusMessage's error tone.", isCustom: false },
   { id: "osi-status-success", name: "Status: success", hex: "#047857", category: "system", note: "Matches StatusMessage's success tone.", isCustom: false },
-  { id: "osi-status-warning", name: "Status: warning", hex: "#B45309", category: "system", note: "New — no prior warning tone existed; see docs/DECISIONS.md.", isCustom: false },
+  { id: "osi-status-warning", name: "Status: warning", hex: "#92400E", category: "system", note: "New — no prior warning tone existed; chosen for WCAG AA contrast, see docs/DECISIONS.md.", isCustom: false },
 ];
 
 // --- Semantic roles -------------------------------------------------------

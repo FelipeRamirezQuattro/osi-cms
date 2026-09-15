@@ -105,19 +105,22 @@ describe("brandingConfigSchema", () => {
     expect(brandingConfigSchema.safeParse(config).success).toBe(false);
   });
 
-  it("rejects an invalid/unknown block-type key", () => {
+  it("rejects an unknown/invalid block-type key", () => {
     const config = structuredClone(OSI_SEED_BRANDING_CONFIG) as unknown as Record<string, unknown>;
     const blockDefaults = config.blockDefaults as Record<string, unknown>;
-    delete blockDefaults.hero_full;
+    // Deliberately does NOT also delete a real key (hero_full) — every
+    // block-type key is optional now (see blockDefaultsSchema's comment),
+    // so this test must add an unrecognized key WITHOUT removing a valid
+    // one, or it would pass even without the schema's `.strict()`.
     blockDefaults.not_a_real_block_type = { surfacePresetId: null, accentSwatchId: null, typography: {} };
     expect(brandingConfigSchema.safeParse(config).success).toBe(false);
   });
 
-  it("rejects a config missing a block-type key", () => {
+  it("accepts a config missing a block-type key (that block type inherits site-wide defaults)", () => {
     const config = structuredClone(OSI_SEED_BRANDING_CONFIG) as unknown as Record<string, unknown>;
     const blockDefaults = config.blockDefaults as Record<string, unknown>;
     delete blockDefaults.hero_full;
-    expect(brandingConfigSchema.safeParse(config).success).toBe(false);
+    expect(brandingConfigSchema.safeParse(config).success).toBe(true);
   });
 
   it("rejects an unsupported schema version", () => {
@@ -144,6 +147,24 @@ describe("brandingConfigSchema", () => {
     const preset = config.surfacePresets.find((p) => p.id === "reading-light")!;
     preset.textSwatchId = "osi-gold-500";
     expect(brandingConfigSchema.safeParse(config).success).toBe(false);
+  });
+
+  it("rejects a status role (error/success/warning/info) that fails WCAG AA contrast against the light surface", () => {
+    // Regression test: an earlier seed shipped `osi-status-warning` at
+    // #B45309 (4.18:1 on osi-cream-100 — below the 4.5:1 AA threshold)
+    // because nothing contrast-checked the status roles at all. Asserted
+    // here against a swatch known to fail (gold-500, accessible on navy
+    // only) so this test fails loudly if that check is ever removed,
+    // independent of whatever hex the seed currently uses.
+    const config = structuredClone(OSI_SEED_BRANDING_CONFIG);
+    config.roles.warning.swatchId = "osi-gold-500";
+    expect(brandingConfigSchema.safeParse(config).success).toBe(false);
+  });
+
+  it("accepts the real seeded status roles against the light surface (no regression of the #B45309 warning-contrast bug)", () => {
+    // The seed's actual current values must clear AA — this is the
+    // seed-fidelity half of the regression test above.
+    expect(brandingConfigSchema.safeParse(OSI_SEED_BRANDING_CONFIG).success).toBe(true);
   });
 
   it("rejects an active brand palette over the 12-swatch cap", () => {

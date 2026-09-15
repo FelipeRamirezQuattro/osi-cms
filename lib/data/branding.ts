@@ -49,6 +49,26 @@ export async function getBrandingDraft(): Promise<BrandingDraft> {
 }
 
 /**
+ * Same read as getBrandingDraft, but returns the row's `config` UNPARSED
+ * (`Json`, not `BrandingConfig`) — exists specifically for
+ * publishBrandingAction (lib/actions/branding.ts), which must re-validate
+ * the draft with a non-throwing `safeParse` immediately before publishing
+ * it (the plan's "Publishing validates the entire palette ... again on
+ * the server" rule) and needs to turn a validation failure into a clean
+ * error result, not an uncaught exception. `getBrandingDraft` above
+ * intentionally still throws on an invalid row (see its own test in
+ * branding.test.ts) — that's the right behavior for an ordinary "load the
+ * draft to display/edit it" read, just not for this one call site that
+ * needs to inspect a *possibly-invalid* draft without blowing up.
+ */
+export async function getBrandingDraftUnvalidated(): Promise<Tables<"site_branding">> {
+  const db = createServerDbClient();
+  const { data, error } = await db.from("site_branding").select("*").eq("id", true).single();
+  if (error) throw error;
+  return data;
+}
+
+/**
  * The public-readable published snapshot — the only branding table a
  * future public theme compiler is allowed to query (site_branding_
  * publications' RLS grants SELECT to `true`, unlike the other two
