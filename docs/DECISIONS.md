@@ -701,3 +701,130 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   submitting already discards any unsaved edits — the same reasoning
   `page-editor.tsx`'s `AdminPageHeader` back link already relied on
   before this task touched anything.
+- **Scroll-to-invalid-block targets a specific field by name where
+  possible, falling back to the block's header toggle (Task 13b).**
+  `lib/validation/blocks.ts`'s `validateBlockList` already returned a
+  dotted Zod issue path as `field` (e.g. `benefits.0.title`) — exactly
+  the same path `FieldRenderer` composes into a bare `name` attribute as
+  `${namePrefix}.${spec.key}` (`namePrefix` being `blocks.<index>.data`).
+  `lib/admin/block-editor-helpers.ts`'s `resolveBlockFocusTarget` turns
+  that into a real `querySelector('[name="..."]')` lookup, scoped to a
+  `[data-block-fields]` wrapper added around the open block's field panel
+  in both `page-editor.tsx` and `shared-section-editor.tsx`. This reaches
+  every `text`/`textarea`/`number`/`select` field (registered via bare
+  `register(name)`) but **not** `image`/`richtext`/`object`/`array` —
+  those are `Controller`-driven widgets with no bare `name` attribute to
+  match (see CLAUDE.md's field-renderer.tsx notes). For those, and for a
+  failure with no `field` at all (e.g. "Unknown block type"), the
+  fallback chain is: first focusable control anywhere in the (now open)
+  field panel, then the block row's own `[data-block-toggle]` header
+  button. Real per-field targeting was judged worth the effort for the
+  common case (most fields in most blocks are exactly those four
+  `FieldRenderer` cases) rather than defaulting straight to the
+  block-level fallback everywhere.
+- **Blocks are opened via a controlled `Set<field id>` (not each row's own
+  local `useState`) so a validation failure can force one open (Task
+  13b).** Keyed by react-hook-form's own stable field-array id, not array
+  index — index shifts on every drag/keyboard reorder, duplicate, or
+  remove, but the id doesn't, so an already-open row stays matched to the
+  right block through all of them.
+- **Duplicate-near-source inserts via react-hook-form's `insert(index + 1,
+  ...)`, and builds the duplicate's `{type, is_visible, data}` explicitly
+  rather than spreading the source `useFieldArray` field object (Task
+  13b)** — the field object also carries react-hook-form's own internal
+  `id` key (used for React keys / dnd-kit sortable ids), which gets
+  overwritten by react-hook-form's own id-generation either way when it
+  next computes `fields`, but there's no reason to let it ride along into
+  the newly stored block value at all. `lib/admin/block-editor-helpers.ts`'s
+  `cloneBlockForDuplicate` deep-clones `data` specifically (not a shallow
+  `{...block}`) so editing the duplicate's nested array/object fields
+  can't mutate the source block — real, unit-tested behavior, not just
+  "it renders."
+- **Keyboard block reordering is dnd-kit's `KeyboardSensor` +
+  `sortableKeyboardCoordinates` (Task 13b), plus explicit Move Up/Down
+  buttons reusing `ReorderButtons`' presentational shell wired directly to
+  `useFieldArray`'s `move(index, index ± 1)`** — not the RPC-swap
+  `ReorderButtons` wiring Task 13a built for the products/entities lists
+  (`lib/data/admin-entities.ts`'s position-swap RPC), which operates on a
+  stored `position` column blocks don't have. Blocks reorder purely
+  in-memory via `move()`, same as a drag, persisted only on the next
+  Save/autosave — see `page-editor.tsx`'s `SortableBlockRow`.
+- **Autosave's "only when the form currently passes client-side
+  validation" gate is "don't retry the exact same content that already
+  failed," not a predictive pre-check (Task 13b).** There is no real
+  client-side schema to check against here: `getBlockPalette()`
+  deliberately never ships a block's Zod `schema` to the client (a
+  `ZodType` isn't serializable across the Server/Client boundary — see
+  CLAUDE.md's Phase 5 section), so only the server's `saveDraftAction` /
+  `validateBlockList` can actually validate a block's `data`. Autosave
+  still calls that exact same action (never a second/parallel save path)
+  — `lib/admin/block-editor-helpers.ts`'s `decideAutosave` just stops it
+  from re-firing the identical failing content on every debounce tick
+  while the editor is looking at, but hasn't yet fixed, a broken field.
+  The moment the content changes at all, autosave is free to try again.
+- **The autosave status indicator ("Saving…"/"Saved"/"Unsaved changes")
+  is fully derived at render time from `isAutosaving`/`isDirty`/
+  `autosaveOutcome`, with no effect syncing them together (Task 13b).**
+  An earlier version used a `useEffect` to flip a stored "dirty" status
+  whenever `isDirty` became true, and a ref (`lastFailedAutosaveValueRef`)
+  for the "don't retry a known failure" gate read directly during render
+  — both tripped this codebase's stricter React Compiler-era ESLint rules
+  (`react-hooks/set-state-in-effect`: no synchronous `setState` inside an
+  effect body; `react-hooks/refs`: no ref `.current` access reachable from
+  a closure built during render, which — surprisingly broadly — includes
+  anything nested inside `handleSubmit(...)`'s callback even though
+  react-hook-form only ever *invokes* that callback later, from a real
+  event handler). The fix was architectural, not suppression: the
+  "last failed value" gate became real `useState` (legitimate to read
+  during render), and the display status is now `isAutosaving ? "saving"
+  : isDirty ? "dirty" : autosaveOutcome` computed inline — no effect
+  needed to keep it in sync at all. The scroll-to-invalid-block target
+  (above) hit the identical ref-in-render-reachable-closure problem for
+  the same reason and got the same fix: plain `useState` holding a fresh
+  `{index, field}` object per validation failure, with no need to reset
+  it back to `null` afterward, since the effect's dependency comparison
+  (`Object.is` on that object) only ever re-fires on a genuinely new
+  object — never on unrelated re-renders, and correctly still re-fires
+  even for a byte-for-byte repeat failure, since `revealValidationTarget`
+  always constructs a new object.
+- **The unsaved-changes guard covers `beforeunload` (tab close/refresh)
+  and this page's own back link, not arbitrary in-app navigation (Task
+  13b).** Next.js 16's App Router has no global "block navigation" hook
+  the way the old Pages Router's route-change events did. Intercepting
+  clicks on links elsewhere in the app (the sidebar, a breadcrumb, another
+  page entirely) would require patching `next/navigation`'s router or
+  History API internals — judged too fragile for this task given how
+  central those modules are to every route transition in the app. Scope
+  was deliberately limited to what `page-editor.tsx`/
+  `shared-section-editor.tsx` themselves render: `AdminPageHeader` gained
+  an optional `onBackClick` interceptor (only these two editors pass one;
+  every other caller keeps plain-navigation behavior), and the Preview
+  link's own click handler warns separately when dirty (see below). A
+  user leaving via the sidebar mid-edit still loses unsaved work
+  silently — a known, documented gap, not a claimed fix.
+- **The Preview link warns via the existing `ConfirmDialog` (ported from
+  Task 12) rather than an ambient inline note, and opens via
+  `window.open()` on confirm instead of letting the anchor navigate
+  natively (Task 13b).** The preview route itself
+  (`app/(site)/preview/[...slug]/page.tsx`) already banners "reflects the
+  last saved draft, not unsaved edits" — this closes the remaining gap
+  one step upstream, at the moment the editor is about to click into a
+  preview that silently won't show their just-typed edits. The trade-off:
+  intercepting the click when dirty means a modifier-click (open in new
+  tab, etc.) on the anchor is lost in that specific case, in exchange for
+  an explicit, hard-to-miss warning at the moment it matters; when the
+  form isn't dirty, the anchor's native `target="_blank"` behavior is
+  untouched.
+- **Shared sections get the identical block-editor treatment (scroll-to-
+  invalid-block, duplicate-near-source, keyboard reordering, unsaved-
+  changes guard, autosave) except the Preview-link warning, which does
+  not apply — shared sections have no standalone preview route (Task
+  13b).** `shared-section-editor.tsx` already duplicated
+  `page-editor.tsx`'s block-list scaffolding structurally (its own
+  `SortableBlockRow`, its own `onDragEnd`) before this task touched
+  either file, so the same duplication convention was kept rather than
+  extracting a shared block-list-editor component neither file's brief
+  asked for — lower risk for a remediation task, at the cost of the two
+  files' block-editing logic (and its comments) being near-identical by
+  design; a future task could extract this into a shared component if a
+  third block-list editor ever needs it.

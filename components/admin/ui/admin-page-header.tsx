@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 
 /**
@@ -15,6 +15,7 @@ export function AdminPageHeader({
   description,
   backHref,
   backLabel,
+  onBackClick,
   actions,
 }: {
   title: ReactNode;
@@ -22,13 +23,21 @@ export function AdminPageHeader({
   description?: ReactNode;
   backHref?: string;
   backLabel?: string;
+  /**
+   * Optional click interceptor for the back link (Task 13b's unsaved-
+   * changes guard) — e.g. `page-editor.tsx` calls `event.preventDefault()`
+   * and shows a ConfirmDialog when the form is dirty, only navigating on
+   * confirm. Omit for the plain-navigation behavior every other caller
+   * (list pages, non-editor forms) still wants.
+   */
+  onBackClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   actions?: ReactNode;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div>
         {backHref && (
-          <Link href={backHref} className="block text-xs opacity-60 hover:underline">
+          <Link href={backHref} onClick={onBackClick} className="block text-xs opacity-60 hover:underline">
             ← {backLabel}
           </Link>
         )}

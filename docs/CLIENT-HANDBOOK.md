@@ -43,17 +43,39 @@ on, stacked top to bottom.
 - **To add a block**, use the search box at the bottom of the block list
   to find one by name or by what it's for (e.g. typing "gallery" or
   "video" both find relevant blocks), then click its card to add it.
-- **To reorder blocks**, drag the ⠿ handle on the left of each block.
+- **To reorder blocks**, drag the ⠿ handle on the left of each block, or
+  use the ↑/↓ buttons next to it — the same buttons also work from the
+  keyboard (Tab to the ⠿ handle, then Space to pick a block up, arrow
+  keys to move it, and Space again to drop it).
 - **To edit a block**, click its title to expand it, fill in the fields,
   and they save when you save the page.
 - **To temporarily hide a block** without deleting it, click **Hide**.
-- **Duplicate**/**Remove** do exactly what they say.
+- **Duplicate** inserts the copy directly below the original block, not
+  at the end of the list, so it's easy to find and adjust right away.
+- **Remove** does exactly what it says.
+- If **Save draft** or **Publish** rejects something (a required field
+  left blank, for instance), the editor scrolls to and opens the block
+  that needs attention automatically — you don't have to hunt for it.
 
 Along the top: **Save draft** saves your work without changing what
-visitors see. **Publish** makes the current version live — it also saves
-a snapshot you can restore later from the **Revisions** panel on the
-right, if you ever need to undo a change. **Preview** opens the page as
-it will look once published, without actually publishing it.
+visitors see. Your work also saves itself a few seconds after you stop
+typing — a small "Saving…" / "Saved" / "Unsaved changes" note next to
+that button shows the current state, so **Save draft** is there for you
+to save immediately (before previewing, say) rather than something you
+must remember to click. **Publish** makes the current version live — it
+also saves a snapshot you can restore later from the **Revisions** panel
+on the right, if you ever need to undo a change. **Preview** opens the
+page as it will look once published, without actually publishing it —
+if you have edits that haven't saved yet, it warns you first, since the
+preview can only show what was last saved.
+
+If you try to leave the page (closing the tab, or clicking **← Pages**)
+while you have unsaved edits, you'll be asked to confirm first — same as
+navigating away with unsaved changes in most other apps. Note that this
+warning only covers the browser tab closing/refreshing and this editor's
+own back link; it can't catch every possible way of navigating elsewhere
+in the admin, so it's still worth glancing at that "Saving…"/"Saved"
+indicator before you go.
 
 Changing the **Slug** field changes the page's web address — do this
 carefully, since anything linking to the old address will break unless

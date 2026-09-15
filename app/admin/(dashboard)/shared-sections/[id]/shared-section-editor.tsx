@@ -1,17 +1,23 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
   DndContext,
+  KeyboardSensor,
   closestCenter,
   PointerSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockFieldsForm } from "@/components/admin/block-fields-form";
 import {
@@ -28,10 +34,18 @@ import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { AsyncMessage, type AsyncMessageState } from "@/components/admin/ui/async-message";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
+import { ReorderButtons } from "@/components/admin/ui/row-actions";
+import { cloneBlockForDuplicate, decideAutosave, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
+import { useDebouncedCallback } from "@/lib/admin/use-debounced-callback";
 
 // Same reasoning as page-editor.tsx: `blocks` mixes fixed shape (type,
 // is_visible) with a per-block-type `data` shape no static type covers.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+/** Same debounce window as page-editor.tsx — see that file's AUTOSAVE_DELAY_MS comment. */
+const AUTOSAVE_DELAY_MS = 4000;
+
+type AutosaveStatus = "idle" | "dirty" | "saving" | "saved" | "error";
 
 export function SharedSectionEditor({
   section,
@@ -44,6 +58,7 @@ export function SharedSectionEditor({
 }) {
   const canPublish = hasCapability(role, "publish");
   const canDelete = hasCapability(role, "delete_content");
+  const canEditDrafts = hasCapability(role, "edit_drafts");
   const router = useRouter();
   const [isSaving, startSaving] = useTransition();
   const [isPublishing, startPublishing] = useTransition();
@@ -55,6 +70,13 @@ export function SharedSectionEditor({
   const [addType, setAddType] = useState(palette[0]?.type ?? "");
   const { confirm, dialog } = useConfirmDialog();
 
+  // See page-editor.tsx's identical declarations for why these are plain
+  // state rather than refs (decideAutosave reads lastFailedAutosaveValue
+  // during render, which this codebase's lint rules forbid for a ref).
+  const [autosaveOutcome, setAutosaveOutcome] = useState<"idle" | "saved" | "error">("idle");
+  const [isAutosaving, setIsAutosaving] = useState(false);
+  const [lastFailedAutosaveValue, setLastFailedAutosaveValue] = useState<string | null>(null);
+
   const paletteByType = Object.fromEntries(palette.map((p) => [p.type, p]));
 
   const form = useForm<any>({
@@ -64,10 +86,15 @@ export function SharedSectionEditor({
     },
   });
 
-  const { control, register, handleSubmit } = form;
-  const { fields, append, remove, move, update } = useFieldArray({ control, name: "blocks" });
+  const { control, register, handleSubmit, getValues } = form;
+  const { isDirty } = form.formState;
+  const { fields, append, insert, remove, move, update } = useFieldArray({ control, name: "blocks" });
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    // Keyboard reordering — see page-editor.tsx's identical sensor setup.
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -82,14 +109,62 @@ export function SharedSectionEditor({
     return saveSharedSectionDraftAction(section.id, values.title, values.blocks, version);
   }
 
+  // --- Scroll-to/focus-the-failed-block — see page-editor.tsx's identical block for the full rationale.
+  const [openIds, setOpenIds] = useState<Set<string>>(new Set());
+  const blockRowRefs = useRef(new Map<number, HTMLDivElement>());
+  // Plain state, not a ref — see page-editor.tsx's identical declaration
+  // for why (revealValidationTarget is called from inside handleSubmit's
+  // render-time-constructed closure, where this codebase's lint rules
+  // forbid touching a ref even though it's only actually invoked later,
+  // as an event handler).
+  const [pendingFocus, setPendingFocus] = useState<{ index: number; field?: string } | null>(null);
+
+  function registerBlockRowRef(index: number, el: HTMLDivElement | null) {
+    if (el) blockRowRefs.current.set(index, el);
+    else blockRowRefs.current.delete(index);
+  }
+
+  function toggleOpen(id: string) {
+    setOpenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function revealValidationTarget(result: { blockIndex?: number; field?: string }) {
+    if (result.blockIndex === undefined) return;
+    const fieldId = fields[result.blockIndex]?.id;
+    if (fieldId) setOpenIds((prev) => new Set(prev).add(fieldId));
+    setPendingFocus({ index: result.blockIndex, field: result.field });
+  }
+
+  useEffect(() => {
+    if (!pendingFocus) return;
+    const container = blockRowRefs.current.get(pendingFocus.index);
+    if (!container) return;
+    container.scrollIntoView({ behavior: "smooth", block: "center" });
+    const target = resolveBlockFocusTarget(container, {
+      namePrefix: `blocks.${pendingFocus.index}.data`,
+      field: pendingFocus.field,
+    });
+    target?.focus();
+  }, [pendingFocus]);
+
   const onSaveDraft = handleSubmit((values) => {
     startSaving(async () => {
       const result = await saveDraft(values);
       if (result.status === "error") {
         setBanner({ kind: "error", message: result.message, conflict: result.conflict });
+        revealValidationTarget(result);
+        if (!result.conflict) setLastFailedAutosaveValue(JSON.stringify(values));
       } else {
         setVersion(result.newVersion);
         setBanner({ kind: "success", message: "Draft saved." });
+        setLastFailedAutosaveValue(null);
+        setAutosaveOutcome("saved");
+        form.reset(values, { keepValues: true, keepDirty: false });
         router.refresh();
       }
     });
@@ -100,9 +175,13 @@ export function SharedSectionEditor({
       const saveResult = await saveDraft(values);
       if (saveResult.status === "error") {
         setBanner({ kind: "error", message: saveResult.message, conflict: saveResult.conflict });
+        revealValidationTarget(saveResult);
         return;
       }
       setVersion(saveResult.newVersion);
+      form.reset(values, { keepValues: true, keepDirty: false });
+      setLastFailedAutosaveValue(null);
+      setAutosaveOutcome("saved");
       const publishResult = await publishSharedSectionAction(section.id, saveResult.newVersion);
       if (publishResult.status === "error") {
         setBanner({ kind: "error", message: publishResult.message, conflict: publishResult.conflict });
@@ -141,6 +220,78 @@ export function SharedSectionEditor({
     append({ type: entry.type, is_visible: true, data: entry.defaults });
   }
 
+  /** Duplicate-near-source — see page-editor.tsx's identical handler for the full rationale. */
+  function duplicateBlockAt(index: number) {
+    const source = fields[index] as any;
+    insert(index + 1, cloneBlockForDuplicate({ type: source.type, is_visible: source.is_visible, data: source.data }));
+  }
+
+  // --- Unsaved-changes guard — see page-editor.tsx's identical block for the in-app-navigation boundary note.
+  useEffect(() => {
+    if (!isDirty) return;
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  async function handleBackClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (!isDirty) return;
+    event.preventDefault();
+    const ok = await confirm({
+      title: "Discard unsaved changes?",
+      message: "You have edits on this shared section that haven't been saved yet. Leaving now will discard them.",
+      tone: "danger",
+      confirmLabel: "Discard and leave",
+    });
+    if (ok) router.push("/admin/shared-sections");
+  }
+
+  // --- Debounced autosave — see page-editor.tsx's identical block for the full rationale
+  // (no separate preview route exists for shared sections, so only the
+  // save-path half of that file's Task 13b work applies here).
+  const watchedValues = useWatch({ control });
+  const serializedValues = JSON.stringify(watchedValues);
+
+  const autosaveDisplayStatus: AutosaveStatus = isAutosaving ? "saving" : isDirty ? "dirty" : autosaveOutcome;
+
+  const autosaveDecision = decideAutosave({
+    enabled: canEditDrafts && !isSaving && !isPublishing && !isAutosaving,
+    isDirty,
+    serializedValue: serializedValues,
+    lastFailedValue: lastFailedAutosaveValue,
+  });
+
+  useDebouncedCallback({
+    watchKey: serializedValues,
+    delayMs: AUTOSAVE_DELAY_MS,
+    enabled: autosaveDecision === "attempt",
+    callback: () => {
+      const values = getValues();
+      const serializedAtAttempt = serializedValues;
+      setIsAutosaving(true);
+      void (async () => {
+        const result = await saveDraft(values);
+        setIsAutosaving(false);
+        if (result.status === "error") {
+          setLastFailedAutosaveValue(serializedAtAttempt);
+          if (result.conflict) {
+            setBanner({ kind: "error", message: result.message, conflict: true });
+          } else {
+            setAutosaveOutcome("error");
+          }
+        } else {
+          setLastFailedAutosaveValue(null);
+          setVersion(result.newVersion);
+          form.reset(values, { keepValues: true, keepDirty: false });
+          setAutosaveOutcome("saved");
+        }
+      })();
+    },
+  });
+
   const bannerMessage: AsyncMessageState = banner ? { kind: banner.kind, text: banner.message } : null;
 
   return (
@@ -149,11 +300,13 @@ export function SharedSectionEditor({
         <AdminPageHeader
           backHref="/admin/shared-sections"
           backLabel="Shared sections"
+          onBackClick={handleBackClick}
           title={section.title}
           subtitle={`key: ${section.key}`}
           actions={
             <>
               <StatusBadge label={status} />
+              <AutosaveIndicator status={autosaveDisplayStatus} />
               <button
                 type="button"
                 onClick={onSaveDraft}
@@ -210,12 +363,19 @@ export function SharedSectionEditor({
                     key={field.id}
                     id={field.id}
                     index={index}
+                    isFirst={index === 0}
+                    isLast={index === fields.length - 1}
                     typeLabel={paletteByType[(field as any).type]?.label ?? (field as any).type}
                     definition={paletteByType[(field as any).type]}
                     isVisible={(field as any).is_visible}
+                    isOpen={openIds.has(field.id)}
+                    onToggleOpen={() => toggleOpen(field.id)}
                     onToggleVisible={() => update(index, { ...(field as any), is_visible: !(field as any).is_visible })}
                     onRemove={() => remove(index)}
-                    onDuplicate={() => append({ ...(field as any) })}
+                    onDuplicate={() => duplicateBlockAt(index)}
+                    onMoveUp={() => move(index, index - 1)}
+                    onMoveDown={() => move(index, index + 1)}
+                    registerRef={registerBlockRowRef}
                   />
                 ))}
               </SortableContext>
@@ -287,26 +447,61 @@ export function SharedSectionEditor({
   );
 }
 
+/** See page-editor.tsx's identical component for the state -> text mapping rationale. */
+function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+  if (status === "idle") return null;
+  const text =
+    status === "saving"
+      ? "Saving…"
+      : status === "saved"
+        ? "Saved"
+        : status === "error"
+          ? "Autosave failed — save manually to see the error"
+          : "Unsaved changes";
+  return (
+    <span
+      role="status"
+      aria-live="polite"
+      className={`text-xs uppercase tracking-wide-label ${status === "error" ? "text-red-600" : "opacity-60"}`}
+    >
+      {text}
+    </span>
+  );
+}
+
 function SortableBlockRow({
   id,
   index,
+  isFirst,
+  isLast,
   typeLabel,
   definition,
   isVisible,
+  isOpen,
+  onToggleOpen,
   onToggleVisible,
   onRemove,
   onDuplicate,
+  onMoveUp,
+  onMoveDown,
+  registerRef,
 }: {
   id: string;
   index: number;
+  isFirst: boolean;
+  isLast: boolean;
   typeLabel: string;
   definition: BlockPaletteEntry | undefined;
   isVisible: boolean;
+  isOpen: boolean;
+  onToggleOpen: () => void;
   onToggleVisible: () => void;
   onRemove: () => void;
   onDuplicate: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  registerRef: (index: number, el: HTMLDivElement | null) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
@@ -315,19 +510,30 @@ function SortableBlockRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  function setRefs(el: HTMLDivElement | null) {
+    setNodeRef(el);
+    registerRef(index, el);
+  }
+
   return (
-    <div ref={setNodeRef} style={style} className="rounded border border-osi-sand-300 bg-osi-white">
+    <div ref={setRefs} style={style} className="rounded border border-osi-sand-300 bg-osi-white">
       <div className="flex items-center gap-2 px-3 py-2">
         <button
           type="button"
           {...attributes}
           {...listeners}
           className="cursor-grab px-1 text-osi-slate-400"
-          aria-label="Drag to reorder"
+          aria-label={`Drag to reorder ${typeLabel} (or focus and use arrow keys)`}
         >
           ⠿
         </button>
-        <button type="button" onClick={() => setOpen((o) => !o)} className="flex-1 text-left text-sm font-medium">
+        <ReorderButtons onMoveUp={onMoveUp} onMoveDown={onMoveDown} disableUp={isFirst} disableDown={isLast} />
+        <button
+          type="button"
+          data-block-toggle
+          onClick={onToggleOpen}
+          className="flex-1 text-left text-sm font-medium"
+        >
           {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
         </button>
         <button type="button" onClick={onToggleVisible} className="text-xs opacity-70 hover:underline">
@@ -340,8 +546,8 @@ function SortableBlockRow({
           Remove
         </button>
       </div>
-      {open && definition && (
-        <div className="border-t border-osi-sand-300 p-4">
+      {isOpen && definition && (
+        <div data-block-fields className="border-t border-osi-sand-300 p-4">
           <BlockFieldsForm definition={definition} namePrefix={`blocks.${index}.data`} />
         </div>
       )}
