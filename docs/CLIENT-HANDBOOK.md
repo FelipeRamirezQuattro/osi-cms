@@ -85,6 +85,19 @@ Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
 publish it later.
 
+**Product categories** (its own sidebar section, separate from
+Products) is the short list of category names products are grouped
+under — the same name/order pattern as Industries/Applications, but with
+no draft/published status of its own (it's a fixed, structural list, not
+content that goes live on its own). One thing that's different here: if
+you try to delete a category that any product still belongs to, you'll
+get a message like "Can't delete — 3 products use this category" instead
+of the delete going through. That's intentional, not a bug — a
+product's page URL always includes its category, so deleting a category
+out from under a product it's still assigned to would break that
+product's page. Move or reassign every product out of a category first
+(edit each product's Category field), then delete it.
+
 Note: **Services** (Fluid Levels, Pump Cards, Machine Shop) doesn't have
 its own sidebar section — those are regular pages, edited under
 **Pages** like any other page.

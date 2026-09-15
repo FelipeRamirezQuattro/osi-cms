@@ -96,29 +96,24 @@ test.describe("public route smoke matrix", () => {
   });
 
   test("nonexistent path renders the not-found boundary content", async ({ page }) => {
-    // Asserts against the raw server-rendered response body rather than a
-    // hydrated DOM locator: under `next dev` (Turbopack), this specific
-    // boundary (HTTPAccessFallbackBoundary, i.e. notFound()) sometimes
-    // logs "Switched to client rendering because the server rendering
-    // errored: NEXT_HTTP_ERROR_FALLBACK;404" and then never finishes
-    // client-rendering — the browser is left showing app/(site)/
-    // loading.tsx's skeleton indefinitely, even though the actual HTML
-    // Next.js served (confirmed with curl and with `next build && next
-    // start`) already contains the correct not-found content. That's a
-    // dev-mode/Turbopack SSR-streaming quirk, not a real defect — reading
-    // the response body directly sidesteps it without weakening what's
-    // actually being verified (the server sent the right content).
-    //
-    // As of Task 8, this specific request never reaches Next's page
-    // pipeline at all — proxy.ts's soft-404 fix intercepts it and serves
-    // a standalone 404 document directly (see that file's top comment).
-    // Its body still contains "Page not found" by design, so this
-    // assertion is unchanged, but it's no longer exercising not-found.tsx
-    // for this exact path — see the status-code test below for the
-    // proxy-level check, and the "known content/route gaps" section of
-    // navigation-links.spec.ts for a case that still goes through the
-    // real not-found.tsx (a product detail 404, left out of proxy's
-    // scope — see proxy.ts's comment).
+    // Asserts against the raw server-rendered response body, not a
+    // hydrated DOM locator — see the dedicated chrome test below for
+    // that. As of Task 8, this request is rewritten by proxy.ts to
+    // app/(site-404)/system-not-found (see that file's top comment) — a
+    // route group with zero Suspense boundaries anywhere in its tree,
+    // which is what fixes the status code (the test right after this
+    // one), but also means Next's own notFound() machinery
+    // (HTTPAccessFallbackBoundary) has no boundary to server-swap
+    // content into and falls back to a minimal `id="__next_error__"`
+    // shell whose actual content ships as an RSC payload for the client
+    // to hydrate (confirmed on a maximally trivial synthetic route too,
+    // in a real `next build && next start` server — NOT the dev-mode-
+    // only Turbopack quirk an earlier version of this comment assumed
+    // the equivalent behavior on the old, Suspense-wrapped code path
+    // was). "Page not found" is still present as a literal substring of
+    // that raw response body (it's serialized inline in the flight
+    // payload), so this assertion still holds without needing to wait
+    // for hydration.
     const response = await page.goto("/this-page-does-not-exist");
     const body = (await response?.text()) ?? "";
     expect(body).toContain("Page not found");
@@ -127,14 +122,27 @@ test.describe("public route smoke matrix", () => {
   // Fixed in Task 8 — see proxy.ts's top comment for the root cause
   // (app/(site)/loading.tsx's ambient Suspense boundary makes the
   // response start streaming as 200 before [...slug]/page.tsx's
-  // notFound() ever runs) and the fix (a proxy-level existence check
-  // that returns a genuine 404 before Next starts rendering at all, for
-  // real top-level document requests). Previously filed as a known
+  // notFound() ever runs) and the fix (a proxy-level rewrite to a
+  // loading.tsx-free sibling route group, so nothing can commit 200
+  // before its own notFound() call runs). Previously filed as a known
   // defect via test.fail() (see git history) — now a normal, must-pass
   // assertion.
   test("nonexistent path returns a real 404 status, not a soft-404", async ({ page }) => {
     const response = await page.goto("/this-page-does-not-exist");
     expect(response?.status()).toBe(404);
+  });
+
+  // Task 8 review fix: the genuine-404 fix above preserves the on-brand
+  // Header/Footer chrome, but (per the previous test's comment) only via
+  // client hydration, not in the raw response body — this is the test
+  // that actually confirms a real visitor sees it, using Playwright's
+  // locators (which wait for hydration) rather than the raw body.
+  test("nonexistent path shows the real site chrome once hydrated", async ({ page }) => {
+    const response = await page.goto("/this-page-does-not-exist");
+    expect(response?.status()).toBe(404);
+    await expect(page.locator("header")).toBeVisible();
+    await expect(page.locator("footer")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
   });
 });
 

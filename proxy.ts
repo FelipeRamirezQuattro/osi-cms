@@ -27,17 +27,45 @@ import { guardAdminRequest, publicSlugIsResolvable } from "@/lib/auth";
 // explicit scope; see task-8-report.md's soft-404 section for that
 // trade-off written out in full.
 //
-// This intentionally returns a plain, standalone 404 document instead of
-// reusing not-found.tsx's chrome-wrapped rendering: there is no way to
-// both (a) get Next to commit a real 404 status and (b) let the normal
-// Header/Footer-wrapped React tree render, because the moment that tree
-// is asked to render at all it re-enters the same ambient Suspense
-// boundary this bug comes from. Only genuine top-level document
-// navigations are affected — clicking a broken internal link while
-// already on the site is a client-side RSC transition (detected below
-// via the `RSC`/`Next-Router-Prefetch` request headers Next attaches to
-// those) and continues to show the existing chrome'd not-found.tsx at
-// (an irrelevant, not user-visible) 200, unchanged from before this fix.
+// THE FIX PRESERVES CHROME (Task 8 review fix — an earlier version of
+// this hand-rolled a standalone, chrome-less 404 document here). On a
+// confirmed-missing slug this rewrites the request to
+// app/(site-404)/system-not-found instead — a sibling route group that
+// reuses (site)'s exact layout/not-found content (see those files' own
+// comments for how) but deliberately has NO loading.tsx anywhere in its
+// tree, which is what fixes the status code: with no Suspense boundary
+// anywhere in (site-404)'s tree, nothing can commit a 200 before
+// system-not-found's unconditional notFound() call runs, so the final
+// status really is 404 (verified against a real `next build && next
+// start` server, not just reasoned about — see task-8-report.md).
+//
+// One nuance worth being explicit about, found the same way (a real
+// server, not just the docs): with zero Suspense boundaries anywhere in
+// the tree, Next's own notFound()-handling machinery
+// (HTTPAccessFallbackBoundary) has no boundary to perform a server-side
+// content swap into, so the raw HTTP response body is a minimal
+// `id="__next_error__"` shell (confirmed via curl on a maximally
+// trivial synthetic route too, in a real production build — this is
+// NOT the "dev-mode Turbopack quirk" an earlier comment in
+// tests/e2e/public-routes.spec.ts assumed it was) — the actual
+// Header/Footer/"Page not found" content ships as an RSC payload the
+// browser hydrates client-side. Confirmed with Playwright against the
+// same built server that every real visitor still sees the full,
+// correct, on-brand chrome (status 404, header/footer/heading all
+// visible) — this is a real, if non-obvious, trade-off of this specific
+// fix, not a defect in it.
+//
+// The rewrite is transparent to the browser (the URL bar keeps showing
+// the original, nonexistent path), and — since proxy runs once per
+// incoming request, not once per internal rewrite hop — doesn't
+// re-invoke this function or re-run the existence check a second time.
+//
+// Only genuine top-level document navigations are affected — clicking a
+// broken internal link while already on the site is a client-side RSC
+// transition (detected below via the `RSC`/`Next-Router-Prefetch`
+// request headers Next attaches to those) and continues to show the
+// existing chrome'd not-found.tsx at (an irrelevant, not user-visible)
+// 200, unchanged from before this fix.
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -45,7 +73,7 @@ export async function proxy(request: NextRequest) {
     return guardAdminRequest(request);
   }
 
-  return maybeServeGenuine404(request);
+  return maybeRewriteToGenuine404(request);
 }
 
 // First-path-segments that are never handled by the [...slug] catch-all
@@ -54,7 +82,14 @@ export async function proxy(request: NextRequest) {
 // for a page it has no business judging. Detail routes nested under
 // these (e.g. /products/:category/:slug, /news/:slug) are deliberately
 // left alone too — see this file's top comment.
-const SKIPPED_TOP_SEGMENTS = new Set([
+//
+// Exported so a test can assert this stays in sync with the real
+// app/(site)/ directory listing — this list already caused one real bug
+// (a missing "resources" entry hard-404'd the real /resources route
+// until caught by manually curling it against a live build). "styleguide"
+// and "api" live outside app/(site)/ entirely, so a directory-listing
+// test can't discover them and they're asserted by hand instead.
+export const SKIPPED_TOP_SEGMENTS = new Set([
   "api",
   "preview",
   "products",
@@ -65,6 +100,11 @@ const SKIPPED_TOP_SEGMENTS = new Set([
   "search",
   "contact",
   "styleguide",
+  // The rewrite target itself (app/(site-404)/system-not-found) — not a
+  // real destination anyone links to, but skipped defensively so a
+  // direct hit on it (or Next re-running proxy against the rewritten
+  // request, if it ever does) can't loop back through this same check.
+  "system-not-found",
 ]);
 
 function isAssetPath(pathname: string): boolean {
@@ -76,14 +116,14 @@ function isAssetPath(pathname: string): boolean {
   );
 }
 
-async function maybeServeGenuine404(request: NextRequest): Promise<Response> {
+async function maybeRewriteToGenuine404(request: NextRequest): Promise<NextResponse> {
   if (request.method !== "GET" && request.method !== "HEAD") {
     return NextResponse.next();
   }
   // Next's own client-side navigation/prefetch fetches — not a top-level
   // document load, so there's no HTTP status a user or crawler ever sees
-  // for these, and returning a plain HTML document here instead of the
-  // RSC Flight payload they expect would break client-side routing.
+  // for these, and rewriting one of these to a different page than the
+  // client's router expects would break client-side routing.
   if (request.headers.get("RSC") || request.headers.get("Next-Router-Prefetch")) {
     return NextResponse.next();
   }
@@ -96,47 +136,10 @@ async function maybeServeGenuine404(request: NextRequest): Promise<Response> {
   if (SKIPPED_TOP_SEGMENTS.has(segments[0])) return NextResponse.next();
 
   const slug = segments.join("/");
-  const exists = await publicSlugIsResolvable(request, slug);
+  const exists = await publicSlugIsResolvable(slug);
   if (exists) return NextResponse.next();
 
-  return genuineNotFoundResponse();
-}
-
-function genuineNotFoundResponse(): Response {
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex" />
-<!--
-  Title deliberately matches app/layout.tsx's bare, untemplated default
-  ("Odessa Separator Inc.", no "X | " prefix) rather than something more
-  descriptive like "Page not found" — tests/e2e/navigation-links.spec.ts
-  detects a broken nav link precisely by that bare-default-title signal
-  (a real page's generateMetadata always produces a templated title), and
-  this response bypasses Next's rendering/metadata pipeline entirely, so
-  it has to reproduce that signal by hand to keep that detection working
-  for every href this fix now intercepts. The <h1> below (not <title>) is
-  what carries the human-readable "Page not found" message.
--->
-<title>Odessa Separator Inc.</title>
-<style>
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#001B33;color:#F2E9DE;font-family:Georgia,serif;text-align:center;padding:24px;}
-p.eyebrow{letter-spacing:.2em;text-transform:uppercase;color:#E2902A;font-size:.75rem;margin:0 0 1rem;}
-a{color:#E2902A;}
-</style>
-</head>
-<body>
-<div>
-<p class="eyebrow">404</p>
-<h1>Page not found</h1>
-<p>The page you&rsquo;re looking for doesn&rsquo;t exist or may have moved.</p>
-<p><a href="/">Back to home</a> &middot; <a href="/search">Search the site</a></p>
-</div>
-</body>
-</html>`;
-  return new Response(html, { status: 404, headers: { "content-type": "text/html; charset=utf-8" } });
+  return NextResponse.rewrite(new URL("/system-not-found", request.url));
 }
 
 export const config = {

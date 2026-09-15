@@ -16,7 +16,16 @@ export const dynamic = "force-dynamic";
 // Wraps every public marketing page with the site chrome. Deliberately
 // excludes /styleguide (isolated design reference) and the future
 // /admin (Phase 5) — those live outside this route group.
-export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+//
+// Exported by name (not just default) so app/(site-404)/layout.tsx — the
+// chrome-preserving genuine-404 route proxy.ts rewrites a confirmed-
+// missing slug to (see that file's top comment) — can reuse this exact
+// component. That sibling route group needs the identical Header/
+// Footer/announcement-bar chrome but, critically, must NOT have a
+// sibling loading.tsx: that absence (not anything about this function)
+// is what lets it commit a real 404 status, so the reuse only covers
+// this layout, not the whole route group.
+export async function SiteLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings();
   const socialLinks = [
     settings.social_facebook,
@@ -35,3 +44,5 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     </>
   );
 }
+
+export default SiteLayout;

@@ -396,3 +396,64 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   old one — publishing new copy is a new announcement as far as a
   viewer's dismissal history goes, without needing staff to remember to
   bump a version field.
+- **The `[...slug]` soft-404 is fixed with a proxy-level rewrite to a
+  `loading.tsx`-free sibling route group** (`app/(site-404)/`), not a
+  hand-rolled standalone HTML response (Task 8, revised after review).
+  Root cause: `app/(site)/loading.tsx` gives every route under `(site)`
+  an ambient Suspense boundary; the moment `[...slug]/page.tsx`'s async
+  body suspends on its DB call, that boundary's fallback commits the
+  response as `200` before `notFound()` ever runs, and the status can
+  never change afterward (Next's docs are explicit that a real status
+  requires checking existence *before* the response streams — the fix
+  is a proxy-level check, but WITHOUT Cache Components, "before it
+  streams" is achievable without giving up chrome). `proxy.ts`'s
+  `publicSlugIsResolvable()` check runs first; on a confirmed miss it
+  `NextResponse.rewrite()`s to `app/(site-404)/system-not-found`, a
+  route group with the exact same Header/Footer chrome (reused from
+  `(site)/layout.tsx` via a named export, not duplicated) but
+  deliberately **no** `loading.tsx` anywhere in its tree — with no
+  Suspense boundary to commit an early `200`, `system-not-found`'s
+  unconditional `notFound()` call is the first thing that can settle the
+  response, and it settles it as a real `404`.
+  **Non-obvious trade-off, found by testing a real `next build && next
+  start` server, not just reading the docs**: with zero Suspense
+  boundaries anywhere in a route's tree, Next's own `notFound()`
+  machinery (`HTTPAccessFallbackBoundary`) has no boundary to perform a
+  server-side content swap into, so the *raw* HTTP response body is a
+  minimal `id="__next_error__"` shell — confirmed even on a maximally
+  trivial synthetic route with no DB calls at all, so it isn't specific
+  to this route's own async work. The actual Header/Footer/"Page not
+  found" content ships as an RSC payload the browser hydrates
+  client-side; confirmed with Playwright against the same built server
+  that every real visitor still sees the correct chrome (status 404,
+  header/footer/heading all visible). This revises an earlier assumption
+  in this codebase (a comment in `tests/e2e/public-routes.spec.ts`,
+  since corrected) that an equivalent "switched to client rendering"
+  message was a `next dev`/Turbopack-only quirk — it is not; it's
+  intrinsic to `notFound()` with no viable Suspense-streaming boundary,
+  in production builds too.
+  **Also found by testing, not by reasoning**: `app/(site)/not-found.tsx`
+  intentionally sets no `title` override in its `metadata` export (the
+  root layout's bare default, "Odessa Separator Inc.", applies
+  instead) — a templated title like "Page not found | Odessa Separator
+  Inc." reads as a *resolved* page to
+  `tests/e2e/navigation-links.spec.ts`'s broken-link detector, which
+  specifically keys off the untemplated bare-default title as its "this
+  didn't resolve to anything" signal (see that file's own header
+  comment for why). A real e2e run against live data caught this
+  silently masking two still-broken nav links (`/esp-packages`,
+  `/what-we-do`) before the fix landed.
+  `publicSlugIsResolvable()` itself fails **open** (returns `true`, i.e.
+  renders normally) on any Supabase error result or thrown exception —
+  a transient DB hiccup must never hard-404 a real page or 500 the whole
+  site; the worst case of failing open is the pre-existing soft-404 for
+  a genuinely missing slug during that same degraded window. It's also
+  deliberately not cookie-bound (unlike `guardAdminRequest`'s client in
+  the same file) — `page_publications`/`redirects` are both fully public
+  (`using (true)`), and binding a visitor's session cookies here with a
+  no-op `setAll` risked silently discarding an admin's rotated refresh
+  token mid-browse. Scoped to exactly the generic catch-all (a hand-
+  maintained `SKIPPED_TOP_SEGMENTS` list, enforced by a test that reads
+  the real `app/(site)/` directory listing) — product/news/industry/
+  application detail pages have the same theoretical soft-404 exposure
+  but are pre-existing and out of this fix's explicit scope.

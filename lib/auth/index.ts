@@ -87,23 +87,48 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
  * lib/data/ (constraint 2's "all DB access lives in lib/data/*.ts"),
  * for the exact same reason guardAdminRequest above does: proxy.ts runs
  * in a context that can't use next/headers' cookies(), so it needs its
- * own request-cookie-bound client, and this is the one file already
- * carved out for that. Read-only (never writes cookies) — no session
- * refresh needed for an anonymous existence check.
+ * own client, and this is the one file already carved out for that.
+ *
+ * Deliberately NOT cookie-bound (no `request` parameter, unlike
+ * guardAdminRequest): `page_publications` and `redirects` both have a
+ * `using (true)` public SELECT policy, so an anonymous client answers
+ * identically to a cookie-bound one and is faster. A cookie-bound client
+ * here was a real bug, not just unnecessary — with `setAll: () => {}`
+ * discarding any refreshed session cookies this read triggered, an
+ * admin merely browsing the public site with a near-expiry access token
+ * could have their refresh token silently rotated-and-discarded here,
+ * invalidating their real session with no replacement ever written back.
+ *
+ * Fails OPEN (returns `true`, i.e. "let Next render normally") on any
+ * Supabase error result or thrown exception — a transient DB hiccup
+ * (statement timeout, pool exhaustion, a network blip) must never read
+ * as "this page doesn't exist" and hard-404 a real page like /about-us,
+ * nor propagate as an uncaught exception out of proxy() and 500 every
+ * single request site-wide. The cost of failing open is at most the
+ * pre-existing soft-404 behavior for a genuinely missing slug during
+ * that same degraded window — vastly preferable to either failure mode
+ * above. `.select()` on a Supabase client returns `{ error, count: null
+ * }` on failure rather than throwing, so both the error-result and
+ * thrown-exception paths need their own handling.
  */
-export async function publicSlugIsResolvable(request: NextRequest, slug: string): Promise<boolean> {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} } },
-  );
+export async function publicSlugIsResolvable(slug: string): Promise<boolean> {
+  try {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { cookies: { getAll: () => [], setAll: () => {} } },
+    );
 
-  const [page, redirect] = await Promise.all([
-    supabase.from("page_publications").select("slug", { head: true, count: "exact" }).eq("slug", slug).eq("locale", "en"),
-    supabase.from("redirects").select("id", { head: true, count: "exact" }).eq("from_path", `/${slug}`),
-  ]);
+    const [page, redirect] = await Promise.all([
+      supabase.from("page_publications").select("slug", { head: true, count: "exact" }).eq("slug", slug).eq("locale", "en"),
+      supabase.from("redirects").select("id", { head: true, count: "exact" }).eq("from_path", `/${slug}`),
+    ]);
 
-  return (page.count ?? 0) > 0 || (redirect.count ?? 0) > 0;
+    if (page.error || redirect.error) return true;
+    return (page.count ?? 0) > 0 || (redirect.count ?? 0) > 0;
+  } catch {
+    return true;
+  }
 }
 
 export async function signInWithPassword(email: string, password: string) {
