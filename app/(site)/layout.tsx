@@ -37,9 +37,25 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
+      {/*
+       * Skip link (Task 14) — invisible until it receives keyboard focus
+       * (first Tab stop on every page), then it's the first thing a
+       * keyboard/screen-reader user sees, letting them jump straight past
+       * the announcement bar/header/mega-menu to the actual page content
+       * instead of tabbing through the same site chrome on every single
+       * page load.
+       */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-osi-navy-900 focus:px-4 focus:py-2 focus:text-sm focus:text-osi-white"
+      >
+        Skip to main content
+      </a>
       <AnnouncementBar settings={normalizeAnnouncementBar(settings.announcement_bar)} />
       <Header />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
       <Footer />
     </>
   );

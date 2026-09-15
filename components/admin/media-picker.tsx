@@ -112,13 +112,17 @@ export function MediaPicker({
           <dialog
             ref={dialogRef}
             onClose={() => setIsOpen(false)}
+            aria-labelledby="media-picker-dialog-title"
             className="w-[90vw] max-w-3xl rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
           >
             <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
-              <h2 className="font-display text-sm tracking-wide-display uppercase">Media library</h2>
+              <h2 id="media-picker-dialog-title" className="font-display text-sm tracking-wide-display uppercase">
+                Media library
+              </h2>
               <button
                 type="button"
                 onClick={close}
+                aria-label="Close media library"
                 className="text-sm opacity-60 transition-opacity duration-200 hover:opacity-100"
               >
                 Close

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { AdminNavGroup } from "@/lib/admin/nav-config";
 
 /**
@@ -27,24 +27,44 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  const drawerRef = useRef<HTMLDialogElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   // A route change (following any nav link) always closes the mobile
-  // drawer. Adjusting state during render (React's documented pattern for
-  // "reset state when a prop changes") rather than an effect — an effect
-  // here would set state synchronously on mount of every navigation,
-  // which is exactly the cascading-render pattern React's own lint rule
-  // flags; tracking the previous pathname and branching during render
-  // needs no effect at all.
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
-    setDrawerOpen(false);
+  // drawer. This is an imperative call on the native <dialog> itself
+  // (close(), not setState), so it's fine inside a plain effect — it
+  // isn't the setState-during-effect cascading-render pattern React's
+  // lint rule flags, and close() on an already-closed dialog is a no-op
+  // (no "close" event fires), so this is harmless on first mount too.
+  useEffect(() => {
+    drawerRef.current?.close();
+  }, [pathname]);
+
+  function openDrawer() {
+    drawerRef.current?.showModal();
+    setDrawerOpen(true);
+  }
+
+  function closeDrawer() {
+    drawerRef.current?.close();
   }
 
   const breadcrumbs = buildBreadcrumbs(pathname, groups);
 
   return (
     <div className="flex min-h-screen flex-col bg-osi-cream-100 text-osi-navy-900 lg:flex-row">
+      {/*
+       * Skip link (Task 14) — same reasoning as the public (site) layout's:
+       * lets a keyboard user jump past the sidebar/breadcrumb chrome
+       * straight to the editor/list content, which repeats identically on
+       * every admin screen.
+       */}
+      <a
+        href="#admin-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-osi-gold-500 focus:px-4 focus:py-2 focus:text-sm focus:text-osi-navy-900"
+      >
+        Skip to main content
+      </a>
       {/* Mobile top bar */}
       <div className="flex items-center justify-between bg-osi-navy-900 px-4 py-3 text-osi-white lg:hidden">
         <Link href="/admin" className="font-display text-base tracking-wide-display uppercase">
@@ -52,40 +72,55 @@ export function AdminShell({
         </Link>
         <button
           type="button"
-          onClick={() => setDrawerOpen(true)}
+          onClick={openDrawer}
           aria-label="Open menu"
+          aria-haspopup="dialog"
+          aria-expanded={drawerOpen}
           className="rounded p-1.5 hover:bg-osi-navy-700"
         >
           <MenuIcon />
         </button>
       </div>
 
-      {/* Mobile drawer */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            type="button"
-            aria-label="Close menu"
-            onClick={() => setDrawerOpen(false)}
-            className="absolute inset-0 bg-osi-navy-900/60"
-          />
-          <aside className="relative flex h-full w-72 max-w-[85vw] flex-col overflow-y-auto bg-osi-navy-900 px-4 py-6 text-osi-white">
-            <div className="mb-6 flex items-center justify-between">
-              <span className="font-display text-lg tracking-wide-display uppercase">OSI Admin</span>
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Close menu"
-                className="rounded p-1.5 hover:bg-osi-navy-700"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            <SidebarNav groups={groups} pathname={pathname} />
-            <SidebarFooter session={session} signOut={signOut} />
-          </aside>
-        </div>
-      )}
+      {/*
+       * Mobile drawer — a native <dialog> via showModal(), same pattern as
+       * ConfirmDialog/MediaPicker (CLAUDE.md): focus containment, Escape-
+       * to-close, and focus restoration to the trigger button all come
+       * from the browser for free. The dialog element itself fills the
+       * viewport and doubles as its own dimmed backdrop (bg-osi-navy-900/60)
+       * — clicking it outside the <aside> drawer closes it (checked via
+       * event.target === currentTarget, the standard "click outside"
+       * pattern for a full-bleed dialog); the old separate full-viewport
+       * backdrop <button> is gone, so there's no more unstyled full-screen
+       * focus-visible ring for keyboard users tabbing through the drawer.
+       */}
+      <dialog
+        ref={drawerRef}
+        onClose={() => setDrawerOpen(false)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) closeDrawer();
+        }}
+        aria-labelledby="admin-drawer-title"
+        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-osi-navy-900/60 p-0 lg:hidden"
+      >
+        <aside className="relative flex h-full w-72 max-w-[85vw] flex-col overflow-y-auto bg-osi-navy-900 px-4 py-6 text-osi-white">
+          <div className="mb-6 flex items-center justify-between">
+            <span id="admin-drawer-title" className="font-display text-lg tracking-wide-display uppercase">
+              OSI Admin
+            </span>
+            <button
+              type="button"
+              onClick={closeDrawer}
+              aria-label="Close menu"
+              className="rounded p-1.5 hover:bg-osi-navy-700"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+          <SidebarNav groups={groups} pathname={pathname} />
+          <SidebarFooter session={session} signOut={signOut} />
+        </aside>
+      </dialog>
 
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 flex-col bg-osi-navy-900 px-4 py-6 text-osi-white lg:flex">
@@ -113,7 +148,9 @@ export function AdminShell({
             ))}
           </nav>
         )}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
+        <main id="admin-main-content" className="flex-1 overflow-y-auto p-6 lg:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -74,6 +74,8 @@ export function BlockPalettePicker({
         <span className="text-xs uppercase tracking-wide-label opacity-60">Add a block</span>
         <input
           type="search"
+          inputMode="search"
+          autoComplete="off"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search blocks by name or purpose…"

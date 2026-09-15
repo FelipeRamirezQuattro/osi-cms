@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getBrowserAuth } from "@/lib/auth/client";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 type Status = "checking" | "ready" | "expired" | "success";
 
@@ -75,12 +76,20 @@ export function ResetPasswordForm() {
   }
 
   if (status === "checking") {
-    return <p className="text-center text-sm text-osi-slate-200">Checking your link…</p>;
+    return (
+      <p role="status" aria-live="polite" className="text-center text-sm text-osi-slate-200">
+        Checking your link…
+      </p>
+    );
   }
 
   if (status === "expired") {
     return (
-      <div className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8 text-center text-sm text-osi-white">
+      <div
+        role="status"
+        aria-live="polite"
+        className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8 text-center text-sm text-osi-white"
+      >
         <p>This link is invalid or has expired.</p>
         <Link href="/admin/forgot-password" className="text-osi-gold-500 hover:underline">
           Request a new one
@@ -90,14 +99,44 @@ export function ResetPasswordForm() {
   }
 
   if (status === "success") {
-    return <p className="text-center text-sm text-osi-slate-200">Password set — redirecting…</p>;
+    return (
+      <p role="status" aria-live="polite" className="text-center text-sm text-osi-slate-200">
+        Password set — redirecting…
+      </p>
+    );
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8">
-      <input name="password" type="password" placeholder="New password" required minLength={8} className={fieldClass} />
-      <input name="confirm" type="password" placeholder="Confirm new password" required minLength={8} className={fieldClass} />
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      <label className="block space-y-1 text-sm text-osi-slate-200" htmlFor="reset-password-new">
+        <span className="block text-xs uppercase tracking-wide-label">New password</span>
+        <input
+          id="reset-password-new"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          spellCheck={false}
+          placeholder="New password"
+          required
+          minLength={8}
+          className={fieldClass}
+        />
+      </label>
+      <label className="block space-y-1 text-sm text-osi-slate-200" htmlFor="reset-password-confirm">
+        <span className="block text-xs uppercase tracking-wide-label">Confirm new password</span>
+        <input
+          id="reset-password-confirm"
+          name="confirm"
+          type="password"
+          autoComplete="new-password"
+          spellCheck={false}
+          placeholder="Confirm new password"
+          required
+          minLength={8}
+          className={fieldClass}
+        />
+      </label>
+      <AsyncMessage variant="dark" message={error ? { kind: "error", text: error } : null} />
       <button
         type="submit"
         disabled={pending}

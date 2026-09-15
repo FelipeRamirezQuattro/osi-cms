@@ -3,20 +3,50 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { loginAction, type LoginState } from "@/lib/actions/auth";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 const initialState: LoginState = { status: "idle" };
 
 const fieldClass =
   "w-full rounded border border-osi-steel-500/50 bg-transparent px-4 py-2 text-sm text-osi-white placeholder:text-osi-slate-400 focus:outline-2 focus:outline-osi-gold-500";
+const labelClass = "block space-y-1 text-sm text-osi-slate-200";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(loginAction, initialState);
 
   return (
     <form action={formAction} className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8">
-      <input name="email" type="email" placeholder="Email" required className={fieldClass} />
-      <input name="password" type="password" placeholder="Password" required className={fieldClass} />
-      {state.status === "error" && <p className="text-sm text-red-400">{state.message}</p>}
+      <label className={labelClass} htmlFor="login-email">
+        <span className="block text-xs uppercase tracking-wide-label">Email</span>
+        <input
+          id="login-email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="username"
+          spellCheck={false}
+          placeholder="you@company.com"
+          required
+          className={fieldClass}
+        />
+      </label>
+      <label className={labelClass} htmlFor="login-password">
+        <span className="block text-xs uppercase tracking-wide-label">Password</span>
+        <input
+          id="login-password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          spellCheck={false}
+          placeholder="Password"
+          required
+          className={fieldClass}
+        />
+      </label>
+      <AsyncMessage
+        variant="dark"
+        message={state.status === "error" ? { kind: "error", text: state.message ?? "Something went wrong." } : null}
+      />
       <button
         type="submit"
         disabled={pending}

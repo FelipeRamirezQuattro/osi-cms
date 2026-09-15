@@ -626,11 +626,20 @@ export function PageEditor({
               <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">Page settings</h2>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">Title</span>
-                <input {...register("title")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm" />
+                <input
+                  {...register("title")}
+                  autoComplete="off"
+                  className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
+                />
               </label>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">Slug</span>
-                <input {...register("slug")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm" />
+                <input
+                  {...register("slug")}
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
+                />
               </label>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">Starting point</span>
@@ -651,13 +660,18 @@ export function PageEditor({
               <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">SEO</h2>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">SEO title</span>
-                <input {...register("seo_title")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm" />
+                <input
+                  {...register("seo_title")}
+                  autoComplete="off"
+                  className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
+                />
               </label>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">SEO description</span>
                 <textarea
                   {...register("seo_description")}
                   rows={3}
+                  autoComplete="off"
                   className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
                 />
               </label>
@@ -801,7 +815,13 @@ function SortableBlockRow({
         >
           ⠿
         </button>
-        <ReorderButtons onMoveUp={onMoveUp} onMoveDown={onMoveDown} disableUp={isFirst} disableDown={isLast} />
+        <ReorderButtons
+          onMoveUp={onMoveUp}
+          onMoveDown={onMoveDown}
+          disableUp={isFirst}
+          disableDown={isLast}
+          itemLabel={typeLabel}
+        />
         <button
           type="button"
           data-block-toggle

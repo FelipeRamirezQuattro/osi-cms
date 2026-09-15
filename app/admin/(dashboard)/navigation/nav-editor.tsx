@@ -200,10 +200,20 @@ function NavItemForm({
       }}
       className="grid grid-cols-2 gap-2 py-2"
     >
+      {/*
+       * This is a compact, repeated-per-row inline editor (one per nav
+       * item, plus an "add child" row under each) — a visible caption
+       * above every field would multiply the grid's height for every
+       * item in the tree, so these use aria-label (a real accessible
+       * name, not just a placeholder that vanishes on input) instead of
+       * a visible <span> label like the standalone forms elsewhere in
+       * this file's siblings (new-page-form.tsx, new-shared-section-form.tsx).
+       */}
       <input
         value={values.label}
         onChange={(e) => setValues({ ...values, label: e.target.value })}
         placeholder="Label"
+        aria-label="Label"
         required
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
       />
@@ -211,6 +221,10 @@ function NavItemForm({
         value={values.href}
         onChange={(e) => setValues({ ...values, href: e.target.value })}
         placeholder="/href"
+        aria-label="Link"
+        inputMode="url"
+        autoComplete="off"
+        spellCheck={false}
         required
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
       />
@@ -218,6 +232,8 @@ function NavItemForm({
         value={values.badge}
         onChange={(e) => setValues({ ...values, badge: e.target.value })}
         placeholder="Badge (optional)"
+        aria-label="Badge (optional)"
+        autoComplete="off"
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
       />
       <label className="flex items-center gap-2 text-xs">

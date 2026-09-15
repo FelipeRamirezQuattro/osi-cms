@@ -106,6 +106,8 @@ export function MegaMenuClient({
           <input
             type="search"
             name="q"
+            inputMode="search"
+            autoComplete="off"
             placeholder="What are you looking for?"
             className="w-48 border-b border-current bg-transparent pb-1 text-sm placeholder:opacity-50"
             aria-label="Search"

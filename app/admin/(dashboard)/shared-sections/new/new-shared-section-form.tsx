@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createSharedSectionAction } from "@/lib/actions/shared-sections";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 export function NewSharedSectionForm() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export function NewSharedSectionForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          autoComplete="off"
           className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
         />
       </label>
@@ -42,13 +44,15 @@ export function NewSharedSectionForm() {
           onChange={(e) => setKey(e.target.value)}
           required
           placeholder="e.g. footer-cta"
+          autoComplete="off"
+          spellCheck={false}
           className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
         />
         <span className="block text-xs opacity-60">
           What the &quot;Shared section&quot; block on any page references — can&apos;t be changed later.
         </span>
       </label>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      <AsyncMessage message={error ? { kind: "error", text: error } : null} />
       <button
         type="submit"
         disabled={isPending}

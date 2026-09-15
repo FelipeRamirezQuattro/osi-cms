@@ -7,6 +7,7 @@ import type { AdminUserRow } from "@/lib/data/admin-users";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { RowActionButton } from "@/components/admin/ui/row-actions";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
   const router = useRouter();
@@ -56,6 +57,7 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
           value={user.role}
           onChange={(e) => changeRole(user, e.target.value as "admin" | "editor")}
           disabled={isPending}
+          aria-label={`Role for ${user.full_name ?? user.email}`}
           className="rounded border border-osi-sand-300 px-2 py-1 text-xs"
         >
           <option value="editor">editor</option>
@@ -89,6 +91,9 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
           <span className="block text-xs uppercase tracking-wide-label opacity-70">Email</span>
           <input
             type="email"
+            inputMode="email"
+            autoComplete="off"
+            spellCheck={false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -98,6 +103,7 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
         <label className="space-y-1 text-sm">
           <span className="block text-xs uppercase tracking-wide-label opacity-70">Full name</span>
           <input
+            autoComplete="off"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="rounded border border-osi-sand-300 px-3 py-2 text-sm"
@@ -121,7 +127,7 @@ export function UsersAdmin({ users }: { users: AdminUserRow[] }) {
         >
           Invite
         </button>
-        {error && <span className="text-sm text-red-600">{error}</span>}
+        <AsyncMessage message={error ? { kind: "error", text: error } : null} />
       </form>
 
       <AdminDataTable columns={columns} rows={users} getRowKey={(user) => user.user_id} />

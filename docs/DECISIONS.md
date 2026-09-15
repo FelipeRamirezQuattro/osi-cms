@@ -828,3 +828,180 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   files' block-editing logic (and its comments) being near-identical by
   design; a future task could extract this into a shared component if a
   third block-list editor ever needs it.
+- **No transcript/caption-authoring UI was added for `video_embed`
+  (Task 14, brief item 8) — this is a deliberate scope boundary, not a
+  gap.** This app only ever embeds third-party video (YouTube/Vimeo
+  iframes — see `components/blocks/video-embed-client.tsx` and
+  `components/blocks/embed.tsx`); it never hosts a video file itself.
+  Both providers already ship their own caption UI on the embedded
+  player, and there is no real transcript content anywhere in
+  `content/legacy/` to seed a new field with — constraint 4 ("never
+  invent client content") rules out adding a field with nothing genuine
+  to put in it. What Task 14 did fix: both embed components' `title`
+  admin field is wired straight through as the underlying `<iframe>`'s
+  real `title` attribute (already true for `embed.tsx`, whose admin
+  field is even labeled "Title (accessible name)"), giving the embed a
+  real accessible name — that's the actual, in-scope a11y requirement
+  for an iframe embed.
+- **The axe-core Playwright suite's authenticated-admin block
+  (`tests/e2e/accessibility.spec.ts`) is gated on
+  `ADMIN_E2E_EMAIL`/`ADMIN_E2E_PASSWORD` and skips (doesn't fail) when
+  unset (Task 14).** Per the Task 1 brief ruling (also cited in
+  `navigation-links.spec.ts`'s header comment): this repo's only
+  Supabase project is live production, with no seeded non-prod
+  environment. The single admin account is bootstrapped via `pnpm
+  create-admin <email>`, a mutating action against production this
+  remediation plan's implementers don't run, and no implementer has (or
+  should invent) a real staff password. The public-reachable pages —
+  home, products, one product detail, news, resources, contact, search
+  (with and without results), 404, admin login, admin forgot-password —
+  all run for real and are part of this task's verification. Set both
+  env vars to a real staff account's credentials to exercise the
+  authenticated block (dashboard, every list screen, one real page
+  editor discovered dynamically from the pages list rather than a
+  hardcoded id, and the media-picker dialog opened from within it).
+- **The axe scan waits 1s after `page.goto()` before analyzing (Task
+  14).** Found by a real failure, not by reasoning: scanning immediately
+  after load caught `/this-page-does-not-exist`'s 404 content and the
+  admin login form's field labels mid-`RevealSection`/opacity-0-start
+  fade (CLAUDE.md's motion rules), where text is still blended toward
+  the page background and reads as a genuine, if purely transient,
+  color-contrast failure — confirmed by re-reading computed styles a
+  moment later and seeing fully-opaque, fully-compliant colors. The
+  login-form fix below is unrelated and real (see next entry); this wait
+  is what makes the *scan* reflect a page's settled state instead of
+  racing Framer Motion's paint, the same way a sighted visitor perceives
+  it a fraction of a second after load rather than mid-transition.
+  `app/(site)/not-found.tsx` also gained `reveal={false}` on its
+  `Section` — same "don't delay legibility with an opacity-0 start"
+  reasoning CLAUDE.md already gives for heroes, since a 404 page's
+  content is the entire reason a visitor is looking at the page.
+- **Fixed a real, non-flaky contrast bug on the auth forms (Task 14):**
+  `login-form.tsx`/`forgot-password-form.tsx`/`reset-password-form.tsx`'s
+  field-caption `<span>`s combined `opacity-70` with the newly-added
+  `text-osi-slate-200` wrapper color. `slate-200` is tuned (see the
+  design-tokens entry above) to clear 4.5:1 on a navy background *at full
+  opacity* — stacking `opacity-70` on top blends it further toward the
+  navy-800 form background, landing at 3.21:1. Fix was to drop the
+  redundant `opacity-70` (the caption's own `text-xs uppercase
+  tracking-wide-label` classes don't need it; the label wrapper already
+  sets the correct, compliant color) rather than pick a new color.
+- **The public contact form (`contact-form-client.tsx`) gained small
+  visible field-caption labels above every input (Task 14), a narrow,
+  deliberate exception to this plan's "accessibility fixes shouldn't
+  change visual design" standing rule.** Placeholder-only fields fail
+  brief item 2's explicit requirement ("persistent visible labels, not
+  placeholder-only") outright — a placeholder is not a label; it
+  disappears the moment the visitor types. The captions reuse the exact
+  small-caps treatment already established in the admin's
+  `LabeledField` (`text-xs uppercase tracking-wide-label opacity-70`),
+  not a new pattern, and the fields keep their placeholders too, so the
+  net visual change is one small caption line per field, not a redesign.
+  Compact, repeated-per-row inputs elsewhere (the nav-item inline
+  editor in `nav-editor.tsx`, which repeats once per nav item plus one
+  per "add child" row) instead got `aria-label` — a real accessible name
+  without multiplying every row's height — since a visible caption
+  there would compound across a whole tree of nav items for one field
+  shape that's never anything other than "Label"/"Link"/"Badge".
+- **`AsyncMessage` (`components/admin/ui/async-message.tsx`) is now the
+  single `aria-live="polite"` status-region primitive for save/upload/
+  validation/login/submission feedback across the whole app, admin and
+  public alike (Task 14)** — including the public contact form
+  (`components/blocks/contact-form-client.tsx`), which imports it
+  despite living outside `components/admin/`. This crosses that
+  directory's implied admin-only boundary, but the brief was explicit
+  ("reuse the existing AsyncMessage component... rather than inventing a
+  second status-announcement mechanism") and a second, parallel
+  live-region component for the one non-admin caller would be exactly
+  that. It gained a `variant?: "light" | "dark"` prop (default "light",
+  unchanged for every existing admin caller on a white/cream form card)
+  so the navy-800 auth forms and the contact form's cream/navy-
+  configurable background (branching on `data.background === "cream"`,
+  same pattern CLAUDE.md documents for gold/slate accents) both get a
+  legible error/success color instead of the admin's default
+  red-600/green-700 going invisible on a dark background.
+- **`ConfirmDialog` gained a `hideCancel` option (Task 14)** — used once,
+  to replace the last `window.alert()` in the admin
+  (`app/admin/(dashboard)/[entity]/entity-list.tsx`'s product-categories
+  change-impact guard) with a real, accessible acknowledgment dialog
+  (`aria-labelledby`, focus containment/restoration, Escape) instead of a
+  native alert that offers none of that and blocks the whole tab.
+- **The admin mobile nav drawer (`components/admin/admin-shell.tsx`) was
+  rewritten from a styled `<div>` overlay to a native `<dialog>` via
+  `showModal()`/`close()` (Task 14)** — the same pattern already used by
+  `ConfirmDialog`/`MediaPicker` (see their own top comments): a native
+  modal dialog gets focus containment, Escape-to-close, and focus
+  restoration to the trigger element for free, which is exactly what the
+  brief flagged as missing (no Escape handling, no focus trap, and a
+  focusable full-viewport backdrop `<button>` that took an unstyled
+  full-screen focus ring when tabbed to). The old backdrop button is
+  gone; the `<dialog>` element itself now fills the viewport and doubles
+  as its own dimmed backdrop, closed by clicking it outside the `<aside>`
+  drawer (the standard `event.target === event.currentTarget` "click
+  outside" check for a full-bleed dialog). `body:has(dialog[open]) {
+  overflow: hidden }` in `globals.css` is a single global rule covering
+  contained overscroll for all three native dialogs in the app at once,
+  rather than a scroll-lock effect duplicated in each.
+- **`ReorderButtons` (`components/admin/ui/row-actions.tsx`) and the
+  block-array move-up/move-down buttons in `field-renderer.tsx` both
+  gained item-specific accessible names via a new `reorderAriaLabel()`
+  helper (`lib/admin/reorder-label.ts`) (Task 14)** — "Move up"/"Move
+  down" on every row of a reorderable list (page blocks, products,
+  generic entities, array-field items) is indistinguishable to a screen
+  reader user browsing by control name once there's more than one row.
+  Every existing call site had a natural label already in scope (a
+  block's type label, a product's name, an entity row's primary column,
+  an array item's position) — folding it in is additive: a caller with
+  no natural label falls back to the old generic text unchanged.
+- **`getTextInputAttrs()` (`lib/admin/field-input-attrs.ts`) infers
+  `type`/`inputMode`/`autoComplete`/`spellCheck` for every block/entity
+  "text" `FieldSpec` from its `key` name, not a new field on `FieldSpec`
+  itself (Task 14).** Adding a dedicated slot would mean touching every
+  one of the ~30 block/entity files that declare a `text` field just to
+  preserve today's behavior; the key-naming convention (`email`,
+  `phone`, `...Url`/`...Href`, `slug`/`...Key`/`...Id`/`..._code`) is
+  already consistent across every schema in this codebase, so a
+  heuristic carries enough signal without the churn. Deliberately does
+  **not** set `type="url"` for url/href-shaped keys even though several
+  hold real absolute URLs — most CTA/link `href` fields hold relative
+  internal paths (`/about-us`), and `<input type="url">`'s native
+  constraint validation requires a full absolute URL, which would
+  silently block saving a perfectly valid internal link (react-hook-form
+  doesn't set `noValidate`, so the browser's own validation runs first).
+  `inputMode="url"` (keyboard hint only, no validation side effect) is
+  the safe lever instead. `autoComplete` is `"off"` across the board
+  rather than real `email`/`tel` tokens: every field this heuristic sees
+  belongs to CMS content (a directory contact's phone number, a block's
+  CTA link) — never the logged-in admin's own identity — so offering the
+  admin's own saved autofill data there would be a wrong-content bug,
+  not a convenience; contrast with the real login/contact forms, which
+  set genuine autocomplete tokens directly since those really are about
+  a person's own identity.
+- **The media library's Images/Documents toggle
+  (`app/admin/(dashboard)/media/media-library.tsx`) gained
+  `aria-controls`/a real `role="tabpanel"` and Left/Right arrow-key
+  navigation between tabs (Task 14)** — it already had
+  `role="tablist"`/`role="tab"`/`aria-selected`, but that's an incomplete
+  implementation of the ARIA tabs pattern without keyboard support or a
+  tab-to-panel relationship; per the APG tabs pattern, arrow-key
+  navigation between tabs isn't optional once a widget claims
+  `role="tablist"`. It's the only `role="tab"` UI anywhere in the app
+  (confirmed by grep), so no other tab-like widget needed the same fix.
+- **Priority 10 (manual responsive/keyboard/reduced-motion verification)
+  was done narrowly, not exhaustively, given this task's size (Task
+  14).** Checked in a real Chromium browser: the public mega-menu drawer
+  at 375px (opens, Escape closes, focus restored to the "Menu" trigger —
+  confirming the same native-dialog-equivalent pattern the admin drawer
+  now also uses behaves correctly in this codebase), reduced-motion
+  (`prefers-reduced-motion: reduce`) leaves a `RevealSection`'s content
+  at full opacity immediately with no fade, the home page at 768px has
+  no horizontal overflow, and the search page's focus-visible outline
+  renders (`outlineStyle: solid`, not `none`) at 375px. Not checked, for
+  lack of admin credentials (see the axe-suite entry above): the admin
+  drawer's own Escape/focus-trap/restoration in a real browser (its
+  logic is identical to the mega-menu's own hand-verified pattern, plus
+  standard, non-custom `<dialog>` browser semantics — not a from-scratch
+  implementation) and any authenticated admin screen at narrow/tablet
+  widths. `ConfirmDialog`'s async resolve/cancel/validate/Escape
+  behavior is covered in a real (if jsdom-simulated) test environment by
+  `confirm-dialog.test.tsx`, not a live browser.

@@ -500,7 +500,11 @@ export function SharedSectionEditor({
               <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">Section settings</h2>
               <label className="block space-y-1 text-sm">
                 <span className="block text-xs uppercase tracking-wide-label opacity-70">Title</span>
-                <input {...register("title")} className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm" />
+                <input
+                  {...register("title")}
+                  autoComplete="off"
+                  className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
+                />
                 <span className="block text-xs opacity-50">Internal label only — never rendered on the public site.</span>
               </label>
             </section>
@@ -601,7 +605,13 @@ function SortableBlockRow({
         >
           ⠿
         </button>
-        <ReorderButtons onMoveUp={onMoveUp} onMoveDown={onMoveDown} disableUp={isFirst} disableDown={isLast} />
+        <ReorderButtons
+          onMoveUp={onMoveUp}
+          onMoveDown={onMoveDown}
+          disableUp={isFirst}
+          disableDown={isLast}
+          itemLabel={typeLabel}
+        />
         <button
           type="button"
           data-block-toggle

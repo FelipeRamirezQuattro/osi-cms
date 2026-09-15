@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createPageAction } from "@/lib/actions/pages";
 import { PAGE_TEMPLATES, type PageTemplate } from "@/lib/validation/pages";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 const STARTING_POINT_HINTS: Record<PageTemplate, string> = {
   standard: "No starter blocks — build the page from scratch.",
@@ -50,6 +51,7 @@ export function NewPageForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          autoComplete="off"
           className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
         />
       </label>
@@ -60,6 +62,8 @@ export function NewPageForm() {
           onChange={(e) => setSlug(e.target.value)}
           required
           placeholder="e.g. about-us or services/machine-shop"
+          autoComplete="off"
+          spellCheck={false}
           className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
         />
       </label>
@@ -78,7 +82,7 @@ export function NewPageForm() {
         </select>
         <span className="block text-xs opacity-60">{STARTING_POINT_HINTS[template]}</span>
       </label>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      <AsyncMessage message={error ? { kind: "error", text: error } : null} />
       <button
         type="submit"
         disabled={isPending}

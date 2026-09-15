@@ -108,6 +108,7 @@ export function ProductsList({
             disabled={isPending}
             disableUp={(positionById.get(product.id) ?? 0) === 0}
             disableDown={(positionById.get(product.id) ?? 0) === products.length - 1}
+            itemLabel={product.name}
           />
         ),
     },

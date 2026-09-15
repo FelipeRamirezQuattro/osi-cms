@@ -21,8 +21,20 @@ export const metadata: Metadata = { robots: { index: false } };
 // confirmed-missing slug to (see proxy.ts's top comment) — can render
 // the exact same on-brand content without duplicating it.
 export function NotFound() {
+  // reveal={false} — this is the entire content of the page a visitor
+  // landed on, the same "don't delay legibility with an opacity-0 start"
+  // reasoning CLAUDE.md gives for heroes (and confirmed by axe: scanning
+  // immediately after load caught this section still fading in, with its
+  // gold/white text transiently blended toward the page background well
+  // under the 4.5:1 contrast floor).
   return (
-    <Section background="navy" spacingTop="lg" spacingBottom="lg" contentClassName="mx-auto max-w-2xl px-6 text-center md:px-12">
+    <Section
+      background="navy"
+      spacingTop="lg"
+      spacingBottom="lg"
+      reveal={false}
+      contentClassName="mx-auto max-w-2xl px-6 text-center md:px-12"
+    >
       <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">404</p>
       <h1 className="font-display text-section tracking-tightest-display uppercase">Page not found</h1>
       <p className="mt-4 text-osi-slate-200">

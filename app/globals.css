@@ -82,6 +82,21 @@ body {
 }
 
 /*
+ * Contained overscroll for every native <dialog> in the admin (Task 14) —
+ * ConfirmDialog, MediaPicker's media-library dialog, and AdminShell's
+ * mobile nav drawer all use showModal(), which makes the rest of the
+ * document inert (un-clickable, untabbable) but does NOT by itself stop
+ * the page behind it from scrolling via wheel/touch. `:has()` lets this
+ * be a single rule instead of a scroll-lock effect duplicated in three
+ * components — it matches whenever any descendant <dialog> is open,
+ * regardless of where in the tree it's portaled to (all three portal to
+ * document.body, a direct descendant of body either way).
+ */
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/*
  * Motif 1 — angled corner clips, fixed default size (1.5rem). Use these
  * for the common single-corner case; the <Clipped> component
  * (components/ui/clipped.tsx) covers arbitrary corners/sizes and an

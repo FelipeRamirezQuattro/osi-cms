@@ -75,7 +75,7 @@ export function EntityList({
       // product-categories change-impact guard) returns here.
       const result = await deleteEntityAction(entity, row.id);
       if (result?.status === "error") {
-        window.alert(result.message);
+        await confirm({ title: "Can't delete", message: result.message, hideCancel: true, confirmLabel: "OK" });
       }
     });
   }
@@ -119,6 +119,7 @@ export function EntityList({
                   disabled={isPending}
                   disableUp={(positionById.get(row.id) ?? 0) === 0}
                   disableDown={(positionById.get(row.id) ?? 0) === initialRows.length - 1}
+                  itemLabel={config.listColumns[0] ? String(row[config.listColumns[0].key] ?? "") : undefined}
                 />
               ),
           },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState, useTransition, type ReactNode } from "react";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 import Image from "next/image";
 import {
   listMediaAction,
@@ -362,7 +363,9 @@ function MediaMetadataEditor({ asset, onSaved }: { asset: MediaAsset; onSaved: (
         >
           Save
         </button>
-        {state.status === "error" && <span className="text-red-600">{state.message}</span>}
+        <AsyncMessage
+          message={state.status === "error" ? { kind: "error", text: state.message ?? "Couldn't save changes." } : null}
+        />
       </div>
     </form>
   );
@@ -412,7 +415,9 @@ function MediaUploadForm({
         >
           Upload
         </button>
-        {state.status === "error" && <span className="text-xs text-red-600">{state.message}</span>}
+        <AsyncMessage
+          message={state.status === "error" ? { kind: "error", text: state.message ?? "Upload failed." } : null}
+        />
       </div>
     </form>
   );
@@ -445,15 +450,25 @@ function UploadFields({ accept, folders }: { accept: MediaBrowserAccept; folders
 
   const inputAccept = accept === "file" ? DOCUMENT_ACCEPT : IMAGE_ACCEPT;
 
+  const labelClass = "flex flex-col gap-1 text-xs";
+  const captionClass = "uppercase tracking-wide-label opacity-60";
+  const fieldClass = "rounded border border-osi-sand-300 px-2 py-1";
+
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3">
-        <input type="file" name="file" accept={inputAccept} required onChange={handleFileChange} className="text-sm" />
+      <div className="flex flex-wrap items-end gap-3">
+        <label className={labelClass}>
+          <span className={captionClass}>File</span>
+          <input type="file" name="file" accept={inputAccept} required onChange={handleFileChange} className="text-sm" />
+        </label>
         <input type="hidden" name="width" value={dimensions.width ?? ""} />
         <input type="hidden" name="height" value={dimensions.height ?? ""} />
-        <input name="title" placeholder="Title (optional)" className="rounded border border-osi-sand-300 px-2 py-1" />
+        <label className={labelClass}>
+          <span className={captionClass}>Title (optional)</span>
+          <input name="title" autoComplete="off" className={fieldClass} />
+        </label>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-end gap-3">
         <label className="flex items-center gap-1">
           <input
             type="checkbox"
@@ -462,22 +477,32 @@ function UploadFields({ accept, folders }: { accept: MediaBrowserAccept; folders
             onChange={(e) => setDecorative(e.target.checked)}
             className="h-4 w-4"
           />
-          Decorative
+          Decorative (no alt text needed)
         </label>
         {!decorative && (
-          <input
-            name="alt"
-            placeholder="Alt text (required)"
-            required
-            className="min-w-[10rem] flex-1 rounded border border-osi-sand-300 px-2 py-1"
-          />
+          <label className={`${labelClass} min-w-[10rem] flex-1`}>
+            <span className={captionClass}>Alt text (required)</span>
+            <input name="alt" placeholder="Describe the image" required autoComplete="off" className={fieldClass} />
+          </label>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <input name="caption" placeholder="Caption (optional)" className="rounded border border-osi-sand-300 px-2 py-1" />
-        <input name="credit" placeholder="Credit (optional)" className="rounded border border-osi-sand-300 px-2 py-1" />
-        <input name="folder" placeholder="Folder (optional)" list="media-folder-options" className="rounded border border-osi-sand-300 px-2 py-1" />
-        <input name="tags" placeholder="Tags, comma-separated" className="rounded border border-osi-sand-300 px-2 py-1" />
+      <div className="flex flex-wrap items-end gap-3">
+        <label className={labelClass}>
+          <span className={captionClass}>Caption (optional)</span>
+          <input name="caption" autoComplete="off" className={fieldClass} />
+        </label>
+        <label className={labelClass}>
+          <span className={captionClass}>Credit (optional)</span>
+          <input name="credit" autoComplete="off" className={fieldClass} />
+        </label>
+        <label className={labelClass}>
+          <span className={captionClass}>Folder (optional)</span>
+          <input name="folder" list="media-folder-options" autoComplete="off" spellCheck={false} className={fieldClass} />
+        </label>
+        <label className={labelClass}>
+          <span className={captionClass}>Tags</span>
+          <input name="tags" placeholder="comma-separated" autoComplete="off" spellCheck={false} className={fieldClass} />
+        </label>
       </div>
       <datalist id="media-folder-options">
         {folders.map((f) => (

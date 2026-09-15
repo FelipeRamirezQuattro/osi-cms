@@ -5,6 +5,8 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { useRelationOptions } from "@/components/admin/relation-options";
+import { getTextInputAttrs } from "@/lib/admin/field-input-attrs";
+import { reorderAriaLabel } from "@/lib/admin/reorder-label";
 
 // The block editor's field shapes are fully dynamic — one shape per block
 // type, described at runtime by FieldSpec (see lib/blocks/admin-fields.ts)
@@ -62,16 +64,25 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
   const { control, register } = useFormContext<any>();
 
   switch (spec.type) {
-    case "text":
+    case "text": {
+      const attrs = getTextInputAttrs(spec.key);
       return (
         <LabeledField label={spec.label}>
-          <input {...register(name)} className={INPUT_CLASS} />
+          <input
+            {...register(name)}
+            type={attrs.type}
+            inputMode={attrs.inputMode}
+            autoComplete={attrs.autoComplete}
+            spellCheck={attrs.spellCheck}
+            className={INPUT_CLASS}
+          />
         </LabeledField>
       );
+    }
     case "textarea":
       return (
         <LabeledField label={spec.label}>
-          <textarea {...register(name)} rows={4} className={INPUT_CLASS} />
+          <textarea {...register(name)} rows={4} autoComplete="off" spellCheck className={INPUT_CLASS} />
         </LabeledField>
       );
     case "number":
@@ -256,12 +267,20 @@ function ArrayFieldRenderer({
               <span className="text-xs opacity-50">#{index + 1}</span>
               <div className="flex gap-3 text-xs">
                 {index > 0 && (
-                  <button type="button" onClick={() => move(index, index - 1)} aria-label="Move up">
+                  <button
+                    type="button"
+                    onClick={() => move(index, index - 1)}
+                    aria-label={reorderAriaLabel("up", `${spec.label} ${index + 1}`)}
+                  >
                     ↑
                   </button>
                 )}
                 {index < fields.length - 1 && (
-                  <button type="button" onClick={() => move(index, index + 1)} aria-label="Move down">
+                  <button
+                    type="button"
+                    onClick={() => move(index, index + 1)}
+                    aria-label={reorderAriaLabel("down", `${spec.label} ${index + 1}`)}
+                  >
                     ↓
                   </button>
                 )}

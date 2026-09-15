@@ -76,6 +76,8 @@ export function AdminListControls({
         <span className="text-xs uppercase tracking-wide-label opacity-60">Search</span>
         <input
           type="search"
+          inputMode="search"
+          autoComplete="off"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder={searchPlaceholder}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { forgotPasswordAction, type ForgotPasswordState } from "@/lib/actions/auth";
+import { AsyncMessage } from "@/components/admin/ui/async-message";
 
 const initialState: ForgotPasswordState = { status: "idle" };
 
@@ -14,7 +15,11 @@ export function ForgotPasswordForm() {
 
   if (state.status === "sent") {
     return (
-      <div className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8 text-center text-sm text-osi-white">
+      <div
+        role="status"
+        aria-live="polite"
+        className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8 text-center text-sm text-osi-white"
+      >
         <p>If that email has an admin account, a reset link is on its way. Check your inbox.</p>
         <Link href="/admin/login" className="text-osi-gold-500 hover:underline">
           Back to sign in
@@ -25,8 +30,24 @@ export function ForgotPasswordForm() {
 
   return (
     <form action={formAction} className="space-y-4 rounded border border-osi-steel-500/30 bg-osi-navy-800 p-8">
-      <input name="email" type="email" placeholder="Email" required className={fieldClass} />
-      {state.status === "error" && <p className="text-sm text-red-400">{state.message}</p>}
+      <label className="block space-y-1 text-sm text-osi-slate-200" htmlFor="forgot-password-email">
+        <span className="block text-xs uppercase tracking-wide-label">Email</span>
+        <input
+          id="forgot-password-email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          spellCheck={false}
+          placeholder="you@company.com"
+          required
+          className={fieldClass}
+        />
+      </label>
+      <AsyncMessage
+        variant="dark"
+        message={state.status === "error" ? { kind: "error", text: state.message ?? "Something went wrong." } : null}
+      />
       <button
         type="submit"
         disabled={pending}

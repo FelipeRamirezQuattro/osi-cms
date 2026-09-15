@@ -27,12 +27,28 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       <h1 className="mb-6 font-display text-section tracking-tightest-display uppercase">Search</h1>
 
       <form action="/search" method="get" className="mb-10">
+        <label htmlFor="site-search-input" className="sr-only">
+          Search
+        </label>
+        {/*
+         * Used to be `focus:outline-none` with no replacement — CLAUDE.md's
+         * known pre-existing gap. A Tailwind `:focus` utility class beats
+         * the global bare `:focus-visible` rule in globals.css on
+         * specificity, which is exactly why that override silently killed
+         * the universal focus ring instead of coexisting with it. Simplest
+         * correct fix: drop the override and let the shared, already-
+         * accessible `:focus-visible` treatment apply here like everywhere
+         * else, rather than picking a second one-off color.
+         */}
         <input
+          id="site-search-input"
           type="search"
           name="q"
+          inputMode="search"
+          autoComplete="off"
           defaultValue={q}
           placeholder="What are you looking for?"
-          className="w-full border-b border-current bg-transparent pb-2 text-lg placeholder:opacity-50 focus:outline-none"
+          className="w-full border-b border-current bg-transparent pb-2 text-lg placeholder:opacity-50"
         />
       </form>
 
