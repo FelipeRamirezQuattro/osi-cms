@@ -14,14 +14,75 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 const EMBED_PROVIDERS = ["youtube", "vimeo", "google_maps"] as const;
 export type EmbedProvider = (typeof EMBED_PROVIDERS)[number];
 
-const ASPECT_RATIOS = ["16:9", "4:3", "1:1", "auto"] as const;
+// No "auto" here (unlike image.tsx's aspect-ratio preset) — an iframe
+// has no intrinsic natural size to fall back to the way an <img> does,
+// so an "auto" option would be dead (mapping to the same class as
+// "16:9" with no distinct behavior of its own). Reviewed and confirmed
+// after Task 9's initial pass shipped exactly that dead option.
+const ASPECT_RATIOS = ["16:9", "4:3", "1:1"] as const;
 
-const schema = blockCommonSchema.extend({
-  provider: z.enum(EMBED_PROVIDERS),
-  url: safeHrefSchema({ label: "Embed URL" }),
-  title: requiredString("Title"),
-  aspectRatio: z.enum(ASPECT_RATIOS).default("16:9"),
-});
+/**
+ * Per-provider hostname allowlist, checked against the *parsed* URL's
+ * hostname — never a substring match against the raw URL string. This
+ * is the fix for a real security review finding on Task 9's first pass:
+ * `provider` didn't actually gate `url` at all, so `{provider:
+ * "youtube", url: "https://attacker.example/pwn"}` was schema-valid and
+ * rendered verbatim in a sandboxed iframe — and because `safeHrefSchema`
+ * also accepts a same-origin `/path`, that specific combination (a
+ * same-origin document framed with `allow-scripts allow-same-origin`)
+ * is a genuine sandbox escape, not just a weak embed. Relative/
+ * same-origin paths are rejected outright for this field below (a
+ * third-party embed is never same-origin); a `google.com/maps`
+ * substring anywhere in the URL (e.g. inside an unrelated query
+ * parameter) no longer counts as "a Maps URL" either, since this checks
+ * `new URL(url).hostname` specifically.
+ */
+function isAllowedHost(provider: EmbedProvider, hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  if (provider === "youtube") {
+    return host === "youtube.com" || host === "www.youtube.com" || host === "youtu.be";
+  }
+  if (provider === "vimeo") {
+    return host === "vimeo.com" || host === "player.vimeo.com";
+  }
+  // Google Maps embeds are legitimately served from any country-code
+  // Google domain (google.com, google.co.uk, google.de, ...) or its
+  // "maps." subdomain — not a fixed list of TLDs.
+  return /^(?:www\.)?google\.[a-z.]{2,}$/.test(host) || /^maps\.google\.[a-z.]{2,}$/.test(host);
+}
+
+const PROVIDER_LABEL: Record<EmbedProvider, string> = {
+  youtube: "YouTube",
+  vimeo: "Vimeo",
+  google_maps: "Google Maps",
+};
+
+const schema = blockCommonSchema
+  .extend({
+    provider: z.enum(EMBED_PROVIDERS),
+    url: safeHrefSchema({ label: "Embed URL" }),
+    title: requiredString("Title"),
+    aspectRatio: z.enum(ASPECT_RATIOS).default("16:9"),
+  })
+  .superRefine((data, ctx) => {
+    let hostname: string | null = null;
+    try {
+      hostname = new URL(data.url).hostname;
+    } catch {
+      // Not parseable as an absolute URL — either malformed, or a
+      // same-origin "/path" that safeHrefSchema allows for other block
+      // types' link fields but that can never be a legitimate
+      // third-party embed source.
+      hostname = null;
+    }
+    if (!hostname || !isAllowedHost(data.provider, hostname)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["url"],
+        message: `Embed URL must be a real ${PROVIDER_LABEL[data.provider]} URL`,
+      });
+    }
+  });
 
 type Data = z.infer<typeof schema>;
 
@@ -37,23 +98,46 @@ const VIMEO_PATTERN = /vimeo\.com\/(?:video\/)?(\d+)/;
  * (google.com/maps/place/...) isn't embeddable as-is — Google's own
  * documented no-API-key trick is appending "&output=embed" to a regular
  * maps URL, so that's applied here rather than leaving editors to
- * discover it (or worse, silently rendering a "refused to connect"
- * iframe). Any URL that doesn't match its provider's pattern falls
- * through unchanged — same non-crashing fallback as toEmbedUrl.
+ * discover it.
+ *
+ * Fails closed (returns `null`, not the raw URL) whenever the host is
+ * right but nothing recognizable was found to embed — e.g. a real
+ * youtube.com URL that isn't a watch/embed/short-link video page, or a
+ * real google.<tld> URL that isn't under /maps at all. The schema above
+ * already rejects the wrong host entirely; this is the second,
+ * independent layer that stops Render from ever framing a URL it
+ * didn't actually recognize, matching Task 9's original brief ("no
+ * dangerouslySetInnerHTML anywhere") in spirit — an unrecognized src is
+ * exactly as unsafe to render blind as raw HTML would be.
  */
-export function toEmbedSrc(provider: EmbedProvider, url: string): string {
+export function toEmbedSrc(provider: EmbedProvider, url: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  if (!isAllowedHost(provider, parsed.hostname)) return null;
+
   if (provider === "youtube") {
     const match = url.match(YOUTUBE_PATTERN);
-    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null;
   }
   if (provider === "vimeo") {
     const match = url.match(VIMEO_PATTERN);
-    return match ? `https://player.vimeo.com/video/${match[1]}` : url;
+    return match ? `https://player.vimeo.com/video/${match[1]}` : null;
   }
-  if (/google\.[a-z.]+\/maps/.test(url) && !/output=embed|\/maps\/embed/.test(url)) {
-    return `${url}${url.includes("?") ? "&" : "?"}output=embed`;
+  // google_maps: checked by pathname, not a substring match anywhere in
+  // the URL (the pre-fix version matched "google.com/maps" even inside
+  // an unrelated query parameter value).
+  if (parsed.pathname.includes("/maps/embed") || parsed.searchParams.get("output") === "embed") {
+    return url;
   }
-  return url;
+  if (parsed.pathname.startsWith("/maps")) {
+    parsed.searchParams.set("output", "embed");
+    return parsed.toString();
+  }
+  return null;
 }
 
 // Sandboxed per CLAUDE.md's Task 9 ruling: every provider needs
@@ -65,7 +149,12 @@ export function toEmbedSrc(provider: EmbedProvider, url: string): string {
 // and allow-presentation (Chromecast/AirPlay casting from the player
 // UI). Verified against real embeds in a browser — see the Task 9
 // report for what "verified" meant here (a standalone sandboxed-iframe
-// harness plus the real built app).
+// harness plus the real built app). `allow-same-origin` combined with
+// `allow-scripts` is only safe here because the schema above guarantees
+// `url` resolves to one of these three third-party hosts, never a
+// same-origin document — that combination on a same-origin frame would
+// be a sandbox escape (a framed same-origin doc can reach into
+// window.parent.document and strip its own sandbox attribute).
 const SANDBOX_BY_PROVIDER: Record<EmbedProvider, string> = {
   youtube: "allow-scripts allow-same-origin allow-popups allow-presentation",
   vimeo: "allow-scripts allow-same-origin allow-popups allow-presentation",
@@ -82,11 +171,16 @@ const ASPECT_CLASS: Record<(typeof ASPECT_RATIOS)[number], string> = {
   "16:9": "aspect-video",
   "4:3": "aspect-[4/3]",
   "1:1": "aspect-square",
-  auto: "aspect-video",
 };
 
 function Render({ data }: { data: Data }) {
   const src = toEmbedSrc(data.provider, data.url);
+  // Fail closed: the schema already rejects the wrong host at save
+  // time, but toEmbedSrc is the second, independent gate — if it still
+  // can't resolve a real embeddable src (see its own comment), render
+  // nothing rather than frame a URL nobody actually verified.
+  if (!src) return null;
+
   return (
     <Section
       background={data.background}

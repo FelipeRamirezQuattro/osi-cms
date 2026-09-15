@@ -3,12 +3,24 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { embedBlock, toEmbedSrc } from "@/components/blocks/embed";
 
 /**
- * Task 9's highest-scrutiny item. Covers: the provider allowlist (only
- * youtube/vimeo/google_maps validate), URL safety (safeHrefSchema
- * rejects javascript:/data:), the YouTube/Vimeo/Maps URL transforms,
- * and — the specific thing the brief called out — that the rendered
- * iframe always carries a `sandbox` attribute and never
- * `dangerouslySetInnerHTML`.
+ * Task 9's highest-scrutiny item — and the subject of a real security
+ * review finding on the first pass: `provider` didn't actually gate
+ * `url` at all, so `{provider: "youtube", url: "https://attacker.example/pwn"}`
+ * was schema-valid and rendered verbatim in an iframe. Two things made
+ * that worse than "a weak embed": (1) safeHrefSchema also allows a
+ * same-origin "/path", and a same-origin document framed with
+ * `allow-scripts allow-same-origin` can reach into
+ * `window.parent.document` and strip its own sandbox — a genuine
+ * sandbox escape, not just an unsafe third party; (2) the old Maps
+ * check was a substring match anywhere in the raw URL string, so a URL
+ * containing "google.com/maps" inside an unrelated query parameter
+ * passed too. This file now covers: the provider allowlist, that `url`'s
+ * *host* is independently validated against that provider (not just
+ * "some https:// URL"), the specific malicious shapes above, the
+ * YouTube/Vimeo/Maps URL transforms, fail-closed behavior when a
+ * recognized host still isn't a recognizable embed, and that the
+ * rendered iframe always carries a `sandbox` attribute with no
+ * `dangerouslySetInnerHTML` anywhere.
  */
 
 const base = {
@@ -19,10 +31,15 @@ const base = {
   aspectRatio: "16:9" as const,
 };
 
-describe("embed block schema", () => {
-  it("accepts each allowlisted provider", () => {
-    for (const provider of ["youtube", "vimeo", "google_maps"] as const) {
-      const result = embedBlock.schema.safeParse({ ...base, provider, url: "https://example.com/embed" });
+describe("embed block schema — provider allowlist", () => {
+  it("accepts each allowlisted provider with a matching real host", () => {
+    const cases: Array<{ provider: "youtube" | "vimeo" | "google_maps"; url: string }> = [
+      { provider: "youtube", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+      { provider: "vimeo", url: "https://vimeo.com/76979871" },
+      { provider: "google_maps", url: "https://www.google.com/maps/embed?pb=1" },
+    ];
+    for (const { provider, url } of cases) {
+      const result = embedBlock.schema.safeParse({ ...base, provider, url });
       expect(result.success).toBe(true);
     }
   });
@@ -35,7 +52,65 @@ describe("embed block schema", () => {
     });
     expect(result.success).toBe(false);
   });
+});
 
+describe("embed block schema — host gating (security review finding)", () => {
+  it("rejects provider: youtube with a non-YouTube host", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "youtube",
+      url: "https://attacker.example/pwn",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a same-origin relative path — never valid for a third-party embed", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "youtube",
+      url: "/pwn",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects an arbitrary third-party host for google_maps", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "google_maps",
+      url: "https://attacker.example/maps",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a Maps-lookalike query string on a non-Google host (the old substring-match bug)", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "google_maps",
+      url: "https://attacker.example/?redirect=google.com/maps",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a vimeo.com-hosted URL when provider is youtube (cross-provider mismatch)", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "youtube",
+      url: "https://vimeo.com/76979871",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts a real Google country-TLD Maps host (not just .com)", () => {
+    const result = embedBlock.schema.safeParse({
+      ...base,
+      provider: "google_maps",
+      url: "https://www.google.co.uk/maps/embed?pb=1",
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("embed block schema — other field validation", () => {
   it("rejects an unsafe URL (javascript:)", () => {
     const result = embedBlock.schema.safeParse({
       ...base,
@@ -101,10 +176,20 @@ describe("toEmbedSrc", () => {
     expect(toEmbedSrc("google_maps", embedUrl)).toBe(embedUrl);
   });
 
-  it("falls through unchanged when a URL doesn't match its provider's pattern", () => {
-    expect(toEmbedSrc("youtube", "https://example.com/not-a-video")).toBe(
-      "https://example.com/not-a-video",
-    );
+  it("fails closed (returns null, not the raw URL) for a right-host YouTube URL with no recognizable video", () => {
+    expect(toEmbedSrc("youtube", "https://www.youtube.com/channel/UCxyz")).toBeNull();
+  });
+
+  it("fails closed for a right-host Google URL that isn't under /maps at all", () => {
+    expect(toEmbedSrc("google_maps", "https://www.google.com/search?q=odessa")).toBeNull();
+  });
+
+  it("fails closed for a wrong-host URL even if it happens to match the video-id regex shape", () => {
+    expect(toEmbedSrc("youtube", "https://attacker.example/watch?v=dQw4w9WgXcQ")).toBeNull();
+  });
+
+  it("fails closed for an unparseable URL", () => {
+    expect(toEmbedSrc("youtube", "/pwn")).toBeNull();
   });
 });
 
@@ -116,7 +201,8 @@ describe("embed block render", () => {
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       ...overrides,
     });
-    const html = renderToStaticMarkup(embedBlock.Render({ data: parsed }) as React.ReactElement);
+    const element = embedBlock.Render({ data: parsed }) as React.ReactElement | null;
+    const html = element ? renderToStaticMarkup(element) : "";
     const container = document.createElement("div");
     container.innerHTML = html;
     return container.querySelector("iframe");
