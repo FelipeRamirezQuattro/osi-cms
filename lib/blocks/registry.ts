@@ -25,6 +25,7 @@ import { logoStripBlock } from "@/components/blocks/logo-strip";
 import { teamDirectoryBlock } from "@/components/blocks/team-directory";
 import { imageGalleryBlock } from "@/components/blocks/image-gallery";
 import { specTableBlock } from "@/components/blocks/spec-table";
+import { imageBlock } from "@/components/blocks/image";
 
 /**
  * The block registry (see CLAUDE.md / master prompt §6). Adding a block
@@ -57,6 +58,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   team_directory: teamDirectoryBlock,
   image_gallery: imageGalleryBlock,
   spec_table: specTableBlock,
+  image: imageBlock,
 };
 
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {

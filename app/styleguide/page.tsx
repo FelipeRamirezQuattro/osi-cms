@@ -10,6 +10,7 @@ import { TiltCard } from "@/components/ui/tilt-card";
 import { GradientText } from "@/components/ui/gradient-text";
 import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
+import { imageBlock } from "@/components/blocks/image";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -230,6 +231,25 @@ export default function StyleguidePage() {
           <CtaBreakoutBar href="#">Find a distributor</CtaBreakoutBar>
         </div>
       </Section>
+
+      {/* Task 9 (CMS remediation plan): previews of the 6 new general-
+          purpose blocks, rendered via their real block.Render — same
+          pattern the rest of this page uses for design-system
+          primitives, applied to full block instances since no per-block
+          preview convention pre-existed here. */}
+      <Section bg="cream" className="pt-24">
+        <Heading>New blocks — Image</Heading>
+      </Section>
+      <imageBlock.Render
+        data={imageBlock.schema.parse({
+          imageUrl: "https://www.odessaseparator.com/images/gas-release-system.jpg",
+          alt: "A gas release system installed in the field",
+          aspectRatio: "16:9",
+          alignment: "center",
+          caption: "Gas Release System, field installation",
+          credit: "Odessa Separator Inc.",
+        })}
+      />
 
       <Section bg="navy">
         <Heading>Scroll reveal</Heading>
