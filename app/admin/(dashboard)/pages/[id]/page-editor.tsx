@@ -414,8 +414,7 @@ export function PageEditor({
   // Always-fresh snapshot of the render-time values the subscribe
   // callback/timer (which live outside the render cycle) need to read.
   // Updated via a plain effect (no deps) so it reflects the latest render
-  // after every commit — same pattern as useDebouncedCallback's
-  // `callbackRef`.
+  // after every commit.
   const autosaveInputsRef = useRef({
     canEditDrafts,
     isSaving,
