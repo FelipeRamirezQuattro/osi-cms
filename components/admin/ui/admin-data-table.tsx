@@ -31,10 +31,23 @@ export type AdminDataTableProps<T> = {
   getRowKey: (row: T, index: number) => string;
   emptyMessage?: ReactNode;
   variant?: "panel" | "plain";
-  /** "auto" lets a wide table (e.g. the audit log) scroll horizontally instead of overflowing the page. Only meaningful for variant="panel". */
+  /**
+   * "hidden" clips instead of scrolling — only ever needed if a caller has
+   * its own reason to suppress the scrollbar. Every panel table defaults to
+   * "auto" (Task 13a) so a table wider than its container scrolls
+   * horizontally on a narrow/mobile viewport instead of silently clipping
+   * columns. Only meaningful for variant="panel".
+   */
   overflow?: "hidden" | "auto";
   /** Extra classes per row, e.g. `"align-top"` for the audit log's multi-line diff cell. */
   rowClassName?: string;
+  /**
+   * A search/filter/sort/pagination bar (e.g. `AdminListControls`) rendered
+   * above the table, inside the same bordered panel — Task 13a's "extend
+   * the shared AdminDataTable primitive" ask, rather than 3 one-off filter
+   * bars. Only rendered for variant="panel".
+   */
+  toolbar?: ReactNode;
 };
 
 export function AdminDataTable<T>({
@@ -43,8 +56,9 @@ export function AdminDataTable<T>({
   getRowKey,
   emptyMessage = "No results yet.",
   variant = "panel",
-  overflow = "hidden",
+  overflow = "auto",
   rowClassName,
+  toolbar,
 }: AdminDataTableProps<T>) {
   const isPanel = variant === "panel";
 
@@ -90,8 +104,9 @@ export function AdminDataTable<T>({
   if (!isPanel) return table;
 
   return (
-    <div className={`rounded border border-osi-sand-300 bg-osi-white ${overflow === "auto" ? "overflow-x-auto" : "overflow-hidden"}`}>
-      {table}
+    <div className="overflow-hidden rounded border border-osi-sand-300 bg-osi-white">
+      {toolbar}
+      <div className={overflow === "auto" ? "overflow-x-auto" : "overflow-hidden"}>{table}</div>
     </div>
   );
 }

@@ -74,6 +74,8 @@ export function EntityEditor({
       <RelationOptionsProvider options={relationOptions}>
         <FormCard
           title={row ? `Edit ${config.label.toLowerCase()}` : `New ${config.label.toLowerCase()}`}
+          backHref={`/admin/${entity}`}
+          backLabel={config.pluralLabel}
           onDelete={row && canDelete ? onDelete : undefined}
           maxWidth="max-w-2xl"
           onSubmit={form.handleSubmit(onSubmit)}

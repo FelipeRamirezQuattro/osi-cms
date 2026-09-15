@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import {
+  countMissingAltMedia,
   deleteMediaAsset,
   deleteMediaAssetProtected,
   findMediaAssetUsages,
@@ -361,5 +362,48 @@ describe("replaceMediaAsset", () => {
   it("refuses to replace an asset with itself", async () => {
     mockCreateServerDbClient.mockReturnValue(createFakeDbClient({}));
     await expect(replaceMediaAsset("same-id", "same-id")).rejects.toThrow(/different asset/i);
+  });
+});
+
+describe("countMissingAltMedia", () => {
+  it("counts only non-decorative image rows with blank/missing alt text", async () => {
+    mockCreateServerDbClient.mockReturnValue(
+      createFakeDbClient({
+        media_assets: [
+          {
+            data: [
+              { alt: "", decorative: false }, // missing alt -> counts
+              { alt: "   ", decorative: false }, // whitespace-only alt -> counts (validateAltRequirement trims)
+              { alt: "A real forklift photo", decorative: false }, // has alt -> doesn't count
+              { alt: null, decorative: false }, // null alt -> counts
+            ],
+            error: null,
+          },
+        ],
+      }),
+    );
+
+    expect(await countMissingAltMedia()).toBe(3);
+  });
+
+  it("returns 0 when every candidate row already has alt text", async () => {
+    mockCreateServerDbClient.mockReturnValue(
+      createFakeDbClient({
+        media_assets: [{ data: [{ alt: "Fine", decorative: false }], error: null }],
+      }),
+    );
+    expect(await countMissingAltMedia()).toBe(0);
+  });
+
+  it("returns 0 for an empty result set", async () => {
+    mockCreateServerDbClient.mockReturnValue(createFakeDbClient({ media_assets: [{ data: [], error: null }] }));
+    expect(await countMissingAltMedia()).toBe(0);
+  });
+
+  it("throws if the query errors", async () => {
+    mockCreateServerDbClient.mockReturnValue(
+      createFakeDbClient({ media_assets: [{ data: null, error: new Error("boom") }] }),
+    );
+    await expect(countMissingAltMedia()).rejects.toThrow("boom");
   });
 });

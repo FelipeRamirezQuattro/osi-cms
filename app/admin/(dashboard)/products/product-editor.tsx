@@ -74,6 +74,8 @@ export function ProductEditor({
       <RelationOptionsProvider options={relationOptions}>
         <FormCard
           title={product ? `Edit ${product.name}` : "New product"}
+          backHref="/admin/products"
+          backLabel="Products"
           onDelete={product && canDelete ? onDelete : undefined}
           onSubmit={form.handleSubmit(onSubmit)}
         >

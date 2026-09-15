@@ -68,6 +68,8 @@ export function FormDefinitionEditor({
     <FormProvider {...form}>
       <FormCard
         title={definition ? `Edit ${definition.name}` : "New form"}
+        backHref="/admin/forms"
+        backLabel="Forms"
         onDelete={definition && canDelete ? onDelete : undefined}
         onSubmit={form.handleSubmit(onSubmit)}
       >

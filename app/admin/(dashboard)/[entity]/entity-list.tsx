@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
 import type { EntityConfig, EntityKey } from "@/lib/admin/entity-config";
 import { deleteEntityAction, moveEntityAction } from "@/lib/actions/entities";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { EntityRow } from "@/lib/data/admin-entities";
+import { filterByStatus, filterBySearch, paginate, sortRows } from "@/lib/admin/list-query";
 import { AdminPageHeader, AdminNewLinkButton } from "@/components/admin/ui/admin-page-header";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { AdminListControls, type SortOption } from "@/components/admin/ui/admin-list-controls";
+import { useListQueryState } from "@/components/admin/ui/use-list-query-state";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { ReorderButtons, RowActionButton } from "@/components/admin/ui/row-actions";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
@@ -29,6 +32,27 @@ export function EntityList({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { confirm, dialog } = useConfirmDialog();
+  const query = useListQueryState();
+
+  const positionById = useMemo(() => new Map(initialRows.map((row, index) => [row.id, index])), [initialRows]);
+
+  const sortOptions: SortOption[] = config.listColumns.flatMap((col) => [
+    { value: col.key, label: `${col.label} A-Z`, direction: "asc" as const },
+    { value: col.key, label: `${col.label} Z-A`, direction: "desc" as const },
+  ]);
+
+  const filtersActive = query.q !== "" || query.status !== "" || query.sort !== "";
+
+  const filtered = useMemo(() => {
+    let rows = filterBySearch(initialRows, query.q, (row) =>
+      config.listColumns.map((col) => String(row[col.key] ?? "")).join(" "),
+    );
+    rows = filterByStatus(rows, query.status, (row) => (config.hasStatus ? String(row.status ?? "") : undefined));
+    if (query.sort) rows = sortRows(rows, (row) => String(row[query.sort] ?? ""), query.direction);
+    return rows;
+  }, [initialRows, query.q, query.status, query.sort, query.direction, config.listColumns, config.hasStatus]);
+
+  const { rows: pageRows, totalPages } = paginate(filtered, query.page);
 
   function move(id: string, direction: "up" | "down") {
     startTransition(async () => {
@@ -83,15 +107,20 @@ export function EntityList({
           {
             key: "order",
             header: "Order",
-            render: (row: EntityRow, index: number) => (
-              <ReorderButtons
-                onMoveUp={() => move(row.id, "up")}
-                onMoveDown={() => move(row.id, "down")}
-                disabled={isPending}
-                disableUp={index === 0}
-                disableDown={index === initialRows.length - 1}
-              />
-            ),
+            render: (row: EntityRow) =>
+              filtersActive ? (
+                <span className="text-xs opacity-40" title="Clear search/filter/sort to reorder">
+                  —
+                </span>
+              ) : (
+                <ReorderButtons
+                  onMoveUp={() => move(row.id, "up")}
+                  onMoveDown={() => move(row.id, "down")}
+                  disabled={isPending}
+                  disableUp={(positionById.get(row.id) ?? 0) === 0}
+                  disableDown={(positionById.get(row.id) ?? 0) === initialRows.length - 1}
+                />
+              ),
           },
         ]
       : []),
@@ -117,9 +146,29 @@ export function EntityList({
 
       <AdminDataTable
         columns={columns}
-        rows={initialRows}
+        rows={pageRows}
         getRowKey={(row) => row.id}
-        emptyMessage={`No ${config.pluralLabel.toLowerCase()} yet.`}
+        emptyMessage={
+          initialRows.length === 0 ? `No ${config.pluralLabel.toLowerCase()} yet.` : "No results match these filters."
+        }
+        toolbar={
+          <AdminListControls
+            searchValue={query.q}
+            onSearchChange={query.setQuery}
+            searchPlaceholder={`Search ${config.pluralLabel.toLowerCase()}…`}
+            statusValue={query.status}
+            onStatusChange={config.hasStatus ? query.setStatus : undefined}
+            statusOptions={config.hasStatus ? ["draft", "published"] : undefined}
+            sortValue={query.sort}
+            sortDirection={query.direction}
+            onSortChange={query.setSort}
+            sortOptions={sortOptions}
+            page={query.page}
+            totalPages={totalPages}
+            onPageChange={query.setPage}
+            resultCount={filtered.length}
+          />
+        }
       />
       {dialog}
     </div>

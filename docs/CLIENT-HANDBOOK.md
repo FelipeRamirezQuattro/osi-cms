@@ -16,8 +16,13 @@ page.
 ## The dashboard
 
 After signing in you'll land on the dashboard: how many new contact-form
-submissions are waiting, how many pages exist, and a list of recently
-edited pages. The left sidebar is how you get everywhere else.
+submissions are waiting, how many pages exist, how many drafts are still
+waiting to be published, how many images are missing required alt text,
+any broken internal links found on the site, and a list of recently
+edited pages plus recent staff activity. The left sidebar (grouped into
+Content/Catalog/Directory/Site setup/Admin sections, with the section
+you're currently in highlighted) is how you get everywhere else — on a
+phone or narrow window it collapses to a menu button in the top bar.
 
 ## Creating a page
 
@@ -35,8 +40,9 @@ later doesn't do anything.
 **blocks** — a hero banner, a row of stat numbers, a contact form, and so
 on, stacked top to bottom.
 
-- **To add a block**, pick a type from the dropdown at the bottom of the
-  block list and click **+ Add block**.
+- **To add a block**, use the search box at the bottom of the block list
+  to find one by name or by what it's for (e.g. typing "gallery" or
+  "video" both find relevant blocks), then click its card to add it.
 - **To reorder blocks**, drag the ⠿ handle on the left of each block.
 - **To edit a block**, click its title to expand it, fill in the fields,
   and they save when you save the page.
@@ -104,7 +110,11 @@ keeps every page visually consistent with the rest of the site.
 
 Each of these has its own section in the sidebar with a list view and an
 edit screen, the same pattern as pages: fill in the fields, set
-**Status** to `published` when it's ready to go live, save.
+**Status** to `published` when it's ready to go live, save. Every list
+screen (including Pages and Products) has a search box, a status filter,
+and a sort dropdown across the top — useful once a list grows past a
+screenful — and the current search/filter/sort choice is saved in the
+page's web address, so you can bookmark or share a filtered view.
 
 **Products** is the most detailed one — besides the basics (name,
 images, description), it has Benefits, Stages, and Specs, each an

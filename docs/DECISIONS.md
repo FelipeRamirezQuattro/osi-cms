@@ -600,3 +600,104 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   `useTransition` callback, or `useActionState`'s reducer — none during
   the render pass itself. No fix was needed; this is recorded so the
   brief's bullet isn't mistaken for still-open in a future pass.
+- **The admin block palette's "thumbnail" is a lettered category swatch,
+  not a real image (Task 13a controller ruling).** There is no
+  thumbnail/icon asset system anywhere in the block registry
+  (`BlockDefinition` has no such field), and inventing preview images for
+  26 blocks with no design assets to draw from would violate constraint 4
+  ("never invent client content") in spirit even though blocks aren't
+  client copy. `components/admin/block-palette-picker.tsx` instead pairs
+  each block with a small navy swatch lettered by its existing `category`
+  (H/C/$/M/F/L) and reuses the `description` field verbatim — every
+  block's description already ends with a "— use for ..." clause (added
+  for exactly this purpose, see Task 9), which doubles as the "common
+  use" text the brief asked for with no schema change needed. No new icon
+  library was added — `package.json` had no `lucide-react` or similar
+  before this task, and a 6-way lettered swatch didn't need one.
+- **Admin list search/filter/sort/pagination runs entirely client-side
+  over an already-fetched array, not a server-side range query (Task
+  13a).** `lib/admin/list-query.ts` (pure filter/sort/paginate helpers) +
+  `components/admin/ui/use-list-query-state.ts` (the `useSearchParams`/
+  `router.replace` URL binding) + `components/admin/ui/admin-list-
+  controls.tsx` (the shared toolbar UI) are used by all three admin list
+  screens (Pages, Products, the generic `[entity]` list). This matches
+  the Task 12 decision to skip a `Pagination` primitive for the same
+  reason: every admin table today runs tens of rows, not thousands, so
+  a real `.range()` query is disproportionate scope. `AdminDataTable`
+  gained an optional `toolbar` slot (rendered above the table, inside the
+  same panel) rather than becoming a Client Component itself — it's
+  still used directly from Server Components (the dashboard, the audit
+  log) whose `columns` arrays hold non-serializable render functions,
+  which a "use client" `AdminDataTable` could never legally receive as
+  props across the server/client boundary.
+- **`AdminDataTable`'s default `overflow` flipped from `"hidden"` to
+  `"auto"` (Task 13a).** Every panel-variant table now scrolls
+  horizontally on a narrow viewport by default instead of silently
+  clipping columns — the opt-in-only `overflow="auto"` (previously only
+  the audit log used it) meant every other admin list actually failed
+  the "horizontal table scrolling" acceptance bullet by default. Passing
+  `overflow="hidden"` explicitly still works for a caller that needs it.
+- **Reordering (`ReorderButtons`, up/down) is disabled whenever a search/
+  status/sort filter is active on Products or a `hasPosition` `[entity]`
+  list (Task 13a)**, rather than trying to make "move up" operate
+  correctly against a sorted/filtered view. These tables' manual
+  drag-free reordering is a swap against the row's real, stored
+  `position` column; once the visible order no longer matches that
+  column's order (a name sort, a status filter), a directional swap
+  button would move a row relative to a neighbor the editor cannot even
+  see, which is worse than turning it off with a "clear filters to
+  reorder" tooltip until the list is back in its default view.
+- **The dashboard's "drafts awaiting publication" count is itemized per
+  content type (pages/products/shared sections/forms), summed into one
+  headline number (Task 13a).** `lib/data/dashboard.ts`'s
+  `countDraftsAwaitingPublication` returns both; the dashboard shows the
+  total as the stat tile and the per-type breakdown as a caption line
+  underneath, so "12 drafts" always answers the obvious follow-up
+  ("drafts of what?") without a second click.
+- **The broken-link scanner (`lib/data/link-audit.ts`) is an on-demand,
+  MVP-scale scan, not a persisted/maintained index (Task 13a) — same
+  precedent as `findMediaAssetUsages`'s `JSON.stringify(...).includes(...)`
+  scan (Task 11, documented above).** It regex-extracts every JSON string
+  value shaped like a site-relative path out of `page_blocks.data` and
+  `shared_section_blocks.data`, then checks each against a known-path set
+  built from existing `lib/data/*` repository functions
+  (`listAllPages`/`listAllProducts`/`listProductCategories`/
+  `listEntityRows` for industries/applications/news_posts/redirects) —
+  deliberately not new raw queries. The known-path set includes every
+  status (draft included): a link to a not-yet-published page/product is
+  not "broken" from an editor's point of view, since it resolves via
+  preview and will resolve publicly the moment it's published. This is
+  a separate function from `lib/auth/index.ts`'s `publicSlugIsResolvable`
+  rather than an extension of it — that function is deliberately scoped
+  to exactly what `proxy.ts`'s soft-404 fix needs (pages/redirects only;
+  Task 8's own comment calls product/news/industry/application detail
+  pages "out of its explicit scope" for that specific fix), and folding a
+  second, unrelated purpose (an admin content-quality scanner) into a
+  request-path security/404 helper would blur that boundary for no
+  benefit — the two now happen to overlap in what they check, but for
+  different reasons and at different trust boundaries (one runs on every
+  public request pre-auth, the other only for an authenticated staff
+  dashboard read). Same substring-match caveat `findMediaAssetUsages`
+  already accepted applies here too (a path could theoretically collide)
+  — acceptable at this content volume, not re-litigated.
+- **The admin sidebar's information architecture, breadcrumbs, and
+  responsive drawer live in `lib/admin/nav-config.ts` +
+  `components/admin/admin-shell.tsx` (Task 13a)**, replacing the single
+  flat `NAV_ITEMS` array `app/admin/(dashboard)/layout.tsx` previously
+  hand-rolled inline. Verified (not just assumed) that Task 4's
+  capability-based nav filtering already correctly covered every current
+  section, including the newer Forms/Shared sections/Media entries added
+  since — no gap was found there, so this task only added grouping,
+  active-section highlighting, the mobile drawer, and breadcrumbs on top
+  of the existing filter. Breadcrumbs are derived from the URL path plus
+  the nav config's own labels (`Admin / <Section> / New|Edit`) rather
+  than a stored per-row title, since a breadcrumb has no cheap way to
+  know a specific row's real name without an extra data fetch the
+  editor's own on-screen heading already provides a click away.
+- **An editor's "Cancel" control on the generic entity/product/form
+  editors is the same link as "back to the list" (`FormCard`'s new
+  `backHref`/`backLabel` props, Task 13a), not a second, separate
+  button.** None of these editors autosave, so navigating away without
+  submitting already discards any unsaved edits — the same reasoning
+  `page-editor.tsx`'s `AdminPageHeader` back link already relied on
+  before this task touched anything.

@@ -81,6 +81,26 @@ export async function getMediaAssetById(id: string): Promise<MediaAsset | null> 
   return data;
 }
 
+/**
+ * Dashboard count (Task 13a) for "missing required media metadata" —
+ * image-kind assets with no alt text and not marked decorative. One query
+ * narrows to image-kind, non-decorative candidates (same `mime.is.null,
+ * mime.like.image/*` treat-legacy-null-as-image rule `listMediaAssets`
+ * already uses), then reuses `validateAltRequirement` verbatim against
+ * each row rather than re-deriving the "is this a violation" rule
+ * separately — see docs/DECISIONS.md.
+ */
+export async function countMissingAltMedia(): Promise<number> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("media_assets")
+    .select("alt, decorative")
+    .eq("decorative", false)
+    .or("mime.is.null,mime.like.image/*");
+  if (error) throw error;
+  return (data ?? []).filter((row) => validateAltRequirement("image", row.alt ?? "", row.decorative) !== null).length;
+}
+
 /** Distinct folder names in use, for the library/picker's folder filter dropdown. Fine to scan client-side at this table's size. */
 export async function listMediaFolders(): Promise<string[]> {
   const db = createServerDbClient();

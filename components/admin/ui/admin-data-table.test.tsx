@@ -43,4 +43,28 @@ describe("AdminDataTable", () => {
     expect(container.querySelector(".border-osi-sand-300.bg-osi-white")).not.toBeInTheDocument();
     expect(container.querySelector("table")).toBeInTheDocument();
   });
+
+  it("defaults a panel table's inner scroller to overflow-x-auto (Task 13a: horizontal scroll, not clipping)", () => {
+    const { container } = render(<AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} />);
+    expect(container.querySelector(".overflow-x-auto")).toBeInTheDocument();
+  });
+
+  it("still supports opting into overflow-hidden", () => {
+    const { container } = render(
+      <AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} overflow="hidden" />,
+    );
+    expect(container.querySelector(".overflow-x-auto")).not.toBeInTheDocument();
+  });
+
+  it("renders a toolbar slot above the table for panel variant", () => {
+    render(
+      <AdminDataTable
+        columns={columns}
+        rows={[]}
+        getRowKey={(r) => r.id}
+        toolbar={<div data-testid="toolbar">Filters</div>}
+      />,
+    );
+    expect(screen.getByTestId("toolbar")).toBeInTheDocument();
+  });
 });
