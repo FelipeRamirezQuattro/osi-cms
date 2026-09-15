@@ -96,23 +96,33 @@ function isPlaceholderProductHref(href: string): boolean {
   return match !== null && !REAL_PRODUCT_SLUGS.has(match[1]);
 }
 
-// Non-product gaps confirmed the same way (bare <title>, no seeded page
-// row):
-// - /resources and /locations are the already-ruled "missing route" gap
-//   (public-routes.spec.ts's Task 8 test.fixme() stubs — the seeded
-//   footer/utility nav just happens to link there already).
-// - /industries and /what-we-do have no seeded `pages` row backing them
-//   yet either, a plain content gap distinct from the routing one.
-// - /esp-packages is a NEW finding (not in CLAUDE.md's documented content
-//   gaps, not part of the Task 8 missing-route set): scripts/
-//   seed-navigation.ts hardcodes `href: "/esp-packages"` for both the
-//   utility nav AND the footer, but no seed script ever creates a
-//   `pages` row with that slug — a real, currently-broken link on two of
-//   the most prominent nav surfaces on the site, unlike the other three
-//   entries here. See task-1-report.md for the full writeup; this needs
-//   triage (either seed a real /esp-packages page or fix the href),
-//   which is out of scope for this task.
-const KNOWN_BROKEN_NAV_HREFS = new Set(["/resources", "/locations", "/industries", "/what-we-do", "/esp-packages"]);
+// Task 8 resolved four of the five gaps this set used to document:
+// - /resources now has a real route (app/(site)/resources/page.tsx) —
+//   it renders (with an empty-state message; the resources table has 0
+//   rows live) regardless of DB content, so it's a genuine fix, not
+//   pending anything further.
+// - /what-we-do and /esp-packages were removed from scripts/
+//   seed-navigation.ts entirely (no page, no product line, no content
+//   anywhere backs them — inventing one would violate CLAUDE.md's "never
+//   fabricate client content" rule). /industries was repointed to
+//   /products (no /industries listing page exists or is planned — see
+//   task-8-report.md item #5). None of these three hrefs are seeded into
+//   nav_items any more, so they simply won't appear in the scrape below
+//   once nav is re-seeded.
+//
+// /locations is the one still-open gap: app/(site)/[...slug]/page.tsx
+// will serve it once a `pages` row exists, but there is no such row yet
+// — scripts/seed-locations.ts (Task 8) creates one, but per this
+// project's "no implementer runs a seed/publish script against the live
+// project" rule it's handed to the controller to run after review, not
+// run here. Remove this once that script has been run.
+//
+// IMPORTANT: none of the nav-side fixes above take effect on the LIVE
+// site until `pnpm seed:navigation` is re-run (same live-write
+// restriction) — see task-8-report.md. Until both scripts are run, this
+// test and the "known gaps" test below will still see the old, broken
+// live nav_items rows.
+const KNOWN_BROKEN_NAV_HREFS = new Set(["/locations"]);
 
 function isKnownGap(href: string): boolean {
   return KNOWN_BROKEN_NAV_HREFS.has(href) || isPlaceholderProductHref(href);

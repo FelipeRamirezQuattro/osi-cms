@@ -10,7 +10,6 @@ import { createServiceRoleDbClient } from "../lib/db/client";
 type ItemInput = { label: string; href: string; badge?: string; children?: ItemInput[] };
 
 const UTILITY_ITEMS: ItemInput[] = [
-  { label: "ESP Packages", href: "/esp-packages" },
   { label: "Customer Cloud", href: "/services" },
   { label: "Directory", href: "/directory" },
   { label: "Careers", href: "/careers" },
@@ -62,8 +61,17 @@ const MEGA_COLUMNS: ItemInput[] = [
     label: "Resources",
     href: "#",
     children: [
-      { label: "What We Do", href: "/what-we-do" },
-      { label: "Industries", href: "/industries" },
+      // "What We Do" (/what-we-do) removed — no page, no product line,
+      // and no content anywhere in this project backs it (Task 8 item
+      // #7; inventing one would violate CLAUDE.md's "never fabricate
+      // client content" rule). "Industries" now points at /products
+      // rather than a bare /industries listing — no such listing page
+      // exists or is planned (only /industries/[slug] detail pages); the
+      // product_grid block's own "Industries" tab on /products already
+      // renders industry cards linking to each industry's detail page,
+      // so this just routes there instead of duplicating that UI. See
+      // task-8-report.md item #5 for the full reasoning.
+      { label: "Industries", href: "/products" },
       { label: "About Us", href: "/about-us" },
       { label: "Resources", href: "/resources" },
       { label: "Careers", href: "/careers" },
@@ -74,7 +82,9 @@ const MEGA_COLUMNS: ItemInput[] = [
 
 const FOOTER_COLUMNS: Record<string, ItemInput[]> = {
   "footer-1": [
-    { label: "ESP Packages", href: "/esp-packages" },
+    // "ESP Packages" (/esp-packages) removed alongside the utility bar's
+    // copy above — same reasoning, same broken link, two places it was
+    // seeded.
     { label: "OSI Brochure", href: "#" },
     { label: "Services", href: "/services" },
   ],
