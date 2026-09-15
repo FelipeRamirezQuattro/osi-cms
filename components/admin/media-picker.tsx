@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { MediaBrowser, type MediaBrowserAccept } from "@/components/admin/media/media-browser";
@@ -52,13 +52,23 @@ export function MediaPicker({
   // itself sits in the tree. Only after mount, since document.body
   // doesn't exist during SSR.
   const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
+  // MediaBrowser fires its list/folders/tags server actions on mount, so
+  // it must not render until the dialog is actually opened — the portal
+  // above mounts unconditionally as soon as the picker itself mounts,
+  // which previously made every MediaPicker on a page (a product editor
+  // has 7+) fire those calls on every page load. isOpen tracks it
+  // independently of the <dialog>'s own open state so MediaBrowser can be
+  // conditionally rendered inside.
+  const [isOpen, setIsOpen] = useState(false);
 
   function open() {
     dialogRef.current?.showModal();
+    setIsOpen(true);
   }
 
   function close() {
     dialogRef.current?.close();
+    setIsOpen(false);
   }
 
   function select(asset: MediaAsset) {
@@ -101,6 +111,7 @@ export function MediaPicker({
         createPortal(
           <dialog
             ref={dialogRef}
+            onClose={() => setIsOpen(false)}
             className="w-[90vw] max-w-3xl rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
           >
             <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
@@ -115,7 +126,7 @@ export function MediaPicker({
             </div>
 
             <div className="max-h-[70vh] overflow-y-auto p-5">
-              <MediaBrowser accept={accept} onSelect={select} onUploaded={select} />
+              {isOpen && <MediaBrowser accept={accept} onSelect={select} onUploaded={select} />}
             </div>
           </dialog>,
           document.body,

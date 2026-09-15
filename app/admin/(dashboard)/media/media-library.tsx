@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { MediaBrowser } from "@/components/admin/media/media-browser";
+import { MediaBrowser, type MediaBrowserAccept } from "@/components/admin/media/media-browser";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { deleteMediaActionFn, replaceMediaAssetAction, type MediaAsset, type MediaUsage } from "@/lib/actions/media";
 import { hasCapability } from "@/lib/auth/capabilities";
@@ -19,6 +19,7 @@ export function MediaLibrary({ role }: { role: AdminRole }) {
   const [blocked, setBlocked] = useState<{ assetId: string; usages: MediaUsage[] } | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isBusy, startBusy] = useTransition();
+  const [accept, setAccept] = useState<MediaBrowserAccept>("image");
 
   function attemptDelete(asset: MediaAsset, refresh: () => void) {
     if (!window.confirm(`Delete "${asset.title ?? asset.filename ?? asset.url}"? This can't be undone.`)) return;
@@ -63,7 +64,27 @@ export function MediaLibrary({ role }: { role: AdminRole }) {
       <h1 className="font-display text-lg tracking-wide-display uppercase">Media library</h1>
       {actionError && <p className="rounded border border-red-300 bg-red-50 p-2 text-xs text-red-700">{actionError}</p>}
 
+      <div role="tablist" aria-label="Asset type" className="flex gap-2 text-xs uppercase tracking-wide-label">
+        {(["image", "file"] as const).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={accept === tab}
+            onClick={() => setAccept(tab)}
+            className={`rounded-full border px-4 py-1.5 ${
+              accept === tab
+                ? "border-osi-navy-900 bg-osi-navy-900 text-white"
+                : "border-osi-sand-300 text-osi-navy-900 hover:border-osi-navy-900"
+            }`}
+          >
+            {tab === "image" ? "Images" : "Documents"}
+          </button>
+        ))}
+      </div>
+
       <MediaBrowser
+        accept={accept}
         renderCardFooter={(asset, { refresh }) => {
           if (!canDelete) return null;
           const isBlocked = blocked?.assetId === asset.id;
