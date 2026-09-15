@@ -40,6 +40,25 @@ export function productJsonLd(input: {
   };
 }
 
+export function articleJsonLd(input: {
+  headline: string;
+  url: string;
+  description?: string | null;
+  image?: string;
+  datePublished?: string | null;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.headline,
+    url: input.url,
+    ...(input.description ? { description: input.description } : {}),
+    ...(input.image ? { image: input.image } : {}),
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    author: { "@type": "Organization", name: "Odessa Separator Inc." },
+  };
+}
+
 export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
