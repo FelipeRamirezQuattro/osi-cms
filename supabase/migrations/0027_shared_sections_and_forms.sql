@@ -280,6 +280,15 @@ revoke all on function public.save_shared_section_draft_atomic(uuid, text, jsonb
 revoke all on function public.publish_shared_section_atomic(uuid, bigint) from public;
 revoke all on function public.unpublish_shared_section_atomic(uuid) from public;
 revoke all on function public.delete_shared_section_atomic(uuid) from public;
+
+-- Supabase grants EXECUTE to anon/authenticated as a bootstrap-time default
+-- privilege independent of the `revoke all ... from public` above (see 0019) —
+-- revoke it from anon explicitly so only staff sessions can ever call these.
+revoke execute on function public.save_shared_section_draft_atomic(uuid, text, jsonb, bigint) from anon;
+revoke execute on function public.publish_shared_section_atomic(uuid, bigint) from anon;
+revoke execute on function public.unpublish_shared_section_atomic(uuid) from anon;
+revoke execute on function public.delete_shared_section_atomic(uuid) from anon;
+
 grant execute on function public.save_shared_section_draft_atomic(uuid, text, jsonb, bigint) to authenticated;
 grant execute on function public.publish_shared_section_atomic(uuid, bigint) to authenticated;
 grant execute on function public.unpublish_shared_section_atomic(uuid) to authenticated;

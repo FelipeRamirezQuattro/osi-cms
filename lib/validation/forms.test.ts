@@ -61,6 +61,15 @@ describe("formFieldDefinitionSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("rejects 'website' as a field key — it collides with the honeypot", () => {
+    const result = formFieldDefinitionSchema.safeParse({
+      key: "website",
+      label: "Company website",
+      type: "text",
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("formDefinitionSchema", () => {

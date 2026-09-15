@@ -40,7 +40,20 @@ export async function FormBlockRender({ data }: { data: FormBlockData }) {
   if (!definition) {
     return <DevDiagnostic>Form &quot;{data.formKey}&quot; not found or not published.</DevDiagnostic>;
   }
-  return <FormBlockClient data={data} definition={definition} />;
+  // Pick only what the client actually renders — `notification_email` (and
+  // any other admin-only column) never needs to reach the browser's RSC
+  // flight payload. Full-row access stays server-only, in
+  // lib/actions/submit-form.ts, where the notification email is sent.
+  return (
+    <FormBlockClient
+      data={data}
+      definition={{
+        fields: definition.fields,
+        submit_label: definition.submit_label,
+        success_message: definition.success_message,
+      }}
+    />
+  );
 }
 
 export const formBlock = defineBlock({

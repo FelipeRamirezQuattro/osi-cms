@@ -8,6 +8,9 @@ import { formFieldDefinitionSchema, type FormFieldDefinition } from "@/lib/valid
 import type { FormBlockData } from "@/components/blocks/form";
 import type { Tables } from "@/lib/db/database.types";
 
+/** The public-safe subset of a form_definitions row — no notification_email, form_key, id, or status. */
+export type PublicFormDefinition = Pick<Tables<"form_definitions">, "fields" | "submit_label" | "success_message">;
+
 const fieldClass =
   "w-full rounded-full border border-current bg-transparent px-5 py-3 text-sm placeholder:opacity-60 focus:outline-2 focus:outline-offset-2 focus:outline-osi-gold-500";
 const textareaClass =
@@ -31,7 +34,7 @@ export function FormBlockClient({
   definition,
 }: {
   data: FormBlockData;
-  definition: Tables<"form_definitions">;
+  definition: PublicFormDefinition;
 }) {
   const pathname = usePathname();
   const fields = parseFieldDefinitions(definition.fields);

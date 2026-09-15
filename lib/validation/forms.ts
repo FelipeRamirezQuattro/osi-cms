@@ -46,6 +46,19 @@ export const FORM_FIELD_TYPES = [
 
 export type FormFieldType = (typeof FORM_FIELD_TYPES)[number];
 
+/**
+ * The honeypot field every generic-engine form submission carries,
+ * alongside whatever fields the form's own definition declares — same
+ * convention as contactFormSchema's `website` field above. Declared before
+ * formFieldKeySchema so an admin field can never reuse this key: a field
+ * named "website" would silently overwrite the honeypot in
+ * buildDynamicFormSchema's shape, turning a real visitor value (e.g. a
+ * legitimate "Company website" field) into a tripped honeypot — the
+ * submission would drop silently while the visitor sees a fake success
+ * message.
+ */
+const HONEYPOT_KEY = "website";
+
 // A stable per-field key — becomes the `form_submissions.payload` key and
 // (for text/select inputs) the form control's `name` attribute, so it's
 // constrained to a safe identifier rather than an arbitrary label.
@@ -53,7 +66,10 @@ const formFieldKeySchema = z
   .string()
   .trim()
   .min(1, "Field key is required")
-  .regex(/^[a-z][a-z0-9_]*$/, "Field key must start with a letter and contain only lowercase letters, numbers, and underscores");
+  .regex(/^[a-z][a-z0-9_]*$/, "Field key must start with a letter and contain only lowercase letters, numbers, and underscores")
+  .refine((key) => key !== HONEYPOT_KEY, {
+    message: `"${HONEYPOT_KEY}" is reserved for spam protection — choose a different field key`,
+  });
 
 export const formFieldDefinitionSchema = z
   .object({
@@ -111,13 +127,6 @@ export const formDefinitionSchema = z
   });
 
 export type FormDefinitionInput = z.infer<typeof formDefinitionSchema>;
-
-/**
- * The honeypot field every generic-engine form submission carries,
- * alongside whatever fields the form's own definition declares — same
- * convention as contactFormSchema's `website` field above.
- */
-const HONEYPOT_KEY = "website";
 
 /**
  * Builds the server-side Zod schema for one form_definitions row's

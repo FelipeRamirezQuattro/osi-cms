@@ -557,3 +557,18 @@ One line per non-obvious choice, with the reason. Newest at bottom.
   it renders `form_key` and the full jsonb `payload` generically, so it
   needed no changes to support the new generic engine's submissions
   alongside the contact form's.
+- **`form_definitions` carries no schema version, and `form_submissions`
+  records no version reference** (Task 10, flagged in review — noted
+  here, not resolved). Editing a form's `fields` after it already has
+  live submissions means old submissions are only interpretable through
+  the field set in effect at read time, not the one in effect when they
+  were submitted (a renamed/removed field silently loses its label in the
+  inbox view; a changed `select`'s options don't invalidate an old
+  answer that's no longer a valid option). Deferred rather than built now:
+  real versioning needs either a schema snapshot per submission or a
+  version column bumped on every field-shape change plus a migration path
+  for the inbox UI to render historical shapes — disproportionate scope
+  under the current time budget for what is, today, a low-traffic admin
+  edge case (a form's fields rarely change once submissions exist).
+  Revisit if a form with meaningful submission volume needs its fields
+  edited.
