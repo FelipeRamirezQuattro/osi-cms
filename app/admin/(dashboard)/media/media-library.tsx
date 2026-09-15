@@ -84,6 +84,12 @@ export function MediaLibrary({ role }: { role: AdminRole }) {
       </div>
 
       <MediaBrowser
+        // Remounts on tab switch — MediaBrowser's pagination/folder/tag/
+        // search state is internal and otherwise persists across an
+        // `accept` change, producing a stale offset or filter from the
+        // other tab (e.g. paging into Images then switching to Documents
+        // re-fetches at the same non-zero offset).
+        key={accept}
         accept={accept}
         renderCardFooter={(asset, { refresh }) => {
           if (!canDelete) return null;
