@@ -27,6 +27,7 @@ import { imageGalleryBlock } from "@/components/blocks/image-gallery";
 import { specTableBlock } from "@/components/blocks/spec-table";
 import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
+import { columnsBlock } from "@/components/blocks/columns";
 
 /**
  * The block registry (see CLAUDE.md / master prompt §6). Adding a block
@@ -61,6 +62,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   spec_table: specTableBlock,
   image: imageBlock,
   embed: embedBlock,
+  columns: columnsBlock,
 };
 
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {

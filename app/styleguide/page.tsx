@@ -12,6 +12,7 @@ import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
+import { columnsBlock } from "@/components/blocks/columns";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -281,6 +282,19 @@ export default function StyleguidePage() {
           />
         </div>
       </Section>
+
+      <Section bg="cream">
+        <Heading>New blocks — Columns (text / image / cta, no nesting)</Heading>
+      </Section>
+      <columnsBlock.Render
+        data={columnsBlock.schema.parse({
+          columns: [
+            { type: "text", heading: "Built to last", body: "Field-proven equipment since 1995." },
+            { type: "image", imageUrl: "https://www.odessaseparator.com/images/esp-chem-screen.jpg", imageAlt: "ESP Chem Screen" },
+            { type: "cta", ctaLabel: "Contact us", ctaHref: "/contact" },
+          ],
+        })}
+      />
 
       <Section bg="navy">
         <Heading>Scroll reveal</Heading>
