@@ -1,5 +1,7 @@
 import { createServerDbClient } from "@/lib/db/client";
 import { recordAudit } from "@/lib/data/audit";
+import { listProductsWithCategorySlug } from "@/lib/data/products";
+import { productHref } from "@/lib/routes";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
 
 export type NavItemNode = Tables<"nav_items"> & { children: NavItemNode[] };
@@ -35,7 +37,26 @@ export async function getNavMenu(key: Tables<"nav_menus">["key"]): Promise<NavIt
     .order("position", { ascending: true });
   if (itemsError) throw itemsError;
 
-  return nestItems(items ?? []);
+  const nested = nestItems(items ?? []);
+  if (key !== "mega") return nested;
+
+  // The legacy mega-menu names more products than the client has
+  // published content for. Keep those names in the CMS, but never expose
+  // a public link that resolves to the not-found boundary. As products
+  // are published they appear automatically, without another code edit.
+  const products = await listProductsWithCategorySlug();
+  const publishedProductHrefs = new Set(
+    products
+      .filter((product) => product.categorySlug)
+      .map((product) => productHref(product.categorySlug!, product.slug)),
+  );
+
+  return nested.map((column) => ({
+    ...column,
+    children: column.children.filter(
+      (child) => !child.href.startsWith("/products/") || publishedProductHrefs.has(child.href),
+    ),
+  }));
 }
 
 // --- Admin ---

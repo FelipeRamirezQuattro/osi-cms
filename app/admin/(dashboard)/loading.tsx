@@ -1,8 +1,15 @@
+import { Skeleton } from "@/components/admin/ui/skeleton";
+
 export default function AdminLoading() {
   return (
-    <div className="animate-pulse space-y-4" aria-hidden>
-      <div className="h-8 w-48 rounded bg-osi-sand-300/60" />
-      <div className="h-64 rounded border border-osi-sand-300 bg-osi-sand-300/20" />
+    <div className="space-y-6" aria-label="Loading admin screen" role="status">
+      <Skeleton className="h-8 w-52" />
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton key={index} className="h-28" />
+        ))}
+      </div>
+      <Skeleton className="h-64" />
     </div>
   );
 }

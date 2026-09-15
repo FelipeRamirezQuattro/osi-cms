@@ -36,7 +36,7 @@ async function Render({ data }: { data: Data }) {
       reveal={false}
     >
       {data.title && (
-        <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
+        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}
@@ -50,7 +50,7 @@ async function Render({ data }: { data: Data }) {
               {people.map((person) => (
                 <AnimatedItem key={person.id}>
                   <div className="text-sm">
-                    <p className="font-display tracking-wide-display uppercase">{person.name}</p>
+                    <p className="font-editorial text-lg font-semibold">{person.name}</p>
                     {person.role && <p className="opacity-70">{person.role}</p>}
                     {person.phone_office && <p className="mt-1">Office: {person.phone_office}</p>}
                     {person.phone_cell && <p>Cell: {person.phone_cell}</p>}

@@ -47,7 +47,7 @@ async function Render({ data }: { data: ResourceListData }) {
       reveal={false}
     >
       {data.title && (
-        <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">{data.title}</h2>
+        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
       )}
       <ResourceListClient resources={items} emptyStateMessage={data.emptyStateMessage} />
     </Section>

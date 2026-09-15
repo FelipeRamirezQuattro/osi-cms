@@ -17,7 +17,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
       session={{ email: session.email, role: session.role }}
       signOut={
         <form action={logoutAction}>
-          <button type="submit" className="mt-2 text-osi-gold-500 hover:underline">
+          <button type="submit" className="mt-3 font-medium text-slate-300 hover:text-white">
             Sign out
           </button>
         </form>

@@ -3,7 +3,13 @@
 import { useActionState, useId } from "react";
 import { usePathname } from "next/navigation";
 import { Section } from "@/components/ui/section";
-import { AsyncMessage } from "@/components/admin/ui/async-message";
+import { StatusMessage } from "@/components/ui/public-primitives";
+import {
+  PUBLIC_FIELD_CLASS,
+  PUBLIC_LABEL_CLASS,
+  PUBLIC_SUBMIT_CLASS,
+  PUBLIC_TEXTAREA_CLASS,
+} from "@/components/ui/public-form-styles";
 import { submitFormAction, type FormBlockState } from "@/lib/actions/submit-form";
 import { formFieldDefinitionSchema, type FormFieldDefinition } from "@/lib/validation/forms";
 import type { FormBlockData } from "@/components/blocks/form";
@@ -11,16 +17,6 @@ import type { Tables } from "@/lib/db/database.types";
 
 /** The public-safe subset of a form_definitions row — no notification_email, form_key, id, or status. */
 export type PublicFormDefinition = Pick<Tables<"form_definitions">, "fields" | "submit_label" | "success_message">;
-
-const fieldClass =
-  "w-full rounded-full border border-current bg-transparent px-5 py-3 text-sm placeholder:opacity-60 focus:outline-2 focus:outline-offset-2 focus:outline-osi-gold-500";
-const textareaClass =
-  "w-full rounded-2xl border border-current bg-transparent px-5 py-3 text-sm placeholder:opacity-60 focus:outline-2 focus:outline-offset-2 focus:outline-osi-gold-500";
-// Same small-caption visible-label treatment as contact-form-client.tsx —
-// this block's fields were placeholder-only with no accessible name at
-// all (axe's "label" rule, critical impact); every field already carries
-// a real admin-authored `label`, so no content is invented.
-const labelClass = "mb-1 block text-xs uppercase tracking-wide-label opacity-70";
 
 const initialState: FormBlockState = { status: "idle" };
 
@@ -58,11 +54,13 @@ export function FormBlockClient({
       anchorId={data.anchorId}
       reveal={false}
     >
-      {data.title && <h2 className="mb-8 font-display-soft text-section font-semibold">{data.title}</h2>}
+      {data.title && <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>}
       {state.status === "success" ? (
-        <p className="text-sm">{definition.success_message}</p>
+        <StatusMessage title="Submission received" tone="success">
+          {definition.success_message}
+        </StatusMessage>
       ) : (
-        <form action={formAction} className="space-y-4">
+        <form action={formAction} aria-busy={pending} className="max-w-3xl space-y-5">
           {/* Honeypot — hidden from real users via CSS, not display:none
               (some bots skip hidden fields, few skip off-screen ones). */}
           <input
@@ -76,18 +74,15 @@ export function FormBlockClient({
           {fields.map((field) => (
             <FormFieldInput key={field.key} field={field} pathname={pathname} idPrefix={idPrefix} />
           ))}
-          {/* red-600 (AsyncMessage's default "light" variant) reads fine on
-              cream/white but too close in luminance to a navy background —
-              same cream-vs-navy accent-color branch CLAUDE.md documents for
-              gold/slate elsewhere (grep `data.background === "cream"`). */}
-          <AsyncMessage
-            variant={data.background === "cream" ? "light" : "dark"}
-            message={state.status === "error" ? { kind: "error", text: state.message ?? "Something went wrong." } : null}
-          />
+          {state.status === "error" && (
+            <StatusMessage title="We couldn’t submit the form" tone="error">
+              {state.message ?? "Something went wrong. Please review the form and try again."}
+            </StatusMessage>
+          )}
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-osi-gold-500 px-8 py-3 font-display text-sm tracking-wide-display text-osi-navy-900 uppercase transition-colors hover:bg-osi-gold-400 disabled:opacity-60"
+            className={PUBLIC_SUBMIT_CLASS}
           >
             {pending ? "Sending…" : definition.submit_label}
           </button>
@@ -103,33 +98,33 @@ function FormFieldInput({
   idPrefix,
 }: {
   field: FormFieldDefinition;
-  pathname: string;
+  pathname: string | null;
   idPrefix: string;
 }) {
   const id = `${idPrefix}-${field.key}`;
 
   switch (field.type) {
     case "hidden-page-context":
-      return <input type="hidden" name={field.key} value={pathname.replace(/^\/+/, "")} />;
+      return <input type="hidden" name={field.key} value={(pathname ?? "").replace(/^\/+/, "")} />;
     case "textarea":
       return (
         <label htmlFor={id}>
-          <span className={labelClass}>{field.label}</span>
+          <span className={PUBLIC_LABEL_CLASS}>{field.label}</span>
           <textarea
             id={id}
             name={field.key}
             placeholder={field.placeholder || field.label}
             required={field.required}
             rows={5}
-            className={textareaClass}
+            className={PUBLIC_TEXTAREA_CLASS}
           />
         </label>
       );
     case "select":
       return (
         <label htmlFor={id}>
-          <span className={labelClass}>{field.label}</span>
-          <select id={id} name={field.key} required={field.required} defaultValue="" className={fieldClass}>
+          <span className={PUBLIC_LABEL_CLASS}>{field.label}</span>
+          <select id={id} name={field.key} required={field.required} defaultValue="" className={PUBLIC_FIELD_CLASS}>
             <option value="" disabled>
               {field.placeholder || field.label}
             </option>
@@ -151,7 +146,7 @@ function FormFieldInput({
     case "email":
       return (
         <label htmlFor={id}>
-          <span className={labelClass}>{field.label}</span>
+          <span className={PUBLIC_LABEL_CLASS}>{field.label}</span>
           <input
             id={id}
             type="email"
@@ -161,14 +156,14 @@ function FormFieldInput({
             spellCheck={false}
             placeholder={field.placeholder || field.label}
             required={field.required}
-            className={fieldClass}
+            className={PUBLIC_FIELD_CLASS}
           />
         </label>
       );
     case "tel":
       return (
         <label htmlFor={id}>
-          <span className={labelClass}>{field.label}</span>
+          <span className={PUBLIC_LABEL_CLASS}>{field.label}</span>
           <input
             id={id}
             type="tel"
@@ -178,7 +173,7 @@ function FormFieldInput({
             spellCheck={false}
             placeholder={field.placeholder || field.label}
             required={field.required}
-            className={fieldClass}
+            className={PUBLIC_FIELD_CLASS}
           />
         </label>
       );
@@ -186,14 +181,14 @@ function FormFieldInput({
     default:
       return (
         <label htmlFor={id}>
-          <span className={labelClass}>{field.label}</span>
+          <span className={PUBLIC_LABEL_CLASS}>{field.label}</span>
           <input
             id={id}
             type="text"
             name={field.key}
             placeholder={field.placeholder || field.label}
             required={field.required}
-            className={fieldClass}
+            className={PUBLIC_FIELD_CLASS}
           />
         </label>
       );

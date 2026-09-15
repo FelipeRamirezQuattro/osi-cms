@@ -9,6 +9,23 @@ export const EASE_OSI = [0.22, 0.61, 0.36, 1] as const;
 // so bounce is never used here.
 export const springTransition: Transition = { type: "spring", bounce: 0, duration: 0.4 };
 
+/** Shared public interaction timings; movement stays within a quiet 8px. */
+export const publicMotion = {
+  pressScale: 0.98,
+  microDuration: 0.18,
+  sectionDuration: 0.36,
+  disclosureOffset: 8,
+} as const;
+
+export const disclosureVariants: Variants = {
+  closed: { opacity: 0, y: -publicMotion.disclosureOffset },
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: publicMotion.sectionDuration, ease: EASE_OSI },
+  },
+};
+
 // useSpring() (tilt-card.tsx) takes physics params, not the
 // bounce/duration shorthand above — stiffness/damping tuned to the same
 // "snappy, no visible overshoot" feel.

@@ -17,34 +17,21 @@ const UTILITY_ITEMS: ItemInput[] = [
 ];
 
 const MEGA_COLUMNS: ItemInput[] = [
+  // Only products with published, client-backed copy belong in public
+  // navigation. The remaining legacy names stay documented in
+  // docs/CONTENT-GAPS.md and can be added here when their records are
+  // ready to publish.
   {
     label: "Sand Control",
     href: "#",
     children: [
       { label: "SRP Sand Lift", href: "/products/sand-control/srp-sand-lift", badge: "NEW" },
-      { label: "Screen Vortex Desander", href: "/products/sand-control/screen-vortex-desander" },
-      { label: "Sand Release Valves", href: "/products/sand-control/sand-release-valves" },
-      { label: "Top Bypass Valve", href: "/products/sand-control/top-bypass-valve" },
-      { label: "Pump Guard Screen", href: "/products/sand-control/pump-guard-screen" },
-      { label: "Dip Tube Bypass", href: "/products/sand-control/dip-tube-bypass" },
-      { label: "Super Perf", href: "/products/sand-control/super-perf" },
-      { label: "Tubing Screen", href: "/products/sand-control/tubing-screen" },
-      { label: "Vortex Desander", href: "/products/sand-control/vortex-desander" },
-      { label: "The Nozzle", href: "/products/sand-control/the-nozzle" },
     ],
   },
   {
     label: "Gas Separation",
     href: "#",
     children: [
-      { label: "ESP Guard Shield", href: "/products/gas-separation/esp-guard-shield" },
-      { label: "ESP Vortex Regulator", href: "/products/gas-separation/esp-vortex-regulator" },
-      {
-        label: "ESP Tracker Type Gas Separator",
-        href: "/products/gas-separation/esp-tracker-type-gas-separator",
-      },
-      { label: "ESP Surge Valve", href: "/products/gas-separation/esp-surge-valve" },
-      { label: "ESP G-Force", href: "/products/gas-separation/esp-g-force" },
       { label: "Gas Release System", href: "/products/gas-separation/gas-release-system" },
     ],
   },
@@ -52,9 +39,7 @@ const MEGA_COLUMNS: ItemInput[] = [
     label: "Pumps",
     href: "#",
     children: [
-      { label: "Chemical Injection Mandrel", href: "/products/pumps/chemical-injection-mandrel", badge: "NEW" },
       { label: "ESP Chem Screen", href: "/products/pumps/esp-chem-screen" },
-      { label: "Well Shockstick", href: "/products/pumps/well-shockstick" },
     ],
   },
   {

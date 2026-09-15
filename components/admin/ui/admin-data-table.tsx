@@ -63,15 +63,16 @@ export function AdminDataTable<T>({
   const isPanel = variant === "panel";
 
   const table = (
-    <table className="w-full text-left text-sm">
+    <table className="admin-table">
       <thead
-        className={
-          isPanel ? "bg-osi-cream-100 text-xs uppercase tracking-wide-label opacity-70" : "border-b border-osi-sand-300 opacity-60"
-        }
+        className={isPanel ? undefined : "border-b border-[var(--admin-border)] bg-transparent"}
       >
         <tr>
           {columns.map((col) => (
-            <th key={col.key} className={`${isPanel ? "px-4 py-2" : "py-2 font-normal"} ${col.headerClassName ?? ""}`}>
+            <th
+              key={col.key}
+              className={`${!isPanel ? "font-medium" : ""} ${col.headerClassName ?? ""}`}
+            >
               {col.header}
             </th>
           ))}
@@ -79,12 +80,9 @@ export function AdminDataTable<T>({
       </thead>
       <tbody>
         {rows.map((row, index) => (
-          <tr
-            key={getRowKey(row, index)}
-            className={`${isPanel ? "border-t border-osi-sand-300" : "border-b border-osi-sand-300/50"} ${rowClassName ?? ""}`}
-          >
+          <tr key={getRowKey(row, index)} className={rowClassName}>
             {columns.map((col) => (
-              <td key={col.key} className={`${isPanel ? "px-4 py-2" : "py-2"} ${col.cellClassName ?? ""}`}>
+              <td key={col.key} className={col.cellClassName}>
                 {col.render(row, index)}
               </td>
             ))}
@@ -104,7 +102,7 @@ export function AdminDataTable<T>({
   if (!isPanel) return table;
 
   return (
-    <div className="overflow-hidden rounded border border-osi-sand-300 bg-osi-white">
+    <div className="admin-table-panel">
       {toolbar}
       <div className={overflow === "auto" ? "overflow-x-auto" : "overflow-hidden"}>{table}</div>
     </div>

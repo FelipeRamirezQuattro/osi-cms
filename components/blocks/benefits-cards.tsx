@@ -24,7 +24,7 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
+      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <AnimatedGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -35,8 +35,8 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
               size="1.25rem"
               className="h-full border border-osi-steel-500/30 bg-osi-navy-600/40 p-6 transition-colors duration-300 hover:border-osi-steel-500/60 hover:bg-osi-navy-600/60"
             >
-              <h3 className="font-display text-sm tracking-wide-display uppercase">{item.title}</h3>
-              {item.body && <p className="mt-2 text-sm opacity-80">{item.body}</p>}
+              <h3 className="font-editorial text-lg font-semibold leading-tight text-balance">{item.title}</h3>
+              {item.body && <p className="mt-3 text-sm leading-relaxed text-osi-slate-200">{item.body}</p>}
             </Clipped>
           </AnimatedItem>
         ))}

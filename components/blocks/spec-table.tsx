@@ -20,24 +20,24 @@ export function SpecTableRender({ data }: { data: SpecTableData }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
-      contentClassName="mx-auto max-w-3xl px-6 md:px-12"
+      contentClassName="mx-auto max-w-4xl px-5 md:px-10"
     >
       {data.title && (
-        <h2 className="mb-6 font-display text-section tracking-tightest-display uppercase">
+        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}
-      <div className="divide-y divide-osi-sand-300/40 border-y border-osi-sand-300/40">
+      <dl className="overflow-hidden rounded-[var(--site-radius-md)] border border-[var(--site-border)] bg-[var(--site-surface-raised)]">
         {data.specs.map((spec) => (
-          <div key={spec.label} className="flex justify-between py-3 text-sm">
-            <span className="opacity-70">{spec.label}</span>
-            <span className="font-display tracking-wide-display">
+          <div key={spec.label} className="grid gap-1 border-b border-[var(--site-border)] px-5 py-4 text-sm last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
+            <dt className="text-osi-slate-300">{spec.label}</dt>
+            <dd className="font-semibold tabular-nums">
               {spec.value}
               {spec.unit ? ` ${spec.unit}` : ""}
-            </span>
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
     </Section>
   );
 }

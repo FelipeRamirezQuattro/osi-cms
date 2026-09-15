@@ -28,15 +28,9 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
-      contentClassName="mx-auto max-w-3xl px-6 text-center md:px-12"
+      contentClassName="mx-auto max-w-4xl px-5 text-center md:px-10"
     >
-      {/* font-display (primary Orbitron), not font-display-soft: CLAUDE.md
-          names exactly 4 block types allowed to use the soft typeface
-          (section_heading, mission_cards, global_map, contact_form) and
-          this isn't one of them — no mockup evidence backs a 5th
-          exception, so this uses the same treatment as every other
-          block's headline text. */}
-      <blockquote className="font-display text-section tracking-tightest-display uppercase">
+      <blockquote className="font-editorial text-section font-medium leading-snug text-balance">
         “{data.quote}”
       </blockquote>
       <div className="mt-6 flex flex-col items-center gap-3">
@@ -54,7 +48,7 @@ function Render({ data }: { data: Data }) {
         )}
         <div>
           <p
-            className={`font-display text-sm tracking-wide-display uppercase ${
+            className={`text-sm font-semibold ${
               data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
             }`}
           >

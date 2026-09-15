@@ -7,9 +7,11 @@
  * tracking-wide-label, etc.) — see /styleguide for every token rendered.
  */
 @theme {
-  --font-display: "Orbitron", sans-serif;
-  --font-display-soft: "Poppins", sans-serif;
-  --font-body: "Montserrat", sans-serif;
+  --font-display: var(--font-display-source), "Orbitron", sans-serif;
+  --font-editorial: var(--font-editorial-source), "Montserrat", sans-serif;
+  /* Legacy alias kept while public blocks migrate to the explicit name. */
+  --font-display-soft: var(--font-editorial-source), "Montserrat", sans-serif;
+  --font-body: var(--font-body-source), "Poppins", sans-serif;
 
   --color-osi-navy-900: #001b33;
   --color-osi-navy-800: #001c34;
@@ -63,6 +65,100 @@
 /* Body copy runs airy, not dense — the mockup's paragraphs use 1.7 */
 body {
   line-height: 1.7;
+}
+
+@media (max-width: 340px) {
+  :root {
+    --text-hero: 1.95rem;
+    --tracking-tightest-display: 0.035em;
+  }
+}
+
+/*
+ * Public-site foundations. These semantic aliases deliberately preserve
+ * OSI's navy / cream / gold identity while giving the marketing site a
+ * calmer editorial rhythm than the admin application.
+ */
+.site-shell {
+  --site-surface: var(--color-osi-cream-100);
+  --site-surface-raised: #fffaf4;
+  --site-ink: var(--color-osi-navy-900);
+  --site-ink-muted: var(--color-osi-slate-300);
+  --site-border: color-mix(in srgb, var(--color-osi-navy-900) 16%, transparent);
+  --site-border-on-dark: color-mix(in srgb, white 18%, transparent);
+  --site-radius-sm: 0.5rem;
+  --site-radius-md: 0.875rem;
+  --site-radius-lg: 1.5rem;
+  --site-container: 72rem;
+  --site-reading-width: 68ch;
+  --site-duration-fast: 160ms;
+  --site-duration-base: 260ms;
+  --site-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  background: var(--site-surface);
+  color: var(--site-ink);
+  font-family: var(--font-body);
+}
+
+.site-shell :where(a, button, input, select, textarea, summary) {
+  touch-action: manipulation;
+}
+
+.site-shell :where(h1, h2, h3, h4, h5, h6)[id],
+.site-shell section[id] {
+  scroll-margin-top: 7rem;
+}
+
+.site-dialog {
+  margin: 0;
+  max-height: none;
+  max-width: none;
+  border: 0;
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity var(--site-duration-base) var(--site-ease),
+    transform var(--site-duration-base) var(--site-ease),
+    overlay var(--site-duration-base) allow-discrete,
+    display var(--site-duration-base) allow-discrete;
+}
+
+.site-dialog[open] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-dialog::backdrop {
+  background: rgb(0 11 22 / 0%);
+  backdrop-filter: blur(0);
+  transition:
+    background-color var(--site-duration-base) var(--site-ease),
+    backdrop-filter var(--site-duration-base) var(--site-ease),
+    overlay var(--site-duration-base) allow-discrete,
+    display var(--site-duration-base) allow-discrete;
+}
+
+.site-dialog.site-lightbox {
+  width: min(96vw, 90rem);
+  height: min(92dvh, 60rem);
+  margin: auto;
+  overflow: visible;
+}
+
+.site-dialog[open]::backdrop {
+  background: rgb(0 11 22 / 72%);
+  backdrop-filter: blur(8px);
+}
+
+@starting-style {
+  .site-dialog[open] {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  .site-dialog[open]::backdrop {
+    background: rgb(0 11 22 / 0%);
+    backdrop-filter: blur(0);
+  }
 }
 
 /*

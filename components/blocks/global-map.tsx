@@ -37,10 +37,10 @@ async function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom="lg"
       anchorId={data.anchorId}
-      contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
+      contentClassName="relative mx-auto max-w-[var(--site-container)] px-5 md:px-10"
     >
       <div className="mb-8 flex flex-col justify-between gap-4 border-b border-osi-steel-500/30 pb-6 sm:flex-row sm:items-center">
-        <h2 className="font-display-soft text-section font-semibold">
+        <h2 className="font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
         {data.subtitle && (
@@ -63,7 +63,7 @@ async function Render({ data }: { data: Data }) {
           />
         </div>
       )}
-      <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3 rounded-full bg-osi-white/95 px-8 py-12 text-osi-navy-900">
+      <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3 rounded-[var(--site-radius-lg)] border border-white/15 bg-osi-white/95 px-6 py-8 text-osi-navy-900 md:px-8">
         {countries.length > 0 ? (
           countries.map((country) => (
             <span
@@ -74,7 +74,12 @@ async function Render({ data }: { data: Data }) {
             </span>
           ))
         ) : (
-          <p className="text-sm text-osi-slate-400">No published locations yet.</p>
+          <div className="max-w-lg text-center">
+            <p className="font-editorial text-xl font-semibold">Location directory coming soon</p>
+            <p className="mt-2 text-sm leading-relaxed text-osi-slate-300">
+              Published countries will appear here. Contact OSI for the nearest available representative.
+            </p>
+          </div>
         )}
       </div>
       <CtaBreakoutBar href={data.ctaHref}>{data.ctaLabel}</CtaBreakoutBar>

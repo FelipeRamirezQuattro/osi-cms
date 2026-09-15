@@ -36,7 +36,7 @@ export function NotFound() {
       contentClassName="mx-auto max-w-2xl px-6 text-center md:px-12"
     >
       <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">404</p>
-      <h1 className="font-display text-section tracking-tightest-display uppercase">Page not found</h1>
+      <h1 className="font-editorial text-section font-semibold text-balance">Page not found</h1>
       <p className="mt-4 text-osi-slate-200">
         The page you&rsquo;re looking for doesn&rsquo;t exist or may have moved. Try the homepage, or search for
         what you need.

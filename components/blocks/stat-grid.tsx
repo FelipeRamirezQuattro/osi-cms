@@ -58,7 +58,7 @@ function Render({ data }: { data: Data }) {
       reveal={false}
     >
       <AnimatedGroup className={`relative grid grid-cols-1 gap-px ${cols}`}>
-        <HairlineGrid cols={data.stats.length} rows={1} className="-inset-x-6 md:-inset-x-12" />
+        <HairlineGrid cols={data.stats.length} rows={1} className="-inset-x-5 md:-inset-x-10" />
         {data.stats.map((stat) =>
           stat.href ? (
             <AnimatedItem key={stat.label}>

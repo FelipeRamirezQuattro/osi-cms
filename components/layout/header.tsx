@@ -9,10 +9,14 @@ export async function Header() {
   ]);
 
   return (
-    <header className="relative z-40 border-b border-osi-steel-500/20 bg-osi-navy-900 px-6 py-4 text-osi-white md:px-12">
-      <div className="mx-auto flex max-w-6xl items-center justify-between">
-        <Link href="/" className="font-display text-xl tracking-wide-display uppercase">
-          OSI
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-osi-navy-900/94 px-5 text-osi-white shadow-[0_12px_35px_rgba(0,11,22,0.14)] backdrop-blur-xl md:px-10">
+      <div className="mx-auto flex min-h-18 max-w-[var(--site-container)] items-center justify-between gap-8">
+        <Link
+          href="/"
+          aria-label="OSI home"
+          className="inline-flex min-h-11 items-center font-display text-xl font-bold tracking-wide-display uppercase"
+        >
+          OSI<span className="ml-1 text-osi-gold-500">.</span>
         </Link>
         <MegaMenuClient utilityItems={utilityItems} megaColumns={megaColumns} />
       </div>

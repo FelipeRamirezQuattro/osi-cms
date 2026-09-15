@@ -66,14 +66,16 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
         ])}
       />
       <Section background="navy" spacingTop="lg" spacingBottom="md" reveal={false}>
-        <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
-          {post.published_at ? new Date(post.published_at).toLocaleDateString() : KIND_LABELS[post.kind]}
+        <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
+          {post.published_at
+            ? new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(post.published_at))
+            : KIND_LABELS[post.kind]}
         </p>
-        <h1 className="font-display text-section tracking-tightest-display uppercase">{post.title}</h1>
-        {post.excerpt && <p className="mt-4 max-w-2xl text-osi-slate-200">{post.excerpt}</p>}
+        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{post.title}</h1>
+        {post.excerpt && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{post.excerpt}</p>}
         {post.kind !== "news" && (post.event_date || post.event_location) && (
           <p className="mt-6 text-sm text-osi-slate-200">
-            {post.event_date && new Date(post.event_date).toLocaleDateString()}
+            {post.event_date && new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(post.event_date))}
             {post.event_date && post.event_location ? " — " : ""}
             {post.event_location}
           </p>
@@ -82,7 +84,13 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
 
       {post.cover_image_url && (
         <Section background="cream" spacingTop="md" spacingBottom="sm">
-          <DuotoneImage src={post.cover_image_url} alt={post.title} className="aspect-[21/9] w-full" intensity={0.2} />
+          <DuotoneImage
+            src={post.cover_image_url}
+            alt={post.title}
+            className="aspect-[21/9] w-full"
+            intensity={0.2}
+            sizes="(min-width: 1280px) 72rem, 100vw"
+          />
         </Section>
       )}
 

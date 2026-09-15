@@ -25,6 +25,8 @@ const schema = blockCommonSchema.extend({
 type Data = z.infer<typeof schema>;
 
 function Render({ data }: { data: Data }) {
+  const useEditorialTitle = data.headline.length > 36;
+
   return (
     <Section
       background={data.background}
@@ -42,10 +44,10 @@ function Render({ data }: { data: Data }) {
       // <section> is already `relative`, so dropping it here lets the
       // backdrop cover the whole section edge-to-edge, which is what the
       // mockup's hero shows.
-      contentClassName="mx-auto flex min-h-[calc(88vh-8rem)] max-w-6xl flex-col justify-center px-6 md:px-12"
+      contentClassName="mx-auto flex min-h-[calc(88vh-8rem)] max-w-[var(--site-container)] flex-col justify-center px-5 md:px-10"
     >
       <div className="absolute inset-0 -z-10">
-        <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} />
+        <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} sizes="100vw" loading="eager" />
         {/* Scrim. The duotone alone was enough over the gradient
             placeholder, but a real photograph has bright regions (the sky
             in the yard shot) where slate-200 subhead copy drops under 4.5:1.
@@ -72,11 +74,17 @@ function Render({ data }: { data: Data }) {
           <GradientText>{data.eyebrow}</GradientText>
         </p>
       )}
-      <h1 className="max-w-2xl font-display text-hero tracking-tightest-display text-osi-white uppercase">
+      <h1
+        className={`max-w-3xl text-hero text-balance text-osi-white [overflow-wrap:anywhere] ${
+          useEditorialTitle
+            ? "font-editorial font-semibold leading-[1.03]"
+            : "font-display tracking-tightest-display uppercase"
+        }`}
+      >
         {data.headline}
       </h1>
       {data.subhead && (
-        <p className={`mt-4 max-w-xl ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+        <p className={`mt-5 max-w-[60ch] text-base font-medium leading-relaxed ${data.background === "cream" ? "text-osi-slate-300" : "text-white/78"}`}>
           {data.subhead}
         </p>
       )}

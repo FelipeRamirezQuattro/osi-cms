@@ -23,8 +23,8 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between">
-        <div>
+      <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(16rem,24rem)] md:gap-12">
+        <div className="max-w-3xl">
           {data.eyebrow && (
             <p className="mb-2 font-display text-small-label tracking-wide-label uppercase">
               {data.background === "navy" ? (
@@ -43,11 +43,18 @@ function Render({ data }: { data: Data }) {
               )}
             </p>
           )}
-          <h1 className="font-display text-section tracking-tightest-display uppercase">
+          <h1 className="font-editorial text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.06] text-balance [overflow-wrap:anywhere]">
             {data.title}
           </h1>
         </div>
-        {data.imageUrl && <DuotoneImage src={data.imageUrl} className="h-40 w-full md:w-80" />}
+        {data.imageUrl && (
+          <DuotoneImage
+            src={data.imageUrl}
+            className="aspect-video w-full rounded-[var(--site-radius-lg)]"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            loading="eager"
+          />
+        )}
       </div>
     </Section>
   );

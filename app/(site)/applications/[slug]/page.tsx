@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getApplicationBySlug, listProductsByApplication } from "@/lib/data/taxonomy";
 import { Section } from "@/components/ui/section";
@@ -7,6 +6,8 @@ import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/seo";
 import { applicationHref, productHref } from "@/lib/routes";
+import { ArrowButton } from "@/components/ui/arrow-button";
+import { EmptyState } from "@/components/ui/public-primitives";
 
 // Same shape as app/(site)/industries/[slug]/page.tsx, joined through
 // product_applications instead of product_industries — see Task 8 item #5.
@@ -40,14 +41,14 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
         ])}
       />
       <Section background="navy" spacingTop="lg" spacingBottom="md">
-        <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+        <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
           Application
         </p>
-        <h1 className="font-display text-section tracking-tightest-display uppercase">{application.name}</h1>
-        {application.description && <p className="mt-4 max-w-2xl text-osi-slate-200">{application.description}</p>}
+        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{application.name}</h1>
+        {application.description && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{application.description}</p>}
       </Section>
       <Section background="cream" spacingTop="md" spacingBottom="lg">
-        <h2 className="mb-8 font-display text-card-label tracking-wide-display uppercase">
+        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
           Products for {application.name}
         </h2>
         {products.length > 0 ? (
@@ -59,13 +60,11 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
             }))}
           />
         ) : (
-          <p className="text-sm text-osi-slate-400">
-            No published products are linked to this application yet — check back soon, or browse the full{" "}
-            <Link href="/products" className="underline underline-offset-4">
-              product catalog
-            </Link>
-            .
-          </p>
+          <EmptyState
+            title="No products are linked yet"
+            description="This application does not have published products assigned to it yet. Explore the complete catalog instead."
+            action={<ArrowButton href="/products" variant="outline-dark">Browse products</ArrowButton>}
+          />
         )}
       </Section>
     </>

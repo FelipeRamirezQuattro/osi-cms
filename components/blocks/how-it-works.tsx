@@ -31,16 +31,16 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
     >
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
         <div>
-          <h2 className="font-display text-section tracking-tightest-display uppercase">
+          <h2 className="font-editorial text-section font-semibold text-balance">
             {data.title}
           </h2>
-          {data.body && <p className="mt-4 max-w-md text-sm opacity-80">{data.body}</p>}
+          {data.body && <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-osi-slate-200">{data.body}</p>}
         </div>
         <div className="flex flex-col gap-3">
           {data.pdfUrl ? (
             <a
               href={data.pdfUrl}
-              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/35 px-6 text-center text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-white/8 active:scale-[0.98]"
             >
               Download PDF
             </a>
@@ -52,7 +52,7 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
             // and passes outright.
             <span
               aria-disabled
-              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase opacity-60"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/25 px-6 text-center text-sm font-medium opacity-70"
             >
               Download PDF — pending client file
             </span>
@@ -60,7 +60,7 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
           {data.model3dUrl ? (
             <a
               href={data.model3dUrl}
-              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/35 px-6 text-center text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-white/8 active:scale-[0.98]"
             >
               See this tool in 3D
             </a>
@@ -68,7 +68,7 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
             // Same WCAG 1.4.3 reasoning as the PDF fallback above.
             <span
               aria-disabled
-              className="rounded border border-current px-6 py-3 text-center font-display text-sm tracking-wide-display uppercase opacity-60"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/25 px-6 text-center text-sm font-medium opacity-70"
             >
               See this tool in 3D — pending client file
             </span>

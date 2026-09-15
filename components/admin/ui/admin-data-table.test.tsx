@@ -24,7 +24,14 @@ describe("AdminDataTable", () => {
   });
 
   it("shows the empty message spanning every column when there are no rows", () => {
-    render(<AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} emptyMessage="No products yet." />);
+    render(
+      <AdminDataTable
+        columns={columns}
+        rows={[]}
+        getRowKey={(r) => r.id}
+        emptyMessage="No products yet."
+      />,
+    );
 
     expect(screen.getByText("No products yet.")).toBeInTheDocument();
     const emptyCell = screen.getByText("No products yet.").closest("td");
@@ -40,12 +47,14 @@ describe("AdminDataTable", () => {
     const { container } = render(
       <AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} variant="plain" />,
     );
-    expect(container.querySelector(".border-osi-sand-300.bg-osi-white")).not.toBeInTheDocument();
+    expect(container.querySelector(".admin-table-panel")).not.toBeInTheDocument();
     expect(container.querySelector("table")).toBeInTheDocument();
   });
 
   it("defaults a panel table's inner scroller to overflow-x-auto (Task 13a: horizontal scroll, not clipping)", () => {
-    const { container } = render(<AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} />);
+    const { container } = render(
+      <AdminDataTable columns={columns} rows={[]} getRowKey={(r) => r.id} />,
+    );
     expect(container.querySelector(".overflow-x-auto")).toBeInTheDocument();
   });
 

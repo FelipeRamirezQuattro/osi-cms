@@ -19,8 +19,8 @@ type CommonProps = {
 };
 
 /**
- * The universal OSI CTA (see CLAUDE.md / mockup motif 2): uppercase
- * Orbitron label with a thin-outlined circled arrow. `ghost-arrow` is
+ * The universal OSI CTA (see CLAUDE.md / mockup motif 2): a compact
+ * interface label with a thin-outlined circled arrow. `ghost-arrow` is
  * the inline text-link variant (leading arrow, no pill/circle).
  */
 export function ArrowButton({
@@ -32,7 +32,7 @@ export function ArrowButton({
 }: CommonProps & Omit<ComponentPropsWithoutRef<"button">, "className" | "children">) {
   if (variant === "ghost-arrow") {
     const content = (
-      <span className="group inline-flex items-center gap-2 font-display text-sm tracking-wide-display uppercase transition-transform duration-200 active:scale-[0.97]">
+      <span className="group inline-flex min-h-11 items-center gap-2 font-body text-sm font-medium tracking-[0.02em] transition-transform duration-200 active:scale-[0.98]">
         <span
           aria-hidden
           className="inline-block transition-transform motion-safe:group-hover:translate-x-1"
@@ -53,7 +53,7 @@ export function ArrowButton({
     );
   }
 
-  const shared = `group inline-flex items-center gap-4 rounded-full border py-2 pr-2 pl-6 font-display text-sm tracking-wide-display uppercase transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] ${VARIANT_CLASSES[variant]} ${className}`;
+  const shared = `group inline-flex min-h-11 items-center gap-4 rounded-full border py-1.5 pr-1.5 pl-5 font-body text-sm font-semibold tracking-[0.02em] transition-[color,background-color,border-color,transform,opacity] duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 aria-busy:pointer-events-none aria-busy:opacity-65 ${VARIANT_CLASSES[variant]} ${className}`;
   const inner = (
     <>
       <span>{children}</span>

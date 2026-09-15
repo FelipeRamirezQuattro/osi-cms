@@ -16,6 +16,18 @@ import { columnsBlock } from "@/components/blocks/columns";
 import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 import { buttonGroupBlock } from "@/components/blocks/button-group";
 import { resourceListBlock } from "@/components/blocks/resource-list";
+import { imageGalleryBlock } from "@/components/blocks/image-gallery";
+import { stagesCarouselBlock } from "@/components/blocks/stages-carousel";
+import {
+  Divider,
+  EmptyState,
+  Eyebrow,
+  IconButton,
+  MediaFrame,
+  PublicSkeleton,
+  SectionHeader,
+  StatusMessage,
+} from "@/components/ui/public-primitives";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -69,7 +81,7 @@ function Section({
 
 function Heading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
+    <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
       {children}
     </h2>
   );
@@ -77,7 +89,7 @@ function Heading({ children }: { children: React.ReactNode }) {
 
 export default function StyleguidePage() {
   return (
-    <main>
+    <main className="site-shell">
       <Section bg="navy" className="diagonal-seam-b pb-24">
         <p className="mb-2 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
           OSI design system
@@ -106,20 +118,17 @@ export default function StyleguidePage() {
         <Heading>Type</Heading>
         <div className="space-y-6">
           <p className="font-display text-hero tracking-tightest-display uppercase">Hero display</p>
-          <p className="font-display text-section tracking-tightest-display uppercase">
-            Section title
-          </p>
-          <p className="font-display-soft text-section font-semibold">
-            Section title — soft
+          <p className="font-editorial text-section font-semibold text-balance">
+            Editorial section title that remains readable across multiple lines
           </p>
           <p className="text-xs text-osi-slate-400">
-            Secondary section headers only — see CLAUDE.md&rsquo;s Design tokens section.
+            Montserrat is reserved for editorial headings; Orbitron stays limited to short display moments.
           </p>
           <p className="font-display text-card-label tracking-wide-display uppercase">
             Card label
           </p>
           <p className="max-w-xl text-base">
-            Body copy runs light and airy — 300&ndash;400 weight Montserrat at 1.7 line-height,
+            Body copy and interface labels use Poppins at a comfortable 1.7 line-height,
             never dense. This is a sample paragraph long enough to show the measure and rhythm the
             mockup uses throughout prose sections.
           </p>
@@ -142,10 +151,50 @@ export default function StyleguidePage() {
         </div>
       </Section>
 
+      <Section bg="cream">
+        <Heading>Public semantic primitives</Heading>
+        <div className="space-y-10">
+          <SectionHeader
+            eyebrow="Engineered clarity"
+            title="A long section heading remains calm, legible, and balanced when content expands"
+            lede="This fixture covers the shared eyebrow, editorial title, reading measure, and muted copy roles used by public blocks."
+          />
+          <Divider />
+          <div className="grid gap-5 md:grid-cols-2">
+            <MediaFrame />
+            <div className="space-y-4">
+              <StatusMessage title="Request received" tone="success">
+                A specialist will follow up with the next steps.
+              </StatusMessage>
+              <StatusMessage title="Something needs attention" tone="error">
+                Review the highlighted fields and try again.
+              </StatusMessage>
+              <div className="flex items-center gap-3">
+                <IconButton label="Example icon action">
+                  <span aria-hidden>+</span>
+                </IconButton>
+                <IconButton label="Unavailable action" disabled>
+                  <span aria-hidden>+</span>
+                </IconButton>
+                <Eyebrow>A translated label can expand safely</Eyebrow>
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            <EmptyState
+              title="No resources match this view"
+              description="Try a broader filter or return to the complete resource library."
+              action={<ArrowButton href="/resources" variant="outline-dark">View all resources</ArrowButton>}
+            />
+            <PublicSkeleton lines={4} />
+          </div>
+        </div>
+      </Section>
+
       <Section bg="navy" className="diagonal-seam-b diagonal-seam-t pb-24">
         <Heading>Hairline grid + stat band</Heading>
         <div className="relative grid grid-cols-1 gap-px sm:grid-cols-3">
-          <HairlineGrid cols={3} rows={2} className="-inset-x-6 md:-inset-x-12" />
+          <HairlineGrid cols={3} rows={2} className="-inset-x-5 md:-inset-x-10" />
           {["$480 million", "40,000+", "120%"].map((stat, i) => (
             <div key={stat} className="relative z-10 p-8">
               <p className="font-display text-3xl tracking-tightest-display text-osi-gold-500 uppercase">
@@ -165,34 +214,9 @@ export default function StyleguidePage() {
 
       <Section bg="navy" className="pb-24">
         <Heading>Motion foundation</Heading>
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
-          <div className="flex flex-col items-center gap-4">
-            <div aria-hidden className="h-16 w-16 rounded-full bg-osi-steel-500 motion-safe:animate-float" />
-            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">Float</p>
-          </div>
-          <div className="flex flex-col items-center gap-4">
-            <div
-              aria-hidden
-              className="h-16 w-16 rounded-full bg-osi-gold-500 motion-safe:animate-pulse-glow-gold"
-            />
-            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">
-              Pulse glow — gold (CTA-only)
-            </p>
-          </div>
-          <div className="flex flex-col items-center gap-4">
-            <div
-              aria-hidden
-              className="h-16 w-16 rounded-full bg-osi-steel-500 motion-safe:animate-pulse-glow"
-            />
-            <p className="text-xs tracking-wide-label text-osi-slate-200 uppercase">
-              Pulse glow — neutral
-            </p>
-          </div>
-        </div>
-        <div
-          aria-hidden
-          className="mt-10 h-3 w-full rounded-full bg-size-[300%_300%] motion-safe:animate-gradient-shift [background-image:linear-gradient(-45deg,var(--color-osi-navy-700),var(--color-osi-steel-500),var(--color-osi-navy-600),var(--color-osi-steel-500))]"
-        />
+        <p className="max-w-2xl text-osi-slate-200">
+          Public motion is event-driven: 160–220ms feedback, 260–400ms reveals, an 8px maximum entrance offset, and no ambient decorative loops. Use Tab, hover, and press on the controls above to inspect the interaction states.
+        </p>
       </Section>
 
       <Section bg="navy" className="pt-0 pb-24">
@@ -255,7 +279,7 @@ export default function StyleguidePage() {
       </Section>
       <imageBlock.Render
         data={imageBlock.schema.parse({
-          imageUrl: "https://www.odessaseparator.com/images/gas-release-system.jpg",
+          imageUrl: "https://static.wixstatic.com/media/1ac9e9_f50ca309b071438d93fa3c37869c83baf000.jpg",
           alt: "A gas release system installed in the field",
           aspectRatio: "16:9",
           alignment: "center",
@@ -301,7 +325,7 @@ export default function StyleguidePage() {
         data={columnsBlock.schema.parse({
           columns: [
             { type: "text", heading: "Built to last", body: "Field-proven equipment since 1995." },
-            { type: "image", imageUrl: "https://www.odessaseparator.com/images/esp-chem-screen.jpg", imageAlt: "ESP Chem Screen" },
+            { type: "image", imageUrl: "https://static.wixstatic.com/media/1ac9e9_40095ee183db4ad0b94815d65e596dec~mv2.jpeg", imageAlt: "ESP Chem Screen" },
             { type: "cta", ctaLabel: "Contact us", ctaHref: "/contact" },
           ],
         })}
@@ -340,6 +364,41 @@ export default function StyleguidePage() {
       </Section>
       <resourceListBlock.Render
         data={resourceListBlock.schema.parse({ title: "Resources" })}
+      />
+
+      <Section bg="cream">
+        <Heading>Interactive media — gallery</Heading>
+        <p className="max-w-xl text-sm text-osi-slate-300">
+          Open either image to inspect the modal viewer, keyboard navigation, visible controls, and focus restoration.
+        </p>
+      </Section>
+      <imageGalleryBlock.Render
+        data={imageGalleryBlock.schema.parse({
+          title: "Field equipment gallery",
+          images: [
+            {
+              url: "https://static.wixstatic.com/media/1ac9e9_f50ca309b071438d93fa3c37869c83baf000.jpg",
+              alt: "Gas release system installed in the field",
+            },
+            {
+              url: "https://static.wixstatic.com/media/1ac9e9_40095ee183db4ad0b94815d65e596dec~mv2.jpeg",
+              alt: "ESP chemical screen assembly",
+            },
+          ],
+        })}
+      />
+
+      <Section bg="cream">
+        <Heading>Interactive media — stages</Heading>
+      </Section>
+      <stagesCarouselBlock.Render
+        data={stagesCarouselBlock.schema.parse({
+          title: "Process stages",
+          stages: [
+            { title: "Separation", body: "The first stage establishes a clear technical sequence." },
+            { title: "Conditioning", body: "The second stage verifies keyboard, button, and swipe navigation." },
+          ],
+        })}
       />
 
       <Section bg="navy">

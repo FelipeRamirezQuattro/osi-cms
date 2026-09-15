@@ -29,11 +29,12 @@ function PostCard({ post }: { post: Tables<"news_posts"> }) {
         alt={post.cover_image_url ? post.title : ""}
         className="aspect-video"
         intensity={0.2}
+        sizes="(min-width: 1024px) 24rem, (min-width: 640px) 33vw, 100vw"
       />
       <p className="mt-3 text-xs text-osi-slate-400 uppercase">
         {post.published_at ? new Date(post.published_at).toLocaleDateString() : post.kind}
       </p>
-      <h3 className="mt-1 font-display text-card-label tracking-wide-display uppercase">
+      <h3 className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">
         {post.title}
       </h3>
     </Link>
@@ -57,7 +58,7 @@ async function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-display text-section tracking-tightest-display uppercase">
+      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <Link href={newsHref(featured.slug)} className="mb-8 block">
@@ -66,8 +67,9 @@ async function Render({ data }: { data: Data }) {
           alt={featured.cover_image_url ? featured.title : ""}
           className="aspect-[21/9] w-full"
           intensity={0.3}
+          sizes="(min-width: 1280px) 72rem, 100vw"
         />
-        <h3 className="mt-4 font-display text-card-label tracking-wide-display uppercase">
+        <h3 className="mt-4 font-editorial text-2xl font-semibold leading-tight text-balance">
           {featured.title}
         </h3>
       </Link>

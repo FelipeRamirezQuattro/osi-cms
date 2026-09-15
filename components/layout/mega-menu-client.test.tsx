@@ -4,11 +4,9 @@ import { MegaMenuClient } from "@/components/layout/mega-menu-client";
 import type { NavItemNode } from "@/lib/data/navigation";
 
 /**
- * Task 7 item #10, continued: the header's utility nav (always visible)
- * and mega-menu column links (mounted once `open` is true, but present in
- * this component's initial render tree since `open` starts false only
- * for the overlay — the utility row is what's actually always rendered)
- * both need to honor is_external the same way footer.tsx does.
+ * The utility and mega-menu links remain in the initial dialog DOM even
+ * while the native dialog is closed, and both need to honor is_external
+ * the same way footer.tsx does.
  */
 
 function navItem(overrides: Partial<NavItemNode>): NavItemNode {
@@ -50,5 +48,17 @@ describe("MegaMenuClient utility nav honors is_external", () => {
     const link = [...container.querySelectorAll("a")].find((a) => a.textContent?.includes("Search"));
     expect(link?.getAttribute("target")).toBeNull();
     expect(link?.getAttribute("rel")).toBeNull();
+  });
+
+  it("exposes labeled search/menu triggers and native dialog semantics", () => {
+    const container = render([]);
+    const searchTrigger = container.querySelector('button[aria-label="Search"]');
+    const menuTrigger = [...container.querySelectorAll("button")].find((button) => button.textContent?.includes("Menu"));
+    const menuDialog = container.querySelector("#mega-menu-panel");
+
+    expect(searchTrigger?.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(menuTrigger?.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(menuDialog?.tagName).toBe("DIALOG");
+    expect(menuDialog?.getAttribute("aria-labelledby")).toBe("site-menu-title");
   });
 });

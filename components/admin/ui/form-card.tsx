@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from "react";
 import Link from "next/link";
+import { Button } from "./button";
 
 /**
  * The outer save/error chrome repeated by product-editor.tsx,
@@ -40,21 +41,28 @@ export function FormCard({
     <div className={`${maxWidth} space-y-6 pb-16`}>
       <div>
         {backHref && (
-          <Link href={backHref} className="block text-xs opacity-60 hover:underline">
+          <Link
+            href={backHref}
+            className="mb-2 inline-block text-xs font-medium text-[var(--admin-ink-secondary)] hover:text-[var(--admin-ink)]"
+          >
             ← {backLabel ?? "Cancel"}
           </Link>
         )}
         <div className="flex items-center justify-between">
-          <h1 className="font-display text-lg tracking-wide-display uppercase">{title}</h1>
+          <h1 className="admin-page-title">{title}</h1>
           {onDelete && (
-            <button type="button" onClick={onDelete} className="text-xs text-red-600 hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onDelete}
+              className="min-h-9 px-3 text-xs text-[var(--admin-danger)]"
+            >
               {deleteLabel}
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded border border-osi-sand-300 bg-osi-white p-5">
+      <form onSubmit={onSubmit} className="admin-card space-y-4 p-5 sm:p-6">
         {children}
       </form>
     </div>
@@ -72,12 +80,8 @@ export function SubmitButton({
   pendingLabel?: ReactNode;
 }) {
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-    >
+    <Button type="submit" disabled={pending} aria-busy={pending}>
       {pending ? pendingLabel : children}
-    </button>
+    </Button>
   );
 }

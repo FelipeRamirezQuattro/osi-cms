@@ -39,6 +39,20 @@ test.describe("public route smoke matrix", () => {
     await expectRenderedSitePage(page, "/products");
   });
 
+  test("product discovery state is URL-backed and restored by browser history", async ({ page }) => {
+    await page.goto("/products");
+    const discovery = page.locator("main");
+    await discovery.getByRole("button", { name: "Industries", exact: true }).click();
+    await expect(page).toHaveURL(/\/products\?view=industries$/);
+    await expect(discovery.getByRole("button", { name: "Industries", exact: true })).toHaveAttribute("aria-pressed", "true");
+
+    await discovery.getByRole("button", { name: "Applications", exact: true }).click();
+    await expect(page).toHaveURL(/\/products\?view=applications$/);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/products\?view=industries$/);
+    await expect(discovery.getByRole("button", { name: "Industries", exact: true })).toHaveAttribute("aria-pressed", "true");
+  });
+
   test("product detail: gas release system", async ({ page }) => {
     await expectRenderedSitePage(page, "/products/gas-separation/gas-release-system");
   });
@@ -57,12 +71,14 @@ test.describe("public route smoke matrix", () => {
 
   test("search page renders its own heading and result form", async ({ page }) => {
     await expectRenderedSitePage(page, "/search");
-    await expect(page.getByRole("heading", { level: 1, name: "Search" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Find products, resources, and expertise" })).toBeVisible();
+    await expect(page.getByRole("searchbox", { name: "Search OSI" })).toBeVisible();
   });
 
   test("search page with a query renders results or a no-results message", async ({ page }) => {
     await expectRenderedSitePage(page, "/search?q=pump");
-    await expect(page.getByRole("heading", { level: 1, name: "Search" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Find products, resources, and expertise" })).toBeVisible();
+    await expect(page.getByRole("searchbox", { name: "Search OSI" })).toHaveValue("pump");
   });
 
   test("generic CMS page (about-us) renders through the catch-all route", async ({ page }) => {
@@ -177,16 +193,10 @@ test.describe("Task 8 routes", () => {
     await expectRenderedSitePage(page, "/applications/some-slug");
   });
 
-  // /locations is served by the existing [...slug] catch-all (no new
-  // route file needed — same mechanism as /directory), but the `pages`
-  // row scripts/seed-locations.ts creates hasn't been run against the
-  // live project yet (this plan's implementers never run seed/publish
-  // scripts against the only environment — see task-8-report.md).
-  // test.fail() documents the intended end state without masking a
-  // regression in the rest of this file; flip to a plain test() once the
-  // controller runs `pnpm seed:locations`.
-  test("locations listing renders (pending scripts/seed-locations.ts being run)", async ({ page }) => {
-    test.fail();
+  // /locations is served by the existing [...slug] catch-all. The live
+  // page now exists, so this is a normal regression assertion rather than
+  // the expected-failure placeholder retained during CMS remediation.
+  test("locations listing renders", async ({ page }) => {
     await expectRenderedSitePage(page, "/locations");
   });
 });

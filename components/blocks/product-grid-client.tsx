@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
+import { EmptyState } from "@/components/ui/public-primitives";
+import { useQueryState } from "@/components/ui/use-query-state";
 import type { Tables } from "@/lib/db/database.types";
 import type { ProductWithCategorySlug } from "@/lib/data/products";
 import { applicationHref, industryHref, productHref } from "@/lib/routes";
 
-type Tab = "products" | "industries" | "applications" | "services";
+type View = "products" | "industries" | "applications" | "services";
+type Sort = "az" | "za";
 
-const TABS: { key: Tab; label: string }[] = [
+const VIEWS: { key: View; label: string }[] = [
   { key: "products", label: "Products" },
   { key: "industries", label: "Industries" },
   { key: "applications", label: "Applications" },
@@ -16,6 +19,10 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 type GridItem = { title: string; body?: string; href: string };
+
+function isView(value: string | null): value is View {
+  return VIEWS.some((view) => view.key === value);
+}
 
 export function ProductGridClient({
   products,
@@ -28,90 +35,148 @@ export function ProductGridClient({
   categories: Tables<"product_categories">[];
   industries: Tables<"industries">[];
   applications: Tables<"applications">[];
-  // Pre-mapped by the caller from real `pages` (not the `services`
-  // table, which stays unused — see docs/DECISIONS.md).
   services: GridItem[];
 }) {
-  const [tab, setTab] = useState<Tab>("products");
-  const [categorySlug, setCategorySlug] = useState<string | "all">("all");
+  const { params, updateQuery } = useQueryState();
+  const viewParam = params.get("view");
+  const view: View = isView(viewParam) ? viewParam : "products";
+  const category = params.get("category") ?? "all";
+  const query = params.get("query")?.trim() ?? "";
+  const sort: Sort = params.get("sort") === "za" ? "za" : "az";
 
-  const filteredProducts = useMemo(() => {
-    if (categorySlug === "all") return products;
-    return products.filter((p) => p.categorySlug === categorySlug);
-  }, [products, categorySlug]);
+  const items = useMemo(() => {
+    const source: Record<View, GridItem[]> = {
+      products: products
+        .filter((product) => category === "all" || product.categorySlug === category)
+        .map((product) => ({
+          title: product.name,
+          body: product.summary ?? undefined,
+          href: product.categorySlug ? productHref(product.categorySlug, product.slug) : "/products",
+        })),
+      industries: industries.map((industry) => ({
+        title: industry.name,
+        body: industry.description ?? undefined,
+        href: industryHref(industry.slug),
+      })),
+      applications: applications.map((application) => ({
+        title: application.name,
+        body: application.description ?? undefined,
+        href: applicationHref(application.slug),
+      })),
+      services,
+    };
 
-  const itemsByTab: Record<Tab, GridItem[]> = {
-    products: filteredProducts.map((p) => ({
-      title: p.name,
-      body: p.summary ?? undefined,
-      href: p.categorySlug ? productHref(p.categorySlug, p.slug) : "/products",
-    })),
-    industries: industries.map((i) => ({
-      title: i.name,
-      body: i.description ?? undefined,
-      href: industryHref(i.slug),
-    })),
-    applications: applications.map((a) => ({
-      title: a.name,
-      body: a.description ?? undefined,
-      href: applicationHref(a.slug),
-    })),
-    services,
-  };
+    const normalizedQuery = query.toLocaleLowerCase();
+    return source[view]
+      .filter((item) => !normalizedQuery || `${item.title} ${item.body ?? ""}`.toLocaleLowerCase().includes(normalizedQuery))
+      .sort((a, b) => (sort === "az" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)));
+  }, [applications, category, industries, products, query, services, sort, view]);
+
+  function changeView(nextView: View) {
+    updateQuery({ view: nextView === "products" ? null : nextView, category: null });
+  }
+
+  function submitSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    updateQuery({ query: String(form.get("product-query") ?? "").trim() || null });
+  }
 
   return (
     <div>
-      <div className="mb-6 flex gap-8 border-b border-osi-sand-300">
-        {TABS.map((t) => (
+      <div className="mb-7 flex gap-2 overflow-x-auto border-b border-osi-navy-900/12 pb-3 [scrollbar-width:thin]">
+        {VIEWS.map((item) => (
           <button
-            key={t.key}
+            key={item.key}
             type="button"
-            onClick={() => setTab(t.key)}
-            className={`pb-3 font-display text-sm tracking-wide-display uppercase ${
-              tab === t.key
-                ? "border-b-2 border-osi-gold-700 text-osi-gold-700"
-                : "text-osi-navy-900/75"
-            }`}
+            onClick={() => changeView(item.key)}
+            aria-pressed={view === item.key}
+            className="min-h-11 shrink-0 rounded-full border border-transparent px-4 text-sm font-semibold text-osi-slate-300 transition-[color,background-color,border-color,transform] duration-200 hover:text-osi-navy-900 active:scale-[0.98] aria-pressed:border-osi-navy-900/14 aria-pressed:bg-osi-navy-900 aria-pressed:text-white"
           >
-            {t.label}
+            {item.label}
           </button>
         ))}
       </div>
 
-      {tab === "products" && categories.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-7 grid gap-4 rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-white/40 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-5">
+        <form onSubmit={submitSearch} className="flex min-w-0 gap-2">
+          <label className="min-w-0 flex-1">
+            <span className="mb-1.5 block text-xs font-semibold text-osi-slate-300">Search this view</span>
+            <input
+              key={`${view}-${query}`}
+              type="search"
+              name="product-query"
+              defaultValue={query}
+              autoComplete="off"
+              placeholder={`Search ${VIEWS.find((item) => item.key === view)?.label.toLocaleLowerCase()}…`}
+              className="min-h-11 w-full rounded-full border border-osi-navy-900/18 bg-white px-4 text-sm outline-none transition-[border-color,box-shadow] duration-200 focus:border-osi-steel-500 focus:shadow-[0_0_0_3px_rgba(35,78,123,0.12)]"
+            />
+          </label>
+          <button
+            type="submit"
+            className="mt-[1.625rem] min-h-11 rounded-full bg-osi-navy-900 px-5 text-sm font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-osi-navy-700 active:scale-[0.98]"
+          >
+            Search
+          </button>
+        </form>
+        <label>
+          <span className="mb-1.5 block text-xs font-semibold text-osi-slate-300">Sort</span>
+          <select
+            value={sort}
+            onChange={(event) => updateQuery({ sort: event.target.value === "za" ? "za" : null })}
+            className="min-h-11 w-full rounded-full border border-osi-navy-900/18 bg-white px-4 text-sm outline-none md:w-auto"
+          >
+            <option value="az">A–Z</option>
+            <option value="za">Z–A</option>
+          </select>
+        </label>
+      </div>
+
+      {view === "products" && categories.length > 0 && (
+        <div className="mb-7 flex flex-wrap gap-2" aria-label="Product categories">
           <button
             type="button"
-            onClick={() => setCategorySlug("all")}
-            className={`rounded-full border px-4 py-1 text-sm ${
-              categorySlug === "all"
-                ? "border-osi-gold-500 bg-osi-gold-500 text-osi-navy-900"
-                : "border-osi-sand-300"
-            }`}
+            onClick={() => updateQuery({ category: null })}
+            aria-pressed={category === "all"}
+            className="min-h-11 rounded-full border border-osi-navy-900/16 px-4 text-sm font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.98] aria-pressed:border-osi-gold-700 aria-pressed:bg-osi-gold-500 aria-pressed:text-osi-navy-900"
           >
-            All
+            All products
           </button>
-          {categories.map((c) => (
+          {categories.map((item) => (
             <button
-              key={c.id}
+              key={item.id}
               type="button"
-              onClick={() => setCategorySlug(c.slug)}
-              className={`rounded-full border px-4 py-1 text-sm ${
-                categorySlug === c.slug
-                  ? "border-osi-gold-500 bg-osi-gold-500 text-osi-navy-900"
-                  : "border-osi-sand-300"
-              }`}
+              onClick={() => updateQuery({ category: item.slug })}
+              aria-pressed={category === item.slug}
+              className="min-h-11 rounded-full border border-osi-navy-900/16 px-4 text-sm font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.98] aria-pressed:border-osi-gold-700 aria-pressed:bg-osi-gold-500 aria-pressed:text-osi-navy-900"
             >
-              {c.name}
+              {item.name}
             </button>
           ))}
         </div>
       )}
 
-      {itemsByTab[tab].length > 0 ? (
-        <LabelPlateGrid items={itemsByTab[tab]} />
+      <p role="status" aria-live="polite" className="mb-5 text-sm text-osi-slate-300">
+        {items.length} {items.length === 1 ? "result" : "results"}
+        {query ? ` for “${query}”` : ""}
+      </p>
+
+      {items.length > 0 ? (
+        <LabelPlateGrid items={items} />
       ) : (
-        <p className="text-sm text-osi-slate-400">Nothing published in this category yet.</p>
+        <EmptyState
+          title="No matches in this view"
+          description="Try a broader search, choose another category, or clear the active filters."
+          action={
+            <button
+              type="button"
+              onClick={() => updateQuery({ category: null, query: null, sort: null })}
+              className="min-h-11 rounded-full border border-osi-navy-900/25 px-5 text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-osi-navy-900/5 active:scale-[0.98]"
+            >
+              Clear filters
+            </button>
+          }
+        />
       )}
     </div>
   );

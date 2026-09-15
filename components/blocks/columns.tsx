@@ -46,14 +46,14 @@ function ColumnContent({ item, background }: { item: ColumnItem; background: Dat
   if (item.type === "text") {
     return (
       <div>
-        <h3 className="font-display text-card-label tracking-wide-display uppercase">{item.heading}</h3>
-        {item.body && <p className="mt-3 text-sm opacity-80">{item.body}</p>}
+        <h3 className="font-editorial text-xl font-semibold leading-tight text-balance">{item.heading}</h3>
+        {item.body && <p className="mt-3 text-sm leading-relaxed opacity-80">{item.body}</p>}
       </div>
     );
   }
   if (item.type === "image") {
     const img = (
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[var(--site-radius-lg)]">
         <Image
           src={resolveMediaUrl(item.imageUrl)}
           alt={item.imageAlt ?? ""}

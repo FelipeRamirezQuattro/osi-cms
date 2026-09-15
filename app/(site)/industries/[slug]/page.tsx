@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getIndustryBySlug, listProductsByIndustry } from "@/lib/data/taxonomy";
 import { Section } from "@/components/ui/section";
@@ -7,6 +6,8 @@ import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/seo";
 import { industryHref, productHref } from "@/lib/routes";
+import { ArrowButton } from "@/components/ui/arrow-button";
+import { EmptyState } from "@/components/ui/public-primitives";
 
 // Taxonomy detail page (Task 8 item #5) — describes the industry and
 // lists published products linked to it via product_industries. The
@@ -45,14 +46,14 @@ export default async function IndustryDetailPage({ params }: PageProps<"/industr
         ])}
       />
       <Section background="navy" spacingTop="lg" spacingBottom="md">
-        <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+        <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
           Industry
         </p>
-        <h1 className="font-display text-section tracking-tightest-display uppercase">{industry.name}</h1>
-        {industry.description && <p className="mt-4 max-w-2xl text-osi-slate-200">{industry.description}</p>}
+        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{industry.name}</h1>
+        {industry.description && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{industry.description}</p>}
       </Section>
       <Section background="cream" spacingTop="md" spacingBottom="lg">
-        <h2 className="mb-8 font-display text-card-label tracking-wide-display uppercase">
+        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
           Products for {industry.name}
         </h2>
         {products.length > 0 ? (
@@ -64,13 +65,11 @@ export default async function IndustryDetailPage({ params }: PageProps<"/industr
             }))}
           />
         ) : (
-          <p className="text-sm text-osi-slate-400">
-            No published products are linked to this industry yet — check back soon, or browse the full{" "}
-            <Link href="/products" className="underline underline-offset-4">
-              product catalog
-            </Link>
-            .
-          </p>
+          <EmptyState
+            title="No products are linked yet"
+            description="This industry does not have published products assigned to it yet. Explore the complete catalog instead."
+            action={<ArrowButton href="/products" variant="outline-dark">Browse products</ArrowButton>}
+          />
         )}
       </Section>
     </>

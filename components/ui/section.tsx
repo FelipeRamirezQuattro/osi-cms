@@ -31,7 +31,7 @@ export function Section({
   reveal = true,
   seam,
   className = "",
-  contentClassName = "mx-auto max-w-6xl px-6 md:px-12",
+  contentClassName = "mx-auto max-w-[var(--site-container)] px-5 md:px-10",
   children,
 }: {
   background?: BlockBackground;

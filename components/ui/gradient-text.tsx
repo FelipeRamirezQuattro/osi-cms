@@ -18,7 +18,7 @@ export function GradientText({
 }) {
   return (
     <span
-      className={`inline-block bg-size-[200%_auto] bg-clip-text text-transparent motion-safe:animate-gradient-shift [background-image:linear-gradient(90deg,var(--color-osi-gold-500),var(--color-osi-gold-400),var(--color-osi-gold-500))] ${className}`}
+      className={`inline-block bg-clip-text text-transparent [background-image:linear-gradient(90deg,var(--color-osi-gold-500),var(--color-osi-gold-400))] ${className}`}
     >
       {children}
     </span>

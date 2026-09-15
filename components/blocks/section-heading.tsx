@@ -21,11 +21,11 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
     >
       <div className={data.align === "center" ? "text-center" : ""}>
-        <h2 className="font-display-soft text-section font-semibold">
+        <h2 className="font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
         {data.lede && (
-          <p className={`mt-4 max-w-2xl text-base ${data.align === "center" ? "mx-auto" : ""}`}>
+          <p className={`mt-4 max-w-[var(--site-reading-width)] text-base ${data.align === "center" ? "mx-auto" : ""}`}>
             {data.lede}
           </p>
         )}

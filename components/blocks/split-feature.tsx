@@ -31,11 +31,11 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom="lg"
       anchorId={data.anchorId}
-      contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
+      contentClassName="relative mx-auto max-w-[var(--site-container)] px-5 md:px-10"
     >
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div>
-          <h2 className="font-display text-section tracking-tightest-display uppercase">
+          <h2 className="font-editorial text-section font-semibold text-balance">
             {data.title}
           </h2>
           {data.body && (
@@ -59,7 +59,12 @@ function Render({ data }: { data: Data }) {
             </div>
           )}
         </div>
-        <DuotoneImage src={data.imageUrl} className="aspect-[4/3] w-full" intensity={0.35} />
+        <DuotoneImage
+          src={data.imageUrl}
+          className="aspect-[4/3] w-full rounded-[var(--site-radius-lg)]"
+          intensity={0.35}
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
       </div>
       {data.cta && (
         <CtaBreakoutBar href={data.cta.href} className="absolute right-8 bottom-0 z-10 translate-y-1/2">

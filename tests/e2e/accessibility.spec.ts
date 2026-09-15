@@ -94,6 +94,26 @@ test.describe("public site — axe", () => {
     await page.goto("/this-page-does-not-exist");
     await expectNoSeriousViolations(page, testInfo);
   });
+
+  test("image gallery dialog", async ({ page }, testInfo) => {
+    await page.goto("/styleguide");
+    const trigger = page.getByRole("button", { name: /Open image 1 of 2/ });
+    await trigger.click();
+    await expect(page.getByRole("dialog", { name: "Image gallery" })).toBeVisible();
+    await expectNoSeriousViolations(page, testInfo, "dialog[open]");
+    await page.getByRole("button", { name: "Close gallery" }).click();
+    await expect(trigger).toBeFocused();
+  });
+
+  test("product technical image dialog", async ({ page }, testInfo) => {
+    await page.goto("/products/gas-separation/gas-release-system");
+    const trigger = page.getByRole("button", { name: /Open Gas Release System diagram fullscreen/i });
+    await trigger.click();
+    await expect(page.getByRole("dialog", { name: "Image gallery" })).toBeVisible();
+    await expectNoSeriousViolations(page, testInfo, "dialog[open]");
+    await page.getByRole("button", { name: "Close gallery" }).click();
+    await expect(trigger).toBeFocused();
+  });
 });
 
 test.describe("admin login — axe", () => {

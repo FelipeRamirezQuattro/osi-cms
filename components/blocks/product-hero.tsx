@@ -1,12 +1,11 @@
-import Image from "next/image";
 import { z } from "zod";
 import { resolveMediaUrl } from "@/lib/media";
 import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
-import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { GradientText } from "@/components/ui/gradient-text";
+import { TechnicalImageViewer } from "@/components/blocks/image-gallery-client";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
@@ -29,10 +28,10 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
       spacingBottom="lg"
       anchorId={data.anchorId}
       reveal={false}
-      contentClassName="relative mx-auto max-w-6xl px-6 md:px-12"
+      contentClassName="relative mx-auto max-w-[var(--site-container)] px-5 md:px-10"
     >
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">
-        <div>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)] lg:items-center lg:gap-14">
+        <div className="max-w-[var(--site-reading-width)]">
           {data.eyebrow && (
             <p className="mb-2 text-xs uppercase">
               {data.background === "navy" ? (
@@ -48,12 +47,12 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
               )}
             </p>
           )}
-          <h1 className="font-display text-section tracking-tightest-display uppercase">
+          <h1 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1.06] tracking-tightest-display text-balance uppercase [overflow-wrap:anywhere]">
             {data.title}
           </h1>
           <div className="mt-2 mb-4 h-px w-24 bg-osi-steel-500/50" />
           <div
-            className={`space-y-4 text-sm ${
+            className={`space-y-4 text-base leading-relaxed ${
               data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"
             }`}
           >
@@ -71,17 +70,14 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
             Contained, full-colour, on a light plate so the drawing's own
             white background doesn't float on navy. */}
         {data.diagramImageUrl ? (
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-osi-white/95 p-4">
-            <Image
-              src={resolveMediaUrl(data.diagramImageUrl)}
-              alt={`${data.title} diagram`}
-              fill
-              sizes="(min-width: 768px) 36rem, 100vw"
-              className="object-contain p-2"
-            />
-          </div>
+          <TechnicalImageViewer
+            image={{ url: resolveMediaUrl(data.diagramImageUrl), alt: `${data.title} diagram` }}
+            title={`${data.title} diagram`}
+          />
         ) : (
-          <DuotoneImage src={undefined} alt="" className="aspect-square w-full" intensity={0.15} />
+          <div className="flex aspect-[4/3] w-full items-end rounded-[var(--site-radius-lg)] border border-white/15 bg-osi-white/8 p-6 text-sm text-osi-slate-200">
+            Technical image unavailable
+          </div>
         )}
       </div>
       <CtaBreakoutBar href={data.ctaHref}>{data.ctaLabel}</CtaBreakoutBar>

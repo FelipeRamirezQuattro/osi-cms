@@ -20,23 +20,23 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
-      contentClassName="mx-auto max-w-3xl px-6 md:px-12"
+      contentClassName="mx-auto max-w-3xl px-5 md:px-10"
     >
       {data.title && (
-        <h2 className="mb-6 font-display text-section tracking-tightest-display uppercase">
+        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}
-      <div className="divide-y divide-osi-sand-300/40">
+      <div className="space-y-3">
         {data.items.map((item) => (
-          <details key={item.title} className="group py-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between font-display text-sm tracking-wide-display uppercase">
+          <details key={item.title} className="group rounded-[var(--site-radius-md)] border border-current/15 bg-white/30 px-5">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-5 font-editorial text-base font-semibold">
               {item.title}
               <span aria-hidden className="transition-transform group-open:rotate-45">
                 +
               </span>
             </summary>
-            <p className="mt-3 text-sm opacity-80">{item.body}</p>
+            <p className="pb-5 text-sm leading-relaxed opacity-80">{item.body}</p>
           </details>
         ))}
       </div>

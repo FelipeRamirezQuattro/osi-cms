@@ -2,7 +2,10 @@ import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { ResourceListClient, type ResourceListItem } from "@/components/blocks/resource-list-client";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  window.history.replaceState(null, "", "/");
+});
 
 const resources: ResourceListItem[] = [
   { id: "r1", title: "Gas Release Brochure", kind: "brochure", category: "Gas", fileUrl: "/a.pdf", productName: "Gas Release System" },

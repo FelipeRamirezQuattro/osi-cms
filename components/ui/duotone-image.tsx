@@ -14,12 +14,14 @@ export function DuotoneImage({
   className = "",
   intensity = 0.55,
   sizes,
+  loading,
 }: {
   src?: string;
   alt?: string;
   className?: string;
   intensity?: number;
   sizes?: string;
+  loading?: "eager" | "lazy";
 }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
@@ -29,6 +31,7 @@ export function DuotoneImage({
           alt={alt}
           fill
           sizes={sizes ?? "100vw"}
+          loading={loading}
           className="object-cover grayscale-[35%]"
         />
       ) : (

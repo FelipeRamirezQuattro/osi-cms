@@ -21,9 +21,9 @@ function Render({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
-      contentClassName="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 text-center md:flex-row md:justify-between md:text-left"
+      contentClassName="mx-auto flex max-w-[var(--site-container)] flex-col items-center gap-6 px-5 text-center md:flex-row md:justify-between md:px-10 md:text-left"
     >
-      <h2 className="font-display text-section tracking-tightest-display uppercase">
+      <h2 className="max-w-3xl font-editorial text-section font-semibold text-balance">
         {data.headline}
       </h2>
       <ArrowButton href={data.ctaHref} variant="solid-gold">

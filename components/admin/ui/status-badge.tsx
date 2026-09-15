@@ -15,11 +15,7 @@ export function StatusBadge({ label }: { label: string }) {
   const isPositive = label.toLowerCase() === "published" || label.toLowerCase() === "active";
   return (
     <span
-      className={
-        isPositive
-          ? "rounded bg-green-100 px-2 py-0.5 text-xs text-green-800"
-          : "rounded bg-osi-sand-300/50 px-2 py-0.5 text-xs opacity-70"
-      }
+      className={`admin-status capitalize ${isPositive ? "admin-status--positive" : "admin-status--neutral"}`}
     >
       {label}
     </span>

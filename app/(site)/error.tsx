@@ -16,10 +16,10 @@ export default function SiteError({ error, reset }: { error: Error & { digest?: 
       spacingBottom="lg"
       contentClassName="mx-auto max-w-2xl px-6 text-center md:px-12"
     >
-      <p className="mb-4 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+      <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
         Something went wrong
       </p>
-      <h1 className="font-display text-section tracking-tightest-display uppercase">
+      <h1 className="font-editorial text-section font-semibold text-balance">
         We hit a snag loading this page
       </h1>
       <p className="mt-4 text-osi-slate-200">

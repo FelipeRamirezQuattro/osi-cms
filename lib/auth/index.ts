@@ -46,12 +46,15 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
     data: { user },
   } = await supabase.auth.getUser();
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
+  const isDevelopmentStyleguide =
+    process.env.NODE_ENV === "development" && request.nextUrl.pathname === "/admin/styleguide";
   // These don't need (and, for reset-password, can't have yet — the
   // recovery session from the email link's URL hash is only
   // establishable client-side, after this server-side check already
   // ran) an existing admin session.
   const isPublicAuthPage =
     isLoginPage ||
+    isDevelopmentStyleguide ||
     request.nextUrl.pathname === "/admin/forgot-password" ||
     request.nextUrl.pathname === "/admin/reset-password";
 

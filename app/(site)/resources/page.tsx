@@ -3,6 +3,8 @@ import { listResources } from "@/lib/data/resources";
 import { listProducts } from "@/lib/data/products";
 import { Section } from "@/components/ui/section";
 import { ResourcesFilterClient, type ResourceItem } from "@/app/(site)/resources/resources-filter-client";
+import { ArrowButton } from "@/components/ui/arrow-button";
+import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -24,14 +26,17 @@ export default async function ResourcesPage() {
 
   return (
     <Section background="cream" spacingTop="lg" spacingBottom="lg">
-      <h1 className="mb-10 font-display text-section tracking-tightest-display uppercase">Resources</h1>
+      <Eyebrow className="mb-3">Knowledge center</Eyebrow>
+      <h1 className="mb-10 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance">Resources</h1>
 
       {items.length > 0 ? (
         <ResourcesFilterClient resources={items} />
       ) : (
-        <p className="text-sm text-osi-slate-400">
-          Nothing published yet — brochures, datasheets, certificates, and manuals will appear here once available.
-        </p>
+        <EmptyState
+          title="The resource library is being prepared"
+          description="Brochures, datasheets, certificates, and manuals will appear here when they are published. In the meantime, explore OSI products or contact a specialist."
+          action={<ArrowButton href="/products" variant="outline-dark">Explore products</ArrowButton>}
+        />
       )}
     </Section>
   );

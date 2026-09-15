@@ -4,22 +4,21 @@ import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const orbitron = Orbitron({
-  variable: "--font-display",
+  variable: "--font-display-source",
   subsets: ["latin"],
-  weight: ["500", "700", "900"],
+  weight: ["500", "700"],
 });
 
 const montserrat = Montserrat({
-  variable: "--font-body",
+  variable: "--font-editorial-source",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["500", "600"],
 });
 
 const poppins = Poppins({
-  variable: "--font-display-soft",
+  variable: "--font-body-source",
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {

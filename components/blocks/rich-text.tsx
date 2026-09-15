@@ -28,7 +28,7 @@ function renderMarks(text: string, marks: TiptapMark[] = []): React.ReactNode {
     if (mark.type === "italic") return <em>{node}</em>;
     if (mark.type === "link") {
       return (
-        <a href={(mark.attrs?.href as string) ?? "#"} className="underline">
+        <a href={(mark.attrs?.href as string) ?? "#"} className="font-semibold underline decoration-osi-gold-700/60 underline-offset-4 hover:decoration-current">
           {node}
         </a>
       );
@@ -43,27 +43,27 @@ function renderNode(node: TiptapNode, key: number): React.ReactNode {
       return <Fragment key={key}>{renderMarks(node.text ?? "", node.marks)}</Fragment>;
     case "paragraph":
       return (
-        <p key={key} className="mb-4">
+        <p key={key} className="mb-5 leading-[1.8]">
           {node.content?.map(renderNode)}
         </p>
       );
     case "heading": {
       const Tag = node.attrs?.level === 3 ? "h3" : "h2";
       return (
-        <Tag key={key} className="mt-8 mb-4 font-display text-card-label tracking-wide-display uppercase">
+        <Tag key={key} className="mt-10 mb-4 font-editorial text-[clamp(1.4rem,3vw,2rem)] font-semibold leading-tight text-balance">
           {node.content?.map(renderNode)}
         </Tag>
       );
     }
     case "bulletList":
       return (
-        <ul key={key} className="mb-4 list-disc space-y-1 pl-6">
+        <ul key={key} className="mb-5 list-disc space-y-2 pl-6 marker:text-osi-gold-700">
           {node.content?.map(renderNode)}
         </ul>
       );
     case "orderedList":
       return (
-        <ol key={key} className="mb-4 list-decimal space-y-1 pl-6">
+        <ol key={key} className="mb-5 list-decimal space-y-2 pl-6 marker:font-semibold marker:text-osi-gold-700">
           {node.content?.map(renderNode)}
         </ol>
       );
@@ -94,9 +94,9 @@ export function RichTextRender({ data }: { data: Data }) {
       spacingTop={data.spacingTop}
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
-      contentClassName="mx-auto max-w-3xl px-6 md:px-12"
+      contentClassName="mx-auto max-w-[var(--site-reading-width)] px-5 md:px-10"
     >
-      <div className="text-base">{doc?.content?.map(renderNode)}</div>
+      <div className="text-base leading-relaxed">{doc?.content?.map(renderNode)}</div>
     </Section>
   );
 }

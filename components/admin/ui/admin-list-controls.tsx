@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import type { SortDirection } from "@/lib/admin/list-query";
+import { SearchField } from "./search-field";
+import { Select } from "./select";
+import { Button } from "./button";
 
 export type SortOption = { value: string; label: string; direction: SortDirection };
 
@@ -71,84 +74,81 @@ export function AdminListControls({
   const sortCompoundValue = sortValue ? `${sortValue}:${sortDirection ?? "asc"}` : "";
 
   return (
-    <div className="flex flex-wrap items-end gap-3 border-b border-osi-sand-300 bg-osi-cream-100/60 px-4 py-3 text-sm">
-      <label className="flex flex-col gap-1">
-        <span className="text-xs uppercase tracking-wide-label opacity-60">Search</span>
-        <input
-          type="search"
+    <div className="admin-filter-bar text-sm">
+      <label className="flex min-w-[min(100%,16rem)] flex-1 flex-col gap-1.5 sm:max-w-sm">
+        <span className="admin-field-label">Search</span>
+        <SearchField
           inputMode="search"
           autoComplete="off"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-48 rounded border border-osi-sand-300 px-2 py-1.5"
+          className="w-full"
         />
       </label>
 
       {statusOptions && onStatusChange && (
-        <label className="flex flex-col gap-1">
-          <span className="text-xs uppercase tracking-wide-label opacity-60">Status</span>
-          <select
-            value={statusValue ?? ""}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="rounded border border-osi-sand-300 px-2 py-1.5"
-          >
+        <label className="flex min-w-36 flex-col gap-1.5">
+          <span className="admin-field-label">Status</span>
+          <Select value={statusValue ?? ""} onChange={(e) => onStatusChange(e.target.value)}>
             <option value="">All statuses</option>
             {statusOptions.map((option) => (
               <option key={option} value={option} className="capitalize">
                 {option}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       )}
 
       {sortOptions && sortOptions.length > 0 && onSortChange && (
-        <label className="flex flex-col gap-1">
-          <span className="text-xs uppercase tracking-wide-label opacity-60">Sort</span>
-          <select
+        <label className="flex min-w-40 flex-col gap-1.5">
+          <span className="admin-field-label">Sort</span>
+          <Select
             value={sortCompoundValue}
             onChange={(e) => {
               const [value, direction] = e.target.value.split(":");
               onSortChange(value, direction === "desc" ? "desc" : "asc");
             }}
-            className="rounded border border-osi-sand-300 px-2 py-1.5"
           >
             <option value="">Default order</option>
             {sortOptions.map((option) => (
-              <option key={`${option.value}:${option.direction}`} value={`${option.value}:${option.direction}`}>
+              <option
+                key={`${option.value}:${option.direction}`}
+                value={`${option.value}:${option.direction}`}
+              >
                 {option.label}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       )}
 
-      <div className="ml-auto flex items-center gap-3 text-xs opacity-70">
+      <div className="ml-auto flex flex-wrap items-center gap-3 text-xs text-[var(--admin-ink-secondary)]">
         <span>
           {resultCount} result{resultCount === 1 ? "" : "s"}
         </span>
         {totalPages > 1 && (
           <div className="flex items-center gap-2">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1}
-              className="rounded border border-osi-sand-300 px-2 py-1 uppercase tracking-wide-label disabled:opacity-40"
+              className="min-h-9 px-3 py-1.5 text-xs"
             >
               Prev
-            </button>
+            </Button>
             <span>
               Page {page} of {totalPages}
             </span>
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => onPageChange(page + 1)}
               disabled={page >= totalPages}
-              className="rounded border border-osi-sand-300 px-2 py-1 uppercase tracking-wide-label disabled:opacity-40"
+              className="min-h-9 px-3 py-1.5 text-xs"
             >
               Next
-            </button>
+            </Button>
           </div>
         )}
       </div>

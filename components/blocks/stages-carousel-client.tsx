@@ -13,6 +13,10 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
   const stage = data.stages[index];
   if (!stage) return null;
 
+  function move(direction: -1 | 1) {
+    setIndex((current) => (current + direction + data.stages.length) % data.stages.length);
+  }
+
   return (
     <Section
       background={data.background}
@@ -20,18 +24,43 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
     >
+      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
       <motion.div
         key={index}
-        className="flex flex-col items-center gap-8 sm:flex-row"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label={`${data.title}: ${stage.title}, stage ${index + 1} of ${data.stages.length}`}
+        tabIndex={0}
+        className="grid cursor-grab gap-8 rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] p-6 text-osi-navy-900 active:cursor-grabbing sm:grid-cols-[10rem_minmax(0,1fr)] sm:items-center md:p-8"
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.25, ease: EASE_OSI }}
+        drag={reduceMotion || data.stages.length < 2 ? false : "x"}
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.12}
+        dragMomentum={false}
+        style={{ touchAction: "pan-y" }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -44) move(1);
+          if (info.offset.x > 44) move(-1);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            move(-1);
+          }
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            move(1);
+          }
+        }}
       >
         <DuotoneImage
           src={stage.imageUrl}
           alt={stage.imageUrl ? stage.title : ""}
-          className="h-32 w-32 shrink-0 rounded-full"
+          className="aspect-square w-full rounded-[var(--site-radius-md)]"
           intensity={0.2}
+          sizes="(min-width: 640px) 10rem, 100vw"
         />
         <div>
           <p
@@ -39,31 +68,34 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
               data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
             }`}
           >
-            {data.title} — {index + 1} of {data.stages.length}
+            Stage {index + 1} of {data.stages.length}
           </p>
-          <h3 className="mt-1 font-display text-card-label tracking-wide-display uppercase">
+          <h3 className="mt-1 font-editorial text-2xl font-semibold leading-tight text-balance">
             {stage.title}
           </h3>
-          {stage.body && <p className="mt-2 max-w-xl text-sm opacity-80">{stage.body}</p>}
+          {stage.body && <p className="mt-3 max-w-xl text-sm leading-relaxed text-osi-slate-300">{stage.body}</p>}
         </div>
       </motion.div>
-      <div className="mt-6 flex gap-3">
-        <button
-          type="button"
-          aria-label="Previous stage"
-          onClick={() => setIndex((i) => (i - 1 + data.stages.length) % data.stages.length)}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-current"
-        >
-          ←
-        </button>
-        <button
-          type="button"
-          aria-label="Next stage"
-          onClick={() => setIndex((i) => (i + 1) % data.stages.length)}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-current"
-        >
-          →
-        </button>
+      <div className="mt-5 flex items-center justify-between gap-4">
+        <p className="text-sm text-osi-slate-300" aria-live="polite">{stage.title}</p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            aria-label="Previous stage"
+            onClick={() => move(-1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-current/25 transition-[background-color,transform] duration-200 hover:bg-current/8 active:scale-[0.98]"
+          >
+            <span aria-hidden="true">←</span>
+          </button>
+          <button
+            type="button"
+            aria-label="Next stage"
+            onClick={() => move(1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-current/25 transition-[background-color,transform] duration-200 hover:bg-current/8 active:scale-[0.98]"
+          >
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
     </Section>
   );

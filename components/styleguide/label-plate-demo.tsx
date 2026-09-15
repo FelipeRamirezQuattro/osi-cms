@@ -8,5 +8,5 @@ const CARDS = [
 ];
 
 export function LabelPlateDemo() {
-  return <LabelPlateGrid items={CARDS} defaultOpenIndex={1} />;
+  return <LabelPlateGrid items={CARDS} />;
 }

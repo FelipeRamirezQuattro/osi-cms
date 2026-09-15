@@ -1,20 +1,21 @@
-// Generic skeleton shown while any (site) route's async data fetch is
-// in flight — Next.js swaps this in automatically per the loading.tsx
-// convention. Deliberately backgroundless/borderless shapes rather than
-// a literal copy of any one page, since this covers every route under
-// (site) that doesn't define its own more specific loading.tsx (see
-// products/[category]/[slug]/loading.tsx for a tailored one).
+import { PublicSkeleton } from "@/components/ui/public-primitives";
+
 export default function SiteLoading() {
   return (
-    <div className="animate-pulse space-y-10 px-6 py-16 md:px-12" aria-hidden>
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="h-4 w-32 rounded bg-osi-sand-300/60" />
-        <div className="h-10 w-2/3 rounded bg-osi-sand-300/60" />
-        <div className="h-4 w-full max-w-xl rounded bg-osi-sand-300/40" />
+    <div
+      className="mx-auto w-full max-w-[var(--site-container)] space-y-10 px-5 py-16 md:px-10"
+      aria-label="Loading page"
+      role="status"
+    >
+      <span className="sr-only">Loading page</span>
+      <div aria-hidden className="max-w-3xl space-y-5">
+        <div className="h-3 w-28 rounded-full bg-osi-sand-300/70 motion-safe:animate-pulse" />
+        <div className="h-12 w-4/5 rounded-xl bg-osi-sand-300/60 motion-safe:animate-pulse" />
+        <div className="h-4 w-full max-w-xl rounded-full bg-osi-sand-300/45 motion-safe:animate-pulse" />
       </div>
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-48 rounded bg-osi-sand-300/40" />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-hidden>
+        {[1, 2, 3].map((index) => (
+          <PublicSkeleton key={index} lines={3} />
         ))}
       </div>
     </div>

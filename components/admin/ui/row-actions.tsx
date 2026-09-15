@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { reorderAriaLabel } from "@/lib/admin/reorder-label";
+import { IconButton } from "./icon-button";
+import { Button } from "./button";
 
 /**
  * The ↑/↓ position buttons every reorderable admin list (products,
@@ -28,24 +30,22 @@ export function ReorderButtons({
 }) {
   return (
     <div className="flex gap-2 text-xs">
-      <button
-        type="button"
+      <IconButton
         onClick={onMoveUp}
         disabled={disabled || disableUp}
-        className="disabled:opacity-30"
+        className="size-9"
         aria-label={reorderAriaLabel("up", itemLabel)}
       >
         ↑
-      </button>
-      <button
-        type="button"
+      </IconButton>
+      <IconButton
         onClick={onMoveDown}
         disabled={disabled || disableDown}
-        className="disabled:opacity-30"
+        className="size-9"
         aria-label={reorderAriaLabel("down", itemLabel)}
       >
         ↓
-      </button>
+      </IconButton>
     </div>
   );
 }
@@ -65,13 +65,13 @@ export function RowActionButton({
   className?: string;
 }) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={onClick}
       disabled={disabled}
-      className={`text-xs hover:underline disabled:opacity-40 ${tone === "danger" ? "text-red-600" : ""} ${className ?? ""}`}
+      className={`min-h-9 px-2 text-xs ${tone === "danger" ? "text-[var(--admin-danger)]" : ""} ${className ?? ""}`}
     >
       {children}
-    </button>
+    </Button>
   );
 }

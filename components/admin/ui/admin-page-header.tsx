@@ -1,5 +1,6 @@
 import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
+import { adminButtonClassName } from "./button";
 
 /**
  * The title row every /admin screen opens with — "Title" + a right-aligned
@@ -34,18 +35,22 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="admin-page-header">
       <div>
         {backHref && (
-          <Link href={backHref} onClick={onBackClick} className="block text-xs opacity-60 hover:underline">
+          <Link
+            href={backHref}
+            onClick={onBackClick}
+            className="mb-2 inline-flex items-center gap-1 text-xs font-medium text-[var(--admin-ink-secondary)] hover:text-[var(--admin-ink)]"
+          >
             ← {backLabel}
           </Link>
         )}
-        <h1 className="font-display text-lg tracking-wide-display uppercase">{title}</h1>
-        {subtitle && <p className="text-xs opacity-50">{subtitle}</p>}
-        {description && <p className="mt-1 max-w-2xl text-sm opacity-70">{description}</p>}
+        <h1 className="admin-page-title">{title}</h1>
+        {subtitle && <p className="mt-1 text-xs text-[var(--admin-ink-secondary)]">{subtitle}</p>}
+        {description && <p className="admin-page-description">{description}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
 }
@@ -53,7 +58,7 @@ export function AdminPageHeader({
 /** The consistent "New product" / "New form" / etc. link-button used in every list page's header actions. */
 export function AdminNewLinkButton({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link href={href} className="rounded bg-osi-navy-900 px-4 py-2 text-xs uppercase tracking-wide-label text-osi-white">
+    <Link href={href} className={adminButtonClassName("primary")}>
       {children}
     </Link>
   );

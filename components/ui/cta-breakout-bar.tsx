@@ -26,7 +26,7 @@ export function CtaBreakoutBar({
         as="span"
         corner={corner}
         size="1.25rem"
-        className="flex items-center gap-6 bg-osi-gold-500 py-4 pr-6 pl-10 font-display text-sm tracking-wide-display text-osi-navy-900 uppercase transition-colors hover:bg-osi-gold-400 motion-safe:animate-pulse-glow-gold"
+        className="flex min-h-12 items-center gap-6 bg-osi-gold-500 py-3 pr-5 pl-8 font-body text-sm font-semibold tracking-[0.02em] text-osi-navy-900 transition-[background-color,transform] duration-200 hover:bg-osi-gold-400 active:scale-[0.98]"
       >
         {children}
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-osi-navy-900/60">

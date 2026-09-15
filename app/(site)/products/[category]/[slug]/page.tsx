@@ -170,7 +170,7 @@ export default async function ProductDetailPage({
       )}
       {relatedProducts.length > 0 && (
         <Section background="navy" spacingTop="md" spacingBottom="md">
-          <h2 className="font-display text-section tracking-tightest-display uppercase">Related products</h2>
+          <h2 className="font-editorial text-section font-semibold text-balance">Related products</h2>
           <div className="mt-8">
             {/*
               LabelPlateGrid directly, not RecommendationsClient: this is
@@ -179,11 +179,9 @@ export default async function ProductDetailPage({
               block — RecommendationsClient re-filters to recently-viewed
               items whenever the visitor has viewed any of them, which
               would silently drop curated entries the visitor hasn't
-              viewed yet (and swap post-hydration). LabelPlateGrid is
-              itself a "use client" component (its own "one open per
-              grid" state), so rendering it directly from this Server
-              Component is the normal RSC pattern, no extra client
-              wrapper needed.
+              viewed yet (and swap post-hydration). LabelPlateGrid renders
+              the shared, fully scannable discovery cards directly, with
+              no extra recommendation or disclosure state here.
             */}
             <LabelPlateGrid
               items={relatedProducts.map((p) => ({
@@ -197,17 +195,17 @@ export default async function ProductDetailPage({
       )}
       {resources.length > 0 && (
         <Section background="cream" spacingTop="md" spacingBottom="md">
-          <h2 className="font-display text-section tracking-tightest-display uppercase">Resources</h2>
-          <ul className="mt-6 space-y-3">
+          <h2 className="font-editorial text-section font-semibold text-balance">Resources</h2>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             {resources.map((resource) => (
               <li key={resource.id}>
                 <a
                   href={resource.file_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-display text-sm tracking-wide-display uppercase underline underline-offset-4 hover:opacity-80"
+                  className="flex min-h-16 items-center justify-between gap-4 rounded-[var(--site-radius-md)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] px-5 py-3 text-sm font-semibold transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-osi-steel-500/35"
                 >
-                  {resource.title}
+                  <span>{resource.title}</span><span aria-hidden className="text-osi-gold-700">↗</span>
                 </a>
               </li>
             ))}

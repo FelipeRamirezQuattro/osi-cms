@@ -86,13 +86,13 @@ export function AnnouncementBar({ settings }: { settings: AnnouncementBarSetting
     <div
       role="region"
       aria-label="Announcement"
-      className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-osi-navy-900 px-4 py-2 text-center text-osi-white"
+      className="relative flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-white/8 bg-osi-navy-900 px-14 py-2 text-center text-osi-white"
     >
-      <span className="font-display text-xs tracking-wide-label uppercase">{message}</span>
+      <span className="text-xs font-medium tracking-[0.02em] sm:text-sm">{message}</span>
       {href && linkLabel && (
         <a
           href={href}
-          className="font-display text-xs tracking-wide-label text-osi-gold-500 uppercase underline underline-offset-2 hover:text-osi-gold-400"
+          className="text-xs font-semibold text-osi-gold-400 underline decoration-current/50 underline-offset-4 transition-colors duration-200 hover:text-osi-gold-500 sm:text-sm"
         >
           {linkLabel}
         </a>
@@ -101,9 +101,11 @@ export function AnnouncementBar({ settings }: { settings: AnnouncementBarSetting
         type="button"
         onClick={dismiss}
         aria-label="Dismiss announcement"
-        className="ml-2 text-osi-white/70 transition-colors duration-200 hover:text-osi-white"
+        className="absolute top-1/2 right-2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-osi-white/64 transition-[color,background-color,transform] duration-200 hover:bg-white/8 hover:text-white active:scale-[0.98]"
       >
-        ✕
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current" strokeWidth="1.8">
+          <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" />
+        </svg>
       </button>
     </div>
   );

@@ -35,7 +35,7 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
   ].filter((url): url is string => Boolean(url));
 
   return (
-    <>
+    <div className="site-shell flex min-h-dvh flex-1 flex-col">
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
       {/*
        * Skip link (Task 14) — invisible until it receives keyboard focus
@@ -53,11 +53,11 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
       </a>
       <AnnouncementBar settings={normalizeAnnouncementBar(settings.announcement_bar)} />
       <Header />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 

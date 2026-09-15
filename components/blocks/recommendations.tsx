@@ -26,7 +26,7 @@ async function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="font-display text-section tracking-tightest-display uppercase">
+      <h2 className="font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <p className="mt-1 mb-8 text-xs text-osi-slate-400 uppercase">{data.subtitle}</p>

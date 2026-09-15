@@ -2,8 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { AdminNavGroup } from "@/lib/admin/nav-config";
+import { AdminNavIcon } from "@/components/admin/ui/admin-nav-icon";
+import { IconButton } from "@/components/admin/ui/icon-button";
+import { ToastProvider } from "@/components/admin/ui/toast";
+
+const SIDEBAR_STORAGE_KEY = "osi-admin-sidebar-collapsed";
+const SIDEBAR_EVENT = "osi-admin-sidebar-preference";
+
+function subscribeSidebarPreference(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(SIDEBAR_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(SIDEBAR_EVENT, callback);
+  };
+}
+
+function getSidebarPreference() {
+  return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true";
+}
+
+function getServerSidebarPreference() {
+  return false;
+}
 
 /**
  * The admin chrome (Task 13a): a fixed sidebar on desktop, a slide-in
@@ -29,6 +52,11 @@ export function AdminShell({
   const pathname = usePathname();
   const drawerRef = useRef<HTMLDialogElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const sidebarCollapsed = useSyncExternalStore(
+    subscribeSidebarPreference,
+    getSidebarPreference,
+    getServerSidebarPreference,
+  );
 
   // A route change (following any nav link) always closes the mobile
   // drawer. This is an imperative call on the native <dialog> itself
@@ -65,134 +93,184 @@ export function AdminShell({
     drawerRef.current?.close();
   }
 
+  function toggleSidebar() {
+    window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(!sidebarCollapsed));
+    window.dispatchEvent(new Event(SIDEBAR_EVENT));
+  }
+
   const breadcrumbs = buildBreadcrumbs(pathname, groups);
+  const activeItem = groups
+    .flatMap((group) => group.items)
+    .find((item) =>
+      item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href),
+    );
 
   return (
-    <div className="flex min-h-screen flex-col bg-osi-cream-100 text-osi-navy-900 lg:flex-row">
-      {/*
-       * Skip link (Task 14) — same reasoning as the public (site) layout's:
-       * lets a keyboard user jump past the sidebar/breadcrumb chrome
-       * straight to the editor/list content, which repeats identically on
-       * every admin screen.
-       */}
-      <a
-        href="#admin-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-osi-gold-500 focus:px-4 focus:py-2 focus:text-sm focus:text-osi-navy-900"
-      >
-        Skip to main content
-      </a>
-      {/* Mobile top bar */}
-      <div className="flex items-center justify-between bg-osi-navy-900 px-4 py-3 text-osi-white lg:hidden">
-        <Link href="/admin" className="font-display text-base tracking-wide-display uppercase">
-          OSI Admin
-        </Link>
-        <button
-          type="button"
-          onClick={openDrawer}
-          aria-label="Open menu"
-          aria-haspopup="dialog"
-          aria-expanded={drawerOpen}
-          className="rounded p-1.5 hover:bg-osi-navy-700"
+    <ToastProvider>
+      <div className="admin-shell flex flex-col lg:flex-row">
+        {/*
+         * Skip link (Task 14) — same reasoning as the public (site) layout's:
+         * lets a keyboard user jump past the sidebar/breadcrumb chrome
+         * straight to the editor/list content, which repeats identically on
+         * every admin screen.
+         */}
+        <a
+          href="#admin-main-content"
+          className="focus:bg-osi-gold-500 focus:text-osi-navy-900 sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:px-4 focus:py-2 focus:text-sm"
         >
-          <MenuIcon />
-        </button>
-      </div>
-
-      {/*
-       * Mobile drawer — a native <dialog> via showModal(), same pattern as
-       * ConfirmDialog/MediaPicker (CLAUDE.md): focus containment, Escape-
-       * to-close, and focus restoration to the trigger button all come
-       * from the browser for free. The dialog element itself fills the
-       * viewport and doubles as its own dimmed backdrop (bg-osi-navy-900/60)
-       * — clicking it outside the <aside> drawer closes it (checked via
-       * event.target === currentTarget, the standard "click outside"
-       * pattern for a full-bleed dialog); the old separate full-viewport
-       * backdrop <button> is gone, so there's no more unstyled full-screen
-       * focus-visible ring for keyboard users tabbing through the drawer.
-       */}
-      <dialog
-        ref={drawerRef}
-        onClose={() => setDrawerOpen(false)}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) closeDrawer();
-        }}
-        aria-labelledby="admin-drawer-title"
-        className="fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-osi-navy-900/60 p-0 lg:hidden"
-      >
-        <aside className="relative flex h-full w-72 max-w-[85vw] flex-col overflow-y-auto bg-osi-navy-900 px-4 py-6 text-osi-white">
-          <div className="mb-6 flex items-center justify-between">
-            <span id="admin-drawer-title" className="font-display text-lg tracking-wide-display uppercase">
-              OSI Admin
-            </span>
-            <button
-              type="button"
-              onClick={closeDrawer}
-              aria-label="Close menu"
-              className="rounded p-1.5 hover:bg-osi-navy-700"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-          <SidebarNav groups={groups} pathname={pathname} />
-          <SidebarFooter session={session} signOut={signOut} />
-        </aside>
-      </dialog>
-
-      {/* Desktop sidebar */}
-      <aside className="hidden w-56 shrink-0 flex-col bg-osi-navy-900 px-4 py-6 text-osi-white lg:flex">
-        <Link href="/admin" className="mb-8 px-2 font-display text-lg tracking-wide-display uppercase">
-          OSI Admin
-        </Link>
-        <SidebarNav groups={groups} pathname={pathname} />
-        <SidebarFooter session={session} signOut={signOut} />
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        {breadcrumbs.length > 1 && (
-          <nav aria-label="Breadcrumb" className="border-b border-osi-sand-300 bg-osi-white px-6 py-2 text-xs opacity-70 lg:px-8">
-            {breadcrumbs.map((crumb, index) => (
-              <span key={crumb.href}>
-                {index > 0 && <span className="px-1.5">/</span>}
-                {index === breadcrumbs.length - 1 ? (
-                  <span className="opacity-100">{crumb.label}</span>
-                ) : (
-                  <Link href={crumb.href} className="hover:underline">
-                    {crumb.label}
-                  </Link>
-                )}
+          Skip to main content
+        </a>
+        {/*
+         * Mobile drawer — a native <dialog> via showModal(), same pattern as
+         * ConfirmDialog/MediaPicker (CLAUDE.md): focus containment, Escape-
+         * to-close, and focus restoration to the trigger button all come
+         * from the browser for free. The dialog element itself fills the
+         * viewport and doubles as its own dimmed backdrop (bg-osi-navy-900/60)
+         * — clicking it outside the <aside> drawer closes it (checked via
+         * event.target === currentTarget, the standard "click outside"
+         * pattern for a full-bleed dialog); the old separate full-viewport
+         * backdrop <button> is gone, so there's no more unstyled full-screen
+         * focus-visible ring for keyboard users tabbing through the drawer.
+         */}
+        <dialog
+          ref={drawerRef}
+          onClose={() => setDrawerOpen(false)}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeDrawer();
+          }}
+          aria-labelledby="admin-drawer-title"
+          className="admin-mobile-dialog fixed inset-0 m-0 h-full max-h-none w-full max-w-none border-0 bg-slate-950/50 p-0 lg:hidden"
+        >
+          <aside className="admin-sidebar admin-mobile-sheet relative flex h-full w-72 max-w-[85vw] flex-col overflow-y-auto px-3 py-5">
+            <div className="mb-6 flex items-center justify-between">
+              <span id="admin-drawer-title" className="px-2 text-base font-semibold tracking-tight">
+                OSI Content
               </span>
-            ))}
-          </nav>
-        )}
-        <main id="admin-main-content" className="flex-1 overflow-y-auto p-6 lg:p-8">
-          {children}
-        </main>
+              <IconButton
+                onClick={closeDrawer}
+                aria-label="Close menu"
+                className="text-slate-200 hover:bg-white/10"
+              >
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <SidebarNav groups={groups} pathname={pathname} collapsed={false} />
+            <SidebarFooter session={session} signOut={signOut} collapsed={false} />
+          </aside>
+        </dialog>
+
+        {/* Desktop sidebar */}
+        <aside
+          className={`admin-sidebar sticky top-0 hidden h-dvh shrink-0 flex-col px-3 py-5 lg:flex ${sidebarCollapsed ? "w-[76px]" : "w-64"}`}
+        >
+          <Link
+            href="/admin"
+            aria-label="OSI Content dashboard"
+            className="mb-7 flex h-10 items-center gap-3 px-3 text-base font-semibold tracking-tight"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-[var(--admin-primary)]">
+              O
+            </span>
+            {!sidebarCollapsed && <span>OSI Content</span>}
+          </Link>
+          <SidebarNav groups={groups} pathname={pathname} collapsed={sidebarCollapsed} />
+          <SidebarFooter session={session} signOut={signOut} collapsed={sidebarCollapsed} />
+        </aside>
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="admin-topbar gap-2">
+            <IconButton
+              onClick={openDrawer}
+              aria-label="Open menu"
+              aria-haspopup="dialog"
+              aria-expanded={drawerOpen}
+              className="admin-mobile-only -ml-2"
+            >
+              <MenuIcon />
+            </IconButton>
+            <IconButton
+              onClick={toggleSidebar}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-expanded={!sidebarCollapsed}
+              className="admin-desktop-only -ml-2"
+            >
+              <CollapseIcon collapsed={sidebarCollapsed} />
+            </IconButton>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold lg:hidden">
+                {activeItem?.label ?? "Admin"}
+              </p>
+              <nav
+                aria-label="Breadcrumb"
+                className="hidden min-w-0 items-center text-xs text-[var(--admin-ink-secondary)] lg:flex"
+              >
+                {breadcrumbs.map((crumb, index) => (
+                  <span key={crumb.href} className="min-w-0">
+                    {index > 0 && <span className="px-2 text-[var(--admin-border-strong)]">/</span>}
+                    {index === breadcrumbs.length - 1 ? (
+                      <span className="font-medium text-[var(--admin-ink)]">{crumb.label}</span>
+                    ) : (
+                      <Link href={crumb.href} className="hover:text-[var(--admin-ink)]">
+                        {crumb.label}
+                      </Link>
+                    )}
+                  </span>
+                ))}
+              </nav>
+            </div>
+            <span className="hidden max-w-64 truncate text-xs text-[var(--admin-ink-secondary)] sm:block">
+              {session.email}
+            </span>
+          </header>
+          <main id="admin-main-content" className="admin-main flex-1">
+            <div key={pathname} className="admin-page-enter">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }
 
-function SidebarNav({ groups, pathname }: { groups: AdminNavGroup[]; pathname: string }) {
+function SidebarNav({
+  groups,
+  pathname,
+  collapsed,
+}: {
+  groups: AdminNavGroup[];
+  pathname: string;
+  collapsed: boolean;
+}) {
   return (
-    <nav className="flex-1 space-y-4 overflow-y-auto">
+    <nav
+      className="flex-1 space-y-5 overflow-y-auto overscroll-contain pr-1"
+      aria-label="Admin navigation"
+    >
       {groups.map((group) => (
         <div key={group.label}>
-          <p className="mb-1 px-2 text-[10px] uppercase tracking-wide-label opacity-50">{group.label}</p>
+          {collapsed ? (
+            <div className="mx-3 mb-2 h-px bg-white/10" aria-hidden="true" />
+          ) : (
+            <p className="mb-1.5 px-3 text-[11px] font-semibold tracking-wide text-slate-400">
+              {group.label}
+            </p>
+          )}
           <div className="space-y-0.5">
             {group.items.map((item) => {
-              const isActive = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+              const isActive =
+                item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`block rounded px-2 py-1.5 text-sm ${
-                    isActive
-                      ? "bg-osi-gold-500 font-medium text-osi-navy-900"
-                      : "opacity-90 hover:bg-osi-navy-700 hover:opacity-100"
-                  }`}
+                  aria-label={collapsed ? item.label : undefined}
+                  className="admin-sidebar-link"
+                  title={collapsed ? item.label : undefined}
                 >
-                  {item.label}
+                  <AdminNavIcon href={item.href} />
+                  {!collapsed && <span>{item.label}</span>}
                 </Link>
               );
             })}
@@ -203,12 +281,34 @@ function SidebarNav({ groups, pathname }: { groups: AdminNavGroup[]; pathname: s
   );
 }
 
-function SidebarFooter({ session, signOut }: { session: { email: string; role: string }; signOut: ReactNode }) {
+function SidebarFooter({
+  session,
+  signOut,
+  collapsed,
+}: {
+  session: { email: string; role: string };
+  signOut: ReactNode;
+  collapsed: boolean;
+}) {
   return (
-    <div className="border-t border-osi-steel-500/20 pt-4 text-xs">
-      <p className="truncate opacity-70">{session.email}</p>
-      <p className="opacity-50 uppercase">{session.role}</p>
-      {signOut}
+    <div className="mt-4 border-t border-white/10 pt-4 text-xs">
+      {collapsed ? (
+        <>
+          <div
+            className="mx-auto flex size-9 items-center justify-center rounded-full bg-white/10 font-semibold text-white"
+            title={`${session.email} · ${session.role}`}
+          >
+            {session.email.slice(0, 1).toUpperCase()}
+          </div>
+          <div className="admin-collapsed-signout">{signOut}</div>
+        </>
+      ) : (
+        <div className="px-3">
+          <p className="truncate font-medium text-slate-100">{session.email}</p>
+          <p className="mt-0.5 text-slate-400 capitalize">{session.role}</p>
+          {signOut}
+        </div>
+      )}
     </div>
   );
 }
@@ -216,7 +316,12 @@ function SidebarFooter({ session, signOut }: { session: { email: string; role: s
 function MenuIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M3 5h14M3 10h14M3 15h14"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -224,7 +329,32 @@ function MenuIcon() {
 function CloseIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M4 4l10 10M14 4L4 14"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CollapseIcon({ collapsed }: { collapsed: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M3.5 4.5h13v11h-13zM7.5 4.5v11"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path
+        d={collapsed ? "m11 7 3 3-3 3" : "m14 7-3 3 3 3"}
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

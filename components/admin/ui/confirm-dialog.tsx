@@ -11,6 +11,8 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { Button } from "./button";
+import { Input } from "./input";
 
 /**
  * Accessible replacement for every `window.confirm()`/`window.prompt()`
@@ -79,168 +81,164 @@ type PendingState =
   | { kind: "confirm"; options: ConfirmOptions; resolve: (value: boolean) => void }
   | { kind: "prompt"; options: PromptOptions; resolve: (value: string | null) => void };
 
-export const ConfirmDialog = forwardRef<ConfirmDialogHandle, object>(function ConfirmDialog(_props, ref) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const [pending, setPending] = useState<PendingState | null>(null);
-  const [inputValue, setInputValue] = useState("");
-  const [inputError, setInputError] = useState<string | null>(null);
-  const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
+export const ConfirmDialog = forwardRef<ConfirmDialogHandle, object>(
+  function ConfirmDialog(_props, ref) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const [pending, setPending] = useState<PendingState | null>(null);
+    const [inputValue, setInputValue] = useState("");
+    const [inputError, setInputError] = useState<string | null>(null);
+    const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
 
-  // Resolves the outstanding promise (if any) and closes the dialog.
-  // Reads `current` from the setState updater rather than the outer
-  // `pending` closure so a button click's direct settle() and the native
-  // "close" event that its own dialogRef.current.close() call triggers
-  // synchronously right after never resolve the same promise twice: React
-  // applies these two setPending calls in order, and the second one sees
-  // `current === null` (already cleared by the first) and no-ops.
-  const settle = useCallback((value: boolean | string | null) => {
-    setPending((current) => {
-      if (!current) return current;
-      if (current.kind === "confirm") {
-        current.resolve(Boolean(value));
+    // Resolves the outstanding promise (if any) and closes the dialog.
+    // Reads `current` from the setState updater rather than the outer
+    // `pending` closure so a button click's direct settle() and the native
+    // "close" event that its own dialogRef.current.close() call triggers
+    // synchronously right after never resolve the same promise twice: React
+    // applies these two setPending calls in order, and the second one sees
+    // `current === null` (already cleared by the first) and no-ops.
+    const settle = useCallback((value: boolean | string | null) => {
+      setPending((current) => {
+        if (!current) return current;
+        if (current.kind === "confirm") {
+          current.resolve(Boolean(value));
+        } else {
+          current.resolve(typeof value === "string" ? value : null);
+        }
+        return null;
+      });
+      dialogRef.current?.close();
+    }, []);
+
+    const confirm = useCallback((options: ConfirmOptions) => {
+      return new Promise<boolean>((resolve) => {
+        setInputError(null);
+        setPending({ kind: "confirm", options, resolve });
+        dialogRef.current?.showModal();
+      });
+    }, []);
+
+    const prompt = useCallback((options: PromptOptions) => {
+      return new Promise<string | null>((resolve) => {
+        setInputValue(options.defaultValue ?? "");
+        setInputError(null);
+        setPending({ kind: "prompt", options, resolve });
+        dialogRef.current?.showModal();
+      });
+    }, []);
+
+    useImperativeHandle(ref, () => ({ confirm, prompt }), [confirm, prompt]);
+
+    function handleConfirmClick() {
+      if (!pending) return;
+      if (pending.kind === "prompt") {
+        const error = pending.options.validate?.(inputValue) ?? null;
+        if (error) {
+          setInputError(error);
+          return;
+        }
+        settle(inputValue);
       } else {
-        current.resolve(typeof value === "string" ? value : null);
+        settle(true);
       }
-      return null;
-    });
-    dialogRef.current?.close();
-  }, []);
-
-  const confirm = useCallback((options: ConfirmOptions) => {
-    return new Promise<boolean>((resolve) => {
-      setInputError(null);
-      setPending({ kind: "confirm", options, resolve });
-      dialogRef.current?.showModal();
-    });
-  }, []);
-
-  const prompt = useCallback((options: PromptOptions) => {
-    return new Promise<string | null>((resolve) => {
-      setInputValue(options.defaultValue ?? "");
-      setInputError(null);
-      setPending({ kind: "prompt", options, resolve });
-      dialogRef.current?.showModal();
-    });
-  }, []);
-
-  useImperativeHandle(ref, () => ({ confirm, prompt }), [confirm, prompt]);
-
-  function handleConfirmClick() {
-    if (!pending) return;
-    if (pending.kind === "prompt") {
-      const error = pending.options.validate?.(inputValue) ?? null;
-      if (error) {
-        setInputError(error);
-        return;
-      }
-      settle(inputValue);
-    } else {
-      settle(true);
     }
-  }
 
-  function handleCancelClick() {
-    settle(pending?.kind === "prompt" ? null : false);
-  }
+    function handleCancelClick() {
+      settle(pending?.kind === "prompt" ? null : false);
+    }
 
-  // Fires on Escape/backdrop dismissal, and (harmlessly, per settle's own
-  // comment) on the imperative close() call settle() already made.
-  function handleNativeClose() {
-    settle(pending?.kind === "prompt" ? null : false);
-  }
+    // Fires on Escape/backdrop dismissal, and (harmlessly, per settle's own
+    // comment) on the imperative close() call settle() already made.
+    function handleNativeClose() {
+      settle(pending?.kind === "prompt" ? null : false);
+    }
 
-  if (!mounted) return null;
+    if (!mounted) return null;
 
-  const tone = pending?.kind === "confirm" ? (pending.options.tone ?? "default") : "default";
-  const hideCancel = pending?.kind === "confirm" && Boolean(pending.options.hideCancel);
-  const titleId = "confirm-dialog-title";
-  const messageId = "confirm-dialog-message";
-  const errorId = "confirm-dialog-input-error";
+    const tone = pending?.kind === "confirm" ? (pending.options.tone ?? "default") : "default";
+    const hideCancel = pending?.kind === "confirm" && Boolean(pending.options.hideCancel);
+    const titleId = "confirm-dialog-title";
+    const messageId = "confirm-dialog-message";
+    const errorId = "confirm-dialog-input-error";
 
-  return createPortal(
-    <dialog
-      ref={dialogRef}
-      onClose={handleNativeClose}
-      aria-labelledby={titleId}
-      aria-describedby={pending?.options.message ? messageId : undefined}
-      className="w-[90vw] max-w-md rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
-    >
-      {pending && (
-        <div className="space-y-4 p-5">
-          <h2 id={titleId} className="font-display text-sm tracking-wide-display uppercase">
-            {pending.options.title}
-          </h2>
+    return createPortal(
+      <dialog
+        ref={dialogRef}
+        onClose={handleNativeClose}
+        aria-labelledby={titleId}
+        aria-describedby={pending?.options.message ? messageId : undefined}
+        className="admin-card w-[90vw] max-w-md rounded-[var(--admin-radius-dialog)] p-0 shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/50"
+      >
+        {pending && (
+          <div className="space-y-4 p-5">
+            <h2 id={titleId} className="text-lg font-semibold tracking-tight">
+              {pending.options.title}
+            </h2>
 
-          {pending.options.message && (
-            <p id={messageId} className="text-sm opacity-80">
-              {pending.options.message}
-            </p>
-          )}
-
-          {pending.kind === "confirm" && pending.options.consequences && pending.options.consequences.length > 0 && (
-            <ul className="list-disc space-y-1 pl-5 text-sm opacity-80">
-              {pending.options.consequences.map((consequence, index) => (
-                <li key={index}>{consequence}</li>
-              ))}
-            </ul>
-          )}
-
-          {pending.kind === "prompt" && (
-            <label className="block space-y-1 text-sm">
-              <span className="block text-xs uppercase tracking-wide-label opacity-70">{pending.options.label}</span>
-              <input
-                autoFocus
-                value={inputValue}
-                placeholder={pending.options.placeholder}
-                aria-invalid={inputError ? true : undefined}
-                aria-describedby={inputError ? errorId : undefined}
-                onChange={(event) => {
-                  setInputValue(event.target.value);
-                  if (inputError) setInputError(null);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    handleConfirmClick();
-                  }
-                }}
-                className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
-              />
-              {inputError && (
-                <span id={errorId} role="alert" className="block text-xs text-red-600">
-                  {inputError}
-                </span>
-              )}
-            </label>
-          )}
-
-          <div className="flex justify-end gap-2 pt-1">
-            {!hideCancel && (
-              <button
-                type="button"
-                onClick={handleCancelClick}
-                className="rounded border border-osi-sand-300 px-3 py-1.5 text-xs uppercase tracking-wide-label"
-              >
-                {pending.options.cancelLabel ?? "Cancel"}
-              </button>
+            {pending.options.message && (
+              <p id={messageId} className="text-sm text-[var(--admin-ink-secondary)]">
+                {pending.options.message}
+              </p>
             )}
-            <button
-              type="button"
-              onClick={handleConfirmClick}
-              autoFocus={hideCancel}
-              className={`rounded px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white ${
-                tone === "danger" ? "bg-red-600" : "bg-osi-navy-900"
-              }`}
-            >
-              {pending.options.confirmLabel ?? (pending.kind === "prompt" ? "OK" : "Confirm")}
-            </button>
+
+            {pending.kind === "confirm" &&
+              pending.options.consequences &&
+              pending.options.consequences.length > 0 && (
+                <ul className="list-disc space-y-1 pl-5 text-sm text-[var(--admin-ink-secondary)]">
+                  {pending.options.consequences.map((consequence, index) => (
+                    <li key={index}>{consequence}</li>
+                  ))}
+                </ul>
+              )}
+
+            {pending.kind === "prompt" && (
+              <label className="block space-y-1 text-sm">
+                <span className="admin-field-label">{pending.options.label}</span>
+                <Input
+                  autoFocus
+                  value={inputValue}
+                  placeholder={pending.options.placeholder}
+                  aria-invalid={inputError ? true : undefined}
+                  aria-describedby={inputError ? errorId : undefined}
+                  onChange={(event) => {
+                    setInputValue(event.target.value);
+                    if (inputError) setInputError(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleConfirmClick();
+                    }
+                  }}
+                />
+                {inputError && (
+                  <span id={errorId} role="alert" className="block text-xs text-red-600">
+                    {inputError}
+                  </span>
+                )}
+              </label>
+            )}
+
+            <div className="flex justify-end gap-2 pt-1">
+              {!hideCancel && (
+                <Button variant="secondary" onClick={handleCancelClick}>
+                  {pending.options.cancelLabel ?? "Cancel"}
+                </Button>
+              )}
+              <Button
+                variant={tone === "danger" ? "danger" : "primary"}
+                onClick={handleConfirmClick}
+                autoFocus={hideCancel}
+              >
+                {pending.options.confirmLabel ?? (pending.kind === "prompt" ? "OK" : "Confirm")}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-    </dialog>,
-    document.body,
-  );
-});
+        )}
+      </dialog>,
+      document.querySelector(".admin-root") ?? document.body,
+    );
+  },
+);
 
 /** Convenience hook: owns the ref, hands back bound `confirm`/`prompt` functions plus the `dialog` element to render once. */
 export function useConfirmDialog() {

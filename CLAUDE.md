@@ -201,35 +201,30 @@ angled corner clips, circled-arrow buttons, hairline grid overlay,
 label-plate cards (one "open" per grid), duotone photography, breakout
 gold CTA bar. Full detail in the master prompt §4.
 
-A second display typeface, `font-display-soft` (Poppins, always paired
-with `font-semibold`, mixed case, no tracking utility), exists
-specifically for the mockup's secondary section headers — a rounder,
-softer treatment distinct from the primary `font-display` (Orbitron,
-always uppercase, wide tracking) used for headlines, nav, card labels,
-and tabs everywhere else. It is currently used by exactly 4 block types:
-`section_heading`, `mission_cards`, `global_map`, `contact_form` (see
-`lib/blocks/registry.ts`). The swap is per-block-type, not per-instance —
-any block of one of those four types, on any page (home, a migrated
-legacy page, anywhere), renders in Font B; that's a deliberate
-design-system decision, not an accident. Do not apply `font-display-soft`
-to a new block without mockup evidence for it — a global swap recreates
-the original "everything looks the same" problem this typeface was
-added to fix, just in the other direction.
+Public typography has three explicit roles. `font-display` (Orbitron) is
+reserved for short hero/product/numeric display moments. `font-editorial`
+(Montserrat) handles section, article, search, and other multiline
+headings. `font-body` (Poppins) handles body copy and interface labels.
+Avoid long all-caps copy and do not use Orbitron as the default navigation
+or button face. `font-display-soft` remains only as a compatibility alias
+for `font-editorial`; new work must use the explicit role name. The admin
+continues to override all public font roles inside `.admin-root`.
 
 ## Motion (Phases 1–2 of the redesign, done)
 
 `motion` (Framer Motion) is the only animation dependency. Shared tuned
 constants live in `lib/motion/variants.ts` (`EASE_OSI` mirrors the CSS
-`--ease-osi` curve — never introduce a second easing curve). CSS
-keyframe utilities (`animate-float`, `animate-gradient-shift`,
-`animate-marquee`, `animate-spin-slow`, `animate-pulse-glow`,
-`animate-pulse-glow-gold`) are declared in `app/globals.css` and must
-always be used with a `motion-safe:` prefix at the call site.
+`--ease-osi` curve — never introduce a second easing curve). Public
+motion is event-driven: 140–220ms feedback, 260–400ms entrances, no more
+than 8px of entrance travel, and no continuously looping decorative
+motion. CSS motion always needs a `motion-safe:` guard; JavaScript motion
+uses `useReducedMotion()`.
 
 Primitives in `components/ui/`: `RevealSection` (internal, drives
 `Section`'s `reveal` prop), `AnimatedSection` (single fade+rise),
 `AnimatedGroup` + `AnimatedItem` (staggered grids), `TiltCard`,
-`GradientText` (gold sweep, **navy backgrounds only**), `MarqueeStrip`.
+`GradientText` (static gold gradient, **navy backgrounds only**),
+`MarqueeStrip` (static wrapping strip).
 All visible primitives are previewed on `/styleguide`.
 
 Rules that must hold for any new animated component:
@@ -263,9 +258,9 @@ Rules that must hold for any new animated component:
 - **`clip-path` clips `box-shadow`.** A glow on a `Clipped` element or a
   `clip-notch-*` utility renders nothing — use border/background hover
   transitions there, or move the glow to an unclipped parent.
-- **Gold stays scarce in motion too.** `animate-pulse-glow-gold` and
-  `GradientText` are for CTAs and hero eyebrows; everything else uses
-  the neutral `osi-steel-500` variants.
+- **Gold stays scarce.** `GradientText` is for hero eyebrows or one short
+  emphasized phrase on navy. Use color/transform feedback for CTAs, not
+  ambient pulse or glow loops.
 
 ## Phase discipline
 
