@@ -53,7 +53,7 @@ export function PagesList({ pages }: { pages: PageRow[] }) {
     return rows;
   }, [pages, query.q, query.status, query.sort, query.direction]);
 
-  const { rows: pageRows, totalPages } = paginate(filtered, query.page);
+  const { rows: pageRows, totalPages, page: currentPage } = paginate(filtered, query.page);
 
   return (
     <div className="space-y-6">
@@ -76,7 +76,7 @@ export function PagesList({ pages }: { pages: PageRow[] }) {
             sortDirection={query.direction}
             onSortChange={query.setSort}
             sortOptions={SORT_OPTIONS}
-            page={query.page}
+            page={currentPage}
             totalPages={totalPages}
             onPageChange={query.setPage}
             resultCount={filtered.length}

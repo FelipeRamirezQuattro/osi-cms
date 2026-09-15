@@ -53,7 +53,7 @@ export function ProductsList({
     return rows;
   }, [products, query.q, query.status, query.sort, query.direction, categoryNames]);
 
-  const { rows: pageRows, totalPages } = paginate(filtered, query.page);
+  const { rows: pageRows, totalPages, page: currentPage } = paginate(filtered, query.page);
 
   function move(id: string, direction: "up" | "down") {
     startTransition(async () => {
@@ -145,7 +145,7 @@ export function ProductsList({
             sortDirection={query.direction}
             onSortChange={query.setSort}
             sortOptions={SORT_OPTIONS}
-            page={query.page}
+            page={currentPage}
             totalPages={totalPages}
             onPageChange={query.setPage}
             resultCount={filtered.length}

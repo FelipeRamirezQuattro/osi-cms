@@ -112,6 +112,7 @@ export function AdminListControls({
             }}
             className="rounded border border-osi-sand-300 px-2 py-1.5"
           >
+            <option value="">Default order</option>
             {sortOptions.map((option) => (
               <option key={`${option.value}:${option.direction}`} value={`${option.value}:${option.direction}`}>
                 {option.label}

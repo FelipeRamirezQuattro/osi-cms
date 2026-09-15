@@ -52,7 +52,7 @@ export function EntityList({
     return rows;
   }, [initialRows, query.q, query.status, query.sort, query.direction, config.listColumns, config.hasStatus]);
 
-  const { rows: pageRows, totalPages } = paginate(filtered, query.page);
+  const { rows: pageRows, totalPages, page: currentPage } = paginate(filtered, query.page);
 
   function move(id: string, direction: "up" | "down") {
     startTransition(async () => {
@@ -163,7 +163,7 @@ export function EntityList({
             sortDirection={query.direction}
             onSortChange={query.setSort}
             sortOptions={sortOptions}
-            page={query.page}
+            page={currentPage}
             totalPages={totalPages}
             onPageChange={query.setPage}
             resultCount={filtered.length}

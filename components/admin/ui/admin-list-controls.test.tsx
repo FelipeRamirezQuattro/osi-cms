@@ -53,6 +53,24 @@ describe("AdminListControls", () => {
     expect(onStatusChange).toHaveBeenCalledWith("draft");
   });
 
+  it("renders a selected 'Default order' option when no sort is applied", () => {
+    render(
+      <AdminListControls
+        searchValue=""
+        onSearchChange={() => {}}
+        sortValue=""
+        onSortChange={() => {}}
+        sortOptions={[{ value: "title", label: "Title A-Z", direction: "asc" }]}
+        page={1}
+        totalPages={1}
+        onPageChange={() => {}}
+        resultCount={5}
+      />,
+    );
+
+    expect(screen.getByDisplayValue("Default order")).toBeInTheDocument();
+  });
+
   it("splits the compound sort option value/direction on change", () => {
     const onSortChange = vi.fn();
     render(
