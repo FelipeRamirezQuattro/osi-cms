@@ -142,6 +142,25 @@ export type ProductAdminDetail = Tables<"products"> & {
   related_product_ids: string[];
 };
 
+/**
+ * How many products reference this category — the pre-write check
+ * behind the product-categories delete guard (lib/actions/entities.ts).
+ * `category_id` is nullable with `on delete set null` at the DB level
+ * (migration 0003), which would silently orphan a product's canonical
+ * URL (productHref needs a category slug) rather than reject the
+ * delete, so the guard has to happen here, before the delete, same
+ * pattern as the last-admin check in lib/data/admin-users.ts.
+ */
+export async function countProductsByCategory(categoryId: string): Promise<number> {
+  const db = createServerDbClient();
+  const { count, error } = await db
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("category_id", categoryId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
 export async function listAllProducts(): Promise<Tables<"products">[]> {
   const db = createServerDbClient();
   const { data, error } = await db

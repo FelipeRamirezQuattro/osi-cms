@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { deleteProduct, listRelatedProducts, saveProduct } from "@/lib/data/products";
+import { countProductsByCategory, deleteProduct, listRelatedProducts, saveProduct } from "@/lib/data/products";
 
 /**
  * Task 5: saveProduct/deleteProduct must go through the
@@ -98,6 +98,37 @@ describe("saveProduct", () => {
     await expect(saveProduct("p1", { name: "Widget" }, [], [], [], [], [], [])).rejects.toThrow(
       "constraint violation",
     );
+  });
+});
+
+/**
+ * Task 8 item #1: the product-categories delete guard in
+ * lib/actions/entities.ts counts referencing products before allowing a
+ * delete (category_id is nullable with `on delete set null` at the DB
+ * level, which would silently orphan a product's canonical URL rather
+ * than reject the delete — see that action's own comment).
+ */
+describe("countProductsByCategory", () => {
+  function createFakeCountClient(count: number | null) {
+    const chain: Record<string, unknown> = {};
+    for (const method of ["select", "eq"]) chain[method] = () => chain;
+    chain.then = (resolve: (v: unknown) => void) => Promise.resolve({ count, error: null }).then(resolve);
+    return { from: () => chain };
+  }
+
+  it("returns the number of products referencing a category", async () => {
+    mockCreateServerDbClient.mockReturnValue(createFakeCountClient(3));
+    expect(await countProductsByCategory("cat-1")).toBe(3);
+  });
+
+  it("returns 0 when nothing references the category", async () => {
+    mockCreateServerDbClient.mockReturnValue(createFakeCountClient(0));
+    expect(await countProductsByCategory("cat-1")).toBe(0);
+  });
+
+  it("treats a null count as 0", async () => {
+    mockCreateServerDbClient.mockReturnValue(createFakeCountClient(null));
+    expect(await countProductsByCategory("cat-1")).toBe(0);
   });
 });
 

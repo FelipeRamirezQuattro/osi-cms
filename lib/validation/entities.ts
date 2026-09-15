@@ -26,6 +26,11 @@ import { tiptapDocSchema } from "@/lib/validation/rich-text";
 
 const statusSchema = z.enum(["draft", "published"]);
 
+const productCategorySchema = z.object({
+  name: requiredString("Name"),
+  slug: slugSchema("Slug"),
+});
+
 const industrySchema = z.object({
   name: requiredString("Name"),
   slug: slugSchema("Slug"),
@@ -144,6 +149,7 @@ const redirectSchema = z.object({
 });
 
 const ENTITY_SCHEMAS = {
+  "product-categories": productCategorySchema,
   industries: industrySchema,
   applications: applicationSchema,
   news: newsSchema,

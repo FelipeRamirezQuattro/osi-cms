@@ -34,7 +34,13 @@ export function EntityList({
   function remove(row: EntityRow) {
     if (!window.confirm(`Delete this ${config.label.toLowerCase()}? This cannot be undone.`)) return;
     startTransition(async () => {
-      await deleteEntityAction(entity, row.id);
+      // A successful delete redirects server-side and never resolves this
+      // promise with a value — only the error path (e.g. the
+      // product-categories change-impact guard) returns here.
+      const result = await deleteEntityAction(entity, row.id);
+      if (result?.status === "error") {
+        window.alert(result.message);
+      }
     });
   }
 

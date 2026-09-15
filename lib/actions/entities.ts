@@ -16,6 +16,7 @@ import {
 import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { validateEntityInput } from "@/lib/validation/entities";
+import { countProductsByCategory } from "@/lib/data/products";
 
 export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]> {
   await requireCapability("edit_drafts");
@@ -113,9 +114,37 @@ export async function saveEntityAction(
   }
 }
 
-export async function deleteEntityAction(entity: EntityKey, id: string): Promise<void> {
+export type DeleteEntityResult = { status: "success" } | { status: "error"; message: string };
+
+export async function deleteEntityAction(entity: EntityKey, id: string): Promise<DeleteEntityResult | void> {
   await requireCapability("delete_content");
-  await deleteEntityRow(ENTITY_CONFIGS[entity].table, id);
+
+  // Change-impact guard: category_id is nullable with `on delete set
+  // null` at the DB level (migration 0003), which would silently orphan
+  // a product's canonical URL (productHref needs a category slug)
+  // instead of rejecting the delete — this is an app-level pre-write
+  // check, same pattern as the last-admin guard in lib/data/admin-users.ts,
+  // not a DB constraint.
+  if (entity === "product-categories") {
+    const count = await countProductsByCategory(id);
+    if (count > 0) {
+      return {
+        status: "error",
+        message: `Can't delete — ${count} product${count === 1 ? "" : "s"} use${count === 1 ? "s" : ""} this category.`,
+      };
+    }
+  }
+
+  try {
+    await deleteEntityRow(ENTITY_CONFIGS[entity].table, id);
+  } catch (err) {
+    return { status: "error", message: err instanceof Error ? err.message : "Delete failed." };
+  }
+
+  // Called outside the try/catch above — redirect() throws internally,
+  // and catching it here would misreport a successful delete as a
+  // failure (same reasoning as requirePublishCapabilityForStatusChange's
+  // call sites in lib/auth/index.ts).
   redirect(`/admin/${entity}`);
 }
 

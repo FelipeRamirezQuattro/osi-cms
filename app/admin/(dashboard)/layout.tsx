@@ -15,6 +15,7 @@ const NAV_ITEMS: { href: string; label: string; capability: Capability | null }[
   { href: "/admin", label: "Dashboard", capability: null },
   { href: "/admin/pages", label: "Pages", capability: "edit_drafts" },
   { href: "/admin/products", label: "Products", capability: "edit_drafts" },
+  { href: "/admin/product-categories", label: "Product categories", capability: "edit_drafts" },
   { href: "/admin/news", label: "News", capability: "edit_drafts" },
   { href: "/admin/industries", label: "Industries", capability: "edit_drafts" },
   { href: "/admin/applications", label: "Applications", capability: "edit_drafts" },

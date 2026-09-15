@@ -19,6 +19,7 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
  * getBlockPalette().
  */
 export type EntityKey =
+  | "product-categories"
   | "industries"
   | "applications"
   | "news"
@@ -42,6 +43,28 @@ export type EntityConfig = {
 };
 
 export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
+  "product-categories": {
+    table: "product_categories",
+    label: "Category",
+    pluralLabel: "Product categories",
+    // No draft state — see migration 0002's comment: a fixed, small
+    // structural list the admin reorders/renames but doesn't unpublish.
+    // products.category_id is a required part of every product's
+    // canonical URL (productHref(categorySlug, slug)), so unlike
+    // industries/applications this table intentionally has no `status`
+    // column to begin with.
+    hasPosition: true,
+    hasStatus: false,
+    listColumns: [
+      { key: "name", label: "Name" },
+      { key: "slug", label: "Slug" },
+    ],
+    fields: [
+      { key: "name", label: "Name", type: "text" },
+      { key: "slug", label: "Slug", type: "text" },
+    ],
+    defaults: { name: "", slug: "", position: 0 },
+  },
   industries: {
     table: "industries",
     label: "Industry",
