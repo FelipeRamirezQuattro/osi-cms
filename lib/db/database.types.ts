@@ -1282,12 +1282,6 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      // Speculative — hand-added ahead of the controller applying
-      // supabase/migrations/0029_archived_status.sql (Task 15), same
-      // convention as every other hand-edited entry in this file for an
-      // unapplied migration. Regenerate via the Supabase MCP's
-      // generate_typescript_types tool once applied; this entry should
-      // then match exactly (or be a harmless no-op diff).
       archive_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
       delete_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
       delete_product_atomic: {
@@ -1305,16 +1299,11 @@ export type Database = {
       has_capability: { Args: { capability: string }; Returns: boolean };
       is_admin: { Args: never; Returns: boolean };
       is_staff: { Args: never; Returns: boolean };
-      // Args extended (speculatively, ahead of applying
-      // supabase/migrations/0031_publish_slug_redirect.sql, Task 15)
-      // with the two new optional trailing params behind `?` — matching
-      // how a generated default-valued Postgres function arg is typed
-      // elsewhere in this file (e.g. save_product_atomic's `p_product_id?`).
       publish_page_atomic: {
         Args: {
+          p_create_redirect?: boolean;
           p_expected_version: number;
           p_page_id: string;
-          p_create_redirect?: boolean;
           p_redirect_status_code?: number;
         };
         Returns: undefined;
@@ -1323,8 +1312,6 @@ export type Database = {
         Args: { p_expected_version: number; p_section_id: string };
         Returns: undefined;
       };
-      // Speculative — see archive_page_atomic's comment above.
-      restore_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
       record_audit: {
         Args: {
           p_action: string;
@@ -1334,6 +1321,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      restore_page_atomic: { Args: { p_page_id: string }; Returns: undefined };
       save_page_draft_atomic: {
         Args: {
           p_blocks: Json;
