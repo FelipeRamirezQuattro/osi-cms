@@ -1,13 +1,11 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { listMediaAction, uploadMediaAction, type UploadMediaState } from "@/lib/actions/media";
-import type { MediaAsset } from "@/lib/data/media";
+import { MediaBrowser, type MediaBrowserAccept } from "@/components/admin/media/media-browser";
+import type { MediaAsset } from "@/lib/actions/media";
 import { resolveMediaUrl } from "@/lib/media";
-
-const initialUploadState: UploadMediaState = { status: "idle" };
 
 // Same useSyncExternalStore-for-"is this the client" trick as
 // recommendations-client.tsx (see CLAUDE.md) — avoids the
@@ -27,50 +25,47 @@ export function MediaPicker({
   value,
   onChange,
   label = "Image",
+  accept = "image",
+  onSelectAsset,
 }: {
   value?: string;
   onChange: (url: string) => void;
   label?: string;
+  /** Restricts the picker to images (default) or documents (currently PDF only) — see lib/validation/media.ts. */
+  accept?: MediaBrowserAccept;
+  /**
+   * Optional companion to onChange: also hands back the full selected
+   * asset (id included) — used by the replace-everywhere flow
+   * (media-library.tsx) to know *which* asset was chosen, not just its
+   * URL. Every existing image-field caller only passes onChange, which
+   * keeps working unchanged (Task 11 controller ruling #1: a new
+   * selection MAY carry an asset id without forcing every existing
+   * consumer field to change shape).
+   */
+  onSelectAsset?: (asset: MediaAsset) => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [assets, setAssets] = useState<MediaAsset[]>([]);
-  const [search, setSearch] = useState("");
-  const [isLoading, startLoading] = useTransition();
-  const [uploadState, uploadFormAction] = useActionState(uploadMediaAction, initialUploadState);
-  // The dialog (and its own upload <form>) is portaled to document.body —
-  // every caller of MediaPicker renders it inside its own <form>, and
-  // HTML forbids a nested <form>. Portaling avoids that regardless of
-  // where MediaPicker itself sits in the tree. Only after mount, since
-  // document.body doesn't exist during SSR.
+  // The dialog (and everything MediaBrowser renders inside it, including
+  // its own upload <form>) is portaled to document.body — every caller
+  // of MediaPicker renders it inside its own <form>, and HTML forbids a
+  // nested <form>. Portaling avoids that regardless of where MediaPicker
+  // itself sits in the tree. Only after mount, since document.body
+  // doesn't exist during SSR.
   const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
-
-  function refresh(q?: string) {
-    startLoading(async () => {
-      const data = await listMediaAction(q);
-      setAssets(data);
-    });
-  }
 
   function open() {
     dialogRef.current?.showModal();
-    refresh(search);
   }
 
   function close() {
     dialogRef.current?.close();
   }
 
-  function select(url: string) {
-    onChange(url);
+  function select(asset: MediaAsset) {
+    onChange(asset.url);
+    onSelectAsset?.(asset);
     close();
   }
-
-  useEffect(() => {
-    if (uploadState.status === "success" && uploadState.asset) {
-      select(uploadState.asset.url);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadState]);
 
   return (
     <div className="flex items-center gap-3">
@@ -119,55 +114,8 @@ export function MediaPicker({
               </button>
             </div>
 
-            <div className="space-y-4 p-5">
-              <form action={uploadFormAction} className="flex items-center gap-3">
-                <input type="file" name="file" accept="image/*" required className="text-xs" />
-                <input
-                  type="text"
-                  name="alt"
-                  placeholder="Alt text (required)"
-                  required
-                  className="flex-1 rounded border border-osi-sand-300 px-2 py-1 text-xs"
-                />
-                <button
-                  type="submit"
-                  className="rounded bg-osi-navy-900 px-3 py-1 text-xs uppercase tracking-wide-label text-osi-white transition-transform duration-200 active:scale-[0.97]"
-                >
-                  Upload
-                </button>
-                {uploadState.status === "error" && (
-                  <span className="text-xs text-red-600">{uploadState.message}</span>
-                )}
-              </form>
-
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  refresh(e.target.value);
-                }}
-                placeholder="Search by title, alt text, or URL…"
-                className="w-full rounded border border-osi-sand-300 px-3 py-2 text-sm"
-              />
-
-              <div className="grid max-h-96 grid-cols-4 gap-3 overflow-y-auto sm:grid-cols-6">
-                {isLoading && <p className="col-span-full text-xs text-osi-slate-400">Loading…</p>}
-                {!isLoading && assets.length === 0 && (
-                  <p className="col-span-full text-xs text-osi-slate-400">No media found.</p>
-                )}
-                {assets.map((asset) => (
-                  <button
-                    key={asset.id}
-                    type="button"
-                    onClick={() => select(asset.url)}
-                    className="relative aspect-square overflow-hidden rounded border border-osi-sand-300 transition-transform duration-200 hover:ring-2 hover:ring-osi-gold-500 active:scale-[0.97]"
-                    title={asset.title ?? asset.url}
-                  >
-                    <Image src={resolveMediaUrl(asset.url)} alt={asset.alt ?? ""} fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
+            <div className="max-h-[70vh] overflow-y-auto p-5">
+              <MediaBrowser accept={accept} onSelect={select} onUploaded={select} />
             </div>
           </dialog>,
           document.body,

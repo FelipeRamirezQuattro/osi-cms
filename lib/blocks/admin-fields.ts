@@ -18,7 +18,19 @@ export type FieldSpec =
   | { key: string; label: string; type: "number"; optional?: boolean }
   | { key: string; label: string; type: "boolean"; optional?: boolean }
   | { key: string; label: string; type: "select"; options: string[]; optional?: boolean }
-  | { key: string; label: string; type: "image"; optional?: boolean }
+  // `accept` distinguishes what MediaPicker should offer/filter for
+  // (Task 11 — "generalize and harden the media library"): "image"
+  // (default, unchanged behavior for every one of the ~32 existing
+  // `image`-type fields that don't set it) or "file" for a document
+  // (currently just PDF — see lib/validation/media.ts). "video" exists
+  // in the type only, reserved for later — no field sets it and
+  // MediaPicker doesn't render a video-specific picker yet; hosted video
+  // isn't supported until file-size/bandwidth/provider limits are
+  // defined (docs/DECISIONS.md), so this is deliberately inert for now,
+  // not wired up. Bumping a field from "image" to "file" is additive and
+  // backward-compatible — it does not require touching every other
+  // caller of this union.
+  | { key: string; label: string; type: "image"; accept?: "image" | "file" | "video"; optional?: boolean }
   | { key: string; label: string; type: "richtext"; optional?: boolean }
   | { key: string; label: string; type: "date"; optional?: boolean }
   // `relation` renders a <select> populated at runtime from a

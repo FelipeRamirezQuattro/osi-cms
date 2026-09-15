@@ -115,7 +115,18 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
           <Controller
             control={control}
             name={name}
-            render={({ field }) => <MediaPicker value={field.value} onChange={field.onChange} label={spec.label} />}
+            render={({ field }) => (
+              <MediaPicker
+                value={field.value}
+                onChange={field.onChange}
+                label={spec.label}
+                // "video" isn't a real MediaPicker mode yet (see
+                // lib/blocks/admin-fields.ts) — no field sets it today,
+                // but fall back to "image" rather than passing an accept
+                // value MediaBrowser doesn't understand if one ever does.
+                accept={spec.accept === "file" ? "file" : "image"}
+              />
+            )}
           />
         </FieldGroup>
       );
