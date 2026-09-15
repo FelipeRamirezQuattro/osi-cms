@@ -14,6 +14,7 @@ import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
 import { columnsBlock } from "@/components/blocks/columns";
 import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
+import { buttonGroupBlock } from "@/components/blocks/button-group";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -305,6 +306,19 @@ export default function StyleguidePage() {
           quote: "Odessa Separator's equipment has never let us down in twenty years of field service.",
           attributionName: "Jane Doe",
           roleCompany: "Field Operations Manager, Example Energy",
+        })}
+      />
+
+      <Section bg="cream">
+        <Heading>New blocks — Button group</Heading>
+      </Section>
+      <buttonGroupBlock.Render
+        data={buttonGroupBlock.schema.parse({
+          buttons: [
+            { label: "Contact us", href: "/contact" },
+            { label: "See products", href: "/products" },
+          ],
+          alignment: "center",
         })}
       />
 
