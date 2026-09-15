@@ -11,6 +11,10 @@ export const metadata: Metadata = {
 const TYPE_LABELS: Record<string, string> = {
   page: "Page",
   product: "Product",
+  news: "News",
+  industry: "Industry",
+  application: "Application",
+  resource: "Resource",
 };
 
 export default async function SearchPage({ searchParams }: PageProps<"/search">) {

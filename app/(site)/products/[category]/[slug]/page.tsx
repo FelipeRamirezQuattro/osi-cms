@@ -62,7 +62,7 @@ export default async function ProductDetailPage({
     listResourcesForProduct(product.id),
   ]);
 
-  const productUrl = absoluteUrl(`/products/${category}/${slug}`);
+  const productUrl = absoluteUrl(productHref(category, slug));
   const productImage = product.hero_image_url ?? product.diagram_image_url;
 
   return (

@@ -1,5 +1,6 @@
 import { createServerDbClient } from "@/lib/db/client";
 import type { PageMeta } from "@/lib/data/pages";
+import { applicationHref, industryHref, newsHref, productHref, resourceHref } from "@/lib/routes";
 
 /**
  * Site-wide search (master prompt §9 Phase 6) — Postgres full-text via
@@ -17,20 +18,19 @@ import type { PageMeta } from "@/lib/data/pages";
  * title/seo_description weighting, sourced from the jsonb snapshot since
  * there's no plain title column on page_publications).
  *
- * Scoped to `pages` and `products` only, NOT `news_posts`/`services`
- * despite the master prompt naming all four (§9: "search over
- * products/news/services/pages") — both tables are empty and, more
- * importantly, have no public route to land on yet. `/services/*` is
- * currently served by the `[...slug]` catch-all against `pages` (the
- * real, Phase-4-migrated Fluid Levels/Pump Cards/Machine Shop content);
- * a `services`-table-backed `/services/[slug]` route would collide with
- * and shadow those working pages at the same URLs. This is a real,
- * unresolved architectural question — see docs/DECISIONS.md — not
- * something to silently route around. Revisit once it's settled.
+ * Task 8: `services` no longer exists as a table at all (dropped in a
+ * prior task's migration — the /services/* route-collision question this
+ * comment used to flag is moot). `news_posts` now has a real /news route
+ * to land on (Task 8), so it's wired in here too via the same
+ * search_vector + textSearch pattern as pages/products. `industries`/
+ * `applications`/`resources` have no search_vector column (small,
+ * hand-curated tables — a generated tsvector column isn't worth a
+ * migration for them yet), so those three use a simple case-insensitive
+ * `ilike` on name/title instead of full-text search.
  */
 
 export type SearchResult = {
-  type: "page" | "product";
+  type: "page" | "product" | "news" | "industry" | "application" | "resource";
   title: string;
   excerpt: string | null;
   href: string;
@@ -44,8 +44,9 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
 
   const db = createServerDbClient();
   const tsQuery = trimmed.split(/\s+/).join(" & ");
+  const ilikeQuery = `%${trimmed}%`;
 
-  const [pages, products] = await Promise.all([
+  const [pages, products, news, industries, applications, resources] = await Promise.all([
     db
       .from("page_publications")
       .select("slug, snapshot")
@@ -57,6 +58,20 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
       .eq("status", "published")
       .textSearch("search_vector", tsQuery, { type: "plain", config: "english" })
       .limit(RESULTS_PER_TABLE),
+    db
+      .from("news_posts")
+      .select("slug, title, excerpt")
+      .eq("status", "published")
+      .textSearch("search_vector", tsQuery, { type: "plain", config: "english" })
+      .limit(RESULTS_PER_TABLE),
+    db.from("industries").select("slug, name, description").eq("status", "published").ilike("name", ilikeQuery).limit(RESULTS_PER_TABLE),
+    db
+      .from("applications")
+      .select("slug, name, description")
+      .eq("status", "published")
+      .ilike("name", ilikeQuery)
+      .limit(RESULTS_PER_TABLE),
+    db.from("resources").select("id, title, kind").eq("status", "published").ilike("title", ilikeQuery).limit(RESULTS_PER_TABLE),
   ]);
 
   const results: SearchResult[] = [];
@@ -75,8 +90,20 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
       type: "product",
       title: row.name,
       excerpt: row.tagline ?? row.summary,
-      href: `/products/${categorySlug}/${row.slug}`,
+      href: productHref(categorySlug, row.slug),
     });
+  }
+  for (const row of news.data ?? []) {
+    results.push({ type: "news", title: row.title, excerpt: row.excerpt, href: newsHref(row.slug) });
+  }
+  for (const row of industries.data ?? []) {
+    results.push({ type: "industry", title: row.name, excerpt: row.description, href: industryHref(row.slug) });
+  }
+  for (const row of applications.data ?? []) {
+    results.push({ type: "application", title: row.name, excerpt: row.description, href: applicationHref(row.slug) });
+  }
+  for (const row of resources.data ?? []) {
+    results.push({ type: "resource", title: row.title, excerpt: row.kind, href: resourceHref() });
   }
 
   return results;
