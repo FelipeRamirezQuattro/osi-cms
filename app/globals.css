@@ -12,6 +12,7 @@
   /* Legacy alias kept while public blocks migrate to the explicit name. */
   --font-display-soft: var(--font-editorial-source), "Montserrat", sans-serif;
   --font-body: var(--font-body-source), "Poppins", sans-serif;
+  --font-label: var(--font-label-source, var(--font-body-source)), "Poppins", sans-serif;
 
   --color-osi-navy-900: #001b33;
   --color-osi-navy-800: #001c34;
@@ -38,6 +39,15 @@
      gold-700 wherever gold text sits on cream/white. See DECISIONS.md. */
   --color-osi-gold-700: #885619;
   --color-osi-white: #ffffff;
+
+  --color-brand-primary: var(--brand-color-primary);
+  --color-brand-secondary: var(--brand-color-secondary);
+  --color-brand-accent-dark: var(--brand-color-accent-on-dark);
+  --color-brand-accent-light: var(--brand-color-accent-on-light);
+  --color-brand-surface-light: var(--brand-color-light-surface);
+  --color-brand-surface-dark: var(--brand-color-dark-surface);
+  --color-brand-text-light: var(--brand-color-text-on-light);
+  --color-brand-text-dark: var(--brand-color-text-on-dark);
 
   /* Display scale — clamp(min, preferred, max) per the mockup's fluid type */
   --text-hero: clamp(2.5rem, 5vw, 4.5rem);
@@ -80,6 +90,15 @@ body {
  * calmer editorial rhythm than the admin application.
  */
 .site-shell {
+  /* Runtime typography roles. Keep these explicit inside the public
+     boundary: Tailwind may omit an @theme custom property when no generated
+     utility owns it, while the branding compiler always supplies the four
+     validated *-source values on this same boundary. */
+  --font-display: var(--font-display-source), "Orbitron", sans-serif;
+  --font-editorial: var(--font-editorial-source), "Montserrat", sans-serif;
+  --font-display-soft: var(--font-editorial-source), "Montserrat", sans-serif;
+  --font-body: var(--font-body-source), "Poppins", sans-serif;
+  --font-label: var(--font-label-source, var(--font-body-source)), "Poppins", sans-serif;
   --site-surface: var(--color-osi-cream-100);
   --site-surface-raised: #fffaf4;
   --site-ink: var(--color-osi-navy-900);
@@ -97,6 +116,34 @@ body {
   background: var(--site-surface);
   color: var(--site-ink);
   font-family: var(--font-body);
+}
+
+.public-site .brand-section {
+  background-color: var(--block-background, transparent);
+  color: var(--block-text, inherit);
+}
+
+.public-site .brand-section-dark {
+  background-color: var(--block-background, var(--brand-color-dark-surface));
+  color: var(--block-text, var(--brand-color-text-on-dark));
+}
+
+.public-site .brand-section-light {
+  background-color: var(--block-background, var(--brand-color-light-surface));
+  color: var(--block-text, var(--brand-color-text-on-light));
+}
+
+.public-site .brand-section-transparent {
+  background-color: var(--block-background, transparent);
+  color: var(--block-text, inherit);
+}
+
+.public-site .brand-block {
+  --font-display: var(--block-font-display, var(--brand-font-display));
+  --font-editorial: var(--block-font-heading, var(--brand-font-heading));
+  --font-display-soft: var(--block-font-heading, var(--brand-font-heading));
+  --font-body: var(--block-font-body, var(--brand-font-body));
+  --font-label: var(--block-font-label, var(--brand-font-label));
 }
 
 .site-shell :where(a, button, input, select, textarea, summary) {

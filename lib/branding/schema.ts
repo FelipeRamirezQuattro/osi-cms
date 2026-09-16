@@ -1,10 +1,20 @@
 import { z } from "zod";
+import {
+  FONT_CATALOG_KEYS,
+  TYPOGRAPHY_SLOTS,
+  getFontCatalogEntry,
+  type TypographySlot,
+} from "@/lib/fonts/catalog";
+
+export {
+  FONT_CATALOG,
+  TYPOGRAPHY_SLOTS,
+  getFontCatalogEntry,
+  type FontCatalogKey,
+  type TypographySlot,
+} from "@/lib/fonts/catalog";
 
 /**
- * Branding module — Phase 1 (data/validation layer only; the theme
- * compiler and admin UI are later phases per
- * .superpowers/sdd/2026-09-15-branding-module-and-block-theming/).
- *
  * This is the version-aware Zod schema for `site_branding.config` /
  * `site_branding_publications.config` / `site_branding_revisions.config`
  * (all `jsonb`, see supabase/migrations/0032_site_branding.sql). Every
@@ -74,118 +84,7 @@ export const BLOCK_TYPE_KEYS = [
 export type BlockTypeKey = (typeof BLOCK_TYPE_KEYS)[number];
 
 // ---------------------------------------------------------------------
-// Font catalog (placeholder — Phase 2 owns the real `lib/fonts/` module)
-// ---------------------------------------------------------------------
-
-export const TYPOGRAPHY_SLOTS = ["display", "heading", "body", "label"] as const;
-export type TypographySlot = (typeof TYPOGRAPHY_SLOTS)[number];
-
-/**
- * Vetted, code-owned font catalog. No arbitrary font URL/CSS/family
- * string is ever accepted from the admin (plan's Font catalog rules) —
- * an admin can only pick a `key` from this list.
- *
- * `lib/fonts/` does not exist yet (checked before writing this file),
- * so this is Phase 1's placeholder catalog — but rather than a 2-3
- * entry stub, it is seeded with the real 9-entry catalog Phase 0's
- * inventory already designed (`docs/reviews/2026-09-15-branding-
- * phase-0-token-and-font-inventory.md` §5), since that document is the
- * named source of truth for "the initial font catalog / block-type key
- * list your schema and Zod validators must accept". A future Phase 2
- * that builds a real `lib/fonts/catalog.ts` should move this constant
- * there and re-export it from here (or update this file's import) so
- * existing branding rows keep validating unchanged.
- */
-export const FONT_CATALOG = [
-  {
-    key: "orbitron",
-    family: "Orbitron",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["display"],
-    status: "available",
-  },
-  {
-    key: "montserrat",
-    family: "Montserrat",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["heading"],
-    status: "available",
-  },
-  {
-    key: "poppins",
-    family: "Poppins",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["body", "label"],
-    status: "available",
-  },
-  {
-    key: "rajdhani",
-    family: "Rajdhani",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["display", "heading"],
-    status: "available",
-  },
-  {
-    key: "fraunces",
-    family: "Fraunces",
-    fallbackStack: "serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["heading", "display"],
-    status: "available",
-  },
-  {
-    key: "source-sans-3",
-    family: "Source Sans 3",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["body", "label"],
-    status: "available",
-  },
-  {
-    key: "inter",
-    family: "Inter",
-    fallbackStack: "sans-serif",
-    source: "Google Fonts (SIL OFL 1.1)",
-    allowedRoles: ["heading", "body", "label"],
-    status: "available",
-  },
-  {
-    key: "system-sans",
-    family: "ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    fallbackStack: "sans-serif",
-    source: "System stack (no font file)",
-    allowedRoles: ["heading", "body", "label"],
-    status: "available",
-  },
-  {
-    key: "system-serif",
-    family: "ui-serif, Georgia, Cambria, 'Times New Roman', serif",
-    fallbackStack: "serif",
-    source: "System stack (no font file)",
-    allowedRoles: ["heading", "display"],
-    status: "available",
-  },
-] as const satisfies readonly {
-  key: string;
-  family: string;
-  fallbackStack: string;
-  source: string;
-  allowedRoles: readonly TypographySlot[];
-  status: "available" | "deprecated" | "unavailable";
-}[];
-
-export type FontCatalogKey = (typeof FONT_CATALOG)[number]["key"];
-
-const FONT_CATALOG_KEYS = FONT_CATALOG.map((entry) => entry.key) as [FontCatalogKey, ...FontCatalogKey[]];
-
-export function getFontCatalogEntry(key: string) {
-  return FONT_CATALOG.find((entry) => entry.key === key);
-}
-
+// Font catalog
 // ---------------------------------------------------------------------
 // Color primitives + WCAG contrast math (pure — no external dependency)
 // ---------------------------------------------------------------------
@@ -278,7 +177,7 @@ export const roleColorRefSchema = z.object({
 export type RoleColorRef = z.infer<typeof roleColorRefSchema>;
 
 /**
- * Stable roles consumed by the (future) public design system — component
+ * Stable roles consumed by the public design system — component
  * code consumes roles, never OSI-specific swatch names (plan's Semantic
  * color roles section). Accent is split into on-dark/on-light variants
  * because CLAUDE.md's Hardening section documents that the mockup's gold

@@ -39,7 +39,7 @@ function Render({ data }: { data: Data }) {
             {data.title}
           </h2>
           {data.body && (
-            <p className={`mt-4 max-w-md ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+            <p className="mt-4 max-w-md text-[var(--block-muted-text,var(--brand-color-muted-text-on-light))]">
               {data.body}
             </p>
           )}

@@ -53,6 +53,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { href: "/admin/navigation", label: "Navigation", capability: "manage_navigation" },
       { href: "/admin/media", label: "Media", capability: "upload_media" },
+      { href: "/admin/branding", label: "Branding", capability: "manage_settings" },
       { href: "/admin/redirects", label: "Redirects", capability: "edit_drafts" },
       { href: "/admin/settings", label: "Settings", capability: "manage_settings" },
     ],

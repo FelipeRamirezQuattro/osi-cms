@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
+import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { EASE_OSI } from "@/lib/motion/variants";
 import type { StagesCarouselData } from "@/components/blocks/stages-carousel";
 
 export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
   const [index, setIndex] = useState(0);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const stage = data.stages[index];
   if (!stage) return null;
 
@@ -63,11 +64,7 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
           sizes="(min-width: 640px) 10rem, 100vw"
         />
         <div>
-          <p
-            className={`font-display text-small-label tracking-wide-label uppercase ${
-              data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
-            }`}
-          >
+          <p className="font-display text-small-label tracking-wide-label text-[var(--block-accent,var(--brand-color-accent-on-light))] uppercase">
             Stage {index + 1} of {data.stages.length}
           </p>
           <h3 className="mt-1 font-editorial text-2xl font-semibold leading-tight text-balance">

@@ -1,25 +1,6 @@
 import type { Metadata } from "next";
-import { Orbitron, Montserrat, Poppins } from "next/font/google";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
-
-const orbitron = Orbitron({
-  variable: "--font-display-source",
-  subsets: ["latin"],
-  weight: ["500", "700"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-editorial-source",
-  subsets: ["latin"],
-  weight: ["500", "600"],
-});
-
-const poppins = Poppins({
-  variable: "--font-body-source",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -29,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${montserrat.variable} ${poppins.variable} h-full antialiased`}>
+    <html lang="en" className="h-full antialiased">
       <head>
         <noscript>
           {/* Motion server-renders its "hidden" initial state as the
@@ -53,9 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`[style*="opacity:0"]:not([style*="opacity:0."]){opacity:1!important;transform:none!important}`}</style>
         </noscript>
       </head>
-      <body className="flex min-h-full flex-col bg-osi-cream-100 font-body text-osi-navy-900">
-        {children}
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

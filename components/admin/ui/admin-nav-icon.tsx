@@ -58,6 +58,18 @@ export function AdminNavIcon({ href }: { href: string }) {
     );
   }
 
+  if (href.includes("branding")) {
+    return (
+      <svg {...common}>
+        <path d="M12 3a9 9 0 1 0 0 18c1.5 0 2.2-.9 1.7-2-.4-.8.1-1.8 1.1-1.8H17a4 4 0 0 0 4-4C21 7.6 17 3 12 3Z" />
+        <circle cx="7.5" cy="11" r="1" />
+        <circle cx="10" cy="7.5" r="1" />
+        <circle cx="14" cy="7" r="1" />
+        <circle cx="17" cy="10" r="1" />
+      </svg>
+    );
+  }
+
   if (href.includes("navigation") || href.includes("redirect")) {
     return (
       <svg {...common}>

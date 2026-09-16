@@ -44,7 +44,7 @@ async function Render({ data }: { data: Data }) {
           {data.title}
         </h2>
         {data.subtitle && (
-          <p className={`text-sm ${data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+          <p className="text-sm text-[var(--block-muted-text,var(--brand-color-muted-text-on-light))]">
             {data.subtitle}
           </p>
         )}

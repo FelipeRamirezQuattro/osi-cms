@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import type { NavItemNode } from "@/lib/data/navigation";
 import { externalLinkAttrs } from "@/lib/routes";
@@ -41,9 +41,11 @@ function MenuIcon({ open }: { open: boolean }) {
 export function MegaMenuClient({
   utilityItems,
   megaColumns,
+  brandLogo,
 }: {
   utilityItems: NavItemNode[];
   megaColumns: NavItemNode[];
+  brandLogo?: ReactNode;
 }) {
   // Next can return null before router context is ready (and our static
   // contract tests intentionally render this component without one).
@@ -93,7 +95,7 @@ export function MegaMenuClient({
               {item.label}
               <span
                 aria-hidden="true"
-                className="absolute inset-x-4 bottom-1.5 h-px origin-left scale-x-0 bg-osi-gold-500 transition-transform duration-200 group-aria-[current=page]:scale-x-100"
+                className="absolute inset-x-4 bottom-1.5 h-px origin-left scale-x-0 bg-brand-accent-dark transition-transform duration-200 group-aria-[current=page]:scale-x-100"
               />
             </Link>
           ))}
@@ -125,7 +127,7 @@ export function MegaMenuClient({
         ref={searchDialogRef}
         onClose={() => setSearchOpen(false)}
         aria-labelledby="site-search-title"
-        className="site-dialog fixed inset-x-0 top-0 z-60 w-full bg-osi-navy-900 text-osi-white shadow-2xl"
+        className="site-dialog fixed inset-x-0 top-0 z-60 w-full bg-brand-surface-dark text-brand-text-dark shadow-2xl"
       >
         <div className="mx-auto max-w-[var(--site-container)] px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 md:px-10 md:pb-12">
           <div className="mb-8 flex items-center justify-between gap-6">
@@ -172,12 +174,12 @@ export function MegaMenuClient({
         ref={menuDialogRef}
         onClose={() => setMenuOpen(false)}
         aria-labelledby="site-menu-title"
-        className="site-dialog fixed inset-0 z-60 h-dvh w-full overflow-y-auto bg-osi-navy-900 text-osi-white"
+        className="site-dialog fixed inset-0 z-60 h-dvh w-full overflow-y-auto bg-brand-surface-dark text-brand-text-dark"
       >
         <div className="mx-auto min-h-full max-w-[var(--site-container)] px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))] md:px-10">
           <div className="flex min-h-14 items-center justify-between border-b border-white/12 pb-5">
             <span id="site-menu-title" className="font-display text-xl font-bold tracking-wide-display uppercase">
-              OSI<span className="text-osi-gold-500">.</span>
+              {brandLogo ?? <>OSI<span className="text-brand-accent-dark">.</span></>}
             </span>
             <button
               type="button"
@@ -191,7 +193,7 @@ export function MegaMenuClient({
 
           <div className="grid gap-12 py-10 lg:grid-cols-[1fr_3fr] lg:gap-16 lg:py-14">
             <div>
-              <p className="mb-5 text-xs font-semibold tracking-[0.12em] text-osi-gold-500 uppercase">Explore</p>
+              <p className="mb-5 text-xs font-semibold tracking-[0.12em] text-brand-accent-dark uppercase">Explore</p>
               <nav aria-label="Featured pages" className="flex flex-col items-start gap-2">
                 {PRIMARY_LINKS.map((item) => (
                   <Link

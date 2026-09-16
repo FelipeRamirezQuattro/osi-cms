@@ -3,6 +3,9 @@ import { requireAdmin } from "@/lib/auth";
 import { getPageById, listPageRevisions } from "@/lib/data/pages";
 import { getBlockPalette } from "@/lib/blocks/registry";
 import { PageEditor } from "@/app/admin/(dashboard)/pages/[id]/page-editor";
+import { getPublishedBranding } from "@/lib/data/branding";
+import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
+import { PublishedBrandingOptionsProvider } from "@/components/admin/block-appearance-fields";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +19,7 @@ export default async function EditPagePage({ params }: PageProps<"/admin/pages/[
   const page = await getPageById(id);
   if (!page) notFound();
 
-  const [palette, revisions] = await Promise.all([getBlockPalette(), listPageRevisions(id)]);
+  const [palette, revisions, branding] = await Promise.all([getBlockPalette(), listPageRevisions(id), getPublishedBranding()]);
 
-  return <PageEditor page={page} palette={palette} revisions={revisions} role={session.role} />;
+  return <PublishedBrandingOptionsProvider branding={branding?.config ?? OSI_SEED_BRANDING_CONFIG}><PageEditor page={page} palette={palette} revisions={revisions} role={session.role} /></PublishedBrandingOptionsProvider>;
 }

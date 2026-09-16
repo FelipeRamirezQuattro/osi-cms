@@ -86,13 +86,13 @@ export function AnnouncementBar({ settings }: { settings: AnnouncementBarSetting
     <div
       role="region"
       aria-label="Announcement"
-      className="relative flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-white/8 bg-osi-navy-900 px-14 py-2 text-center text-osi-white"
+      className="relative flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-white/8 bg-brand-surface-dark px-14 py-2 text-center text-brand-text-dark"
     >
       <span className="text-xs font-medium tracking-[0.02em] sm:text-sm">{message}</span>
       {href && linkLabel && (
         <a
           href={href}
-          className="text-xs font-semibold text-osi-gold-400 underline decoration-current/50 underline-offset-4 transition-colors duration-200 hover:text-osi-gold-500 sm:text-sm"
+          className="text-xs font-semibold text-brand-accent-dark underline decoration-current/50 underline-offset-4 transition-colors duration-200 hover:opacity-85 sm:text-sm"
         >
           {linkLabel}
         </a>

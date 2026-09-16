@@ -13,6 +13,7 @@ const entries: BlockPaletteEntry[] = [
     description: "Full-bleed photo hero — use for the homepage.",
     adminFields: [],
     defaults: {},
+    appearance: { surface: true, accent: true, typography: ["display"] },
   },
   {
     type: "rich_text",
@@ -21,6 +22,7 @@ const entries: BlockPaletteEntry[] = [
     description: "Tiptap-authored prose — use for migrated legacy copy.",
     adminFields: [],
     defaults: {},
+    appearance: { surface: true, accent: false, typography: ["heading", "body"] },
   },
   {
     type: "contact_form",
@@ -29,6 +31,7 @@ const entries: BlockPaletteEntry[] = [
     description: "The site's honeypot + rate-limited contact form.",
     adminFields: [],
     defaults: {},
+    appearance: { surface: true, accent: true, typography: ["label"] },
   },
 ];
 

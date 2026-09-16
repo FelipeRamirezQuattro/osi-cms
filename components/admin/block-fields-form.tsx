@@ -2,6 +2,8 @@
 
 import { FieldRenderer } from "@/components/admin/field-renderer";
 import { COMMON_ADMIN_FIELDS, type FieldSpec } from "@/lib/blocks/admin-fields";
+import { BlockAppearanceFields } from "@/components/admin/block-appearance-fields";
+import type { BlockAppearanceCapabilities } from "@/lib/blocks/types";
 
 /**
  * Renders the full field set for one block instance: the common
@@ -21,16 +23,17 @@ export function BlockFieldsForm({
   definition,
   namePrefix,
 }: {
-  definition: { adminFields: FieldSpec[] };
+  definition: { type: string; adminFields: FieldSpec[]; appearance: BlockAppearanceCapabilities };
   namePrefix: string;
 }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        {COMMON_ADMIN_FIELDS.map((spec) => (
+        {COMMON_ADMIN_FIELDS.filter((spec) => spec.key !== "background").map((spec) => (
           <FieldRenderer key={spec.key} spec={spec} name={`${namePrefix}.${spec.key}`} />
         ))}
       </div>
+      <BlockAppearanceFields blockType={definition.type} capabilities={definition.appearance} namePrefix={namePrefix} />
       <hr className="border-osi-sand-300" />
       <div className="space-y-4">
         {definition.adminFields.map((spec) => (

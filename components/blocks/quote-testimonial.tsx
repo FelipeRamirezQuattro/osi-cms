@@ -47,11 +47,7 @@ function Render({ data }: { data: Data }) {
           </div>
         )}
         <div>
-          <p
-            className={`text-sm font-semibold ${
-              data.background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
-            }`}
-          >
+          <p className="text-sm font-semibold text-[var(--block-accent,var(--brand-color-accent-on-light))]">
             {data.attributionName}
           </p>
           {data.roleCompany && (

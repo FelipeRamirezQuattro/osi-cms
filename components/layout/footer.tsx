@@ -5,6 +5,10 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
 import { externalLinkAttrs } from "@/lib/routes";
 import { SocialIcon } from "@/components/ui/social-icon";
+import { BrandLogo } from "@/components/branding/brand-logo";
+import type { BrandingConfig } from "@/lib/branding/schema";
+import type { MediaAsset } from "@/lib/data/media";
+import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
 
 const SOCIAL_LINKS = [
   { key: "social_facebook", label: "Facebook" },
@@ -15,7 +19,7 @@ const SOCIAL_LINKS = [
 
 const COLUMN_LABELS = ["Solutions", "Resources", "Explore", "Company"] as const;
 
-export async function Footer() {
+export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = null }: { branding?: BrandingConfig; logoAsset?: MediaAsset | null } = {}) {
   const [footer1, footer2, footer3, footer4, settings] = await Promise.all([
     getNavMenu("footer-1"),
     getNavMenu("footer-2"),
@@ -26,7 +30,7 @@ export async function Footer() {
   const columns = [footer1, footer2, footer3, footer4];
 
   return (
-    <footer className="border-t border-white/10 bg-osi-navy-900 px-5 py-12 text-osi-white md:px-10 md:py-16">
+    <footer className="border-t border-white/10 bg-brand-surface-dark px-5 py-12 text-brand-text-dark md:px-10 md:py-16">
       <div className="mx-auto max-w-[var(--site-container)]">
         <div className="mb-12 grid gap-8 border-b border-white/12 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-xl">
@@ -35,7 +39,7 @@ export async function Footer() {
               aria-label="OSI home"
               className="inline-flex min-h-11 items-center font-display text-xl font-bold tracking-wide-display uppercase"
             >
-              OSI<span className="text-osi-gold-500">.</span>
+              <BrandLogo config={branding} asset={logoAsset} />
             </Link>
             {settings.footer_tagline && (
               <p className="mt-3 max-w-lg font-editorial text-xl font-medium leading-snug text-white/78 md:text-2xl">
@@ -56,7 +60,7 @@ export async function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 md:gap-10">
           {columns.map((col, i) => (
             <div key={COLUMN_LABELS[i]}>
-              <h2 className="mb-4 text-xs font-semibold tracking-[0.12em] text-osi-gold-500 uppercase">
+              <h2 className="mb-4 text-xs font-semibold tracking-[0.12em] text-brand-accent-dark uppercase">
                 {COLUMN_LABELS[i]}
               </h2>
               <ul className="space-y-1">

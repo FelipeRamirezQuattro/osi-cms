@@ -1,6 +1,13 @@
 import type { ReactElement } from "react";
 import type { ZodType } from "zod";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import type { TypographySlot } from "@/lib/fonts/catalog";
+
+export type BlockAppearanceCapabilities = {
+  surface: boolean;
+  accent: boolean;
+  typography: readonly TypographySlot[];
+};
 
 /**
  * Threaded through every block's Render call by BlockRenderer (Task 10) —
@@ -41,6 +48,8 @@ export interface BlockDefinition<T> {
   Render: BlockRenderComponent<T>;
   /** Block-specific admin form fields — COMMON_ADMIN_FIELDS is prepended by the editor UI. */
   adminFields: FieldSpec[];
+  /** Filled centrally by the registry for every block type. */
+  appearance?: BlockAppearanceCapabilities;
 }
 
 // Registry entries are stored type-erased (the registry itself doesn't

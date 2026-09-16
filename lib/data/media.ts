@@ -302,13 +302,18 @@ export type MediaUsageSource =
   | "news_post"
   | "directory_contact"
   | "resource"
-  | "site_settings";
+  | "site_settings"
+  | "branding_draft"
+  | "branding_publication"
+  | "branding_revision";
 
 export type MediaUsage = {
   source: MediaUsageSource;
   id: string;
   label: string;
   editHref: string | null;
+  /** Historical references are informative but do not prevent deletion. */
+  blocking?: boolean;
 };
 
 type DirectLookupRow = Record<string, unknown> & { id: string };
@@ -404,7 +409,7 @@ const DIRECT_LOOKUPS: DirectLookup[] = [
  * indexed usage-tracking table); revisit if the page/block count grows
  * enough to make this slow.
  */
-export async function findMediaAssetUsages(url: string): Promise<MediaUsage[]> {
+export async function findMediaAssetUsages(url: string, assetId?: string): Promise<MediaUsage[]> {
   const db = createServerDbClient();
   const usages: MediaUsage[] = [];
 
@@ -441,6 +446,31 @@ export async function findMediaAssetUsages(url: string): Promise<MediaUsage[]> {
     }
   }
 
+  if (assetId) {
+    const brandingLookups = [
+      { table: "site_branding", source: "branding_draft", label: "Branding draft (primary logo)", blocking: true },
+      { table: "site_branding_publications", source: "branding_publication", label: "Live branding (primary logo)", blocking: true },
+      { table: "site_branding_revisions", source: "branding_revision", label: "Branding revision (historical logo)", blocking: false },
+    ] as const;
+    for (const lookup of brandingLookups) {
+      const { data, error } = await (
+        // Generic table iteration is deliberately confined to this boundary.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        db.from(lookup.table as any) as any
+      ).select("id").eq("primary_logo_media_id", assetId);
+      if (error) throw error;
+      for (const row of data ?? []) {
+        usages.push({
+          source: lookup.source,
+          id: String(row.id),
+          label: lookup.label,
+          editHref: lookup.blocking ? "/admin/branding" : null,
+          blocking: lookup.blocking,
+        });
+      }
+    }
+  }
+
   return usages;
 }
 
@@ -457,8 +487,8 @@ export type DeleteMediaResult = { status: "deleted" } | { status: "blocked"; usa
 export async function deleteMediaAssetProtected(id: string): Promise<DeleteMediaResult> {
   const asset = await getMediaAssetById(id);
   if (!asset) return { status: "deleted" }; // already gone — matches deleteMediaAsset's prior no-op-on-missing behavior
-  const usages = await findMediaAssetUsages(asset.url);
-  if (usages.length > 0) {
+  const usages = await findMediaAssetUsages(asset.url, asset.id);
+  if (usages.some((usage) => usage.blocking !== false)) {
     return { status: "blocked", usages };
   }
   await deleteMediaAsset(id);
@@ -530,17 +560,24 @@ export async function replaceMediaAsset(oldAssetId: string, newAssetId: string):
   const { updatedBlocks, updatedColumns } = await replaceMediaAssetEverywhere(oldAsset.url, newAsset.url);
 
   const db = createServerDbClient();
+  const { data: brandingUpdates, error: brandingError } = await db.rpc("replace_branding_logo_asset_atomic", {
+    p_old_asset_id: oldAsset.id,
+    p_new_asset_id: newAsset.id,
+  });
+  if (brandingError) throw brandingError;
+
   const { error } = await db
     .from("media_assets")
     .update({ replaced_by: newAsset.id, replaced_at: new Date().toISOString() })
     .eq("id", oldAsset.id);
   if (error) throw error;
 
-  const updated = updatedBlocks + updatedColumns;
+  const updated = updatedBlocks + updatedColumns + (brandingUpdates ?? 0);
   await recordAudit("replace", "media_asset", oldAsset.id, {
     replacedWith: newAsset.id,
     updatedBlocks,
     updatedColumns,
+    brandingUpdates: brandingUpdates ?? 0,
   });
   return { updated };
 }

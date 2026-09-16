@@ -33,6 +33,7 @@ import { buttonGroupBlock } from "@/components/blocks/button-group";
 import { resourceListBlock } from "@/components/blocks/resource-list";
 import { sharedSectionBlock } from "@/components/blocks/shared-section";
 import { formBlock } from "@/components/blocks/form";
+import { BLOCK_APPEARANCE_CAPABILITIES, DEFAULT_CAPABILITIES } from "@/lib/blocks/appearance-capabilities";
 
 /**
  * The block registry (see CLAUDE.md / master prompt §6). Adding a block
@@ -76,7 +77,12 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
 };
 
 export function getBlockDefinition(type: string): BlockDefinition<unknown> | undefined {
-  return blockRegistry[type];
+  const definition = blockRegistry[type];
+  if (!definition) return undefined;
+  return {
+    ...definition,
+    appearance: BLOCK_APPEARANCE_CAPABILITIES[type as keyof typeof BLOCK_APPEARANCE_CAPABILITIES] ?? DEFAULT_CAPABILITIES,
+  };
 }
 
 // Client-safe summary for the admin block palette — BlockDefinition itself
@@ -88,18 +94,25 @@ export type BlockPaletteEntry = {
   category: BlockDefinition<unknown>["category"];
   description: BlockDefinition<unknown>["description"];
   adminFields: BlockDefinition<unknown>["adminFields"];
+  appearance: NonNullable<BlockDefinition<unknown>["appearance"]>;
   defaults: unknown;
 };
 
 export function getBlockPalette(): BlockPaletteEntry[] {
   return Object.values(blockRegistry)
-    .map((def) => ({
-      type: def.type,
-      label: def.label,
-      category: def.category,
-      description: def.description,
-      adminFields: def.adminFields,
-      defaults: def.defaults,
-    }))
+    .map((rawDefinition) => {
+      const def = getBlockDefinition(rawDefinition.type)!;
+      return {
+        type: def.type,
+        label: def.label,
+        category: def.category,
+        description: def.description,
+        adminFields: def.adminFields,
+        // Presence of an empty appearance object identifies a newly-created
+        // block and makes it inherit instead of freezing a legacy background.
+        defaults: { ...(def.defaults as Record<string, unknown>), appearance: {} },
+        appearance: def.appearance ?? DEFAULT_CAPABILITIES,
+      };
+    })
     .sort((a, b) => a.label.localeCompare(b.label));
 }

@@ -52,9 +52,7 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
           </h1>
           <div className="mt-2 mb-4 h-px w-24 bg-osi-steel-500/50" />
           <div
-            className={`space-y-4 text-base leading-relaxed ${
-              data.background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"
-            }`}
+            className="space-y-4 text-base leading-relaxed text-[var(--block-muted-text,var(--brand-color-muted-text-on-light))]"
           >
             {data.paragraphs.map((p, i) => (
               <p key={i}>{p}</p>

@@ -4,7 +4,7 @@ type Surface = "cream" | "navy";
 
 export function Eyebrow({ children, surface = "cream", className = "" }: { children: ReactNode; surface?: Surface; className?: string }) {
   return (
-    <p className={`text-xs font-semibold tracking-[0.12em] uppercase ${surface === "navy" ? "text-osi-gold-400" : "text-osi-gold-700"} ${className}`}>
+    <p className={`text-xs font-semibold tracking-[0.12em] uppercase ${surface === "navy" ? "text-brand-accent-dark" : "text-brand-accent-light"} ${className}`}>
       {children}
     </p>
   );
@@ -17,7 +17,7 @@ export function SectionHeader({ eyebrow, title, lede, align = "left", surface = 
       {eyebrow && <Eyebrow surface={surface} className="mb-3">{eyebrow}</Eyebrow>}
       <h2 className="font-editorial text-section font-semibold text-balance">{title}</h2>
       {lede && (
-        <p className={`mt-4 max-w-[var(--site-reading-width)] text-base leading-relaxed ${surface === "navy" ? "text-osi-slate-200" : "text-osi-slate-300"} ${centered ? "mx-auto" : ""}`}>
+        <p className={`mt-4 max-w-[var(--site-reading-width)] text-base leading-relaxed ${surface === "navy" ? "text-[var(--brand-color-muted-text-on-dark)]" : "text-[var(--brand-color-muted-text-on-light)]"} ${centered ? "mx-auto" : ""}`}>
           {lede}
         </p>
       )}
@@ -41,9 +41,9 @@ export function IconButton({ label, children, className = "", ...props }: { labe
 export function MediaFrame({ children, aspect = "video", className = "" }: { children?: ReactNode; aspect?: "video" | "square" | "portrait"; className?: string }) {
   const aspectClass = aspect === "square" ? "aspect-square" : aspect === "portrait" ? "aspect-[4/5]" : "aspect-video";
   return (
-    <div className={`relative overflow-hidden rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-osi-sand-300/30 ${aspectClass} ${className}`}>
+    <div className={`relative overflow-hidden rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] ${aspectClass} ${className}`}>
       {children ?? (
-        <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-osi-slate-300">
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-[var(--brand-color-muted-text-on-light)]">
           Media unavailable
         </div>
       )}
@@ -52,7 +52,7 @@ export function MediaFrame({ children, aspect = "video", className = "" }: { chi
 }
 
 export function Divider({ surface = "cream", className = "" }: { surface?: Surface; className?: string }) {
-  return <hr className={`border-0 border-t ${surface === "navy" ? "border-white/14" : "border-osi-navy-900/14"} ${className}`} />;
+  return <hr className={`border-0 border-t ${surface === "navy" ? "border-[var(--brand-color-border-on-dark)]" : "border-[var(--site-border)]"} ${className}`} />;
 }
 
 export function StatusMessage({ children, tone = "info", title }: { children: ReactNode; tone?: "info" | "success" | "error"; title?: string }) {
@@ -68,9 +68,9 @@ export function StatusMessage({ children, tone = "info", title }: { children: Re
 export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
   return (
     <div className="rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] px-6 py-10 text-center md:px-10">
-      <span aria-hidden="true" className="mx-auto mb-5 block h-10 w-px bg-osi-gold-500" />
+      <span aria-hidden="true" className="mx-auto mb-5 block h-10 w-px bg-brand-accent-light" />
       <h2 className="font-editorial text-2xl font-semibold text-balance">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-osi-slate-300">{description}</p>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[var(--brand-color-muted-text-on-light)]">{description}</p>
       {action && <div className="mt-6 flex justify-center">{action}</div>}
     </div>
   );

@@ -1,6 +1,6 @@
 # OSI CMS branding module and block theming — implementation plan
 
-> **Third-phase gate:** Do not start this plan until the CMS remediation, the admin UI redesign, and the public-site UI/motion redesign are merged, verified, and visually stable. The branding module must parameterize the finished design system; it must not compete with either redesign while their foundations are still changing.
+> **Third-phase gate (revised 2026-09-15 — see "Current status and phase sequencing" below):** The blanket "wait until both prior plans are fully merged" gate turned out to be stricter than necessary and, if followed literally, would sit idle indefinitely. The admin and public redesigns are executed incrementally against `main` (not isolated branches) and are realistically going to have phases still open when this plan starts. What actually matters is *file-level* non-collision, not calendar sequencing. See the status section for exactly which phases of this plan are safe to start now versus gated.
 
 **Goal:** Give an authorized administrator a safe, understandable branding workspace where they can manage the public site's primary logo, brand palette, global typography roles, and defaults for each registered block type. Page editors can then choose approved brand colors and fonts while adding or editing a block, without gaining an unrestricted CSS editor or changing the neutral admin interface.
 
@@ -24,6 +24,46 @@ The responsibilities remain deliberately separate:
 - The **branding module** changes the public identity through approved tokens, block defaults, and explicit overrides. Its editing interface follows the admin design system, while its isolated preview follows the public design system.
 
 Do not solve branding by applying public CSS variables to `<html>` or `<body>` globally. Branding must be scoped to the public site and authenticated public previews so the admin remains visually stable.
+
+---
+
+## Current status and phase sequencing (investigated 2026-09-15)
+
+A read-only audit of the actual repo state (not just the plan documents) found both prior plans are *partially* landed, executed incrementally straight onto `main`:
+
+**Admin UI redesign (`2026-09-14-admin-ui-motion-redesign.md`) — codex is actively implementing it:**
+
+- Phase 1 (admin tokens/primitive library) and Phase 4 (custom dialogs/toasts, no native `alert`/`confirm`/`prompt`) are done and real — `app/admin/admin.css`, `components/admin/ui/*`, `confirm-dialog.tsx`, `toast.tsx` are in active use. Safe foundations to build on now.
+- Phase 2 (responsive shell/nav) and Phase 3 (lists/tables/filters) and Phase 5 (dashboard) are done in substance, just filed under different names than the plan specifies (e.g. one `admin-shell.tsx` instead of a `shell/` directory; `admin-data-table.tsx`/`admin-list-controls.tsx` instead of `data-table.tsx`/`filter-bar.tsx`).
+- **Phase 6 (page/shared-section editing workspace) is in progress right now** — the page editor, `components/admin/block-fields-form.tsx`, `components/admin/field-renderer.tsx`, and the block editor inspector are actively being reshaped (sticky command bar, editor-shell primitives, block card treatment).
+- Phases 7–10 (product/entity/form editors, media/submissions polish, auth/empty states, QA/docs) are not started.
+
+**Public site redesign (`2026-09-15-public-site-ui-motion-redesign.md`):**
+
+- Phases 0–9 and the code/verification portion of Phase 10 landed in commit `2071d44`: public tokens, shell, hero system, product discovery/detail, search/resources/news, forms, maintained block renderers, responsive behavior, and automated accessibility coverage are implemented.
+- The public layer is visually stable enough for branding work. Remaining release activities are production Lighthouse/Core Web Vitals, real-device/screen-reader checks, an exhaustive generated fixture for every data-backed block state, and the user guide (explicitly deferred by the user).
+
+**What this means for this plan's sequencing:**
+
+- **Direct file-level collision risk exists only with admin Phase 6.** This plan's own Phase 6 ("Page and shared-section editor controls") edits `BlockFieldsForm`, the block editor inspector grouping, and appearance selectors — the exact files codex has open right now. Do not start this plan's Phase 5 (branding admin module) or Phase 6 (page-editor appearance integration) until admin-ui-motion-redesign's Phase 6 is merged and stable. Re-check before starting either phase; a quick `git log`/file diff against the admin editor files is enough, no need to re-run a full audit.
+- **No collision with Phases 0–4** (token inventory, database/RLS/validation/audit, font catalog + theme compiler, semantic migration of the public shell/UI primitives, block capability metadata on the registry/`BlockRenderer`). None of these touch `app/admin/(dashboard)/pages/[id]/page-editor.tsx`, `components/admin/block-fields-form.tsx`, or `components/admin/field-renderer.tsx` — they are safe to start now, concurrently with codex's admin Phase 6 work.
+- **The public redesign is no longer a sequencing blocker.** The branding plan can now treat the public shell and maintained block markup as its stable integration surface. Phase 3 should migrate the existing public semantic roles rather than recreating them, and Phase 4 capability metadata should preserve the renderer semantics and accessible interactions delivered in `2071d44`.
+
+### Takeover checkpoint — Phase 2 complete (2026-09-15)
+
+- Phases 0 and 1 were rechecked against the repository contracts required by Phase 2. No blocking defect or corrective change was needed; the previously documented revision-version uniqueness item remains deferred to the final whole-branch review.
+- Phase 2 is implemented: the nine-entry code-owned font catalog, self-hosted public font declarations, server-only published-brand resolver with OSI fallback, deterministic safe CSS-variable compiler, and public-only server-rendered theme boundary are in place.
+- The root/admin route graph no longer imports or requests public fonts. The seeded publication preserves Poppins/Orbitron/Montserrat and the existing OSI colors without a client-side theme flash.
+- See `docs/reviews/2026-09-15-branding-phase-2-theme-compiler.md` for implementation and verification details.
+
+### Implementation checkpoint — Phases 3–9 complete in the workspace (2026-09-15)
+
+- The public shell, semantic primitives, styleguide, and all block renderers now resolve published branding through a public-only theme boundary. Compatibility aliases keep legacy OSI utilities responsive while the maintained public chrome uses semantic utilities directly.
+- All 34 registered blocks have explicit appearance capabilities, safe inheritance/default/override resolution, and legacy-background compatibility. Page and shared-section saves validate every token and font reference against the published configuration on the server.
+- `/admin/branding` provides logo, governed palette, role/surface, typography, block-default, draft/publish/reset, history/restore, and isolated responsive preview workflows using the neutral admin design system. `/branding-preview` validates same-origin structured messages and never accepts arbitrary CSS or HTML. Saved real-page preview uses the branding draft throughout the public shell.
+- Branding logo references participate in media usage detection and atomic replacement. Brand-token usage scanning covers draft/live branding, current page and shared-section blocks, publications, defaults, and historical revisions. Migration `0035_branding_media_replacement.sql` also closes the deferred branding-revision version uniqueness item.
+- The client handbook, decisions record, semantic public styleguide, and final Claude handoff are updated. Automated typecheck/lint/unit/build/public route/branding boundary/axe verification is recorded in the handoff.
+- Operational boundary: migration `0035` remains a repository migration until it is applied in the target Supabase environment, and no production deployment was performed in this implementation session. Authenticated admin browser QA requires credentials that were not available; the route is still covered by typecheck, build, component/domain tests, capability guards, and the existing authenticated axe matrix configuration.
 
 ---
 
@@ -548,6 +588,8 @@ The branding module defines approved values; the page/shared-section editors con
 
 ### Phase 5 — Branding admin module
 
+> **Gate:** confirm admin-ui-motion-redesign Phase 6 (page/shared-section editor) is merged before starting — see "Current status and phase sequencing" above. This phase's own new files don't collide directly, but it's easier to build against a settled editor-shell/inspector pattern than a moving one.
+
 **Create:**
 
 - Branding route and navigation entry.
@@ -570,6 +612,8 @@ The branding module defines approved values; the page/shared-section editors con
 **Acceptance:** An authorized administrator can change a draft logo, palette, typography roles, and a block-type default, preview them, publish them, and restore a prior revision without developer intervention.
 
 ### Phase 6 — Page and shared-section editor controls
+
+> **Hard gate:** do NOT start this phase until admin-ui-motion-redesign Phase 6 is merged and stable. Both plans edit `BlockFieldsForm`, the block editor inspector grouping, and the page editor directly — starting this concurrently with codex's in-progress work on those same files will produce real merge conflicts. Re-verify status (`git log` / diff the relevant files) immediately before starting, rather than trusting this note's staleness.
 
 **Refactor:**
 

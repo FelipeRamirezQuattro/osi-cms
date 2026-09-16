@@ -46,10 +46,10 @@ export function Section({
 }) {
   const bgClass =
     background === "navy"
-      ? "bg-osi-navy-900 text-osi-white"
+      ? "brand-section brand-section-dark"
       : background === "cream"
-        ? "bg-osi-cream-100 text-osi-navy-900"
-        : "bg-transparent";
+        ? "brand-section brand-section-light"
+        : "brand-section brand-section-transparent";
   const seamClass =
     seam === "both"
       ? "diagonal-seam-t diagonal-seam-b"

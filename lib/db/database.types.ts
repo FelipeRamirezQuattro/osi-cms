@@ -1446,6 +1446,10 @@ export type Database = {
         Args: { p_expected_version: number };
         Returns: number;
       };
+      replace_branding_logo_asset_atomic: {
+        Args: { p_new_asset_id: string; p_old_asset_id: string };
+        Returns: number;
+      };
       restore_branding_revision_to_draft_atomic: {
         Args: { p_expected_version: number; p_revision_id: string };
         Returns: number;

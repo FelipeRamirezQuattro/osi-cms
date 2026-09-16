@@ -151,7 +151,7 @@ export async function getMediaUsagesAction(id: string): Promise<MediaUsage[]> {
   await requireCapability("delete_media");
   const asset = await getMediaAssetById(id);
   if (!asset) return [];
-  return findMediaAssetUsages(asset.url);
+  return findMediaAssetUsages(asset.url, asset.id);
 }
 
 export type DeleteMediaActionResult = DeleteMediaResult | { status: "error"; message: string };

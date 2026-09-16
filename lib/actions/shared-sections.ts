@@ -13,6 +13,9 @@ import {
 import { isVersionConflictError } from "@/lib/data/pages";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { validateBlockList } from "@/lib/validation/blocks";
+import { validateBlockAppearanceReferences } from "@/lib/validation/block-appearance";
+import { getPublishedBranding } from "@/lib/data/branding";
+import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
 import { createSharedSectionSchema, sharedSectionTitleSchema } from "@/lib/validation/shared-sections";
 
 export type SharedSectionSaveResult =
@@ -66,6 +69,17 @@ export async function saveSharedSectionDraftAction(
 
   const validationError = validateBlockList(blocks);
   if (validationError) return validationError;
+  let publishedBrandingConfig = OSI_SEED_BRANDING_CONFIG;
+  try {
+    const publishedBranding = await getPublishedBranding();
+    if (publishedBranding) publishedBrandingConfig = publishedBranding.config;
+  } catch {
+    // Malformed/unreachable publication row — fail open to the built-in
+    // OSI defaults rather than blocking every save (matches
+    // resolvePublishedBranding's fallback behavior for public routes).
+  }
+  const appearanceError = validateBlockAppearanceReferences(blocks, publishedBrandingConfig);
+  if (appearanceError) return appearanceError;
 
   try {
     const newVersion = await saveSharedSectionDraft(sectionId, parsedTitle.data, blocks, expectedVersion);

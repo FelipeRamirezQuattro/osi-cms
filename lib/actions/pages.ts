@@ -22,6 +22,9 @@ import { runPagePreflight } from "@/lib/data/publish-preflight";
 import type { PreflightSummary } from "@/lib/validation/preflight";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { validateBlockList } from "@/lib/validation/blocks";
+import { validateBlockAppearanceReferences } from "@/lib/validation/block-appearance";
+import { getPublishedBranding } from "@/lib/data/branding";
+import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
 import { newPageSlugSchema, pageMetaSchema, type PageTemplate } from "@/lib/validation/pages";
 
 /**
@@ -127,6 +130,17 @@ export async function saveDraftAction(
 
   const validationError = validateBlocks(blocks);
   if (validationError) return validationError;
+  let publishedBrandingConfig = OSI_SEED_BRANDING_CONFIG;
+  try {
+    const publishedBranding = await getPublishedBranding();
+    if (publishedBranding) publishedBrandingConfig = publishedBranding.config;
+  } catch {
+    // Malformed/unreachable publication row — fail open to the built-in
+    // OSI defaults rather than blocking every page save (matches
+    // resolvePublishedBranding's fallback behavior for public routes).
+  }
+  const appearanceError = validateBlockAppearanceReferences(blocks, publishedBrandingConfig);
+  if (appearanceError) return appearanceError;
 
   try {
     const newVersion = await savePageDraft(pageId, parsedMeta.data, blocks, expectedVersion);

@@ -1,5 +1,8 @@
 import { getBlockDefinition } from "@/lib/blocks/registry";
 import type { Tables } from "@/lib/db/database.types";
+import { resolveBlockAppearanceStyle } from "@/lib/branding/block-appearance";
+import type { BlockCommon } from "@/lib/blocks/common";
+import { getPublicFontVariableClassNames } from "@/lib/fonts/public-fonts";
 
 function DevDiagnostic({ children }: { children: React.ReactNode }) {
   if (process.env.NODE_ENV === "production") return null;
@@ -53,13 +56,30 @@ export function BlockRenderer({
         }
 
         const Render = definition.Render;
+        const common = parsed.data as BlockCommon;
+        const resolvedAppearance = resolveBlockAppearanceStyle({
+          blockType: definition.type,
+          legacyBackground: common.background,
+          appearance: common.appearance,
+          capabilities: definition.appearance!,
+        });
+        const instanceFontClasses = getPublicFontVariableClassNames(
+          Object.values(common.appearance?.typography ?? {}).filter((key): key is NonNullable<typeof key> => Boolean(key)),
+        );
         return (
-          <Render
+          <div
             key={block.id}
-            data={parsed.data}
-            visitedSharedSectionKeys={visitedSharedSectionKeys}
-            sharedSectionDepth={sharedSectionDepth}
-          />
+            className={`brand-block contents ${instanceFontClasses}`.trim()}
+            style={resolvedAppearance.style}
+            data-block-type={definition.type}
+            data-appearance-source={resolvedAppearance.source}
+          >
+            <Render
+              data={parsed.data}
+              visitedSharedSectionKeys={visitedSharedSectionKeys}
+              sharedSectionDepth={sharedSectionDepth}
+            />
+          </div>
         );
       })}
     </>

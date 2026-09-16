@@ -28,6 +28,9 @@ import {
   SectionHeader,
   StatusMessage,
 } from "@/components/ui/public-primitives";
+import { PublicThemeBoundary } from "@/components/branding/public-theme-boundary";
+import { resolvePublishedBranding } from "@/lib/branding/resolve";
+import { getFontCatalogEntry } from "@/lib/fonts/catalog";
 
 export const metadata: Metadata = {
   title: "Styleguide — OSI",
@@ -42,22 +45,25 @@ export const metadata: Metadata = {
 // fails the build the moment that call runs.
 export const dynamic = "force-dynamic";
 
-const COLORS = [
-  ["osi-navy-900", "#001B33"],
-  ["osi-navy-800", "#001C34"],
-  ["osi-navy-700", "#04243D"],
-  ["osi-navy-600", "#133752"],
-  ["osi-steel-500", "#234E7B"],
-  ["osi-slate-400", "#4C6880"],
-  ["osi-slate-300", "#576979"],
-  ["osi-slate-200", "#818F9B"],
-  ["osi-cream-100", "#F2E9DE"],
-  ["osi-cream-200", "#EFE8DD"],
-  ["osi-sand-300", "#D0C0A7"],
-  ["osi-gold-500", "#E2902A"],
-  ["osi-gold-400", "#F0A93D"],
-  ["osi-gold-700", "#885619"],
-] as const;
+const ROLE_LABELS = {
+  primary: "Primary",
+  secondary: "Secondary",
+  accentOnDark: "Accent on dark",
+  accentOnLight: "Accent on light",
+  lightSurface: "Light surface",
+  darkSurface: "Dark surface",
+  textOnLight: "Text on light",
+  textOnDark: "Text on dark",
+  mutedTextOnLight: "Muted text on light",
+  mutedTextOnDark: "Muted text on dark",
+  borderOnLight: "Border on light",
+  borderOnDark: "Border on dark",
+  focusIndicator: "Focus indicator",
+  error: "Error",
+  success: "Success",
+  warning: "Warning",
+  info: "Information",
+} as const;
 
 function Section({
   bg,
@@ -71,14 +77,15 @@ function Section({
   return (
     <section
       className={`relative overflow-visible px-6 py-16 md:px-12 ${
-        bg === "navy" ? "bg-osi-navy-900 text-osi-white" : "bg-osi-cream-100 text-osi-navy-900"
+        bg === "navy"
+          ? "bg-brand-surface-dark text-brand-text-dark"
+          : "bg-brand-surface-light text-brand-text-light"
       } ${className}`}
     >
       <div className="mx-auto max-w-6xl">{children}</div>
     </section>
   );
 }
-
 function Heading({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
@@ -87,30 +94,64 @@ function Heading({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function StyleguidePage() {
+export default async function StyleguidePage() {
+  const branding = await resolvePublishedBranding();
+  const swatchById = new Map(
+    branding.config.swatches.map((swatch) => [swatch.id, swatch]),
+  );
+  const typographyNames = Object.fromEntries(
+    Object.entries(branding.config.typography).map(([role, key]) => [
+      role,
+      getFontCatalogEntry(key)?.family ?? key,
+    ]),
+  );
+
   return (
-    <main className="site-shell">
+    <PublicThemeBoundary branding={branding}>
+      <main>
       <Section bg="navy" className="diagonal-seam-b pb-24">
-        <p className="mb-2 font-display text-small-label tracking-wide-label text-osi-gold-500 uppercase">
+        <p className="mb-2 font-display text-small-label tracking-wide-label text-brand-accent-dark uppercase">
           OSI design system
         </p>
         <h1 className="font-display text-hero tracking-tightest-display uppercase">Styleguide</h1>
-        <p className="mt-4 max-w-xl text-osi-slate-200">
+        <p className="mt-4 max-w-xl text-[var(--brand-color-muted-text-on-dark)]">
           Every token and primitive from the mockup, rendered in isolation. This page is the
           fidelity checkpoint — not part of the public site nav, `noindex`.
         </p>
       </Section>
 
       <Section bg="cream" className="pt-24">
-        <Heading>Color</Heading>
+        <Heading>Published brand palette</Heading>
+        <p className="mb-8 max-w-2xl text-[var(--brand-color-muted-text-on-light)]">
+          These are the governed swatches currently published from the Branding module. Public components consume the semantic roles below rather than depending on a swatch name.
+        </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
-          {COLORS.map(([name, hex]) => (
-            <div key={name}>
-              <div className="h-16 rounded border border-osi-sand-300" style={{ background: hex }} />
-              <p className="mt-2 font-display text-xs tracking-wide-label uppercase">{name}</p>
-              <p className="text-xs text-osi-slate-400">{hex}</p>
+          {branding.config.swatches.map((swatch) => (
+            <div key={swatch.id}>
+              <div className="h-16 rounded border border-[var(--site-border)]" style={{ background: swatch.hex }} />
+              <p className="mt-2 font-display text-xs tracking-wide-label uppercase">{swatch.name}</p>
+              <p className="text-xs text-[var(--brand-color-muted-text-on-light)]">{swatch.hex}</p>
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section bg="cream">
+        <Heading>Semantic color roles</Heading>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {Object.entries(ROLE_LABELS).map(([role, label]) => {
+            const reference = branding.config.roles[role as keyof typeof branding.config.roles];
+            const swatch = swatchById.get(reference.swatchId);
+            return (
+              <div key={role} className="rounded border border-[var(--site-border)] bg-[var(--site-surface-raised)] p-4">
+                <div className="mb-3 h-10 rounded border border-[var(--site-border)]" style={{ background: swatch?.hex }} />
+                <p className="font-display text-xs tracking-wide-label uppercase">{label}</p>
+                <p className="mt-1 text-xs text-[var(--brand-color-muted-text-on-light)]">
+                  {swatch?.name ?? reference.swatchId}{reference.opacity < 1 ? ` · ${Math.round(reference.opacity * 100)}%` : ""}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </Section>
 
@@ -121,14 +162,14 @@ export default function StyleguidePage() {
           <p className="font-editorial text-section font-semibold text-balance">
             Editorial section title that remains readable across multiple lines
           </p>
-          <p className="text-xs text-osi-slate-400">
-            Montserrat is reserved for editorial headings; Orbitron stays limited to short display moments.
+          <p className="text-xs text-[var(--brand-color-muted-text-on-light)]">
+            The published role mapping is display: {typographyNames.display}, heading: {typographyNames.heading}, body: {typographyNames.body}, and interface/label: {typographyNames.label}.
           </p>
           <p className="font-display text-card-label tracking-wide-display uppercase">
             Card label
           </p>
           <p className="max-w-xl text-base">
-            Body copy and interface labels use Poppins at a comfortable 1.7 line-height,
+            Body copy uses {typographyNames.body} at a comfortable 1.7 line-height,
             never dense. This is a sample paragraph long enough to show the measure and rhythm the
             mockup uses throughout prose sections.
           </p>
@@ -419,6 +460,7 @@ export default function StyleguidePage() {
           ))}
         </AnimatedGroup>
       </Section>
-    </main>
+      </main>
+    </PublicThemeBoundary>
   );
 }

@@ -17,11 +17,11 @@ import {
 import { isVersionConflictError } from "@/lib/data/pages";
 import { brandingConfigSchema } from "@/lib/branding/schema";
 import type { z } from "zod";
+import { findBrandTokenUsages } from "@/lib/data/branding-usage";
+import type { BrandTokenUsage } from "@/lib/branding/usage";
 
 /**
- * Server Actions for the branding module's data layer (Phase 1 — schema/
- * validation/permissions/audit only; the theme compiler and admin UI are
- * later phases, so nothing yet calls most of these). Every action here
+ * Server Actions for the branding module's data layer. Every action here
  * requires the existing `manage_settings` capability (admin-only, see
  * lib/auth/capabilities.ts) per the Phase 1 brief — RLS
  * (0032_site_branding.sql) enforces the same rule independently at the
@@ -71,6 +71,11 @@ export async function getPublishedBrandingAction(): Promise<BrandingPublication 
 export async function listBrandingRevisionsAction(limit?: number): Promise<BrandingRevision[]> {
   await requireCapability("manage_settings");
   return listBrandingRevisions(limit);
+}
+
+export async function findBrandTokenUsagesAction(tokenId: string): Promise<BrandTokenUsage[]> {
+  await requireCapability("manage_settings");
+  return findBrandTokenUsages(tokenId);
 }
 
 /**

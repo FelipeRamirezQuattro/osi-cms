@@ -23,11 +23,7 @@ type Data = z.infer<typeof schema>;
 function StatItem({ value, label, background }: z.infer<typeof statSchema> & { background: Data["background"] }) {
   return (
     <div className="relative z-10 h-full p-8">
-      <p
-        className={`font-display text-3xl tracking-tightest-display ${
-          background === "cream" ? "text-osi-gold-700" : "text-osi-gold-500"
-        }`}
-      >
+      <p className="font-display text-3xl tracking-tightest-display text-[var(--block-accent,var(--brand-color-accent-on-light))]">
         {value}
       </p>
       <p className={`mt-2 text-sm ${background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>

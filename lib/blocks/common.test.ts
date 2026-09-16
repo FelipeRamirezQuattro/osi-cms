@@ -24,4 +24,16 @@ describe("blockCommonSchema's background enum", () => {
     const result = blockCommonSchema.safeParse({});
     expect(result.success && result.data.background).toBe("cream");
   });
+
+  it("keeps legacy blocks distinguishable from new inheriting blocks", () => {
+    const legacy = blockCommonSchema.parse({});
+    const inheriting = blockCommonSchema.parse({ appearance: {} });
+    expect(legacy.appearance).toBeUndefined();
+    expect(inheriting.appearance).toEqual({});
+  });
+
+  it("rejects arbitrary font and token syntax in appearance overrides", () => {
+    expect(blockCommonSchema.safeParse({ appearance: { typography: { body: "url(evil)" } } }).success).toBe(false);
+    expect(blockCommonSchema.safeParse({ appearance: { surfacePresetId: "bad value" } }).success).toBe(false);
+  });
 });

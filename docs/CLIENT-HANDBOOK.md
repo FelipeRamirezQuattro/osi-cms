@@ -222,6 +222,60 @@ replacement image from that same panel; every one of those uses is
 swapped to the replacement automatically, and the delete button then
 goes through.
 
+## Branding
+
+**Branding** is the workspace for the public site's visual identity. It
+is intentionally separate from **Settings**: Settings holds contact and
+operational information, while Branding controls the logo, approved
+colors, public fonts, and the default appearance of content blocks. The
+admin interface stays neutral when you change public branding.
+
+Branding has its own draft and publication workflow. **Save draft** keeps
+your work private. **Publish** validates the complete configuration,
+creates a restorable revision, and makes it visible across the public
+site. **Reset** replaces the draft with the current live branding. The
+revision list can restore an older version into the draft; review and
+publish it separately when you are ready.
+
+Use the isolated preview to compare **Draft** and **Live** at mobile,
+tablet, and desktop widths. The preview is representative, while the
+normal page preview shows saved page content together with the saved
+branding draft. Unsaved fields need to be saved before they appear in a
+real-page preview.
+
+For the primary logo, choose an image from the media library and provide
+the organization's name as its accessible text. Prefer a transparent
+SVG or a high-resolution transparent PNG with comfortable clear space;
+do not add the word “logo” to the accessible name. The system preserves
+the file's proportions and reserves its display size. If no image is
+selected, the OSI text mark is used as a safe fallback. A logo asset that
+is in use cannot be deleted until its branding references are replaced.
+
+The color palette contains a governed set of stable swatches. You can
+rename or recolor those swatches; every role or block that refers to the
+same swatch updates with it. **Color roles and surfaces** is the advanced
+area that maps swatches to jobs such as primary, accent, text, borders,
+and light/dark surfaces. Publishing is blocked when required text and
+surface pairs do not meet the built-in contrast checks. The blue focus
+indicator is deliberately fixed so keyboard focus remains visible.
+
+Typography is chosen from the vetted font catalog for four roles:
+display, heading, body, and interface/label. Fonts are self-hosted and
+only compatible choices are offered; uploaded font files and arbitrary
+font URLs are not supported. Changing a global role updates blocks that
+still inherit it.
+
+**Defaults by block** controls the inherited surface, accent, and font
+roles for each kind of block. In a page or shared-section editor, the
+**Appearance** controls show only the choices supported by that block.
+Leave a value at **Use block default** to inherit future brand updates,
+or choose an approved override for an exception. **Reset all to block
+defaults** removes the block's overrides and returns it to inheritance.
+Older blocks keep their legacy background until an editor deliberately
+opts them into the new inheritance model — and the Surface field's
+**Legacy** option stays available afterward too, so choosing it again
+reverts the block to its original background at any time.
+
 ## Submissions
 
 **Submissions** is the inbox for every form on the site — the main

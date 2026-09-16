@@ -40,6 +40,7 @@ function createFakeDbClient(
     remove: (paths: string[]) => Promise<{ error: unknown }>;
     getPublicUrl: () => { data: { publicUrl: string } };
   }> = {},
+  rpcResponse: { data: number | null; error: unknown } = { data: 0, error: null },
 ) {
   function makeChain(table: string) {
     const queue = tableQueues[table] ?? [];
@@ -58,6 +59,7 @@ function createFakeDbClient(
 
   return {
     from: (table: string) => makeChain(table),
+    rpc: vi.fn(async () => rpcResponse),
     storage: {
       from: () => ({
         upload: storage.upload ?? (async () => ({ error: null })),
@@ -65,6 +67,14 @@ function createFakeDbClient(
         remove: storage.remove ?? (async () => ({ error: null })),
       }),
     },
+  };
+}
+
+function emptyBrandingLookupQueues(): TableQueues {
+  return {
+    site_branding: [{ data: [], error: null }],
+    site_branding_publications: [{ data: [], error: null }],
+    site_branding_revisions: [{ data: [], error: null }],
   };
 }
 
@@ -283,6 +293,7 @@ describe("deleteMediaAssetProtected", () => {
       directory_contacts: [{ data: [], error: null }],
       resources: [{ data: [], error: null }],
       site_settings: [{ data: [], error: null }],
+      ...emptyBrandingLookupQueues(),
     });
     mockCreateServerDbClient.mockReturnValue(fake);
 
@@ -304,6 +315,7 @@ describe("deleteMediaAssetProtected", () => {
       ],
       page_blocks: [{ data: [], error: null }],
       ...emptyDirectLookupQueues(),
+      ...emptyBrandingLookupQueues(),
     });
     mockCreateServerDbClient.mockReturnValue(fake);
 
@@ -356,6 +368,7 @@ describe("replaceMediaAsset", () => {
       replacedWith: "new-1",
       updatedBlocks: 1,
       updatedColumns: 0,
+      brandingUpdates: 0,
     });
   });
 

@@ -2,7 +2,12 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { normalizeAnnouncementBar } from "@/components/layout/announcement-bar";
 import { AnnouncementBar } from "@/components/layout/announcement-bar-client";
+import { PublicThemeBoundary } from "@/components/branding/public-theme-boundary";
+import { resolvePublishedBranding } from "@/lib/branding/resolve";
+import { resolveDraftBranding } from "@/lib/branding/resolve";
 import { getSiteSettings } from "@/lib/data/settings";
+import { getMediaAssetById } from "@/lib/data/media";
+import { headers } from "next/headers";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteUrl } from "@/lib/seo";
 
@@ -26,7 +31,10 @@ export const dynamic = "force-dynamic";
 // is what lets it commit a real 404 status, so the reuse only covers
 // this layout, not the whole route group.
 export async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettings();
+  const requestHeaders = await headers();
+  const isDraftPreview = requestHeaders.get("x-osi-branding-preview") === "draft";
+  const [settings, branding] = await Promise.all([getSiteSettings(), isDraftPreview ? resolveDraftBranding() : resolvePublishedBranding()]);
+  const logoAsset = branding.config.logo.mediaAssetId ? await getMediaAssetById(branding.config.logo.mediaAssetId) : null;
   const socialLinks = [
     settings.social_facebook,
     settings.social_linkedin,
@@ -35,7 +43,7 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
   ].filter((url): url is string => Boolean(url));
 
   return (
-    <div className="site-shell flex min-h-dvh flex-1 flex-col">
+    <PublicThemeBoundary branding={branding} className="flex min-h-dvh flex-1 flex-col">
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
       {/*
        * Skip link (Task 14) — invisible until it receives keyboard focus
@@ -47,17 +55,17 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
        */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-osi-navy-900 focus:px-4 focus:py-2 focus:text-sm focus:text-osi-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-brand-surface-dark focus:px-4 focus:py-2 focus:text-sm focus:text-brand-text-dark"
       >
         Skip to main content
       </a>
       <AnnouncementBar settings={normalizeAnnouncementBar(settings.announcement_bar)} />
-      <Header />
+      <Header branding={branding.config} logoAsset={logoAsset} />
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         {children}
       </main>
-      <Footer />
-    </div>
+      <Footer branding={branding.config} logoAsset={logoAsset} />
+    </PublicThemeBoundary>
   );
 }
 

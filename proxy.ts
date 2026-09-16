@@ -69,11 +69,27 @@ import { guardAdminRequest, publicSlugIsResolvable } from "@/lib/auth";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // `x-osi-branding-preview` switches a public request to draft branding
+  // (see app/(site)/layout.tsx). It must never be attacker-controlled: an
+  // anonymous request that supplied this header itself would otherwise ride
+  // along unchanged into every non-/preview response. RLS already denies an
+  // anonymous read of the draft row, so this is defense in depth, not the
+  // only thing standing between a visitor and draft branding — but it
+  // closes the gap structurally instead of leaving it to fail closed only
+  // by coincidence of today's RLS shape.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete("x-osi-branding-preview");
+
   if (pathname.startsWith("/admin")) {
     return guardAdminRequest(request);
   }
 
-  return maybeRewriteToGenuine404(request);
+  if (pathname.startsWith("/preview/")) {
+    requestHeaders.set("x-osi-branding-preview", "draft");
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  return maybeRewriteToGenuine404(request, requestHeaders);
 }
 
 // First-path-segments that are never handled by the [...slug] catch-all
@@ -100,6 +116,7 @@ export const SKIPPED_TOP_SEGMENTS = new Set([
   "search",
   "contact",
   "styleguide",
+  "branding-preview",
   // The rewrite target itself (app/(site-404)/system-not-found) — not a
   // real destination anyone links to, but skipped defensively so a
   // direct hit on it (or Next re-running proxy against the rewritten
@@ -116,30 +133,32 @@ function isAssetPath(pathname: string): boolean {
   );
 }
 
-async function maybeRewriteToGenuine404(request: NextRequest): Promise<NextResponse> {
+async function maybeRewriteToGenuine404(request: NextRequest, requestHeaders: Headers): Promise<NextResponse> {
+  const next = () => NextResponse.next({ request: { headers: requestHeaders } });
+
   if (request.method !== "GET" && request.method !== "HEAD") {
-    return NextResponse.next();
+    return next();
   }
   // Next's own client-side navigation/prefetch fetches — not a top-level
   // document load, so there's no HTTP status a user or crawler ever sees
   // for these, and rewriting one of these to a different page than the
   // client's router expects would break client-side routing.
   if (request.headers.get("RSC") || request.headers.get("Next-Router-Prefetch")) {
-    return NextResponse.next();
+    return next();
   }
 
   const { pathname } = request.nextUrl;
-  if (isAssetPath(pathname)) return NextResponse.next();
+  if (isAssetPath(pathname)) return next();
 
   const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 0) return NextResponse.next(); // home
-  if (SKIPPED_TOP_SEGMENTS.has(segments[0])) return NextResponse.next();
+  if (segments.length === 0) return next(); // home
+  if (SKIPPED_TOP_SEGMENTS.has(segments[0])) return next();
 
   const slug = segments.join("/");
   const exists = await publicSlugIsResolvable(slug);
-  if (exists) return NextResponse.next();
+  if (exists) return next();
 
-  return NextResponse.rewrite(new URL("/system-not-found", request.url));
+  return NextResponse.rewrite(new URL("/system-not-found", request.url), { request: { headers: requestHeaders } });
 }
 
 export const config = {
