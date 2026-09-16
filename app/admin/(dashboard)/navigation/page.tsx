@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getMenuItemsAction } from "@/lib/actions/navigation";
 import type { NavMenuKey } from "@/lib/actions/navigation";
+import { listLinkableResourcesForNav } from "@/lib/data/navigation";
 import { NavEditor } from "@/app/admin/(dashboard)/navigation/nav-editor";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,10 @@ export default async function NavigationPage({
   const raw = typeof params.menu === "string" ? params.menu : "mega";
   const key = (MENU_KEYS.includes(raw as NavMenuKey) ? raw : "mega") as NavMenuKey;
 
-  const { menu, items } = await getMenuItemsAction(key);
+  const [{ menu, items }, linkableResources] = await Promise.all([
+    getMenuItemsAction(key),
+    listLinkableResourcesForNav(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -40,7 +44,7 @@ export default async function NavigationPage({
         ))}
       </div>
 
-      <NavEditor menuId={menu.id} items={items} />
+      <NavEditor menuId={menu.id} items={items} linkableResources={linkableResources} />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "@/lib/actions/navigation";
 import type { Tables } from "@/lib/db/database.types";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
+import type { LinkableResource } from "@/lib/data/navigation";
 
 type NavItem = Tables<"nav_items">;
 
@@ -17,7 +18,15 @@ type FormValues = { label: string; href: string; badge: string; is_external: boo
 
 const EMPTY_FORM: FormValues = { label: "", href: "", badge: "", is_external: false };
 
-export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] }) {
+export function NavEditor({
+  menuId,
+  items,
+  linkableResources,
+}: {
+  menuId: string;
+  items: NavItem[];
+  linkableResources: LinkableResource[];
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [addingUnder, setAddingUnder] = useState<string | null | undefined>(undefined);
@@ -111,6 +120,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
             <div className="border-t border-osi-sand-300 p-3">
               <NavItemForm
                 initial={{ label: item.label, href: item.href, badge: item.badge ?? "", is_external: item.is_external }}
+                linkableResources={linkableResources}
                 onCancel={() => setEditingId(null)}
                 onSubmit={(values) => update(item.id, item.parent_id, values)}
               />
@@ -150,6 +160,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
                 {editingId === child.id && (
                   <NavItemForm
                     initial={{ label: child.label, href: child.href, badge: child.badge ?? "", is_external: child.is_external }}
+                    linkableResources={linkableResources}
                     onCancel={() => setEditingId(null)}
                     onSubmit={(values) => update(child.id, child.parent_id, values)}
                   />
@@ -157,7 +168,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
               </div>
             ))}
             {addingUnder === item.id && (
-              <NavItemForm initial={EMPTY_FORM} onCancel={() => setAddingUnder(undefined)} onSubmit={(values) => create(item.id, values)} />
+              <NavItemForm initial={EMPTY_FORM} linkableResources={linkableResources} onCancel={() => setAddingUnder(undefined)} onSubmit={(values) => create(item.id, values)} />
             )}
           </div>
         </div>
@@ -165,7 +176,7 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
 
       {addingUnder === null ? (
         <div className="rounded border border-osi-sand-300 bg-osi-white p-3">
-          <NavItemForm initial={EMPTY_FORM} onCancel={() => setAddingUnder(undefined)} onSubmit={(values) => create(null, values)} />
+          <NavItemForm initial={EMPTY_FORM} linkableResources={linkableResources} onCancel={() => setAddingUnder(undefined)} onSubmit={(values) => create(null, values)} />
         </div>
       ) : (
         <button
@@ -181,16 +192,28 @@ export function NavEditor({ menuId, items }: { menuId: string; items: NavItem[] 
   );
 }
 
+const CUSTOM_LINK_VALUE = "__custom";
+
 function NavItemForm({
   initial,
+  linkableResources,
   onSubmit,
   onCancel,
 }: {
   initial: FormValues;
+  linkableResources: LinkableResource[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
 }) {
   const [values, setValues] = useState(initial);
+  // A stored href that happens to match a real page/product's current href
+  // starts the picker on that resource; anything else (an external URL, a
+  // "#" category header, a since-renamed slug) starts it on "Custom URL" so
+  // existing items are never silently reinterpreted.
+  const matchingResource = linkableResources.find((resource) => resource.href === initial.href);
+  const [linkSelection, setLinkSelection] = useState<string>(matchingResource?.id ?? CUSTOM_LINK_VALUE);
+  const pageResources = linkableResources.filter((resource) => resource.group === "Page");
+  const productResources = linkableResources.filter((resource) => resource.group === "Product");
 
   return (
     <form
@@ -217,17 +240,53 @@ function NavItemForm({
         required
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
       />
-      <input
-        value={values.href}
-        onChange={(e) => setValues({ ...values, href: e.target.value })}
-        placeholder="/href"
-        aria-label="Link"
-        inputMode="url"
-        autoComplete="off"
-        spellCheck={false}
-        required
+      <select
+        value={linkSelection}
+        onChange={(e) => {
+          const nextId = e.target.value;
+          setLinkSelection(nextId);
+          if (nextId === CUSTOM_LINK_VALUE) return;
+          const resource = linkableResources.find((r) => r.id === nextId);
+          if (resource) setValues((prev) => ({ ...prev, href: resource.href }));
+        }}
+        aria-label="Link to a page or product"
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
-      />
+      >
+        <option value={CUSTOM_LINK_VALUE}>Custom URL / anchor…</option>
+        {pageResources.length > 0 && (
+          <optgroup label="Pages">
+            {pageResources.map((resource) => (
+              <option key={resource.id} value={resource.id}>
+                {resource.label}
+              </option>
+            ))}
+          </optgroup>
+        )}
+        {productResources.length > 0 && (
+          <optgroup label="Products">
+            {productResources.map((resource) => (
+              <option key={resource.id} value={resource.id}>
+                {resource.label}
+              </option>
+            ))}
+          </optgroup>
+        )}
+      </select>
+      {linkSelection === CUSTOM_LINK_VALUE ? (
+        <input
+          value={values.href}
+          onChange={(e) => setValues({ ...values, href: e.target.value })}
+          placeholder="/href, #anchor, or https://…"
+          aria-label="Link"
+          inputMode="url"
+          autoComplete="off"
+          spellCheck={false}
+          required
+          className="col-span-2 rounded border border-osi-sand-300 px-2 py-1 text-sm"
+        />
+      ) : (
+        <p className="col-span-2 truncate text-xs opacity-60">→ {values.href}</p>
+      )}
       <input
         value={values.badge}
         onChange={(e) => setValues({ ...values, badge: e.target.value })}

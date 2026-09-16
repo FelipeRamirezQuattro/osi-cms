@@ -7,12 +7,6 @@ import type { NavItemNode } from "@/lib/data/navigation";
 import { externalLinkAttrs } from "@/lib/routes";
 import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
 
-const PRIMARY_LINKS = [
-  { label: "Products", href: "/products" },
-  { label: "Resources", href: "/resources" },
-  { label: "About", href: "/about-us" },
-] as const;
-
 function SearchIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current" strokeWidth="1.8">
@@ -85,14 +79,16 @@ export function MegaMenuClient({
     <>
       <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
         <nav className="mr-auto hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
-          {PRIMARY_LINKS.map((item) => (
+          {utilityItems.map((item) => (
             <Link
-              key={item.href}
+              key={item.id}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
               className="group relative inline-flex min-h-11 items-center rounded-full px-4 font-body text-sm font-medium text-white/74 transition-[color,background-color] duration-200 hover:bg-white/7 hover:text-white aria-[current=page]:text-white"
+              {...externalLinkAttrs(item.is_external)}
             >
               {item.label}
+              {item.is_external && <ExternalLinkIcon className="ml-1 text-[0.85em]" />}
               <span
                 aria-hidden="true"
                 className="absolute inset-x-4 bottom-1.5 h-px origin-left scale-x-0 bg-brand-accent-dark transition-transform duration-200 group-aria-[current=page]:scale-x-100"
@@ -195,16 +191,18 @@ export function MegaMenuClient({
             <div>
               <p className="mb-5 text-xs font-semibold tracking-[0.12em] text-brand-accent-dark uppercase">Explore</p>
               <nav aria-label="Featured pages" className="flex flex-col items-start gap-2">
-                {PRIMARY_LINKS.map((item) => (
+                {utilityItems.map((item) => (
                   <Link
-                    key={item.href}
+                    key={item.id}
                     href={item.href}
                     onClick={closeMenu}
                     aria-current={isActive(item.href) ? "page" : undefined}
                     className="group inline-flex min-h-11 items-center gap-3 font-editorial text-[clamp(1.5rem,3vw,2.4rem)] font-semibold leading-tight text-white/82 transition-colors duration-200 hover:text-white aria-[current=page]:text-osi-gold-400"
+                    {...externalLinkAttrs(item.is_external)}
                   >
                     <span aria-hidden="true" className="text-sm text-osi-gold-500 transition-transform duration-200 group-hover:translate-x-1">→</span>
                     {item.label}
+                    {item.is_external && <ExternalLinkIcon className="ml-1 text-[0.6em]" />}
                   </Link>
                 ))}
               </nav>
@@ -241,23 +239,6 @@ export function MegaMenuClient({
               ))}
             </nav>
           </div>
-
-          {utilityItems.length > 0 && (
-            <nav aria-label="Utility" className="flex flex-wrap gap-x-7 gap-y-2 border-t border-white/12 pt-6">
-              {utilityItems.map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="inline-flex min-h-10 items-center text-sm font-medium text-white/64 transition-colors duration-200 hover:text-white"
-                  {...externalLinkAttrs(item.is_external)}
-                >
-                  {item.label}
-                  {item.is_external && <ExternalLinkIcon className="ml-1 text-[0.85em]" />}
-                </Link>
-              ))}
-            </nav>
-          )}
         </div>
       </dialog>
     </>

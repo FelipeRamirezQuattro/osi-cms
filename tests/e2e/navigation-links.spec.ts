@@ -40,7 +40,7 @@ const SITE_DEFAULT_TITLE = "Odessa Separator Inc.";
 
 async function collectInternalHrefs(page: Page): Promise<string[]> {
   const utilityHrefs = await page
-    .locator('nav[aria-label="Utility"] a[href]')
+    .locator('nav[aria-label="Primary navigation"] a[href]')
     .evaluateAll((els) => els.map((el) => el.getAttribute("href")));
 
   await page.getByRole("button", { name: "Menu", exact: true }).click();

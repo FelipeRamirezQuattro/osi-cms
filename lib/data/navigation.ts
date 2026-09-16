@@ -1,7 +1,8 @@
 import { createServerDbClient } from "@/lib/db/client";
 import { recordAudit } from "@/lib/data/audit";
 import { listProductsWithCategorySlug } from "@/lib/data/products";
-import { productHref } from "@/lib/routes";
+import { listAllPages } from "@/lib/data/pages";
+import { pageHref, productHref } from "@/lib/routes";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
 
 export type NavItemNode = Tables<"nav_items"> & { children: NavItemNode[] };
@@ -57,6 +58,36 @@ export async function getNavMenu(key: Tables<"nav_menus">["key"]): Promise<NavIt
       (child) => !child.href.startsWith("/products/") || publishedProductHrefs.has(child.href),
     ),
   }));
+}
+
+export type LinkableResource = { id: string; label: string; href: string; group: "Page" | "Product" };
+
+/**
+ * Real pages/products an editor can point a nav item at, for the admin nav
+ * form's picker — replaces hand-typing (and mistyping) a slug. Published
+ * only, matching this repo's "avoid broken links" pattern elsewhere (see
+ * listProductsWithCategorySlug's status filter and getNavMenu's own mega-menu
+ * published-product filtering above): an editor can still fall back to a
+ * free-text URL for external links, "#" category headers, and anything not
+ * modeled as a page/product.
+ */
+export async function listLinkableResourcesForNav(): Promise<LinkableResource[]> {
+  const [pages, products] = await Promise.all([listAllPages(), listProductsWithCategorySlug()]);
+
+  const pageResources: LinkableResource[] = pages
+    .filter((page) => page.status === "published")
+    .map((page) => ({ id: `page:${page.id}`, label: page.title, href: pageHref(page.slug), group: "Page" }));
+
+  const productResources: LinkableResource[] = products
+    .filter((product) => product.categorySlug)
+    .map((product) => ({
+      id: `product:${product.id}`,
+      label: product.name,
+      href: productHref(product.categorySlug!, product.slug),
+      group: "Product",
+    }));
+
+  return [...pageResources, ...productResources].sort((a, b) => a.label.localeCompare(b.label));
 }
 
 // --- Admin ---
