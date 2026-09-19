@@ -49,6 +49,7 @@ Each concept has a persistent selector, a return-to-comparison action, keyboard-
 - `theme-page.tsx`: shared semantic sections and theme-specific hero recipes.
 - `comparison-gallery.tsx`: gallery, concept summaries, palettes, tradeoffs, and decision matrix.
 - `theme-selector.tsx`: persistent cross-theme navigation.
+- `motion.tsx`: theme-specific critically damped springs, scroll reveals, hero/media entrances, reduced-motion behavior, and scroll progress.
 - `icons.tsx`: one local SVG line-icon family.
 - `showcase.css`: namespaced base primitives, semantic theme tokens, five visual recipes, and responsive behavior.
 - `public/*.webp`: three original, locally stored prototype images.

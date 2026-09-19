@@ -15,6 +15,7 @@ import {
   ShieldIcon,
 } from "./icons";
 import { ThemeSelector } from "./theme-selector";
+import { MotionHeroContent, MotionHeroMedia, RevealSection, ThemeMotionProgress } from "./motion";
 
 const capabilityIcons = [MeasureIcon, FlowIcon, ShieldIcon, PinIcon];
 
@@ -65,14 +66,16 @@ function Hero({ theme }: { theme: ThemeSlug }) {
   if (theme === "forge") {
     return (
       <section className="hero hero--forge" id="top">
-        <Image src={operationsHero} alt="Oilfield production equipment operating at dusk" fill loading="eager" sizes="100vw" />
+        <MotionHeroMedia theme={theme} className="hero__image-layer">
+          <Image src={operationsHero} alt="Oilfield production equipment operating at dusk" fill loading="eager" sizes="100vw" />
+        </MotionHeroMedia>
         <div className="hero__shade" />
-        <div className="hero__content">
+        <MotionHeroContent theme={theme} className="hero__content">
           <p className="eyebrow">{content.hero.eyebrow}</p>
           <h1>Condition<br />the <em>flow.</em><br />Extend the run.</h1>
           <p className="hero__body">{content.hero.body}</p>
           <div className="hero__actions"><a className="button button--primary" href="#solutions">{content.hero.primaryAction}<ArrowRightIcon /></a></div>
-        </div>
+        </MotionHeroContent>
         <div className="hero__status"><span>Operating context</span><strong>Permian Basin</strong><small>Illustrative image · 31.8°N</small></div>
         <a className="hero__scroll" href="#solutions"><span>Scroll to explore</span><ChevronDownIcon /></a>
       </section>
@@ -83,7 +86,7 @@ function Hero({ theme }: { theme: ThemeSlug }) {
     return (
       <section className="hero hero--vector" id="top">
         <div className="vector-coordinates" aria-hidden="true"><span>Y 08</span><span>OSI / FLUID SYSTEMS</span><span>X 24</span></div>
-        <div className="hero__content">
+        <MotionHeroContent theme={theme} className="hero__content">
           <p className="eyebrow">{content.hero.eyebrow}</p>
           <h1>Control the variables.<br /><em>Improve the outcome.</em></h1>
           <p className="hero__body">{content.hero.body}</p>
@@ -92,12 +95,12 @@ function Hero({ theme }: { theme: ThemeSlug }) {
             <a className="button button--text" href="#contact">{content.hero.secondaryAction}</a>
           </div>
           <div className="vector-spec"><span>Pressure</span><strong>Application-led</strong><span>Geometry</span><strong>Field-proven</strong></div>
-        </div>
-        <div className="hero__media">
+        </MotionHeroContent>
+        <MotionHeroMedia theme={theme} className="hero__media">
           <Image src={technologyTools} alt="Precision-machined downhole tools arranged in a technical laboratory" fill loading="eager" sizes="(max-width: 767px) 100vw, 54vw" />
           <span className="crosshair crosshair--one" aria-hidden="true" /><span className="crosshair crosshair--two" aria-hidden="true" />
           <div className="media-caption"><span>FIG. 01</span> Precision fluid-conditioning systems</div>
-        </div>
+        </MotionHeroMedia>
       </section>
     );
   }
@@ -105,7 +108,7 @@ function Hero({ theme }: { theme: ThemeSlug }) {
   if (theme === "horizon") {
     return (
       <section className="hero hero--horizon" id="top">
-        <div className="hero__content">
+        <MotionHeroContent theme={theme} className="hero__content">
           <p className="eyebrow">{content.hero.eyebrow}</p>
           <h1>More productive wells.<br /><em>More thoughtful operations.</em></h1>
           <p className="hero__body">{content.hero.body}</p>
@@ -113,12 +116,12 @@ function Hero({ theme }: { theme: ThemeSlug }) {
             <a className="button button--primary" href="#solutions">{content.hero.primaryAction}<ArrowRightIcon /></a>
             <a className="button button--text" href="#responsibility">Our approach to responsibility</a>
           </div>
-        </div>
-        <div className="hero__media">
+        </MotionHeroContent>
+        <MotionHeroMedia theme={theme} className="hero__media">
           <Image src={operationsHero} alt="Oilfield production equipment beneath a broad evening sky" fill loading="eager" sizes="100vw" />
           <svg className="contour-lines" viewBox="0 0 900 420" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 315c180-110 210 45 390-48s255-70 550-10"/><path d="M-20 345c180-110 210 45 390-48s255-70 550-10"/><path d="M-20 375c180-110 210 45 390-48s255-70 550-10"/></svg>
           <div className="media-caption">Designing for the full operating lifecycle</div>
-        </div>
+        </MotionHeroMedia>
       </section>
     );
   }
@@ -126,17 +129,17 @@ function Hero({ theme }: { theme: ThemeSlug }) {
   if (theme === "fieldwork") {
     return (
       <section className="hero hero--fieldwork" id="top">
-        <div className="hero__media">
+        <MotionHeroMedia theme={theme} className="hero__media">
           <Image src={fieldEngineer} alt="Field engineer measuring a downhole tool in an oilfield service yard" fill loading="eager" sizes="(max-width: 767px) 100vw, 58vw" />
           <div className="work-order"><span>WORK ORDER</span><strong>FW—042</strong><small>Measure twice. Deploy once.</small></div>
-        </div>
-        <div className="hero__content">
+        </MotionHeroMedia>
+        <MotionHeroContent theme={theme} className="hero__content">
           <p className="eyebrow">Built for the worksite</p>
           <h1>The right tool.<br /><em>The right setup.</em><br />A team that shows up.</h1>
           <p className="hero__body">{content.hero.body}</p>
           <div className="hero__actions"><a className="button button--primary" href="#solutions">See how we help<ArrowRightIcon /></a></div>
           <div className="field-facts"><span><strong>30+</strong> years in the field</span><span><strong>9+</strong> countries supported</span></div>
-        </div>
+        </MotionHeroContent>
       </section>
     );
   }
@@ -144,7 +147,7 @@ function Hero({ theme }: { theme: ThemeSlug }) {
   return (
     <section className="hero hero--signal" id="top">
       <div className="hero__index"><span>01</span><span>Homepage</span></div>
-      <div className="hero__content">
+      <MotionHeroContent theme={theme} className="hero__content">
         <p className="eyebrow">{content.hero.eyebrow}</p>
         <h1>Condition the flow.<br /><em>Extend the run.</em></h1>
         <p className="hero__body">{content.hero.body}</p>
@@ -152,11 +155,11 @@ function Hero({ theme }: { theme: ThemeSlug }) {
           <a className="button button--primary" href="#solutions">{content.hero.primaryAction}<ArrowRightIcon /></a>
           <a className="button button--text" href="#contact">{content.hero.secondaryAction}</a>
         </div>
-      </div>
-      <div className="hero__media">
+      </MotionHeroContent>
+      <MotionHeroMedia theme={theme} className="hero__media">
         <Image src={operationsHero} alt="Oilfield production equipment at dusk" fill loading="eager" sizes="(max-width: 767px) 100vw, 48vw" />
         <div className="media-caption"><span>Operational reliability</span><span>Downhole engineering</span></div>
-      </div>
+      </MotionHeroMedia>
       <div className="signal-ticker"><span>GAS SEPARATION</span><span>SAND CONTROL</span><span>CHEMICAL TREATMENT</span></div>
     </section>
   );
@@ -173,9 +176,9 @@ function SectionIntro({ eyebrow, title, body, index }: { eyebrow: string; title:
   );
 }
 
-function Outcomes() {
+function Outcomes({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section outcomes" id="solutions">
+    <RevealSection theme={theme} className="section outcomes" id="solutions">
       <SectionIntro index="02" eyebrow="Outcome pathways" title="Start with what is limiting the well." body="Three recurring challenges. One application-led engineering approach." />
       <div className="outcome-grid">
         {content.outcomes.map((item) => (
@@ -188,13 +191,13 @@ function Outcomes() {
           </article>
         ))}
       </div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Capabilities() {
+function Capabilities({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section capabilities" id="products">
+    <RevealSection theme={theme} className="section capabilities" id="products">
       <SectionIntro index="03" eyebrow="Core capabilities" title="Engineering that travels from desk to field." />
       <div className="capability-grid">
         {content.capabilities.map((item, index) => {
@@ -202,24 +205,24 @@ function Capabilities() {
           return <article key={item.title}><Icon /><span>0{index + 1}</span><h3>{item.title}</h3><p>{item.body}</p></article>;
         })}
       </div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Metrics() {
+function Metrics({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="metrics" aria-label="OSI proof points">
+    <RevealSection theme={theme} className="metrics" ariaLabel="OSI proof points">
       <div className="metrics__head"><p>Public OSI proof points</p><span>Verify before production use</span></div>
       <div className="metric-grid">
         {content.metrics.map((metric) => <div key={metric.value}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}
       </div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Story() {
+function Story({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section story" id="industries">
+    <RevealSection theme={theme} className="section story" id="industries">
       <div className="story__media"><Image src={fieldEngineer} alt="Engineer checking dimensional accuracy of a downhole assembly" fill sizes="(max-width: 767px) 100vw, 52vw" /><span>Illustrative field scenario</span></div>
       <div className="story__content">
         <SectionIntro index="04" eyebrow={content.story.eyebrow} title={content.story.title} body={content.story.body} />
@@ -227,13 +230,13 @@ function Story() {
         <p className="placeholder-note">{content.story.note}</p>
         <ArrowLink href="#contact">Discuss your application</ArrowLink>
       </div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Technology() {
+function Technology({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section technology" id="technology">
+    <RevealSection theme={theme} className="section technology" id="technology">
       <div className="technology__content">
         <SectionIntro index="05" eyebrow={content.technology.eyebrow} title={content.technology.title} body={content.technology.body} />
         <ol className="process-list">
@@ -241,24 +244,24 @@ function Technology() {
         </ol>
       </div>
       <div className="technology__media"><Image src={technologyTools} alt="Machined fluid-conditioning tools in an engineering lab" fill sizes="(max-width: 767px) 100vw, 50vw" /><div className="technical-label"><span>OSI / ENGINEERING</span><strong>Application → Geometry</strong></div></div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Responsibility() {
+function Responsibility({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section responsibility" id="responsibility">
+    <RevealSection theme={theme} className="section responsibility" id="responsibility">
       <div className="responsibility__orbit" aria-hidden="true"><span /><span /><span /></div>
       <SectionIntro index="06" eyebrow={content.responsibility.eyebrow} title={content.responsibility.title} body={content.responsibility.body} />
       <ul>{content.responsibility.points.map((point, index) => <li key={point}><span>0{index + 1}</span>{point}</li>)}</ul>
       <p className="evidence-note"><ShieldIcon /> Evidence-led language only. Production claims require an approved source.</p>
-    </section>
+    </RevealSection>
   );
 }
 
-function Insights() {
+function Insights({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="section insights" id="resources">
+    <RevealSection theme={theme} className="section insights" id="resources">
       <SectionIntro index="07" eyebrow="Insights and resources" title="Useful thinking for difficult wells." />
       <div className="insight-grid">
         {content.insights.map((insight, index) => (
@@ -268,18 +271,18 @@ function Insights() {
           </article>
         ))}
       </div>
-    </section>
+    </RevealSection>
   );
 }
 
-function Contact() {
+function Contact({ theme }: { theme: ThemeSlug }) {
   return (
-    <section className="contact-band" id="contact">
+    <RevealSection theme={theme} className="contact-band" id="contact">
       <p className="eyebrow">{content.contact.eyebrow}</p>
       <h2>{content.contact.title}</h2>
       <p>{content.contact.body}</p>
       <div><a className="button button--primary" href="#prototype-static-note">Talk to an engineer<ArrowRightIcon /></a><a className="button button--text" href="#locations">Find a location</a></div>
-    </section>
+    </RevealSection>
   );
 }
 
@@ -299,19 +302,20 @@ export function ThemePage({ slug }: { slug: ThemeSlug }) {
   const theme = getTheme(slug);
   return (
     <div className={`prototype-page theme-${slug}`} data-theme={slug}>
+      <ThemeMotionProgress theme={slug} />
       <ThemeSelector active={slug} />
       <div className="theme-canvas">
         <Header theme={slug} />
         <main id="main-content" tabIndex={-1}>
           <Hero theme={slug} />
-          <Outcomes />
-          <Capabilities />
-          <Metrics />
-          <Story />
-          <Technology />
-          <Responsibility />
-          <Insights />
-          <Contact />
+          <Outcomes theme={slug} />
+          <Capabilities theme={slug} />
+          <Metrics theme={slug} />
+          <Story theme={slug} />
+          <Technology theme={slug} />
+          <Responsibility theme={slug} />
+          <Insights theme={slug} />
+          <Contact theme={slug} />
         </main>
         <Footer />
       </div>

@@ -66,6 +66,7 @@
 .skip-link:focus { transform: translateY(0); }
 .concept-label { position: fixed; right: 0; bottom: 26px; z-index: 50; display: flex; align-items: center; gap: 12px; padding: 9px 14px; color: #fff; background: rgba(5,8,10,.82); backdrop-filter: blur(12px); font: 600 9px/1 var(--font-catalog-montserrat), sans-serif; letter-spacing: .12em; text-transform: uppercase; writing-mode: vertical-rl; }
 .concept-label span + span { color: #aeb5b9; }
+.theme-motion-progress { position:fixed; z-index:140; top:0; left:0; width:100%; height:3px; background:var(--accent); transform-origin:0 50%; pointer-events:none; }
 
 .theme-header { position: relative; z-index: 10; color: var(--ink); background: var(--surface); border-bottom: 1px solid var(--line); }
 .theme-header__inner { min-height: 82px; display: flex; align-items: center; gap: 28px; padding: 0 var(--gutter); }
@@ -90,6 +91,11 @@
 .eyebrow::before { width: 24px; height: 2px; content: ""; background: currentColor; }
 .button { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 24px; padding: 0 22px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; transition: transform 180ms ease, background-color 180ms ease, color 180ms ease; }
 .button:hover { transform: translateY(-2px); }
+.button:active,
+.header-cta:active,
+.prototype-selector a:active,
+.outcome-card a:active,
+.insight-card a:active { transform:scale(.97); transition-duration:100ms; }
 .button svg { width: 18px; }
 .button--primary { color: var(--accent-ink); background: var(--accent); }
 .prototype-page .button--primary,
@@ -105,6 +111,7 @@
 .hero__body { max-width: 590px; color: var(--muted); font-size: clamp(17px, 1.45vw, 21px); line-height: 1.55; }
 .hero__actions { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
 .hero__media { position: relative; overflow: hidden; }
+.hero__image-layer { position:absolute; inset:0; overflow:hidden; }
 .hero__media img, .story__media img, .technology__media img { object-fit: cover; }
 .media-caption { position: absolute; display: flex; align-items: center; gap: 16px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 
@@ -203,7 +210,7 @@
 .theme-forge .theme-header { color:#fff; background:rgba(9,10,11,.72); border-color:rgba(255,255,255,.18); margin-bottom:-83px; backdrop-filter:blur(12px); }
 .theme-forge .brand-mark__monogram { font-size:30px; }
 .theme-forge .hero--forge { min-height:900px; color:#fff; }
-.hero--forge > img { object-fit:cover; }
+.hero--forge .hero__image-layer img { object-fit:cover; }
 .hero--forge .hero__shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(3,5,6,.93) 0%,rgba(3,5,6,.56) 43%,rgba(3,5,6,.12) 78%),linear-gradient(0deg,rgba(3,5,6,.82),transparent 44%); }
 .hero--forge .hero__content { position:relative; z-index:2; max-width:880px; padding:clamp(180px,22vh,250px) var(--gutter) 120px; }
 .theme-forge .hero h1 { margin-top:28px; font-size:clamp(64px,8vw,124px); font-weight:700; text-transform:uppercase; letter-spacing:-.045em; }
@@ -491,7 +498,7 @@
 
   .theme-forge .theme-header { margin-bottom:-71px; }
   .theme-forge .hero--forge { min-height:790px; }
-  .hero--forge > img { object-position:68% center; }
+  .hero--forge .hero__image-layer img { object-position:68% center; }
   .hero--forge .hero__shade { background:linear-gradient(0deg,rgba(3,5,6,.96) 0%,rgba(3,5,6,.62) 65%,rgba(3,5,6,.22)); }
   .hero--forge .hero__content { padding:165px 22px 170px; }
   .theme-forge .hero h1 { font-size:58px; }
@@ -567,4 +574,18 @@
 
 @media (prefers-reduced-motion: reduce) {
   .osi-theme-prototype *, .osi-theme-prototype *::before, .osi-theme-prototype *::after { scroll-behavior:auto!important; transition-duration:.01ms!important; animation-duration:.01ms!important; animation-iteration-count:1!important; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .prototype-selector,
+  .theme-forge .theme-header,
+  .concept-label { background:#0c0f11; backdrop-filter:none; }
+}
+
+@media (prefers-contrast: more) {
+  .prototype-selector,
+  .theme-header,
+  .outcome-card,
+  .insight-card { border-color:currentColor; }
+  .prototype-selector { background:#000; }
 }

@@ -53,9 +53,24 @@ test.describe("OSI theme showcase", () => {
     await expect(page.locator("#main-content")).toBeFocused();
   });
 
+  test("every direction applies its motion profile and reveals on scroll", async ({ page }) => {
+    for (const theme of themes) {
+      await page.goto(`/${theme}`);
+      await expect(page.locator("[data-motion='hero']")).toHaveCount(1);
+      await expect(page.locator(".theme-motion-progress")).toHaveAttribute("data-theme", theme);
+
+      const firstSection = page.locator("[data-motion='section']").first();
+      await expect(firstSection).toHaveCSS("opacity", "0");
+      await firstSection.scrollIntoViewIfNeeded();
+      await expect.poll(async () => Number.parseFloat(await firstSection.evaluate((element) => getComputedStyle(element).opacity))).toBeGreaterThan(0.99);
+    }
+  });
+
   test("routes have no serious or critical automated accessibility violations", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
     for (const route of ["/theme-showcase", ...themes.map((theme) => `/${theme}`)]) {
       await page.goto(route);
+      await page.waitForTimeout(250);
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
       const serious = results.violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical");
       expect(serious.map((violation) => `${route}: ${violation.id} (${violation.nodes.length})`)).toEqual([]);
@@ -66,11 +81,13 @@ test.describe("OSI theme showcase", () => {
     test.skip(testInfo.project.name !== "chromium", "Capture one canonical browser set only.");
     const outputDirectory = "prototypes/osi-theme-showcase/screenshots";
     await mkdir(outputDirectory, { recursive: true });
+    await page.emulateMedia({ reducedMotion: "reduce" });
 
     for (const theme of themes) {
       for (const size of [reviewSizes[0], reviewSizes[2]]) {
         await page.setViewportSize(size);
         await page.goto(`/${theme}`);
+        await page.waitForTimeout(250);
         await page.screenshot({ path: `${outputDirectory}/${theme}-${size.name}.png`, fullPage: true });
       }
     }
