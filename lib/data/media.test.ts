@@ -72,8 +72,9 @@ function createFakeDbClient(
 
 function emptyBrandingLookupQueues(): TableQueues {
   return {
-    site_branding: [{ data: [], error: null }],
-    site_branding_publications: [{ data: [], error: null }],
+    // Two reads each: the primary-logo FK lookup, then the favicon (config jsonb) lookup.
+    site_branding: [{ data: [], error: null }, { data: [], error: null }],
+    site_branding_publications: [{ data: [], error: null }, { data: [], error: null }],
     site_branding_revisions: [{ data: [], error: null }],
   };
 }

@@ -53,6 +53,7 @@ export function BrandingEditor({
   revisions,
   palette,
   initialLogoAsset,
+  initialFaviconAsset,
   publishedLogoUrl,
 }: {
   draft: BrandingDraft;
@@ -60,6 +61,7 @@ export function BrandingEditor({
   revisions: BrandingRevision[];
   palette: BlockPaletteEntry[];
   initialLogoAsset: MediaAsset | null;
+  initialFaviconAsset: MediaAsset | null;
   publishedLogoUrl: string | null;
 }) {
   const router = useRouter();
@@ -69,6 +71,7 @@ export function BrandingEditor({
   const [savedSnapshot, setSavedSnapshot] = useState(() => JSON.stringify(draft.config));
   const [version, setVersion] = useState(draft.draft_version);
   const [logoAsset, setLogoAsset] = useState(initialLogoAsset);
+  const [faviconAsset, setFaviconAsset] = useState(initialFaviconAsset);
   const [message, setMessage] = useState<AsyncMessageState>(null);
   const [search, setSearch] = useState("");
   const [pending, startTransition] = useTransition();
@@ -235,6 +238,31 @@ export function BrandingEditor({
                   </Select>
                 </FormField>
               </div>
+            </div>
+          </Panel>
+
+          <Panel title="Favicon" description="The small icon shown in browser tabs and bookmarks. Square images (PNG, WEBP, or AVIF, ideally 512×512) work best; without one the built-in icon is used.">
+            <div className="space-y-4">
+              <MediaPicker
+                value={faviconAsset?.url ?? ""}
+                label="favicon"
+                accept="image"
+                onChange={(url) => {
+                  if (!url) {
+                    setFaviconAsset(null);
+                    update((next) => { next.favicon = { mediaAssetId: null }; });
+                  }
+                }}
+                onSelectAsset={(asset) => {
+                  setFaviconAsset(asset);
+                  update((next) => { next.favicon = { mediaAssetId: asset.id }; });
+                }}
+              />
+              {faviconAsset && (
+                <p className="text-xs text-[var(--admin-ink-secondary)]">
+                  {faviconAsset.filename ?? faviconAsset.title ?? "Selected asset"} · {faviconAsset.width ?? "?"}×{faviconAsset.height ?? "?"} · {faviconAsset.mime ?? "image"}
+                </p>
+              )}
             </div>
           </Panel>
 

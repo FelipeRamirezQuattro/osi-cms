@@ -10,6 +10,8 @@ import { getMediaAssetById } from "@/lib/data/media";
 import { headers } from "next/headers";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteUrl } from "@/lib/seo";
+import type { Metadata } from "next";
+import { resolveMediaUrl } from "@/lib/media";
 import { AnalyticsBeacon } from "@/components/analytics/analytics-beacon";
 
 // Every route here reads live, draft/published-gated content straight
@@ -18,6 +20,16 @@ import { AnalyticsBeacon } from "@/components/analytics/analytics-beacon";
 // force dynamic rendering rather than let Next attempt to statically
 // prerender pages whose content can change via the admin at any time.
 export const dynamic = "force-dynamic";
+
+// Uses the published branding's favicon when one is set; otherwise the
+// file-convention app/favicon.ico still applies.
+export async function generateMetadata(): Promise<Metadata> {
+  const { config } = await resolvePublishedBranding();
+  const faviconId = config.favicon?.mediaAssetId;
+  const asset = faviconId ? await getMediaAssetById(faviconId).catch(() => null) : null;
+  if (!asset) return {};
+  return { icons: { icon: [{ url: resolveMediaUrl(asset.url), ...(asset.mime ? { type: asset.mime } : {}) }] } };
+}
 
 // Wraps every public marketing page with the site chrome. Deliberately
 // excludes /styleguide (isolated design reference) and the future

@@ -5,6 +5,7 @@ import fieldEngineer from "./public/field-engineer.webp";
 import technologyTools from "./public/technology-tools.webp";
 import { themes } from "./content";
 import { ArrowRightIcon, ArrowUpRightIcon } from "./icons";
+import { PrototypeLogo } from "./prototype-logo";
 
 const previewImages = {
   forge: operationsHero,
@@ -18,7 +19,7 @@ export function ComparisonGallery() {
   return (
     <main className="comparison-page" id="top">
       <header className="comparison-header">
-        <Link href="/" className="comparison-brand" aria-label="OSI production homepage"><span>OSI</span><small>Theme study<br />September 2026</small></Link>
+        <Link href="/" className="comparison-brand" aria-label="OSI production homepage"><PrototypeLogo /><small>Theme study<br />September 2026</small></Link>
         <div><span className="comparison-kicker">Design validation prototype · 05 directions</span><p>One story. Five distinct ways to tell it.</p></div>
       </header>
 

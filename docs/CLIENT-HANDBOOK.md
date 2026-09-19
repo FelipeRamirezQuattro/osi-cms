@@ -135,7 +135,8 @@ The site's main contact form is managed separately, as its own
 ## Choosing images
 
 Wherever you see a **Choose image** button, it opens the media library.
-You can pick an existing image or upload a new one. **Alt text is
+You can pick an existing image or upload a new one (JPG, PNG, WEBP, AVIF,
+or GIF, up to 8 MB). **Alt text is
 required on upload** — a short, plain description of what the image
 shows (e.g. "ESP Gas Release System diagram"). This isn't red tape: it's
 what a screen reader reads aloud to a visitor who can't see the image,
@@ -304,12 +305,20 @@ branding draft. Unsaved fields need to be saved before they appear in a
 real-page preview.
 
 For the primary logo, choose an image from the media library and provide
-the organization's name as its accessible text. Prefer a transparent
-SVG or a high-resolution transparent PNG with comfortable clear space;
+the organization's name as its accessible text. Prefer a
+high-resolution transparent PNG, WEBP, or AVIF with comfortable clear space;
 do not add the word “logo” to the accessible name. The system preserves
 the file's proportions and reserves its display size. If no image is
 selected, the OSI text mark is used as a safe fallback. A logo asset that
 is in use cannot be deleted until its branding references are replaced.
+
+The **Favicon** panel, just below the logo, sets the small icon shown in
+browser tabs and bookmarks. Choose a square image (a PNG around 512×512
+works best; AVIF works in most but not all browsers). It follows the same
+draft and publish steps as the rest of Branding, so it appears on the
+public site only after you publish. With no favicon selected, the built-in
+icon is used. Like the logo, a favicon that is in use cannot be deleted
+from the media library until you change it here.
 
 The color palette contains a governed set of stable swatches. You can
 rename or recolor those swatches; every role or block that refers to the

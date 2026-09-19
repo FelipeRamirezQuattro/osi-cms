@@ -469,6 +469,28 @@ export async function findMediaAssetUsages(url: string, assetId?: string): Promi
         });
       }
     }
+
+    // The favicon lives only inside the config jsonb (no FK column like
+    // the logo), so match it in JS rather than with a jsonb-path filter.
+    const faviconLookups = [
+      { table: "site_branding", source: "branding_draft", label: "Branding draft (favicon)" },
+      { table: "site_branding_publications", source: "branding_publication", label: "Live branding (favicon)" },
+    ] as const;
+    for (const lookup of faviconLookups) {
+      const { data, error } = await db.from(lookup.table).select("id, config");
+      if (error) throw error;
+      for (const row of data ?? []) {
+        const favicon = (row.config as { favicon?: { mediaAssetId?: string | null } } | null)?.favicon;
+        if (favicon?.mediaAssetId !== assetId) continue;
+        usages.push({
+          source: lookup.source,
+          id: String(row.id),
+          label: lookup.label,
+          editHref: "/admin/branding",
+          blocking: true,
+        });
+      }
+    }
   }
 
   return usages;

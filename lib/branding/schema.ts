@@ -358,6 +358,16 @@ export const primaryLogoSchema = z.object({
 
 export type PrimaryLogo = z.infer<typeof primaryLogoSchema>;
 
+/**
+ * Browser-tab icon. Optional so configs stored before it existed still
+ * parse; absent/null falls back to the built-in `app/favicon.ico`.
+ */
+export const faviconSchema = z.object({
+  mediaAssetId: z.string().uuid().nullable(),
+});
+
+export type Favicon = z.infer<typeof faviconSchema>;
+
 // ---------------------------------------------------------------------
 // Top-level versioned configuration
 // ---------------------------------------------------------------------
@@ -380,6 +390,7 @@ export const brandingConfigV1Schema = z
     typography: typographyRoleAssignmentsSchema,
     blockDefaults: blockDefaultsSchema,
     logo: primaryLogoSchema,
+    favicon: faviconSchema.optional(),
   })
   .superRefine((config, ctx) => {
     // --- Swatches: unique IDs/names, active-brand-palette cap ---

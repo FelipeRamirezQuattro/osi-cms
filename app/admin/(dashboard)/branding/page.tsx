@@ -11,12 +11,15 @@ export default async function BrandingPage() {
     getPublishedBrandingAction(),
     listBrandingRevisionsAction(12),
   ]);
-  const [logoAsset, publishedLogoAsset] = await Promise.all([
+  const [logoAsset, publishedLogoAsset, faviconAsset] = await Promise.all([
     draft.config.logo.mediaAssetId
       ? getMediaAssetById(draft.config.logo.mediaAssetId)
       : Promise.resolve(null),
     published?.config.logo.mediaAssetId
       ? getMediaAssetById(published.config.logo.mediaAssetId)
+      : Promise.resolve(null),
+    draft.config.favicon?.mediaAssetId
+      ? getMediaAssetById(draft.config.favicon.mediaAssetId)
       : Promise.resolve(null),
   ]);
 
@@ -28,6 +31,7 @@ export default async function BrandingPage() {
       revisions={revisions}
       palette={getBlockPalette()}
       initialLogoAsset={logoAsset}
+      initialFaviconAsset={faviconAsset}
       publishedLogoUrl={publishedLogoAsset?.url ?? null}
     />
   );

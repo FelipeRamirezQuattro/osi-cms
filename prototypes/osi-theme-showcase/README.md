@@ -49,6 +49,7 @@ Each concept has a persistent selector, a return-to-comparison action, keyboard-
 - `theme-page.tsx`: shared semantic sections and theme-specific hero recipes.
 - `comparison-gallery.tsx`: gallery, concept summaries, palettes, tradeoffs, and decision matrix.
 - `theme-selector.tsx`: persistent cross-theme navigation.
+- `prototype-logo.tsx`: the shared production `BrandLogo` renderer and its single future asset handoff point.
 - `motion.tsx`: theme-specific critically damped springs, scroll reveals, hero/media entrances, reduced-motion behavior, and scroll progress.
 - `icons.tsx`: one local SVG line-icon family.
 - `showcase.css`: namespaced base primitives, semantic theme tokens, five visual recipes, and responsive behavior.
@@ -57,6 +58,8 @@ Each concept has a persistent selector, a return-to-comparison action, keyboard-
 - `tests/e2e/theme-showcase.spec.ts`: route, gallery, responsive overflow, keyboard focus, accessibility, and screenshot coverage.
 
 ## Theme summary
+
+All five directions are locked to OSI's production navy, cream, gold, steel, slate, and sand system. The comparison is intentionally about composition, typography, geometry, imagery, density, and motion—not alternative brand colors.
 
 - **Forge** — the most cinematic and authoritative. Strong for global industrial scale; highest ongoing photography burden.
 - **Vector** — the most technical and engineered. Strong for complex products and measurement; needs a disciplined diagram language.
@@ -69,6 +72,7 @@ Each concept has a persistent selector, a return-to-comparison action, keyboard-
 - Public OSI facts and product names were derived from the repository's legacy public content. Proof points are labeled for verification before production use.
 - The featured field story and resource titles are explicitly illustrative placeholders.
 - Header, CTA, and footer links demonstrate navigation states only. No form, search, CMS, account, or backend action is connected.
+- The header uses the same `BrandLogo` component and configured fallback as the production homepage. The static prototype passes no CMS media record; the approved logo asset can be connected at the single adapter in `prototype-logo.tsx` when supplied.
 - The three industrial images were generated specifically for this prototype and do not depict a real OSI customer, employee, product, or documented site.
 - The prototype does not exercise real CMS content density, localization, production media governance, or final legal copy.
 

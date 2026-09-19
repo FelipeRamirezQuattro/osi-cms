@@ -16,16 +16,12 @@ import {
 } from "./icons";
 import { ThemeSelector } from "./theme-selector";
 import { MotionHeroContent, MotionHeroMedia, RevealSection, ThemeMotionProgress } from "./motion";
+import { PrototypeLogo } from "./prototype-logo";
 
 const capabilityIcons = [MeasureIcon, FlowIcon, ShieldIcon, PinIcon];
 
 function Mark() {
-  return (
-    <span className="brand-mark" aria-label="Odessa Separator Inc.">
-      <span className="brand-mark__monogram" aria-hidden="true">OSI</span>
-      <span className="brand-mark__name">Odessa<br />Separator Inc.</span>
-    </span>
-  );
+  return <PrototypeLogo />;
 }
 
 function ArrowLink({ children, href = "#" }: { children: React.ReactNode; href?: string }) {

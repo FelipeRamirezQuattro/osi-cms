@@ -30,8 +30,8 @@ import { z } from "zod";
 export const MEDIA_KINDS = ["image", "document"] as const;
 export type MediaKind = (typeof MEDIA_KINDS)[number];
 
-export const ALLOWED_IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
-export const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"] as const;
+export const ALLOWED_IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"] as const;
+export const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"] as const;
 export const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
 
 export const ALLOWED_DOCUMENT_MIME_TYPES = ["application/pdf"] as const;
@@ -65,7 +65,7 @@ export function validateUploadFile(file: UploadFileLike): UploadValidationResult
   if (!isImageMime && !isDocumentMime) {
     return {
       ok: false,
-      message: `Unsupported file type "${mime || "unknown"}". Allowed: JPG/PNG/WEBP/GIF images or PDF documents.`,
+      message: `Unsupported file type "${mime || "unknown"}". Allowed: JPG/PNG/WEBP/AVIF/GIF images or PDF documents.`,
     };
   }
 

@@ -26,6 +26,10 @@ describe("validateUploadFile", () => {
     }
   });
 
+  it("accepts an AVIF image", () => {
+    expect(validateUploadFile({ name: "logo.avif", type: "image/avif", size: 1024 })).toEqual({ ok: true, kind: "image" });
+  });
+
   it("accepts a PDF as a document", () => {
     const result = validateUploadFile({ name: "datasheet.pdf", type: "application/pdf", size: 1024 });
     expect(result).toEqual({ ok: true, kind: "document" });

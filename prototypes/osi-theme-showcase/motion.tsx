@@ -47,8 +47,8 @@ function spring(response: number, delay = 0) {
 function revealVariants(theme: ThemeSlug, reduced: boolean): Variants {
   if (reduced) {
     return {
-      hidden: { opacity: 0, x: 0, y: 0, scale: 1 },
-      visible: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: 0.2, ease: "easeOut" } },
+      hidden: { opacity: 1, x: 0, y: 0, scale: 1 },
+      visible: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: 0 } },
     };
   }
 
