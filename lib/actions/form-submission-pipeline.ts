@@ -1,6 +1,7 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { createHash } from "node:crypto";
 import { countRecentSubmissionsByIp, insertFormSubmission } from "@/lib/data/forms";
+import { SESSION_COOKIE, VISITOR_COOKIE } from "@/lib/analytics/cookies";
 import type { Json } from "@/lib/db/database.types";
 
 /**
@@ -52,6 +53,7 @@ export async function processFormSubmission(params: {
   }
 
   const h = await headers();
+  const cookieStore = await cookies();
   const { error } = await insertFormSubmission({
     form_key: params.formKey,
     page_slug: params.pageSlug ?? undefined,
@@ -64,6 +66,12 @@ export async function processFormSubmission(params: {
     payload: params.payload as unknown as Json,
     ip_hash: ipHash,
     user_agent: h.get("user-agent"),
+    // Attributes this lead to the analytics session/visitor that made
+    // it, for "Form Submissions by Traffic Source" / "Contacts by
+    // Source" — null if the visitor somehow never triggered the beacon
+    // (e.g. JS disabled) rather than blocking the submission on it.
+    session_id: cookieStore.get(SESSION_COOKIE)?.value ?? null,
+    visitor_id: cookieStore.get(VISITOR_COOKIE)?.value ?? null,
   });
 
   if (error) {

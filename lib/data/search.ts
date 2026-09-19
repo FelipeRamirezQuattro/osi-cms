@@ -1,6 +1,10 @@
+import { cookies } from "next/headers";
 import { createServerDbClient } from "@/lib/db/client";
 import type { PageMeta } from "@/lib/data/pages";
-import { applicationHref, industryHref, newsHref, productHref, resourceHref } from "@/lib/routes";
+import { applicationHref, industryHref, postHref, productHref, resourceHref } from "@/lib/routes";
+import { hashClientIp } from "@/lib/actions/form-submission-pipeline";
+import { recordSearchQuery } from "@/lib/data/analytics-events";
+import { SESSION_COOKIE, VISITOR_COOKIE } from "@/lib/analytics/cookies";
 
 /**
  * Site-wide search (master prompt §9 Phase 6) — Postgres full-text via
@@ -60,7 +64,7 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
       .limit(RESULTS_PER_TABLE),
     db
       .from("news_posts")
-      .select("slug, title, excerpt")
+      .select("slug, title, excerpt, kind")
       .eq("status", "published")
       .textSearch("search_vector", tsQuery, { type: "plain", config: "english" })
       .limit(RESULTS_PER_TABLE),
@@ -94,7 +98,7 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
     });
   }
   for (const row of news.data ?? []) {
-    results.push({ type: "news", title: row.title, excerpt: row.excerpt, href: newsHref(row.slug) });
+    results.push({ type: "news", title: row.title, excerpt: row.excerpt, href: postHref(row) });
   }
   for (const row of industries.data ?? []) {
     results.push({ type: "industry", title: row.name, excerpt: row.description, href: industryHref(row.slug) });
@@ -106,5 +110,26 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
     results.push({ type: "resource", title: row.title, excerpt: row.kind, href: resourceHref() });
   }
 
+  await recordSearchQueryBestEffort(trimmed, results.length);
+
   return results;
+}
+
+// Feeds "Top Searches" / "Searches with No Results" / "Searches over
+// Time" (Behavior). Never allowed to affect the search response itself —
+// a logging failure must not break search for a real visitor.
+async function recordSearchQueryBestEffort(query: string, resultsCount: number): Promise<void> {
+  try {
+    const cookieStore = await cookies();
+    const ipHash = await hashClientIp();
+    await recordSearchQuery({
+      session_id: cookieStore.get(SESSION_COOKIE)?.value ?? null,
+      visitor_id: cookieStore.get(VISITOR_COOKIE)?.value ?? null,
+      query,
+      results_count: resultsCount,
+      ip_hash: ipHash,
+    });
+  } catch (err) {
+    console.error("[search] Failed to record search query:", err);
+  }
 }

@@ -12,6 +12,8 @@ function submission(overrides: Partial<Tables<"form_submissions">> = {}): Tables
     user_agent: "test-agent",
     status: "new",
     created_at: "2026-01-01T00:00:00.000Z",
+    session_id: null,
+    visitor_id: null,
     ...overrides,
   };
 }

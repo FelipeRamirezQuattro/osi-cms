@@ -52,6 +52,28 @@ describe("validateEntityInput — news", () => {
     ).toBe(true);
   });
 
+  it("publishes a blog post without an event_date", () => {
+    expect(validateEntityInput("news", baseNews({ kind: "blog", status: "published" })).success).toBe(true);
+  });
+
+  it("accepts blog author, tags and reading time, defaulting tags to empty", () => {
+    const parsed = validateEntityInput(
+      "news",
+      baseNews({ kind: "blog", author_name: "Jane Doe", tags: ["esp", " gas "], reading_minutes: 4 }),
+    );
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data).toMatchObject({ tags: ["esp", "gas"], reading_minutes: 4 });
+
+    const bare = validateEntityInput("news", baseNews({ kind: "blog" }));
+    expect(bare.success && bare.data).toMatchObject({ tags: [], reading_minutes: null, author_name: null });
+  });
+
+  it("rejects blank tags, more than 10 tags, and a non-positive reading time", () => {
+    expect(validateEntityInput("news", baseNews({ tags: ["ok", "  "] })).success).toBe(false);
+    expect(validateEntityInput("news", baseNews({ tags: Array.from({ length: 11 }, (_, i) => `t${i}`) })).success).toBe(false);
+    expect(validateEntityInput("news", baseNews({ reading_minutes: 0 })).success).toBe(false);
+  });
+
   it("rejects an unsafe cta_url and accepts a real one", () => {
     expect(validateEntityInput("news", baseNews({ cta_url: "javascript:alert(1)" })).success).toBe(false);
     expect(validateEntityInput("news", baseNews({ cta_url: "/contact" })).success).toBe(true);

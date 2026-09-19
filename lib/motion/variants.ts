@@ -76,10 +76,10 @@ export const staggerContainerVariants: Variants = {
 // accessibility guidance this project follows: a gentle state change,
 // not zero feedback and not invisible content) but drop the rise and
 // make the transition instant. `y` is set explicitly to 0 in both states
-// (not omitted) — `useReducedMotion()` resolves after mount, so the
-// component briefly mounts against the full `fadeRiseVariants` (y: 8)
-// before switching to this reduced set; if `y` were absent here Motion
-// would never touch it and the 8px offset would be left stranded.
+// (not omitted) — useHydratedReducedMotion() intentionally preserves the
+// full server variant for the hydration render, then switches to this
+// reduced set; if `y` were absent here Motion would never clear the 8px
+// offset from that first render.
 export const fadeRiseVariantsReduced: Variants = {
   hidden: { opacity: 0, y: 0 },
   visible: { opacity: 1, y: 0, transition: { duration: 0 } },

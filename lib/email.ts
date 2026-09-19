@@ -97,3 +97,131 @@ export async function sendFormNotification(params: {
     console.error(`[email] Failed to send "${params.formName}" notification:`, err);
   }
 }
+
+/**
+ * Double opt-in confirmation for a newsletter signup. Same env gating and
+ * never-throws behavior as the notifications above, but returns whether
+ * the message was actually handed to Resend — the signup action uses that
+ * to decide whether to start the resend cooldown (an email that never went
+ * out shouldn't lock the address out of trying again).
+ */
+export async function sendNewsletterConfirmation(params: { to: string; confirmUrl: string }): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+
+  if (!apiKey || !from) {
+    console.warn("[email] Skipped newsletter confirmation — RESEND_API_KEY/RESEND_FROM_EMAIL not set.");
+    return false;
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to: params.to,
+      subject: "Confirm your subscription to Odessa Separator news",
+      text: [
+        "Thanks for signing up for Odessa Separator news.",
+        "",
+        "Please confirm your subscription by opening this link:",
+        params.confirmUrl,
+        "",
+        "If you didn't sign up, you can ignore this email — you won't be subscribed.",
+      ].join("\n"),
+    });
+    if (error) {
+      console.error("[email] Resend rejected newsletter confirmation:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[email] Failed to send newsletter confirmation:", err);
+    return false;
+  }
+}
+
+// --- Newsletter campaigns ------------------------------------------------------
+
+export type CampaignEmail = {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  /** Signed one-click unsubscribe endpoint, for the List-Unsubscribe header. */
+  oneClickUnsubscribeUrl: string;
+};
+
+export type CampaignBatchResult =
+  /** `ids[i]` is the provider message id for `messages[i]`. */
+  | { ok: true; ids: string[] }
+  /** `retryable` = leave the recipients pending and try again later (rate limit, outage). */
+  | { ok: false; retryable: boolean; message: string };
+
+/** Resend's batch endpoint accepts at most 100 messages per request. */
+export const CAMPAIGN_BATCH_SIZE = 100;
+
+// 409 is Resend's concurrent-idempotent-request; 429 a rate limit; 5xx or no
+// status at all (network) an outage. Anything else is a rejection that
+// retrying the same payload will not fix.
+function isRetryable(statusCode: number | null): boolean {
+  return statusCode === null || statusCode === 409 || statusCode === 429 || statusCode >= 500;
+}
+
+/**
+ * Sends up to CAMPAIGN_BATCH_SIZE personalized messages in one request. The
+ * caller supplies a deterministic `idempotencyKey` (campaign + the exact
+ * recipients in the batch) so a retry after a crash between "Resend accepted
+ * it" and "we recorded it" can't send the batch twice.
+ */
+export async function sendCampaignBatch(messages: CampaignEmail[], idempotencyKey: string): Promise<CampaignBatchResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from) return { ok: false, retryable: false, message: "Email is not configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." };
+  if (messages.length === 0) return { ok: true, ids: [] };
+  if (messages.length > CAMPAIGN_BATCH_SIZE) throw new Error(`A batch holds at most ${CAMPAIGN_BATCH_SIZE} messages.`);
+
+  try {
+    const resend = new Resend(apiKey);
+    const { data, error } = await resend.batch.send(
+      messages.map((message) => ({
+        from,
+        to: message.to,
+        subject: message.subject,
+        html: message.html,
+        text: message.text,
+        headers: {
+          "List-Unsubscribe": `<${message.oneClickUnsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
+      })),
+      { idempotencyKey },
+    );
+    if (error) return { ok: false, retryable: isRetryable(error.statusCode), message: error.message };
+    const ids = data?.data.map((entry) => entry.id) ?? [];
+    if (ids.length !== messages.length) {
+      return { ok: false, retryable: false, message: "The email provider returned an unexpected response." };
+    }
+    return { ok: true, ids };
+  } catch (err) {
+    console.error("[email] Campaign batch failed:", err);
+    return { ok: false, retryable: true, message: err instanceof Error ? err.message : "Could not reach the email provider." };
+  }
+}
+
+/** One preview message to the editor. No unsubscribe headers — it is not a real send. */
+export async function sendCampaignTest(params: { to: string; subject: string; html: string; text: string }): Promise<
+  { ok: true } | { ok: false; message: string }
+> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from) return { ok: false, message: "Email is not configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." };
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({ from, to: params.to, subject: params.subject, html: params.html, text: params.text });
+    return error ? { ok: false, message: error.message } : { ok: true };
+  } catch (err) {
+    console.error("[email] Campaign test failed:", err);
+    return { ok: false, message: "Could not reach the email provider." };
+  }
+}

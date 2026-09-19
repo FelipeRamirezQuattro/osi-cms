@@ -538,6 +538,47 @@ staff — keep it in sync with any admin UI changes that alter a
 documented workflow (adding/renaming an admin section, changing the
 block editor's controls, etc.).
 
+## Blog + newsletters (Phase 9)
+
+**Blog** is `kind = 'blog'` on `news_posts` (migration `0042`; adds
+`author_name`, `tags`, `reading_minutes`), not a separate table. `/news`
+and `/blog` are separate public listings over it: `lib/data/news.ts`
+restricts the news readers to news/conference/event and the blog readers
+to `blog`, and `postHref()` in `lib/routes.ts` picks a post's URL by kind.
+Anything listing posts (search, sitemap, `news_feed`) must use it, and a
+new top-level public route must be added to `SKIPPED_TOP_SEGMENTS` in
+`proxy.ts` (a test enforces this).
+
+**Subscribers** (`newsletter_subscribers`/`_tags`/`_subscriber_tags`, `0043`)
+are staff-only under RLS with **no anonymous policies** — public signup,
+confirm and unsubscribe go through the service-role client in
+`lib/data/newsletter-subscribers.ts`. Signup is double opt-in
+(`lib/actions/subscribe-newsletter.ts`, decision logic in
+`lib/newsletter/signup.ts`) and fails closed without
+`NEWSLETTER_TOKEN_SECRET`. Confirm/unsubscribe links carry stateless HMAC
+tokens (`lib/newsletter/tokens.ts`) and only act on a **button press**
+(mail scanners prefetch links), except the RFC 8058 one-click POST at
+`app/api/newsletter/unsubscribe`. The public block is `newsletter_signup`
+(client/schema file split, registered in `lib/blocks/registry.ts` **and**
+the three branding registries — `lib/branding/schema.ts`,
+`appearance-capabilities.ts`, `seed.ts`; a test enforces parity).
+
+**Campaigns** (`newsletter_campaigns`/`_campaign_recipients`, `0044`) are
+built from **email blocks**, a registry separate from web blocks
+(`lib/email-blocks/registry.ts`, `components/email/`). Rendering is
+`@react-email/render` only — `@react-email/components` is deprecated (see
+`docs/DECISIONS.md`). Email links resolve with `absoluteUrl()` and images
+with `resolveMediaUrl()`; **never** pass a link through `resolveMediaUrl`.
+The header/unsubscribe link/mailing address are a fixed shell, not blocks.
+Sending is `sendCampaignStep()` (`lib/newsletter/send-campaign.ts`): a
+resumable, time-budgeted step the editor calls in a loop, batches of 100
+with deterministic idempotency keys, recipient status re-checked at send
+time. Real sends need `publish` (admin); drafting/preview/test need
+`manage_newsletter`. Sending needs `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
+`NEWSLETTER_TOKEN_SECRET` and `NEWSLETTER_MAILING_ADDRESS`
+(`lib/newsletter/readiness.ts` reports what's missing). All four are unset
+in production until the client supplies them — see `docs/CONTENT-GAPS.md`.
+
 ## Deployment
 
 `git push origin main` on `github.com/FelipeRamirezQuattro/osi-cms`

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { guardAdminRequest, publicSlugIsResolvable } from "@/lib/auth";
+import { logBotVisitIfMatched } from "@/lib/analytics/log-bot-visit";
 
 // Next.js 16 renamed middleware.ts -> proxy.ts (see CLAUDE.md). Gates
 // every /admin/* route except /admin/login behind an active
@@ -107,9 +108,21 @@ export async function proxy(request: NextRequest) {
 // test can't discover them and they're asserted by hand instead.
 export const SKIPPED_TOP_SEGMENTS = new Set([
   "api",
+  // Isolated, static design-validation prototype routes. These have no
+  // CMS records by design, so the public catch-all's database-backed
+  // soft-404 check must not judge them. Keeping the allow-list explicit
+  // ensures no other production slug bypasses the existing check.
+  "theme-showcase",
+  "forge",
+  "vector",
+  "horizon",
+  "fieldwork",
+  "signal",
   "preview",
   "products",
   "news",
+  "blog",
+  "newsletter",
   "industries",
   "applications",
   "resources",
@@ -149,6 +162,13 @@ async function maybeRewriteToGenuine404(request: NextRequest, requestHeaders: He
 
   const { pathname } = request.nextUrl;
   if (isAssetPath(pathname)) return next();
+
+  // Deliberately runs before the SKIPPED_TOP_SEGMENTS check below — those
+  // segments (products, news, industries...) are real, crawlable pages a
+  // search/AI bot legitimately visits, and must still be tracked (see
+  // lib/analytics/log-bot-visit.ts). Fire-and-forget: never awaited, so
+  // it can't add latency or affect the response a crawler receives.
+  logBotVisitIfMatched(pathname, request.headers.get("user-agent"));
 
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return next(); // home

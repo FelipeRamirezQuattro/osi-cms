@@ -1,6 +1,6 @@
 import { createServerDbClient } from "@/lib/db/client";
 import type { PageMeta } from "@/lib/data/pages";
-import { applicationHref, industryHref, newsHref, productHref, resourceHref } from "@/lib/routes";
+import { applicationHref, blogHref, industryHref, newsHref, postHref, productHref, resourceHref } from "@/lib/routes";
 
 export type SitemapEntry = { url: string; lastModified: string };
 
@@ -33,7 +33,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
       .from("products")
       .select("slug, updated_at, product_categories(slug)")
       .eq("status", "published"),
-    db.from("news_posts").select("slug, updated_at").eq("status", "published").order("updated_at", { ascending: false }),
+    db.from("news_posts").select("slug, kind, updated_at").eq("status", "published").order("updated_at", { ascending: false }),
     db.from("industries").select("slug, updated_at").eq("status", "published"),
     db.from("applications").select("slug, updated_at").eq("status", "published"),
     db.from("resources").select("updated_at").eq("status", "published").order("updated_at", { ascending: false }).limit(1),
@@ -57,9 +57,15 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   // /products (a seeded `pages` row already covered by the loop above)
   // they need an explicit listing entry regardless of whether any
   // content exists yet under them.
-  entries.push({ url: newsHref(), lastModified: news.data?.[0]?.updated_at ?? now });
-  for (const post of news.data ?? []) {
-    entries.push({ url: newsHref(post.slug), lastModified: post.updated_at });
+  const newsRows = (news.data ?? []).filter((post) => post.kind !== "blog");
+  const blogRows = (news.data ?? []).filter((post) => post.kind === "blog");
+  entries.push({ url: newsHref(), lastModified: newsRows[0]?.updated_at ?? now });
+  for (const post of newsRows) {
+    entries.push({ url: postHref(post), lastModified: post.updated_at });
+  }
+  entries.push({ url: blogHref(), lastModified: blogRows[0]?.updated_at ?? now });
+  for (const post of blogRows) {
+    entries.push({ url: postHref(post), lastModified: post.updated_at });
   }
   for (const industry of industries.data ?? []) {
     entries.push({ url: industryHref(industry.slug), lastModified: industry.updated_at });

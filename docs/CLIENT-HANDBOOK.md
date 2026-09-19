@@ -168,6 +168,13 @@ Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
 publish it later.
 
+**Blog posts** live in the same **News & blog** section as news: create a
+post and set its **Kind** to `blog`. Blog posts also have an **Author**,
+up to 10 **Tags**, and a **Reading time** in minutes (all optional). They
+appear on the public **/blog** page, where visitors can filter by tag,
+and not on **/news** — news, conference and event posts stay on **/news**.
+Unlike event and conference posts, a blog post does not need an event date.
+
 **Products, News, and Resources** can also be **archived** — a reversible
 way to take something off the public site without deleting it (a
 discontinued product, an old news post). Each of those list screens has
@@ -193,7 +200,60 @@ Note: **Services** (Fluid Levels, Pump Cards, Machine Shop) doesn't have
 its own sidebar section — those are regular pages, edited under
 **Pages** like any other page.
 
-## Navigation
+## Newsletter subscribers
+
+**Email marketing → Subscribers** lists everyone who signed up through a
+**Newsletter signup** block (add it to any page from the block palette,
+under Forms). Signing up is a two-step process: the visitor enters their
+email, we email them a confirmation link, and they only become
+**subscribed** once they press the button on that page. Until then they
+show as **pending confirmation**; people who opt out show as
+**unsubscribed** and are never emailed again unless they sign up and
+confirm again.
+
+- **Tags** group subscribers so a newsletter can go to just one group.
+  Add a tag in the Tags panel, then open **Add tags** on a subscriber's
+  row to choose theirs. Click a tag to filter the list.
+- **Export CSV** downloads the whole list, including each person's status
+  and when they agreed.
+- **Delete** is for erasure requests (admins only) — it also removes the
+  record that someone unsubscribed. Someone who just wants no more email
+  should use the unsubscribe link in a newsletter.
+
+Signups only complete once the email settings are in place (see the
+technical notes from your developer); until then people appear as pending.
+
+## Newsletter campaigns
+
+**Email marketing → Campaigns** is where newsletters are written and sent.
+
+1. **New campaign**, give it a name (only you see it).
+2. Fill in the **Subject line** and optional **Preview text** (the grey
+   snippet next to the subject in most inboxes).
+3. Choose the **Audience**: tick no tags to send to everyone subscribed, or
+   tick tags to reach only people who have any of them.
+4. Build the email from **blocks** — Heading, Text, Image, Button, Divider
+   and Article card. Use the arrows to reorder and **Remove** to delete one.
+   Images need a short description (alt text). The header, an
+   **unsubscribe link** and our mailing address are added to every email
+   automatically; you can't remove them.
+5. **Preview** shows the email as it will look; **Send test** emails it to
+   you (or any address you type), marked "[Test]", without touching your
+   list; **Save draft** keeps your work.
+6. **Send…** (administrators only) asks you to confirm how many people will
+   receive it, then sends. **Keep the page open until it finishes.** If you
+   lose the connection, come back to the campaign and press **Resume
+   sending** — nobody gets it twice.
+
+Once a campaign has been sent it can't be edited, so it stays as a record
+of what went out. Anyone who unsubscribes while a send is in progress is
+skipped. Only drafts can be deleted.
+
+Sending to your list needs the email settings in place (a verified sender
+address and the mailing address shown in the footer). Until then the page
+lists what's still missing, and you can still write, preview and send
+yourself tests once the sender is set up.
+
 
 **Navigation** controls the menus — the header's utility links, the mega
 menu (the big dropdown with product columns), the footer columns, and so
@@ -288,6 +348,40 @@ either way. **Export CSV**, at the top, downloads every submission (every
 status, every form) as a spreadsheet file — useful for handing a batch of
 leads to someone outside the admin, or for your own records outside the
 site.
+
+## Analytics
+
+**Analytics** is the visitor dashboard — the replacement for the one you
+used to see in Wix. **Overview** shows top-line numbers (sessions, page
+views, unique visitors, form leads) for the selected date range, plus any
+reports you've starred. Six category pages break things down further:
+
+- **Traffic** — where visitors come from (which country) and when they
+  visit
+- **Behavior** — which buttons get clicked, which pages get visited,
+  what people search for on the site (including searches that came up
+  empty)
+- **Marketing** — which channel (search, social, a link from another
+  site, a paid ad) is actually bringing people to the site, and whether
+  those visits turn into form submissions
+- **SEO** — how the site performs in Google search results, plus how
+  often search engines and AI tools like ChatGPT and Perplexity crawl the
+  site (the "AI Bot" reports are something Wix's own dashboard doesn't
+  offer)
+- **Blog** — which news posts get read, and where that traffic comes from
+- **People** — new vs. returning visitors, and where your leads come
+  from
+
+Every report can be **starred** (the ☆ next to its title) for quick
+access from the Overview page — the same idea as Wix's saved reports. The
+date-range dropdown at the top of each page applies to every report on
+that page at once.
+
+The Google-search numbers under **SEO** need a one-time technical setup
+(a Google Search Console connection) before they show real data — until
+that's connected, that section shows a short notice instead of a blank
+chart. Everything else on this page works immediately, with no setup
+required.
 
 ## Settings
 

@@ -52,7 +52,7 @@ const applicationSchema = z.object({
   status: statusSchema,
 });
 
-const NEWS_KINDS = ["news", "conference", "event"] as const;
+const NEWS_KINDS = ["news", "conference", "event", "blog"] as const;
 
 function optionalDateSchema(label: string) {
   return z.preprocess(
@@ -78,6 +78,12 @@ const newsSchema = z
     event_location: optionalNullableString(),
     cta_label: optionalNullableString(),
     cta_url: optionalSafeHrefSchema({ label: "CTA link" }),
+    author_name: optionalNullableString(),
+    tags: z
+      .array(z.string().trim().min(1, "Tags can't be empty"))
+      .max(10, "Use at most 10 tags")
+      .default([]),
+    reading_minutes: optionalNullableNumber(1, 120),
     is_featured: z.boolean().default(false),
     status: archivableStatusSchema,
   })
@@ -85,8 +91,9 @@ const newsSchema = z
   // nothing renders it yet (see CLAUDE.md's known content gaps), but the
   // column exists precisely for that, so this is enforced now rather than
   // left for whoever builds the news detail page to discover the hard way.
+  // News and blog posts are dated by `published_at`, not an event date.
   .superRefine((data, ctx) => {
-    if (data.status === "published" && data.kind !== "news" && !data.event_date) {
+    if (data.status === "published" && (data.kind === "event" || data.kind === "conference") && !data.event_date) {
       ctx.addIssue({
         code: "custom",
         path: ["event_date"],

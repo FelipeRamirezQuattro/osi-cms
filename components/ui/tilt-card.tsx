@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import type { PointerEvent, ReactNode } from "react";
+import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { tiltSpringConfig } from "@/lib/motion/variants";
 
 const MAX_TILT_DEG = 6;
@@ -20,7 +21,7 @@ export function TiltCard({
   children: ReactNode;
   className?: string;
 }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const pointerX = useMotionValue(0.5);
   const pointerY = useMotionValue(0.5);
   const rotateX = useSpring(useTransform(pointerY, [0, 1], [MAX_TILT_DEG, -MAX_TILT_DEG]), tiltSpringConfig);

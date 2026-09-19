@@ -63,6 +63,7 @@ export const BLOCK_TYPE_KEYS = [
   "benefits_cards",
   "video_embed",
   "contact_form",
+  "newsletter_signup",
   "contact_details",
   "cta_band",
   "rich_text",

@@ -46,6 +46,8 @@ export function articleJsonLd(input: {
   description?: string | null;
   image?: string;
   datePublished?: string | null;
+  /** Blog posts name a person; omitted = the organization. */
+  authorName?: string | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -55,7 +57,9 @@ export function articleJsonLd(input: {
     ...(input.description ? { description: input.description } : {}),
     ...(input.image ? { image: input.image } : {}),
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
-    author: { "@type": "Organization", name: "Odessa Separator Inc." },
+    author: input.authorName
+      ? { "@type": "Person", name: input.authorName }
+      : { "@type": "Organization", name: "Odessa Separator Inc." },
   };
 }
 

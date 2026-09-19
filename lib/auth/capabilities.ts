@@ -15,6 +15,8 @@ export const CAPABILITIES = [
   "manage_submissions",
   "manage_users",
   "view_audit",
+  "view_analytics",
+  "manage_newsletter",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
@@ -48,6 +50,12 @@ const EDITOR_CAPABILITIES: ReadonlySet<Capability> = new Set([
   "upload_media",
   "view_submissions",
   "manage_submissions",
+  // Read-only, non-destructive — same reasoning as view_submissions.
+  "view_analytics",
+  // Subscribers, tags and campaigns are day-to-day marketing work, like
+  // submissions triage. Deleting a subscriber stays admin-only
+  // (delete_content) — see lib/actions/newsletter-subscribers.ts.
+  "manage_newsletter",
 ]);
 
 export function hasCapability(role: AdminRole, capability: Capability): boolean {

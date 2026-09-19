@@ -128,3 +128,23 @@ items get struck through with the resolution, not deleted.
   publish — building the public routes then is a small, low-risk
   addition (same pattern as everything else in `app/(site)/`), not
   worth doing speculatively against an empty table.
+
+## Found during Phase 9 (blog + newsletters)
+
+- **Newsletter email is wired but unconfigured.** Signup, double opt-in
+  confirmation and (later) campaign sending all go through Resend, which
+  needs `RESEND_API_KEY` and a `RESEND_FROM_EMAIL` on a domain the client
+  has verified in Resend — same unanswered dependency as the contact-form
+  notification above. Until then a signup is stored as `pending` but the
+  confirmation email is never sent, so nobody can complete double opt-in.
+  Also needs `NEWSLETTER_TOKEN_SECRET` set in **Vercel production** (not
+  yet added there) — without it signup deliberately shows "temporarily
+  unavailable" instead of storing subscribers it can never confirm.
+- **Newsletter footer needs the client's legal details.** CAN-SPAM
+  requires a physical mailing address in every commercial email. It comes
+  from the `NEWSLETTER_MAILING_ADDRESS` environment variable, which the
+  client hasn't supplied — no address is invented here. Campaigns can be
+  written, previewed and test-sent without it, but **sending to
+  subscribers is blocked** until it (and `NEWSLETTER_TOKEN_SECRET`, and
+  the Resend key/sender above) are set; the admin says exactly which are
+  missing.

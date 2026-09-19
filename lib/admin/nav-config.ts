@@ -33,6 +33,13 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     ],
   },
   {
+    label: "Email marketing",
+    items: [
+      { href: "/admin/newsletter/campaigns", label: "Campaigns", capability: "manage_newsletter" },
+      { href: "/admin/newsletter/subscribers", label: "Subscribers", capability: "manage_newsletter" },
+    ],
+  },
+  {
     label: "Catalog",
     items: [
       { href: "/admin/products", label: "Products", capability: "edit_drafts" },
@@ -56,6 +63,18 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: "/admin/branding", label: "Branding", capability: "manage_settings" },
       { href: "/admin/redirects", label: "Redirects", capability: "edit_drafts" },
       { href: "/admin/settings", label: "Settings", capability: "manage_settings" },
+    ],
+  },
+  {
+    label: "Analytics",
+    items: [
+      { href: "/admin/analytics", label: "Overview", capability: "view_analytics" },
+      { href: "/admin/analytics/traffic", label: "Traffic", capability: "view_analytics" },
+      { href: "/admin/analytics/behavior", label: "Behavior", capability: "view_analytics" },
+      { href: "/admin/analytics/marketing", label: "Marketing", capability: "view_analytics" },
+      { href: "/admin/analytics/seo", label: "SEO", capability: "view_analytics" },
+      { href: "/admin/analytics/blog", label: "Blog", capability: "view_analytics" },
+      { href: "/admin/analytics/people", label: "People", capability: "view_analytics" },
     ],
   },
   {

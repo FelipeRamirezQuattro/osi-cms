@@ -17,6 +17,7 @@ import { howItWorksBlock } from "@/components/blocks/how-it-works";
 import { benefitsCardsBlock } from "@/components/blocks/benefits-cards";
 import { videoEmbedBlock } from "@/components/blocks/video-embed";
 import { contactFormBlock } from "@/components/blocks/contact-form";
+import { newsletterSignupBlock } from "@/components/blocks/newsletter-signup";
 import { contactDetailsBlock } from "@/components/blocks/contact-details";
 import { ctaBandBlock } from "@/components/blocks/cta-band";
 import { richTextBlock } from "@/components/blocks/rich-text";
@@ -58,6 +59,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   benefits_cards: benefitsCardsBlock,
   video_embed: videoEmbedBlock,
   contact_form: contactFormBlock,
+  newsletter_signup: newsletterSignupBlock,
   contact_details: contactDetailsBlock,
   cta_band: ctaBandBlock,
   rich_text: richTextBlock,

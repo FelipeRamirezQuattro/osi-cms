@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Clipped } from "./clipped";
+import { trackEvent } from "@/lib/analytics/track-event";
 
 /**
  * Motif 6 — the gold bar that overhangs a section's edge and crosses
@@ -21,7 +24,7 @@ export function CtaBreakoutBar({
   className?: string;
 }) {
   return (
-    <Link href={href} className={className}>
+    <Link href={href} className={className} onClick={() => trackEvent("button_click", `cta_breakout_bar:${href}`)}>
       <Clipped
         as="span"
         corner={corner}

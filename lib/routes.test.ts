@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   applicationHref,
+  blogHref,
   externalLinkAttrs,
   industryHref,
   isSafeHref,
   newsHref,
   pageHref,
+  postHref,
   productHref,
 } from "@/lib/routes";
 
@@ -13,8 +15,15 @@ describe("CMS route helpers", () => {
   it("constructs every structured content route", () => {
     expect(productHref("gas lift", "nova/x")).toBe("/products/gas%20lift/nova%2Fx");
     expect(newsHref("new-tool")).toBe("/news/new-tool");
+    expect(blogHref()).toBe("/blog");
+    expect(blogHref("esp lift")).toBe("/blog/esp%20lift");
     expect(industryHref("oil-gas")).toBe("/industries/oil-gas");
     expect(applicationHref("artificial-lift")).toBe("/applications/artificial-lift");
+  });
+
+  it("routes a news_posts row to /blog or /news by kind", () => {
+    expect(postHref({ slug: "a", kind: "blog" })).toBe("/blog/a");
+    for (const kind of ["news", "conference", "event"]) expect(postHref({ slug: "a", kind })).toBe("/news/a");
   });
 
   it("normalizes CMS page slugs", () => {

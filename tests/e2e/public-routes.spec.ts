@@ -162,6 +162,51 @@ test.describe("public route smoke matrix", () => {
   });
 });
 
+test.describe("Phase 9 routes (blog + newsletter)", () => {
+  // Renders unconditionally (empty state while there are no published blog
+  // posts), and blog detail pages are left for when there's real content —
+  // same reasoning as the industry/application detail fixmes below.
+  test("blog listing renders", async ({ page }) => {
+    await expectRenderedSitePage(page, "/blog");
+    await expect(page.getByRole("heading", { level: 1, name: "Blog" })).toBeVisible();
+  });
+
+  test("blog listing with an unknown tag shows the empty state, not an error", async ({ page }) => {
+    await expectRenderedSitePage(page, "/blog?tag=no-such-tag");
+    await expect(page.getByText(/No articles tagged/)).toBeVisible();
+  });
+
+  // The confirm/unsubscribe pages only act on a button press, so a bad or
+  // missing token must show the explanation and offer NO action control at
+  // all (and must never be indexed).
+  for (const path of ["/newsletter/confirm", "/newsletter/unsubscribe", "/newsletter/confirm?token=forged"]) {
+    test(`${path} with no valid token explains the problem and offers no action`, async ({ page }) => {
+      await expectRenderedSitePage(page, path);
+      await expect(page.getByText("This link isn't valid")).toBeVisible();
+      await expect(page.locator("main button[type='submit']")).toHaveCount(0);
+      await expect(page.locator("meta[name='robots']")).toHaveAttribute("content", /noindex/);
+    });
+  }
+
+  test("the one-click unsubscribe endpoint rejects a request with no valid token", async ({ request }) => {
+    const response = await request.post("/api/newsletter/unsubscribe?token=forged");
+    expect(response.status()).toBe(400);
+  });
+
+  test("opening the unsubscribe endpoint in a browser (GET) redirects instead of changing anything", async ({ request }) => {
+    const response = await request.get("/api/newsletter/unsubscribe?token=forged", { maxRedirects: 0 });
+    expect(response.status()).toBe(303);
+    expect(response.headers()["location"]).toContain("/newsletter/unsubscribe");
+  });
+
+  test("the admin newsletter screens require a sign-in", async ({ page }) => {
+    for (const path of ["/admin/newsletter/subscribers", "/admin/newsletter/campaigns"]) {
+      await page.goto(path);
+      await expect(page).toHaveURL(/\/admin\/login/);
+    }
+  });
+});
+
 test.describe("Task 8 routes", () => {
   // app/(site)/news/page.tsx now exists — renders unconditionally
   // (empty-state copy when news_posts has no published rows, which is

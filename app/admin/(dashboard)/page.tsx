@@ -9,6 +9,7 @@ import { listBrokenLinks } from "@/lib/data/link-audit";
 import { listAuditLog, type AuditLogEntry } from "@/lib/data/audit";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
 import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
+import { StatCard } from "@/components/admin/ui/stat-card";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { adminButtonClassName } from "@/components/admin/ui/button";
 import type { Tables } from "@/lib/db/database.types";
@@ -65,29 +66,6 @@ const auditColumns: AdminDataTableColumn<AuditLogEntry>[] = [
   },
   { key: "entity", header: "Entity", render: (entry) => entry.entity },
 ];
-
-function StatCard({ value, label, href }: { value: number; label: string; href: string }) {
-  return (
-    <Link
-      href={href}
-      className="admin-card group block p-4 hover:-translate-y-0.5 hover:border-[var(--admin-border-strong)] hover:shadow-md sm:p-5"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-2xl font-semibold tracking-tight tabular-nums">{value}</p>
-          <p className="mt-1 text-sm text-[var(--admin-ink-secondary)]">{label}</p>
-        </div>
-        <span
-          className="mt-1 text-[var(--admin-ink-secondary)] transition-transform group-hover:translate-x-0.5"
-          aria-hidden="true"
-        >
-          →
-        </span>
-      </div>
-      <span className="sr-only">View {label.toLowerCase()}</span>
-    </Link>
-  );
-}
 
 function DashboardSectionHeader({
   title,

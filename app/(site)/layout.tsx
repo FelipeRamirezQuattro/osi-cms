@@ -10,6 +10,7 @@ import { getMediaAssetById } from "@/lib/data/media";
 import { headers } from "next/headers";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteUrl } from "@/lib/seo";
+import { AnalyticsBeacon } from "@/components/analytics/analytics-beacon";
 
 // Every route here reads live, draft/published-gated content straight
 // from Supabase (and lib/db/client.ts touches cookies() for session
@@ -45,6 +46,7 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <PublicThemeBoundary branding={branding} className="flex min-h-dvh flex-1 flex-col">
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
+      <AnalyticsBeacon />
       {/*
        * Skip link (Task 14) — invisible until it receives keyboard focus
        * (first Tab stop on every page), then it's the first thing a

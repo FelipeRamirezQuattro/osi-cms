@@ -29,7 +29,7 @@ const COLUMNS = ["id", "form_key", "status", "page_slug", "created_at", "payload
 const FORMULA_INJECTION_PREFIX = /^[=+\-@\t\r]/;
 
 /** RFC 4180 field escaping: wrap in quotes and double any embedded quote whenever the value contains a comma, quote, or newline. */
-function csvField(value: string): string {
+export function csvField(value: string): string {
   const safeValue = FORMULA_INJECTION_PREFIX.test(value) ? `'${value}` : value;
   if (/[",\n\r]/.test(safeValue)) {
     return `"${safeValue.replace(/"/g, '""')}"`;

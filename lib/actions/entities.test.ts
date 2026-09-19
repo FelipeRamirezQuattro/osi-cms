@@ -172,7 +172,7 @@ describe("restoreEntityAction", () => {
 
     const result = await restoreEntityAction("news", "n1");
 
-    expect(result).toEqual({ status: "error", message: "News post is not archived." });
+    expect(result).toEqual({ status: "error", message: "News or blog post is not archived." });
     expect(mockUpdateEntityRow).not.toHaveBeenCalled();
   });
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useRef, type ReactNode } from "react";
+import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { useRevealInView } from "@/lib/motion/use-reveal-in-view";
 import {
   fadeRiseVariants,
@@ -26,7 +27,7 @@ export function AnimatedGroup({
   children: ReactNode;
   className?: string;
 }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useRevealInView(ref);
 
@@ -50,7 +51,7 @@ export function AnimatedItem({
   children: ReactNode;
   className?: string;
 }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <motion.div

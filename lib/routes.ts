@@ -10,6 +10,10 @@ export function productHref(categorySlug: string, productSlug: string): string {
 }
 
 export const newsHref = (slug?: string) => (slug ? `/news/${encodeSegment(slug)}` : "/news");
+export const blogHref = (slug?: string) => (slug ? `/blog/${encodeSegment(slug)}` : "/blog");
+// news_posts holds both /news and /blog content, split by `kind`.
+export const postHref = (post: { slug: string; kind: string }) =>
+  post.kind === "blog" ? blogHref(post.slug) : newsHref(post.slug);
 export const resourceHref = () => "/resources";
 export const industryHref = (slug: string) => `/industries/${encodeSegment(slug)}`;
 export const applicationHref = (slug: string) => `/applications/${encodeSegment(slug)}`;

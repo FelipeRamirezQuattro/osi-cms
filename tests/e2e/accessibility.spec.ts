@@ -50,6 +50,25 @@ async function expectNoSeriousViolations(page: Page, testInfo: TestInfo, include
 }
 
 test.describe("public site — axe", () => {
+  test("reduced-motion preference hydrates without a mismatch", async ({ page }) => {
+    const hydrationErrors: string[] = [];
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    page.on("console", (message) => {
+      if (message.type() === "error" && /hydration|hydrated/i.test(message.text())) {
+        hydrationErrors.push(message.text());
+      }
+    });
+    page.on("pageerror", (error) => {
+      if (/hydration|hydrated/i.test(error.message)) hydrationErrors.push(error.message);
+    });
+
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    expect(hydrationErrors).toEqual([]);
+  });
+
   test("home page", async ({ page }, testInfo) => {
     await page.goto("/");
     await expectNoSeriousViolations(page, testInfo);
@@ -70,6 +89,21 @@ test.describe("public site — axe", () => {
     await expectNoSeriousViolations(page, testInfo);
   });
 
+  test("blog listing", async ({ page }, testInfo) => {
+    await page.goto("/blog");
+    await expectNoSeriousViolations(page, testInfo);
+  });
+
+  test("newsletter confirm page (invalid link)", async ({ page }, testInfo) => {
+    await page.goto("/newsletter/confirm");
+    await expectNoSeriousViolations(page, testInfo);
+  });
+
+  test("newsletter unsubscribe page (invalid link)", async ({ page }, testInfo) => {
+    await page.goto("/newsletter/unsubscribe");
+    await expectNoSeriousViolations(page, testInfo);
+  });
+
   test("resources listing", async ({ page }, testInfo) => {
     await page.goto("/resources");
     await expectNoSeriousViolations(page, testInfo);
@@ -77,6 +111,11 @@ test.describe("public site — axe", () => {
 
   test("contact page", async ({ page }, testInfo) => {
     await page.goto("/contact");
+    await expectNoSeriousViolations(page, testInfo);
+  });
+
+  test("published semantic styleguide", async ({ page }, testInfo) => {
+    await page.goto("/styleguide");
     await expectNoSeriousViolations(page, testInfo);
   });
 
@@ -176,6 +215,7 @@ test.describe("authenticated admin — axe", () => {
     ["users list", "/admin/users"],
     ["navigation editor", "/admin/navigation"],
     ["settings", "/admin/settings"],
+    ["branding", "/admin/branding"],
     ["audit log", "/admin/audit-log"],
     ["submissions list", "/admin/submissions"],
   ];

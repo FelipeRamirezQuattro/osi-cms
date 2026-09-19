@@ -73,6 +73,34 @@ The registry remains the single source of truth in `lib/blocks/registry.ts`; the
 - Removed active ambient loops from the gradient text, logo strip, CTA breakout, and video play control.
 - Corrected the stat-grid negative inset responsible for mobile horizontal overflow.
 
-## Follow-up gates
+## Phase 3–8 implementation outcome
 
-Phases 3–10 remain intentionally open: hero families/page composition, product discovery/detail, content/search/sparse states, forms/locations, full block coverage, accessibility/responsive audit, performance, and regression handoff.
+- Refined cinematic, editorial, and technical hero families with immediate text paint, guarded contrast, responsive long-title typography, and intentional missing-media states.
+- Rebuilt product discovery around URL-backed view, category, query, and sort state. Browser back/forward restores the selected view, result counts are announced, and cards remain understandable without disclosure or hover.
+- Reworked product cards into one semantic link with stable media proportions, concise teasers, and a labeled technical placeholder.
+- Added accessible fullscreen viewing for technical product diagrams and image galleries, including visible controls, arrow-key gallery navigation, Escape support through native dialog behavior, and explicit focus restoration.
+- Added pointer drag, touch swipe, keyboard arrows, buttons, and reduced-motion behavior to stage carousels without autoplay.
+- Reworked search, resources, news, loading, 404, and recoverable-error states around shared public status, empty-state, and skeleton primitives.
+- Consolidated the two resource filtering implementations behind one shared URL-backed resource browser.
+- Consolidated public contact and generic CMS forms around one visual field family with visible labels and designed pending, success, and failure feedback.
+- Replaced the oversized missing-map void with a compact directions fallback and corrected its dark-surface contrast.
+- Applied the editorial/body typography roles across the maintained block registry without duplicating route-specific block renderers.
+- Removed product navigation entries that do not have published CMS records. Runtime filtering now makes newly published products appear automatically while preventing soft-404 links.
+
+## Phase 9–10 verification outcome
+
+- `pnpm check` passed after the final changes: 71 test files and 577 unit tests.
+- `pnpm build` completed successfully on Next.js 16.3.4.
+- Twenty-two public axe checks passed at desktop and mobile for the home, product listing/detail, news, resources, contact, search, 404, gallery dialog, and technical-image dialog surfaces. Two additional reduced-motion hydration checks passed without React mismatches.
+- Public route smoke coverage passed at desktop and mobile; industry and application detail fixtures remain skipped because production has no published records for them.
+- Strict rendered-navigation link verification passes at desktop and mobile with no allow-list of broken destinations.
+- Thirty-five route/viewport combinations across 320, 390, 768, 1024, and 1440 pixels produced no horizontal overflow, missing shell, unexpected status, or browser page error.
+- Responsive image `sizes` contracts were added and above-the-fold hero/technical media now opt into eager loading. Unused Orbitron/Montserrat font weights and italic files were removed.
+- A final reduced-motion browser pass exposed and fixed an SSR/client Motion variant mismatch; the shared hydrated-preference hook now keeps the first client render identical to the server before applying the user's preference.
+
+## Intentional follow-ups
+
+- The CMS user guide remains deferred at the user's request.
+- Production Lighthouse/Core Web Vitals must be measured after deployment; local development uses live CMS requests and is not a trustworthy performance score.
+- The styleguide covers shared primitives, remediation-era blocks, the gallery, and carousel interactions, but it is not yet a generated exhaustive fixture for every state of all 33 data-dependent blocks.
+- Browser automation covered desktop/mobile emulation, reduced motion, keyboard behavior, and target widths. A final real-device touch and screen-reader pass remains a release activity.

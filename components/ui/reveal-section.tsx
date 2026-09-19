@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useRef, type ReactNode } from "react";
+import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { useRevealInView } from "@/lib/motion/use-reveal-in-view";
 import { fadeRiseVariants, fadeRiseVariantsReduced } from "@/lib/motion/variants";
 
@@ -28,7 +29,7 @@ export function RevealSection({
   className?: string;
   children: ReactNode;
 }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const inView = useRevealInView(ref);
 

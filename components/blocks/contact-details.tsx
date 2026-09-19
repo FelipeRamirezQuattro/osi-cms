@@ -6,6 +6,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { SocialIcon } from "@/components/ui/social-icon";
+import { TrackedLink } from "@/components/analytics/tracked-link";
 
 const schema = blockCommonSchema.extend({
   // Rendered directly as an <iframe src> below — not a click-navigable
@@ -75,10 +76,26 @@ async function Render({ data }: { data: Data }) {
           <p className="mb-5 font-editorial text-2xl font-semibold">Contact OSI</p>
           <address className="space-y-2 text-sm not-italic leading-relaxed">
             {settings.phone && (
-              <p><a className="font-semibold underline decoration-current/30 underline-offset-4" href={`tel:${settings.phone.replace(/[^+\d]/g, "")}`}>{settings.phone}</a></p>
+              <p>
+                <TrackedLink
+                  className="font-semibold underline decoration-current/30 underline-offset-4"
+                  href={`tel:${settings.phone.replace(/[^+\d]/g, "")}`}
+                  label="contact_details:phone"
+                >
+                  {settings.phone}
+                </TrackedLink>
+              </p>
             )}
             {settings.email && (
-              <p><a className="font-semibold underline decoration-current/30 underline-offset-4" href={`mailto:${settings.email}`}>{settings.email}</a></p>
+              <p>
+                <TrackedLink
+                  className="font-semibold underline decoration-current/30 underline-offset-4"
+                  href={`mailto:${settings.email}`}
+                  label="contact_details:email"
+                >
+                  {settings.email}
+                </TrackedLink>
+              </p>
             )}
             {settings.address_lines?.map((line) => <p key={line}>{line}</p>)}
           </address>
