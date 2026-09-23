@@ -27,7 +27,7 @@ import { z } from "zod";
  * stays embed-only via the `embed`/`video_embed` blocks.
  */
 
-export const MEDIA_KINDS = ["image", "document"] as const;
+export const MEDIA_KINDS = ["image", "document", "model"] as const;
 export type MediaKind = (typeof MEDIA_KINDS)[number];
 
 export const ALLOWED_IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"] as const;
@@ -37,6 +37,19 @@ export const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
 export const ALLOWED_DOCUMENT_MIME_TYPES = ["application/pdf"] as const;
 export const ALLOWED_DOCUMENT_EXTENSIONS = [".pdf"] as const;
 export const MAX_DOCUMENT_SIZE_BYTES = 20 * 1024 * 1024; // 20MB
+
+// Browsers routinely fail to report a MIME type at all for these two
+// extensions (no universal OS-level registration the way image/PDF MIME
+// sniffing is standardized) — "" and "application/octet-stream" are kept
+// in the allowlist deliberately. validateUploadFile's extension check is
+// what actually gates a model upload; this list only decides whether a
+// file gets a chance to reach that check.
+export const ALLOWED_MODEL_MIME_TYPES = ["model/gltf-binary", "model/vnd.usdz+zip", "application/octet-stream", ""] as const;
+export const ALLOWED_MODEL_EXTENSIONS = [".glb", ".usdz"] as const;
+// Kept under the "media" Storage bucket's explicit 50MB file_size_limit
+// (supabase/migrations/0046_media_bucket_model_size_limit.sql) with
+// headroom, rather than relying on an unverified project-wide default.
+export const MAX_MODEL_SIZE_BYTES = 45 * 1024 * 1024; // 45MB
 
 function extensionOf(filename: string): string {
   const idx = filename.lastIndexOf(".");
@@ -61,16 +74,18 @@ export function validateUploadFile(file: UploadFileLike): UploadValidationResult
 
   const isImageMime = (ALLOWED_IMAGE_MIME_TYPES as readonly string[]).includes(mime);
   const isDocumentMime = (ALLOWED_DOCUMENT_MIME_TYPES as readonly string[]).includes(mime);
+  const isModelMime = (ALLOWED_MODEL_MIME_TYPES as readonly string[]).includes(mime);
 
-  if (!isImageMime && !isDocumentMime) {
+  if (!isImageMime && !isDocumentMime && !isModelMime) {
     return {
       ok: false,
-      message: `Unsupported file type "${mime || "unknown"}". Allowed: JPG/PNG/WEBP/AVIF/GIF images or PDF documents.`,
+      message: `Unsupported file type "${mime || "unknown"}". Allowed: JPG/PNG/WEBP/AVIF/GIF images, PDF documents, or GLB/USDZ 3D models.`,
     };
   }
 
-  const kind: MediaKind = isImageMime ? "image" : "document";
-  const allowedExts = kind === "image" ? ALLOWED_IMAGE_EXTENSIONS : ALLOWED_DOCUMENT_EXTENSIONS;
+  const kind: MediaKind = isImageMime ? "image" : isDocumentMime ? "document" : "model";
+  const allowedExts =
+    kind === "image" ? ALLOWED_IMAGE_EXTENSIONS : kind === "document" ? ALLOWED_DOCUMENT_EXTENSIONS : ALLOWED_MODEL_EXTENSIONS;
   if (!(allowedExts as readonly string[]).includes(ext)) {
     return {
       ok: false,
@@ -78,7 +93,7 @@ export function validateUploadFile(file: UploadFileLike): UploadValidationResult
     };
   }
 
-  const maxSize = kind === "image" ? MAX_IMAGE_SIZE_BYTES : MAX_DOCUMENT_SIZE_BYTES;
+  const maxSize = kind === "image" ? MAX_IMAGE_SIZE_BYTES : kind === "document" ? MAX_DOCUMENT_SIZE_BYTES : MAX_MODEL_SIZE_BYTES;
   if (file.size <= 0) {
     return { ok: false, message: "The file appears to be empty." };
   }

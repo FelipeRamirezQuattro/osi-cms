@@ -4,6 +4,7 @@ import {
   ALLOWED_IMAGE_MIME_TYPES,
   MAX_DOCUMENT_SIZE_BYTES,
   MAX_IMAGE_SIZE_BYTES,
+  MAX_MODEL_SIZE_BYTES,
   parseTagsInput,
   validateAltRequirement,
   validateUploadFile,
@@ -84,6 +85,45 @@ describe("validateUploadFile", () => {
       size: MAX_IMAGE_SIZE_BYTES + 1, // bigger than the image cap, still under the document cap
     });
     expect(ok).toEqual({ ok: true, kind: "document" });
+  });
+
+  it("accepts a .glb model with an empty MIME type (browsers rarely know model/gltf-binary)", () => {
+    const result = validateUploadFile({ name: "gas-release-system.glb", type: "", size: 1024 });
+    expect(result).toEqual({ ok: true, kind: "model" });
+  });
+
+  it("accepts a .glb model reported as the generic application/octet-stream", () => {
+    const result = validateUploadFile({ name: "gas-release-system.glb", type: "application/octet-stream", size: 1024 });
+    expect(result).toEqual({ ok: true, kind: "model" });
+  });
+
+  it("accepts a .usdz model with an empty MIME type", () => {
+    const result = validateUploadFile({ name: "gas-release-system.usdz", type: "", size: 1024 });
+    expect(result).toEqual({ ok: true, kind: "model" });
+  });
+
+  it("accepts a .glb reported with its real MIME type when a browser does know it", () => {
+    const result = validateUploadFile({ name: "gas-release-system.glb", type: "model/gltf-binary", size: 1024 });
+    expect(result).toEqual({ ok: true, kind: "model" });
+  });
+
+  it("rejects a mismatched extension even with an empty MIME type", () => {
+    // A renamed .txt with no real extension match — the permissive model
+    // MIME allowlist (which includes "") must not become a bypass.
+    const result = validateUploadFile({ name: "notes.txt", type: "", size: 1024 });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.message).toMatch(/unsupported file type|extension/i);
+  });
+
+  it("rejects a model over the model size limit", () => {
+    const result = validateUploadFile({ name: "huge.glb", type: "", size: MAX_MODEL_SIZE_BYTES + 1 });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.message).toMatch(/too large/i);
+  });
+
+  it("accepts a model exactly at the size limit", () => {
+    const result = validateUploadFile({ name: "max.glb", type: "", size: MAX_MODEL_SIZE_BYTES });
+    expect(result).toEqual({ ok: true, kind: "model" });
   });
 });
 
