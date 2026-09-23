@@ -48,4 +48,5 @@ next-env.d.ts
 # Claude Code local tooling (skills cache) — not part of the app
 .agents/
 .claude/
+.superpowers/
 skills-lock.json
