@@ -7,8 +7,17 @@ import type { DetailedHTMLProps, HTMLAttributes } from "react";
  * attributes this project actually sets are typed; anything else passed
  * through falls back to `unknown` via the HTMLAttributes base, matching
  * how a real custom element accepts arbitrary attributes.
+ *
+ * Augments the "react" module's own `JSX` namespace rather than the
+ * global `JSX` namespace: with `"jsx": "react-jsx"` (this project's
+ * tsconfig) and @types/react 19, TypeScript resolves intrinsic elements
+ * through `React.JSX.IntrinsicElements` (re-exported from
+ * react/jsx-runtime), not a global `namespace JSX` — a `declare global {
+ * namespace JSX { ... } }` version of this file type-checked but was
+ * silently never consulted, surfacing only once ar-model-client.tsx
+ * (Task 7) actually used the `<model-viewer>` tag.
  */
-declare global {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
       "model-viewer": DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
