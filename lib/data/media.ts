@@ -64,6 +64,12 @@ export async function listMediaAssets(options: ListMediaAssetsOptions = {}): Pro
     query = query.or("mime.is.null,mime.like.image/*");
   } else if (kind === "document") {
     query = query.not("mime", "is", null).not("mime", "like", "image/*");
+  } else if (kind === "model") {
+    // No legacy model rows predate mime being populated (unlike image/
+    // document), and uploadMediaAsset above never stores a null/empty
+    // mime for a model — a plain like is sufficient, no null-mime
+    // fallback needed.
+    query = query.like("mime", "model/*");
   }
 
   const safeLimit = Math.max(1, limit);
@@ -183,6 +189,18 @@ export async function uploadMediaAsset(file: File, meta: UploadMediaMeta = {}): 
   const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : "";
   const path = `${crypto.randomUUID()}${ext}`;
 
+  // file.type is unreliable for .glb/.usdz (see lib/validation/media.ts) —
+  // for a model upload, always derive the stored mime from the
+  // already-validated extension rather than trusting whatever (possibly
+  // empty) value the browser sent. Every other kind keeps trusting
+  // file.type, matching prior behavior.
+  const mime =
+    validation.kind === "model"
+      ? ext.toLowerCase() === ".glb"
+        ? "model/gltf-binary"
+        : "model/vnd.usdz+zip"
+      : file.type || null;
+
   const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, {
     contentType: file.type || undefined,
     upsert: false,
@@ -201,7 +219,7 @@ export async function uploadMediaAsset(file: File, meta: UploadMediaMeta = {}): 
       url: publicUrl,
       alt: decorative ? null : (meta.alt?.trim() || null),
       decorative,
-      mime: file.type || null,
+      mime,
       title: meta.title?.trim() || file.name,
       filename: file.name,
       caption: meta.caption?.trim() || null,

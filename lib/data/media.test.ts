@@ -135,6 +135,38 @@ describe("uploadMediaAsset", () => {
     });
   });
 
+  it("stores a canonical mime for a model upload even when the browser reports no MIME type", async () => {
+    const fake = createFakeDbClient({
+      media_assets: [{ data: { id: "asset-model-1", title: "gas-release-system.glb", mime: "model/gltf-binary" }, error: null }],
+    });
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    const file = new File(["glb-bytes"], "gas-release-system.glb", { type: "" });
+    const asset = await uploadMediaAsset(file, {});
+    expect(asset.id).toBe("asset-model-1");
+    expect(mockRecordAudit).toHaveBeenCalledWith("upload", "media_asset", "asset-model-1", {
+      title: "gas-release-system.glb",
+      mime: "model/gltf-binary",
+      kind: "model",
+    });
+  });
+
+  it("stores the usdz mime for a .usdz upload with no browser-reported MIME type", async () => {
+    const fake = createFakeDbClient({
+      media_assets: [{ data: { id: "asset-model-2", title: "gas-release-system.usdz", mime: "model/vnd.usdz+zip" }, error: null }],
+    });
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    const file = new File(["usdz-bytes"], "gas-release-system.usdz", { type: "" });
+    const asset = await uploadMediaAsset(file, {});
+    expect(asset.id).toBe("asset-model-2");
+    expect(mockRecordAudit).toHaveBeenCalledWith("upload", "media_asset", "asset-model-2", {
+      title: "gas-release-system.usdz",
+      mime: "model/vnd.usdz+zip",
+      kind: "model",
+    });
+  });
+
   it("removes the just-uploaded storage object when the row insert fails (compensating transaction)", async () => {
     const remove = vi.fn(async () => ({ error: null }));
     const fake = createFakeDbClient(
