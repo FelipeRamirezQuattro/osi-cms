@@ -167,6 +167,23 @@ describe("uploadMediaAsset", () => {
     });
   });
 
+  it("passes the canonical mime as Storage contentType for a model upload with empty browser-reported type", async () => {
+    const upload = vi.fn(async () => ({ error: null }));
+    const fake = createFakeDbClient(
+      {
+        media_assets: [{ data: { id: "asset-model-3", title: "model.glb", mime: "model/gltf-binary" }, error: null }],
+      },
+      { upload },
+    );
+    mockCreateServerDbClient.mockReturnValue(fake);
+
+    const file = new File(["glb-bytes"], "model.glb", { type: "" });
+    await uploadMediaAsset(file, {});
+    expect(upload).toHaveBeenCalledTimes(1);
+    const uploadCall = upload.mock.calls[0];
+    expect(uploadCall[2]).toEqual(expect.objectContaining({ contentType: "model/gltf-binary" }));
+  });
+
   it("removes the just-uploaded storage object when the row insert fails (compensating transaction)", async () => {
     const remove = vi.fn(async () => ({ error: null }));
     const fake = createFakeDbClient(

@@ -202,7 +202,7 @@ export async function uploadMediaAsset(file: File, meta: UploadMediaMeta = {}): 
       : file.type || null;
 
   const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, {
-    contentType: file.type || undefined,
+    contentType: mime || undefined,
     upsert: false,
   });
   if (uploadError) throw uploadError;
