@@ -135,7 +135,7 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
                 // lib/blocks/admin-fields.ts) — no field sets it today,
                 // but fall back to "image" rather than passing an accept
                 // value MediaBrowser doesn't understand if one ever does.
-                accept={spec.accept === "file" ? "file" : "image"}
+                accept={spec.accept === "file" ? "file" : spec.accept === "model" ? "model" : "image"}
               />
             )}
           />

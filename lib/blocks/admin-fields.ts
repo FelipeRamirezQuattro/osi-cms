@@ -30,7 +30,7 @@ export type FieldSpec =
   // not wired up. Bumping a field from "image" to "file" is additive and
   // backward-compatible — it does not require touching every other
   // caller of this union.
-  | { key: string; label: string; type: "image"; accept?: "image" | "file" | "video"; optional?: boolean }
+  | { key: string; label: string; type: "image"; accept?: "image" | "file" | "video" | "model"; optional?: boolean }
   | { key: string; label: string; type: "richtext"; optional?: boolean }
   | { key: string; label: string; type: "date"; optional?: boolean }
   // `relation` renders a <select> populated at runtime from a
