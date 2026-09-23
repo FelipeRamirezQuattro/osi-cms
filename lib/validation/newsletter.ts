@@ -16,6 +16,9 @@ export type NewsletterSignupInput = z.infer<typeof newsletterSignupSchema>;
 
 export const newsletterTagNameSchema = z.string().trim().min(1, "Tag name is required").max(60, "Tag names are at most 60 characters");
 
+/** Admin "add subscriber" form — same normalization as public signup, reused so the two never drift. */
+export const adminAddSubscriberEmailSchema = newsletterSignupSchema.shape.email;
+
 /** Campaign draft fields. `blocks` is validated separately, block by block, against the email block registry. */
 export const campaignInputSchema = z.object({
   name: z.string().trim().min(1, "Give the campaign a name").max(120, "Names are at most 120 characters"),

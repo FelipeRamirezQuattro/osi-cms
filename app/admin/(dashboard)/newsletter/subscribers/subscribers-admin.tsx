@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import type { AdminRole } from "@/lib/auth";
 import { hasCapability } from "@/lib/auth/capabilities";
 import {
+  addSubscriberAction,
   createTagAction,
   deleteSubscriberAction,
   deleteTagAction,
   exportSubscribersCsvAction,
   setSubscriberTagsAction,
+  type AddSubscriberResult,
   type NewsletterAdminResult,
 } from "@/lib/actions/newsletter-subscribers";
 import type { NewsletterSubscriberWithTags, NewsletterTag } from "@/lib/data/newsletter-subscribers";
@@ -45,6 +47,9 @@ export function SubscribersAdmin({
   const query = useListQueryState();
   const [tagFilter, setTagFilter] = useState("");
   const [newTag, setNewTag] = useState("");
+  const [newSubscriberEmail, setNewSubscriberEmail] = useState("");
+  const [newSubscriberTagIds, setNewSubscriberTagIds] = useState<string[]>([]);
+  const [addNote, setAddNote] = useState<string | null>(null);
 
   const tagName = useMemo(() => new Map(tags.map((tag) => [tag.id, tag.name])), [tags]);
   const counts = useMemo(() => {
@@ -76,6 +81,23 @@ export function SubscribersAdmin({
     if (!name) return;
     startTransition(async () => {
       if (await report(await createTagAction(name), "Can't add tag")) setNewTag("");
+    });
+  }
+
+  function addSubscriber() {
+    const email = newSubscriberEmail.trim();
+    if (!email) return;
+    setAddNote(null);
+    startTransition(async () => {
+      const result: AddSubscriberResult = await addSubscriberAction(email, newSubscriberTagIds);
+      if (result.status === "error") {
+        await confirm({ title: "Can't add subscriber", message: result.message, hideCancel: true, confirmLabel: "OK" });
+        return;
+      }
+      setNewSubscriberEmail("");
+      setNewSubscriberTagIds([]);
+      setAddNote(result.alreadySubscribed ? "Already subscribed — tags updated." : "Added and marked subscribed.");
+      router.refresh();
     });
   }
 
@@ -165,6 +187,57 @@ export function SubscribersAdmin({
           </Button>
         }
       />
+
+      <section aria-labelledby="add-subscriber-heading" className="space-y-3 rounded border border-osi-sand-300 bg-osi-white p-4">
+        <h2 id="add-subscriber-heading" className="text-sm font-medium">
+          Add subscriber
+        </h2>
+        <p className="text-xs opacity-70">
+          For someone who agreed to receive email off-site — in person, by phone, at a trade show. They&rsquo;re marked subscribed
+          immediately; no confirmation email is sent. Visitors on the website should use the newsletter signup block instead.
+        </p>
+        <form
+          className="flex flex-wrap items-end gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            addSubscriber();
+          }}
+        >
+          <Input
+            type="email"
+            value={newSubscriberEmail}
+            onChange={(event) => setNewSubscriberEmail(event.target.value)}
+            placeholder="name@example.com"
+            aria-label="New subscriber email"
+            className="max-w-xs"
+          />
+          {tags.length > 0 && (
+            <fieldset className="flex flex-wrap items-center gap-3">
+              <legend className="sr-only">Tags</legend>
+              {tags.map((tag) => (
+                <label key={tag.id} className="flex items-center gap-1.5 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={newSubscriberTagIds.includes(tag.id)}
+                    onChange={(event) =>
+                      setNewSubscriberTagIds((prev) => (event.target.checked ? [...prev, tag.id] : prev.filter((id) => id !== tag.id)))
+                    }
+                  />
+                  {tag.name}
+                </label>
+              ))}
+            </fieldset>
+          )}
+          <Button type="submit" variant="secondary" disabled={isPending || !newSubscriberEmail.trim()}>
+            Add subscriber
+          </Button>
+        </form>
+        {addNote && (
+          <p role="status" className="text-xs opacity-70">
+            {addNote}
+          </p>
+        )}
+      </section>
 
       <section aria-labelledby="newsletter-tags-heading" className="space-y-3 rounded border border-osi-sand-300 bg-osi-white p-4">
         <h2 id="newsletter-tags-heading" className="text-sm font-medium">

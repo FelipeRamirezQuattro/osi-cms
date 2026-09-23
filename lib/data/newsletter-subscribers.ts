@@ -1,6 +1,6 @@
 import { recordAudit } from "@/lib/data/audit";
 import { createServerDbClient, createServiceRoleDbClient } from "@/lib/db/client";
-import type { Tables } from "@/lib/db/database.types";
+import type { Json, Tables } from "@/lib/db/database.types";
 
 export type NewsletterSubscriber = Tables<"newsletter_subscribers">;
 export type NewsletterTag = Tables<"newsletter_tags">;
@@ -141,6 +141,63 @@ export async function deleteSubscriber(id: string): Promise<void> {
   if (error) throw error;
   // Id only — never the email, so an erasure isn't undone by the audit log.
   await recordAudit("delete", "newsletter_subscriber", id);
+}
+
+export type StaffAddResult = { subscriber: NewsletterSubscriber; previousStatus: string | null };
+
+/**
+ * Staff "add subscriber" — for consent given off-site (phone, in person),
+ * not the public signup form. Skips double opt-in entirely: the row is
+ * created (or moved back to) `subscribed` immediately, `source: "admin"`,
+ * no confirmation email. `previousStatus` lets the caller tell an editor
+ * "already subscribed" apart from a fresh add or a resubscribe.
+ *
+ * Read-then-write, not a single upsert, because insert and update need
+ * different columns (unsubscribed_at only makes sense to clear on an
+ * existing row) — same reasoning as restartPendingSubscriber. The 23505
+ * race (another add of the same email between the read and the insert)
+ * is handled the same way createTag handles its own name collision: catch
+ * it and fall through to the update path instead of failing the request.
+ */
+export async function addOrResubscribeByStaff(email: string): Promise<StaffAddResult> {
+  const db = createServerDbClient();
+  const now = new Date().toISOString();
+
+  const { data: existing, error: readError } = await db.from("newsletter_subscribers").select("*").eq("email", email).maybeSingle();
+  if (readError) throw readError;
+
+  if (!existing) {
+    const { data, error } = await db
+      .from("newsletter_subscribers")
+      .insert({ email, status: "subscribed", source: "admin", confirmed_at: now })
+      .select("*")
+      .maybeSingle();
+    if (error && error.code !== "23505") throw error;
+    if (data) {
+      await recordAudit("create", "newsletter_subscriber", data.id, { email: data.email, source: "admin" } as unknown as Json);
+      return { subscriber: data, previousStatus: null };
+    }
+    // Lost the race — someone else inserted this email just now; fall through to update it below.
+  }
+
+  let target = existing;
+  if (!target) {
+    const { data, error } = await db.from("newsletter_subscribers").select("*").eq("email", email).single();
+    if (error) throw error;
+    target = data;
+  }
+
+  const { data, error } = await db
+    .from("newsletter_subscribers")
+    .update({ status: "subscribed", source: "admin", confirmed_at: now, consented_at: now, unsubscribed_at: null })
+    .eq("id", target.id)
+    .select("*")
+    .single();
+  if (error) throw error;
+  if (target.status !== "subscribed") {
+    await recordAudit("update", "newsletter_subscriber", data.id, { field: "status", from: target.status, to: "subscribed", source: "admin" } as unknown as Json);
+  }
+  return { subscriber: data, previousStatus: target.status };
 }
 
 export async function listTags(): Promise<NewsletterTag[]> {

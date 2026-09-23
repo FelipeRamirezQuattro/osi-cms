@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth";
 import { buildSubscribersCsv } from "@/lib/admin/subscribers-csv";
 import {
+  addOrResubscribeByStaff,
   createTag,
   deleteSubscriber,
   deleteTag,
@@ -13,7 +14,7 @@ import {
   type NewsletterSubscriberWithTags,
   type NewsletterTag,
 } from "@/lib/data/newsletter-subscribers";
-import { newsletterTagNameSchema } from "@/lib/validation/newsletter";
+import { adminAddSubscriberEmailSchema, newsletterTagNameSchema } from "@/lib/validation/newsletter";
 
 export type SubscribersAdminData = { subscribers: NewsletterSubscriberWithTags[]; tags: NewsletterTag[] };
 export type NewsletterAdminResult = { status: "success" } | { status: "error"; message: string };
@@ -41,6 +42,25 @@ export async function deleteTagAction(id: string): Promise<NewsletterAdminResult
   await deleteTag(id);
   revalidatePath(PAGE);
   return { status: "success" };
+}
+
+export type AddSubscriberResult = { status: "success"; alreadySubscribed: boolean } | { status: "error"; message: string };
+
+/**
+ * The manual-add path (off-site consent: phone, in person) — skips double
+ * opt-in entirely, unlike the public signup form. Same `manage_newsletter`
+ * gate as tag management: adding someone staff already have consent from
+ * is day-to-day marketing work, not a destructive action.
+ */
+export async function addSubscriberAction(email: string, tagIds: string[]): Promise<AddSubscriberResult> {
+  await requireCapability("manage_newsletter");
+  const parsed = adminAddSubscriberEmailSchema.safeParse(email);
+  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message ?? "Invalid email address." };
+
+  const { subscriber, previousStatus } = await addOrResubscribeByStaff(parsed.data);
+  if (tagIds.length > 0) await setSubscriberTags(subscriber.id, tagIds);
+  revalidatePath(PAGE);
+  return { status: "success", alreadySubscribed: previousStatus === "subscribed" };
 }
 
 export async function setSubscriberTagsAction(subscriberId: string, tagIds: string[]): Promise<NewsletterAdminResult> {

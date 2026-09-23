@@ -239,6 +239,12 @@ show as **pending confirmation**; people who opt out show as
 **unsubscribed** and are never emailed again unless they sign up and
 confirm again.
 
+- **Add subscriber**, above the Tags panel, is for someone who agreed to
+  receive email off-site — in person, by phone, at a trade show. Type
+  their email, tick any tags, and they're marked subscribed right away —
+  no confirmation email goes out, so only use it when you already have
+  their consent. Adding an address that's already on the list (in any
+  status) just updates its tags and marks it subscribed again.
 - **Tags** group subscribers so a newsletter can go to just one group.
   Add a tag in the Tags panel, then open **Add tags** on a subscriber's
   row to choose theirs. Click a tag to filter the list.
