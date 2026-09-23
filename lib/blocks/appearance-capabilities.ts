@@ -37,6 +37,7 @@ export const BLOCK_APPEARANCE_CAPABILITIES = {
   how_it_works: { surface: true, accent: false, typography: ["heading", "body"] },
   benefits_cards: { surface: true, accent: false, typography: ["heading", "body"] },
   video_embed: { surface: true, accent: false, typography: ["heading"] },
+  ar_model: { surface: true, accent: false, typography: ["heading"] },
   contact_form: { surface: true, accent: true, typography: ["heading", "label"] },
   newsletter_signup: { surface: true, accent: true, typography: ["heading", "label"] },
   contact_details: { surface: true, accent: false, typography: ["heading", "label"] },
