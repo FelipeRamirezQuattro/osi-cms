@@ -28,6 +28,7 @@ declare module "react" {
         ar?: boolean;
         "ar-modes"?: string;
         "camera-controls"?: boolean;
+        "interaction-prompt"?: string;
       };
     }
   }

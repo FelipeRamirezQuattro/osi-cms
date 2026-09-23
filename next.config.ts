@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
   // DOM node still left its `aria-expanded` state unchanged). Real,
   // user-facing dev-mode breakage, not a testing-only workaround.
   allowedDevOrigins: ["127.0.0.1"],
+  // Raises the default 1MB Server Action body cap so a .glb/.usdz model
+  // upload (via lib/actions/media.ts -> uploadMediaAsset) can actually
+  // reach the server locally / on a self-hosted deployment. This does NOT
+  // fix production uploads on Vercel (this project's actual host — see
+  // CLAUDE.md's Deployment section): Vercel serverless functions hard-cap
+  // request bodies at 4.5MB regardless of this setting, so a real-world
+  // model upload in production still needs a browser -> Supabase Storage
+  // direct upload via a signed URL — a separate follow-up, not built here.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "50mb",
+    },
+  },
   images: {
     // Legacy Wix media host — see lib/media.ts and CLAUDE.md constraint 3.
     // Add hosts here (never `domains`, deprecated in Next 16) as content

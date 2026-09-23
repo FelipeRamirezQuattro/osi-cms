@@ -27,9 +27,11 @@ export function ArModelRender({ data }: { data: ArModelData }) {
   useEffect(() => {
     if (!data.glbUrl || !data.usdzUrl) return;
     let cancelled = false;
-    generateQrCodeSvg(window.location.href).then((svg) => {
-      if (!cancelled) setQrSvg(svg);
-    });
+    generateQrCodeSvg(window.location.href)
+      .then((svg) => {
+        if (!cancelled) setQrSvg(svg);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -62,16 +64,34 @@ export function ArModelRender({ data }: { data: ArModelData }) {
           // auto-rotate is deliberately never set — CLAUDE.md's Motion
           // conventions rule out continuously-looping decorative motion;
           // orbiting the model is drag-driven only.
-          className="aspect-square w-full rounded bg-osi-sand-100"
+          //
+          // interaction-prompt="none" disables model-viewer's default
+          // "auto" prompt, which starts an indefinitely looping wiggle
+          // animation ~3s after load — the same looping-motion rule above,
+          // and one this library has no prefers-reduced-motion support for
+          // at all.
+          interaction-prompt="none"
+          // block (not the default inline display for an unknown custom
+          // element) + explicit sizing utilities avoid a zero-height box
+          // before @google/model-viewer's dynamic import upgrades the
+          // element; touch-pan-y keeps a vertical swipe starting on the
+          // model scrolling the page instead of orbiting it (model-viewer's
+          // default touch-action: none traps mobile scroll otherwise).
+          className="block aspect-square w-full touch-pan-y rounded bg-osi-sand-100"
         />
         {qrSvg && (
           <div className="flex flex-col items-center gap-2 text-center text-xs">
             {/*
-             * Safe: qrSvg is always generated from window.location.href
-             * (this page's own URL, produced by generateQrCodeSvg in
-             * lib/ar/qr.ts) — never third-party or user-supplied text.
+             * Safe regardless of what window.location.href contains: qrcode's SVG
+             * renderer never interpolates the input text into the output markup —
+             * it only emits a <path d="..."> built from the computed QR matrix, so
+             * no injected text can reach the DOM as markup.
              */}
-            <div className="h-32 w-32" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+            <div
+              className="h-32 w-32 [&>svg]:h-full [&>svg]:w-full"
+              aria-hidden="true"
+              dangerouslySetInnerHTML={{ __html: qrSvg }}
+            />
             <span className="opacity-70">Scan to view in AR</span>
           </div>
         )}

@@ -36,6 +36,16 @@ describe("arModelBlock schema", () => {
     const result = arModelBlock.schema.safeParse({ ...base, alt: "" });
     expect(result.success).toBe(false);
   });
+
+  it("rejects a .usdz file in the glbUrl field (swapped extensions)", () => {
+    const result = arModelBlock.schema.safeParse({ ...base, glbUrl: "https://example.test/media/model.usdz" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a .glb file in the usdzUrl field (swapped extensions)", () => {
+    const result = arModelBlock.schema.safeParse({ ...base, usdzUrl: "https://example.test/media/model.glb" });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("ArModelRender", () => {

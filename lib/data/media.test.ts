@@ -4,6 +4,7 @@ import {
   deleteMediaAsset,
   deleteMediaAssetProtected,
   findMediaAssetUsages,
+  listMediaAssets,
   replaceMediaAsset,
   uploadMediaAsset,
 } from "@/lib/data/media";
@@ -213,6 +214,43 @@ describe("uploadMediaAsset", () => {
     );
     expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("listMediaAssets", () => {
+  /**
+   * listMediaAssets doesn't otherwise have direct unit tests in this file
+   * (its callers — lib/actions/media.ts — aren't tested here either), so
+   * this is a minimal, purpose-built fake rather than createFakeDbClient
+   * above: createFakeDbClient's chain methods are all no-op passthroughs
+   * that just return the next queued response, with no way to see what
+   * filter arguments a caller passed. This one captures the `.not(...)`
+   * calls instead, so the test can assert on the actual query built for
+   * `kind: "document"` — the "model/* assets leaking into the Documents
+   * filter" bug fixed here is entirely about which filters get chained,
+   * not about what data comes back.
+   */
+  it("excludes model/* assets (not just image/*) from the 'document' kind filter", async () => {
+    const notCalls: unknown[][] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const chain: any = {};
+    for (const method of ["select", "eq", "or", "contains", "order", "range"]) {
+      chain[method] = () => chain;
+    }
+    chain.not = (...args: unknown[]) => {
+      notCalls.push(args);
+      return chain;
+    };
+    chain.then = (resolve: (v: unknown) => void) => {
+      resolve({ data: [], error: null, count: 0 });
+    };
+    mockCreateServerDbClient.mockReturnValue({ from: () => chain });
+
+    await listMediaAssets({ kind: "document" });
+
+    expect(notCalls).toContainEqual(["mime", "is", null]);
+    expect(notCalls).toContainEqual(["mime", "like", "image/*"]);
+    expect(notCalls).toContainEqual(["mime", "like", "model/*"]);
   });
 });
 

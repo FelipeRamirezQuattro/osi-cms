@@ -63,7 +63,7 @@ export async function listMediaAssets(options: ListMediaAssetsOptions = {}): Pro
   if (kind === "image") {
     query = query.or("mime.is.null,mime.like.image/*");
   } else if (kind === "document") {
-    query = query.not("mime", "is", null).not("mime", "like", "image/*");
+    query = query.not("mime", "is", null).not("mime", "like", "image/*").not("mime", "like", "model/*");
   } else if (kind === "model") {
     // No legacy model rows predate mime being populated (unlike image/
     // document), and uploadMediaAsset above never stores a null/empty

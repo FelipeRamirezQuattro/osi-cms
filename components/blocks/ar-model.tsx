@@ -7,8 +7,18 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
 const schema = blockCommonSchema.extend({
   title: z.string().optional(),
-  glbUrl: requiredString("3D model (.glb)"),
-  usdzUrl: requiredString("iOS AR model (.usdz)"),
+  // Every URL these fields ever hold comes from this app's own Supabase
+  // Storage uploads via uploadMediaAsset (path is
+  // `${crypto.randomUUID()}${ext}`, no query string ever appended to the
+  // public URL), so a plain case-insensitive endsWith check is enough to
+  // catch an editor picking the wrong file for a field — no general
+  // URL-parsing/query-string-stripping logic needed.
+  glbUrl: requiredString("3D model (.glb)").refine((url) => url.toLowerCase().endsWith(".glb"), {
+    message: "3D model must be a .glb file",
+  }),
+  usdzUrl: requiredString("iOS AR model (.usdz)").refine((url) => url.toLowerCase().endsWith(".usdz"), {
+    message: "iOS AR model must be a .usdz file",
+  }),
   posterUrl: z.string().optional(),
   alt: requiredString("Alt text"),
   caption: z.string().optional(),
