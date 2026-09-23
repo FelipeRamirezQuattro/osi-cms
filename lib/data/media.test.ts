@@ -36,7 +36,7 @@ type TableQueues = Record<string, unknown[]>;
 function createFakeDbClient(
   tableQueues: TableQueues,
   storage: Partial<{
-    upload: () => Promise<{ error: unknown }>;
+    upload: (path: string, file: File, options: { contentType?: string; upsert: boolean }) => Promise<{ error: unknown }>;
     remove: (paths: string[]) => Promise<{ error: unknown }>;
     getPublicUrl: () => { data: { publicUrl: string } };
   }> = {},
@@ -168,7 +168,7 @@ describe("uploadMediaAsset", () => {
   });
 
   it("passes the canonical mime as Storage contentType for a model upload with empty browser-reported type", async () => {
-    const upload = vi.fn(async () => ({ error: null }));
+    const upload = vi.fn(async (_path: string, _file: File, _options: { contentType?: string; upsert: boolean }) => ({ error: null }));
     const fake = createFakeDbClient(
       {
         media_assets: [{ data: { id: "asset-model-3", title: "model.glb", mime: "model/gltf-binary" }, error: null }],
