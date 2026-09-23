@@ -43,4 +43,20 @@ describe("MediaPicker", () => {
     fireEvent.click(screen.getByRole("button", { name: /choose image/i }));
     expect(mockMediaBrowser).toHaveBeenCalled();
   });
+
+  it("shows a model placeholder instead of next/image for a model value", () => {
+    render(<MediaPicker value="https://example.test/media/model.glb" onChange={() => {}} accept="model" label="3D model" />);
+    // next/image's thumbnail always renders with alt="" (a decorative
+    // preview, not user-facing content), which gives it an implicit ARIA
+    // role of "presentation" rather than "img" — so presence/absence of
+    // the <img> tag itself, not its role, is what actually distinguishes
+    // the model placeholder from the image thumbnail here.
+    expect(document.querySelector("img")).toBeNull();
+    expect(screen.getByText("3D")).toBeInTheDocument();
+  });
+
+  it("still renders an Image thumbnail for a normal image value", () => {
+    render(<MediaPicker value="https://example.test/media/photo.png" onChange={() => {}} />);
+    expect(document.querySelector("img")).toBeInTheDocument();
+  });
 });

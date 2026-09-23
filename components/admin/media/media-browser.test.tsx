@@ -126,6 +126,32 @@ describe("MediaBrowser", () => {
     expect(listMediaAction).toHaveBeenCalledWith(expect.objectContaining({ kind: "document" }));
   });
 
+  it("requests the 'model' kind when accept='model'", async () => {
+    listMediaAction.mockResolvedValue({ assets: [], total: 0 });
+    render(<MediaBrowser accept="model" />);
+    await waitFor(() => expect(listMediaAction).toHaveBeenCalled());
+    expect(listMediaAction).toHaveBeenCalledWith(expect.objectContaining({ kind: "model" }));
+  });
+
+  it("sets the upload file input's accept to model extensions when accept='model'", async () => {
+    listMediaAction.mockResolvedValue({ assets: [], total: 0 });
+    render(<MediaBrowser accept="model" />);
+    await waitFor(() => expect(listMediaAction).toHaveBeenCalled());
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    expect(fileInput.accept).toBe(".glb,.usdz");
+  });
+
+  it("shows a GLB badge (not an <img>) for a model asset", async () => {
+    listMediaAction.mockResolvedValue({
+      assets: [makeAsset({ id: "a1", title: "Gas Release System", mime: "model/gltf-binary", filename: "model.glb" })],
+      total: 1,
+    });
+    render(<MediaBrowser />);
+    await waitFor(() => expect(screen.getByText("Gas Release System")).toBeInTheDocument());
+    expect(screen.getByText("GLB")).toBeInTheDocument();
+    expect(screen.queryByRole("img")).toBeNull();
+  });
+
   it("renders a library-mode footer via renderCardFooter without making the card itself selectable", async () => {
     listMediaAction.mockResolvedValue({ assets: [makeAsset({ id: "a1", title: "Hero" })], total: 1 });
     render(<MediaBrowser renderCardFooter={(asset) => <button type="button">{`Delete ${asset.title}`}</button>} />);

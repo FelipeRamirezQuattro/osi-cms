@@ -80,9 +80,15 @@ export function MediaPicker({
   return (
     <div className="flex items-center gap-3">
       {value ? (
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded border border-osi-sand-300">
-          <Image src={resolveMediaUrl(value)} alt="" fill className="object-cover" />
-        </div>
+        accept === "model" ? (
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded border border-osi-sand-300 bg-osi-sand-100 text-[10px] font-display uppercase tracking-wide-label text-osi-slate-500">
+            3D
+          </div>
+        ) : (
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded border border-osi-sand-300">
+            <Image src={resolveMediaUrl(value)} alt="" fill className="object-cover" />
+          </div>
+        )
       ) : (
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded border border-dashed border-osi-sand-300 text-[10px] text-osi-slate-400">
           None

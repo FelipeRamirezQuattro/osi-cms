@@ -13,7 +13,7 @@ import {
   type UpdateMetadataState,
   type UploadMediaState,
 } from "@/lib/actions/media";
-import { ALLOWED_DOCUMENT_MIME_TYPES, ALLOWED_IMAGE_MIME_TYPES } from "@/lib/validation/media";
+import { ALLOWED_DOCUMENT_MIME_TYPES, ALLOWED_IMAGE_MIME_TYPES, ALLOWED_MODEL_EXTENSIONS } from "@/lib/validation/media";
 import { resolveMediaUrl } from "@/lib/media";
 
 /**
@@ -37,7 +37,7 @@ const initialMetadataState: UpdateMetadataState = { status: "idle" };
 const PAGE_SIZE = 24;
 const DEBOUNCE_MS = 300;
 
-export type MediaBrowserAccept = "image" | "file";
+export type MediaBrowserAccept = "image" | "file" | "model";
 
 export type MediaBrowserProps = {
   /** Restricts the upload input + listing to a kind. Default "image" — matches every existing MediaPicker caller. */
@@ -110,7 +110,7 @@ export function MediaBrowser({
         search: query.search || undefined,
         folder: query.folder || undefined,
         tag: query.tag || undefined,
-        kind: accept === "file" ? "document" : "image",
+        kind: accept === "file" ? "document" : accept === "model" ? "model" : "image",
         limit: PAGE_SIZE,
         offset: query.offset,
       });
@@ -240,6 +240,12 @@ function isImageAsset(asset: MediaAsset): boolean {
   return !asset.mime || asset.mime.startsWith("image/");
 }
 
+function assetKindLabel(asset: MediaAsset): string {
+  if (asset.mime === "model/gltf-binary") return "GLB";
+  if (asset.mime === "model/vnd.usdz+zip") return "USDZ";
+  return (asset.mime?.split("/")[1] ?? "file").toUpperCase();
+}
+
 function MediaAssetCard({
   asset,
   onSelect,
@@ -257,7 +263,7 @@ function MediaAssetCard({
     <Image src={resolveMediaUrl(current.url)} alt={current.alt ?? ""} fill className="object-cover" />
   ) : (
     <div className="flex h-full w-full items-center justify-center bg-osi-sand-100 text-[10px] font-display uppercase tracking-wide-label text-osi-slate-400">
-      {(current.mime?.split("/")[1] ?? "file").toUpperCase()}
+      {assetKindLabel(current)}
     </div>
   );
 
@@ -373,6 +379,11 @@ function MediaMetadataEditor({ asset, onSaved }: { asset: MediaAsset; onSaved: (
 
 const IMAGE_ACCEPT = ALLOWED_IMAGE_MIME_TYPES.join(",");
 const DOCUMENT_ACCEPT = ALLOWED_DOCUMENT_MIME_TYPES.join(",");
+// The file input's accept attribute is a filename-extension filter here
+// (not a MIME allowlist) — .glb/.usdz MIME types aren't reliably known
+// to OS file pickers the way image/PDF MIME types are, but the OS
+// pickers do understand extensions.
+const MODEL_ACCEPT = ALLOWED_MODEL_EXTENSIONS.join(",");
 
 function MediaUploadForm({
   accept,
@@ -448,7 +459,7 @@ function UploadFields({ accept, folders }: { accept: MediaBrowserAccept; folders
     probe.src = objectUrl;
   }
 
-  const inputAccept = accept === "file" ? DOCUMENT_ACCEPT : IMAGE_ACCEPT;
+  const inputAccept = accept === "file" ? DOCUMENT_ACCEPT : accept === "model" ? MODEL_ACCEPT : IMAGE_ACCEPT;
 
   const labelClass = "flex flex-col gap-1 text-xs";
   const captionClass = "uppercase tracking-wide-label opacity-60";

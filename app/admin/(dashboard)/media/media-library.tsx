@@ -16,8 +16,8 @@ import { AsyncMessage } from "@/components/admin/ui/async-message";
  * only makes sense here (MediaPicker is for choosing an image for a
  * field, not for managing the library).
  */
-const ASSET_TABS = ["image", "file"] as const;
-const TAB_LABELS: Record<(typeof ASSET_TABS)[number], string> = { image: "Images", file: "Documents" };
+const ASSET_TABS = ["image", "file", "model"] as const;
+const TAB_LABELS: Record<(typeof ASSET_TABS)[number], string> = { image: "Images", file: "Documents", model: "3D Models" };
 
 export function MediaLibrary({ role }: { role: AdminRole }) {
   const canDelete = hasCapability(role, "delete_media");
