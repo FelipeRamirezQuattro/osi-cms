@@ -161,9 +161,9 @@ In the page editor, add an **AR model** block and upload the `.glb` to
 the first file field and the `.usdz` to the second. Add alt text
 describing the model (read aloud by screen readers, same rule as any
 image). A poster image and caption are optional. On the live page,
-visitors on a phone get an in-page 3D viewer with a **View in AR**
-button; visitors on a desktop see the same viewer plus a QR code they
-can scan with their own phone's camera to open the page there instead.
+every visitor sees the 3D viewer with a **View in AR** button on their
+phone; the page also shows a QR code (useful for print, or for a desktop
+visitor to open the page on their own phone).
 
 Colors and materials can't be changed from the admin — if a model's
 colors need adjusting, that happens in Blender and the `.glb`/`.usdz`

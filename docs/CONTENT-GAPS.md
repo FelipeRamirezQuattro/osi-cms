@@ -148,3 +148,11 @@ items get struck through with the resolution, not deleted.
   subscribers is blocked** until it (and `NEWSLETTER_TOKEN_SECRET`, and
   the Resend key/sender above) are set; the admin says exactly which are
   missing.
+
+## Found while adding the AR model block
+
+- **No `.glb`/`.usdz` 3D model files exist anywhere yet.** Neither the
+  legacy scrape nor any other source in this project has real 3D model
+  exports — the `ar_model` block ships fully working but with no real
+  content to use it with until the client supplies Blender exports (a
+  `.glb` and a matching `.usdz`) for at least one product.
