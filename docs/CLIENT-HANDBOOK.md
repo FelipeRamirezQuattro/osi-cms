@@ -142,6 +142,33 @@ shows (e.g. "ESP Gas Release System diagram"). This isn't red tape: it's
 what a screen reader reads aloud to a visitor who can't see the image,
 and it's required by law in some jurisdictions for a commercial site.
 
+## Adding a 3D/AR model
+
+The **AR model** block lets a visitor view a product in 3D and launch it
+in augmented reality on their own phone — point the camera at a flat
+surface and the model appears there, life-size. It replaces the old
+Sketchfab/Worldcast.io process: you no longer need either of those
+tools or an account with them.
+
+What you need before adding the block: a **.glb** file and a **.usdz**
+file of the same model, both exported from Blender (Blender's built-in
+glTF exporter produces the `.glb`; the `.usdz` needs a separate export/
+conversion step — ask whoever built the model in Blender for both
+files together). Both are required — the block won't save without
+either one.
+
+In the page editor, add an **AR model** block and upload the `.glb` to
+the first file field and the `.usdz` to the second. Add alt text
+describing the model (read aloud by screen readers, same rule as any
+image). A poster image and caption are optional. On the live page,
+visitors on a phone get an in-page 3D viewer with a **View in AR**
+button; visitors on a desktop see the same viewer plus a QR code they
+can scan with their own phone's camera to open the page there instead.
+
+Colors and materials can't be changed from the admin — if a model's
+colors need adjusting, that happens in Blender and the `.glb`/`.usdz`
+need re-exporting and re-uploading.
+
 ## Writing formatted text
 
 Fields labeled for rich text give you a small toolbar: bold, italic,
