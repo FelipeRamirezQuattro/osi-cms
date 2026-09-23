@@ -33,6 +33,21 @@ describe("AdminListControls", () => {
     expect(onSearchChange).toHaveBeenCalledTimes(1);
   });
 
+  it("reserves space for the search icon so it cannot overlap the entered text", () => {
+    render(
+      <AdminListControls
+        searchValue=""
+        onSearchChange={() => {}}
+        page={1}
+        totalPages={1}
+        onPageChange={() => {}}
+        resultCount={5}
+      />,
+    );
+
+    expect(screen.getByPlaceholderText("Search…")).toHaveClass("admin-search-control");
+  });
+
   it("calls onStatusChange immediately (no debounce) when a status filter is chosen", () => {
     const onStatusChange = vi.fn();
     render(

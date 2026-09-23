@@ -101,7 +101,10 @@ export function FieldRenderer({ spec, name }: { spec: FieldSpec; name: string })
     case "select":
       return (
         <LabeledField label={spec.label}>
-          <select {...register(name)} className={INPUT_CLASS}>
+          <select
+            {...register(name)}
+            className={`${INPUT_CLASS}${spec.key === "status" ? " admin-status-select" : ""}`}
+          >
             {spec.options.map((opt) => (
               <option key={opt} value={opt}>
                 {opt}

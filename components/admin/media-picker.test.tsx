@@ -44,6 +44,20 @@ describe("MediaPicker", () => {
     expect(mockMediaBrowser).toHaveBeenCalled();
   });
 
+  it("portals a viewport-centered responsive dialog into the admin theme boundary", () => {
+    const adminRoot = document.createElement("div");
+    adminRoot.className = "admin-root";
+    document.body.appendChild(adminRoot);
+    render(<MediaPicker value={undefined} onChange={() => {}} />, { container: adminRoot });
+
+    const dialog = document.querySelector("dialog");
+    expect(dialog).not.toBeNull();
+    expect(dialog).toHaveClass("fixed", "inset-0", "m-auto");
+    expect(dialog?.parentElement).toHaveClass("admin-root");
+
+    adminRoot.remove();
+  });
+
   it("shows a model placeholder instead of next/image for a model value", () => {
     render(<MediaPicker value="https://example.test/media/model.glb" onChange={() => {}} accept="model" label="3D model" />);
     // next/image's thumbnail always renders with alt="" (a decorative

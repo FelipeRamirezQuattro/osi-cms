@@ -23,9 +23,11 @@ const columns: AdminDataTableColumn<PageRow>[] = [
   {
     key: "title",
     header: "Title",
+    headerClassName: "admin-page-title-cell",
+    cellClassName: "admin-page-title-cell",
     render: (page) => (
       <>
-        <Link href={`/admin/pages/${page.id}`} className="font-medium hover:underline">
+        <Link href={`/admin/pages/${page.id}`} className="admin-page-title-link hover:underline">
           {page.title}
         </Link>
         {page.is_system && <span className="ml-2 text-[10px] uppercase tracking-wide-label opacity-50">system</span>}

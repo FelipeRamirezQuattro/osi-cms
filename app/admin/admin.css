@@ -302,6 +302,59 @@
   box-shadow: 0 1px 2px rgb(16 24 40 / 0.03);
 }
 
+/* The search icon occupies 16px at 12px from the left edge. Keep this
+   semantic padding after the base control shorthand so the input text
+   always starts beyond it, independent of Tailwind stylesheet order. */
+.admin-search-control {
+  padding-inline-start: 2.5rem;
+}
+
+.admin-status-select {
+  min-height: 52px;
+  border-color: var(--admin-border-strong);
+  background: var(--admin-surface);
+  padding-block: 0.8125rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.admin-status-select option {
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+.admin-file-input {
+  display: block;
+  min-height: 48px;
+  width: 100%;
+  max-width: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid var(--admin-border-strong);
+  border-radius: var(--admin-radius-control);
+  background: var(--admin-surface);
+  padding: 0.25rem;
+  color: var(--admin-ink-secondary);
+  font-size: 0.875rem;
+}
+
+.admin-file-input::file-selector-button {
+  min-height: 38px;
+  cursor: pointer;
+  border: 0;
+  border-radius: 7px;
+  background: var(--admin-primary);
+  padding: 0.5rem 0.875rem;
+  margin-inline-end: 0.75rem;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+}
+
+.admin-file-input:hover::file-selector-button {
+  background: var(--admin-primary-hover);
+}
+
 .admin-field-control::placeholder {
   color: #98a2b3;
 }
@@ -377,6 +430,23 @@
 
 .admin-table tbody tr:hover {
   background: var(--admin-surface-raised);
+}
+
+.admin-page-title-cell {
+  width: min(30rem, 45vw);
+  min-width: 14rem;
+  max-width: 30rem;
+}
+
+.admin-page-title-link {
+  display: block;
+  max-width: 30rem;
+  overflow-wrap: anywhere;
+  color: var(--admin-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: normal;
 }
 
 .admin-filter-bar {

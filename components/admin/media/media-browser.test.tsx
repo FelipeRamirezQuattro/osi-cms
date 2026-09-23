@@ -141,6 +141,14 @@ describe("MediaBrowser", () => {
     expect(fileInput.accept).toBe(".glb,.usdz");
   });
 
+  it("gives the native file chooser a prominent, reusable admin style", async () => {
+    listMediaAction.mockResolvedValue({ assets: [], total: 0 });
+    render(<MediaBrowser accept="file" />);
+    await waitFor(() => expect(listMediaAction).toHaveBeenCalled());
+
+    expect(document.querySelector('input[type="file"]')).toHaveClass("admin-file-input");
+  });
+
   it("shows a GLB badge (not an <img>) for a model asset", async () => {
     listMediaAction.mockResolvedValue({
       assets: [makeAsset({ id: "a1", title: "Gas Release System", mime: "model/gltf-binary", filename: "model.glb" })],

@@ -468,13 +468,20 @@ function UploadFields({ accept, folders }: { accept: MediaBrowserAccept; folders
   return (
     <>
       <div className="flex flex-wrap items-end gap-3">
-        <label className={labelClass}>
+        <label className={`${labelClass} min-w-0 flex-1 basis-full sm:basis-auto`}>
           <span className={captionClass}>File</span>
-          <input type="file" name="file" accept={inputAccept} required onChange={handleFileChange} className="text-sm" />
+          <input
+            type="file"
+            name="file"
+            accept={inputAccept}
+            required
+            onChange={handleFileChange}
+            className="admin-file-input"
+          />
         </label>
         <input type="hidden" name="width" value={dimensions.width ?? ""} />
         <input type="hidden" name="height" value={dimensions.height ?? ""} />
-        <label className={labelClass}>
+        <label className={`${labelClass} min-w-0 flex-1`}>
           <span className={captionClass}>Title (optional)</span>
           <input name="title" autoComplete="off" className={fieldClass} />
         </label>

@@ -17,7 +17,7 @@ export const SearchField = forwardRef<HTMLInputElement, InputHTMLAttributes<HTML
         <input
           ref={ref}
           type="search"
-          className={joinClassNames("admin-field-control pl-9", className)}
+          className={joinClassNames("admin-field-control admin-search-control", className)}
           {...props}
         />
       </span>

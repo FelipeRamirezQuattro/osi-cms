@@ -46,11 +46,11 @@ export function MediaPicker({
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   // The dialog (and everything MediaBrowser renders inside it, including
-  // its own upload <form>) is portaled to document.body — every caller
+  // its own upload <form>) is portaled to the admin root — every caller
   // of MediaPicker renders it inside its own <form>, and HTML forbids a
   // nested <form>. Portaling avoids that regardless of where MediaPicker
-  // itself sits in the tree. Only after mount, since document.body
-  // doesn't exist during SSR.
+  // itself sits in the tree, while keeping the scoped admin design tokens.
+  // Only after mount, since the portal target doesn't exist during SSR.
   const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot);
   // MediaBrowser fires its list/folders/tags server actions on mount, so
   // it must not render until the dialog is actually opened — the portal
@@ -119,9 +119,9 @@ export function MediaPicker({
             ref={dialogRef}
             onClose={() => setIsOpen(false)}
             aria-labelledby="media-picker-dialog-title"
-            className="w-[90vw] max-w-3xl rounded-lg border border-osi-sand-300 bg-osi-white p-0 backdrop:bg-osi-navy-900/60"
+            className="fixed inset-0 m-auto max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-3xl overflow-hidden rounded-[var(--admin-radius-dialog)] border border-[var(--admin-border)] bg-[var(--admin-surface)] p-0 text-[var(--admin-ink)] shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/60 sm:max-h-[calc(100dvh-2rem)] sm:w-[90vw]"
           >
-            <div className="flex items-center justify-between border-b border-osi-sand-300 px-5 py-3">
+            <div className="flex items-center justify-between border-b border-[var(--admin-border)] px-4 py-3 sm:px-5">
               <h2 id="media-picker-dialog-title" className="font-display text-sm tracking-wide-display uppercase">
                 Media library
               </h2>
@@ -135,11 +135,11 @@ export function MediaPicker({
               </button>
             </div>
 
-            <div className="max-h-[70vh] overflow-y-auto p-5">
+            <div className="max-h-[calc(100dvh-4.5rem)] overflow-y-auto p-3 sm:p-5">
               {isOpen && <MediaBrowser accept={accept} onSelect={select} onUploaded={select} />}
             </div>
           </dialog>,
-          document.body,
+          document.querySelector(".admin-root") ?? document.body,
         )}
     </div>
   );
