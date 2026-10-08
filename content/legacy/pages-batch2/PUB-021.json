@@ -1,0 +1,192 @@
+{
+  "id": "PUB-021",
+  "url": "https://www.odessaseparator.com/services-2",
+  "title": "OSI Papers | odessaseparator",
+  "meta_description": null,
+  "og_title": "OSI Papers | odessaseparator",
+  "scraped_at": "2026-10-08T16:55:45.021Z",
+  "headings": [
+    {
+      "level": "h1",
+      "text": "OSI PAPERS"
+    }
+  ],
+  "paragraphs": [
+    "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies",
+    "SPE-201289-MS",
+    "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia",
+    "SPE-209734-MS",
+    "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump",
+    "SPE-213079-MS",
+    "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin",
+    "SPE-201477-MS",
+    "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells",
+    "SPE-209749-MS",
+    "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation",
+    "SPE-213056-MS",
+    "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study",
+    "SPE-201744-MS",
+    "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency",
+    "SPE-213064-MS"
+  ],
+  "images": [],
+  "internal_links": [],
+  "external_links": [
+    {
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201289-MS",
+      "text": "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies"
+    },
+    {
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-209734-MS",
+      "text": "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia"
+    },
+    {
+      "url": "https://doi.org/10.2118/213079-MS",
+      "text": "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump"
+    },
+    {
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201477-MS",
+      "text": "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin"
+    },
+    {
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-209749-MS",
+      "text": "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells"
+    },
+    {
+      "url": "https://doi.org/10.2118/213056-MS",
+      "text": "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation"
+    },
+    {
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201744-MS",
+      "text": "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study"
+    },
+    {
+      "url": "https://doi.org/10.2118/213064-MS",
+      "text": "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency"
+    }
+  ],
+  "videos": [],
+  "pdfs": [],
+  "tables": [],
+  "dropped_widget": [],
+  "items": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "OSI PAPERS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies"
+    },
+    {
+      "type": "link",
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201289-MS",
+      "text": "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-201289-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia"
+    },
+    {
+      "type": "link",
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-209734-MS",
+      "text": "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-209734-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump"
+    },
+    {
+      "type": "link",
+      "url": "https://doi.org/10.2118/213079-MS",
+      "text": "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-213079-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin"
+    },
+    {
+      "type": "link",
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201477-MS",
+      "text": "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-201477-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells"
+    },
+    {
+      "type": "link",
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-209749-MS",
+      "text": "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-209749-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation"
+    },
+    {
+      "type": "link",
+      "url": "https://doi.org/10.2118/213056-MS",
+      "text": "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-213056-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study"
+    },
+    {
+      "type": "link",
+      "url": "https://onepetro.org/search-results?page=1&q=SPE-201744-MS",
+      "text": "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-201744-MS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency"
+    },
+    {
+      "type": "link",
+      "url": "https://doi.org/10.2118/213064-MS",
+      "text": "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency",
+      "external": true
+    },
+    {
+      "type": "paragraph",
+      "text": "SPE-213064-MS"
+    }
+  ],
+  "raw_text": "OSI PAPERS\nControlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies\nSPE-201289-MS\nNew Mechanism of Sand Management Above ESPs: Cases Study in Colombia\nSPE-209734-MS\nIncreasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump\nSPE-213079-MS\nImproving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin\nSPE-201477-MS\nA Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells\nSPE-209749-MS\nSlow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation\nSPE-213056-MS\nImproving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study\nSPE-201744-MS\nManagement Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency\nSPE-213064-MS"
+}

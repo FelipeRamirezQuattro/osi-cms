@@ -1,0 +1,174 @@
+{
+  "id": "PUB-045",
+  "url": "https://www.odessaseparator.com/gforce",
+  "title": "G-Force | odessaseparator",
+  "meta_description": null,
+  "og_title": "G-Force | odessaseparator",
+  "scraped_at": "2026-10-08T17:04:28.019Z",
+  "headings": [
+    {
+      "level": "h1",
+      "text": "G-FORCE"
+    },
+    {
+      "level": "h2",
+      "text": "BENEFITS"
+    },
+    {
+      "level": "h2",
+      "text": "HOW IT WORKS"
+    }
+  ],
+  "paragraphs": [
+    "A Revolutionary Packer type Gas separator design that implements G-Force, elevating Gas separation to a whole new level.",
+    "With its 1.89” OD at the outlet section, the G- force is the only gas separator in the market which maximizes phase separation area where it matters.",
+    "The G-Force packer type Gas separator enhances gas separation by maximizing phase separation with the G-forces acting on both the liquid and gaseous phase.",
+    "With an innovative fluid exit slots design, the G-force creates a linear flow path allowing gas to separate and rise up the casing annulus as easily as it sounds.",
+    "- Mitigates gas slugs",
+    "- Reduces or eliminates gas locking",
+    "- Increases pump fillage and pump efficiency",
+    "- Utilizes both the tubing and the casing as gas separators",
+    "- Provides sand and gas separation when combined with an OSI sand separator.",
+    "1.89\" OD",
+    "1.09\" ID",
+    "Test Horizontal Well",
+    "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+    "Click here to see this tool in 3D"
+  ],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_ee83cd103422432490e85146944f6dcb~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/G-FORCE%20(Brochure)%20Mar10%202022.png",
+      "alt": "G-Force - OSI",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [
+    {
+      "url": "https://portal.worldcast.io/show/olgZXQJyn5wrA3O1eyeG14WazMYLmxvkb7dV-gforce/",
+      "text": "Click here to see this tool in 3D"
+    }
+  ],
+  "videos": [
+    {
+      "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/0FDcBCkoNbo?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_d805e348c58946c6bcde835507e2d0f3.pdf",
+      "text": "G-Force"
+    }
+  ],
+  "tables": [],
+  "dropped_widget": [
+    "Scott Vestal",
+    "Senior account manager"
+  ],
+  "items": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "G-FORCE"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_ee83cd103422432490e85146944f6dcb~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/G-FORCE%20(Brochure)%20Mar10%202022.png",
+      "alt": "G-Force - OSI"
+    },
+    {
+      "type": "paragraph",
+      "text": "A Revolutionary Packer type Gas separator design that implements G-Force, elevating Gas separation to a whole new level."
+    },
+    {
+      "type": "paragraph",
+      "text": "With its 1.89” OD at the outlet section, the G- force is the only gas separator in the market which maximizes phase separation area where it matters."
+    },
+    {
+      "type": "paragraph",
+      "text": "The G-Force packer type Gas separator enhances gas separation by maximizing phase separation with the G-forces acting on both the liquid and gaseous phase."
+    },
+    {
+      "type": "paragraph",
+      "text": "With an innovative fluid exit slots design, the G-force creates a linear flow path allowing gas to separate and rise up the casing annulus as easily as it sounds."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "BENEFITS"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "Mitigates gas slugs",
+        "Reduces or eliminates gas locking",
+        "Increases pump fillage and pump efficiency",
+        "Utilizes both the tubing and the casing as gas separators",
+        "Provides sand and gas separation when combined with an OSI sand separator."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "1.89\" OD"
+    },
+    {
+      "type": "paragraph",
+      "text": "1.09\" ID"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "paragraph",
+      "text": "Test Horizontal Well"
+    },
+    {
+      "type": "paragraph",
+      "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "HOW IT WORKS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Click here to see this tool in 3D"
+    },
+    {
+      "type": "link",
+      "url": "https://portal.worldcast.io/show/olgZXQJyn5wrA3O1eyeG14WazMYLmxvkb7dV-gforce/",
+      "text": "Click here to see this tool in 3D",
+      "external": true
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/0FDcBCkoNbo?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_d805e348c58946c6bcde835507e2d0f3.pdf",
+      "text": "G-Force"
+    }
+  ],
+  "raw_text": "G-FORCE\nA Revolutionary Packer type Gas separator design that implements G-Force, elevating Gas separation to a whole new level.\nWith its 1.89” OD at the outlet section, the G- force is the only gas separator in the market which maximizes phase separation area where it matters.\nThe G-Force packer type Gas separator enhances gas separation by maximizing phase separation with the G-forces acting on both the liquid and gaseous phase.\nWith an innovative fluid exit slots design, the G-force creates a linear flow path allowing gas to separate and rise up the casing annulus as easily as it sounds.\nBENEFITS\nMitigates gas slugs\nReduces or eliminates gas locking\nIncreases pump fillage and pump efficiency\nUtilizes both the tubing and the casing as gas separators\nProvides sand and gas separation when combined with an OSI sand separator.\n1.89\" OD\n1.09\" ID\nTest Horizontal Well\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.\nHOW IT WORKS\nClick here to see this tool in 3D"
+}

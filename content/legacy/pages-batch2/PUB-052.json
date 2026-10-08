@@ -1,0 +1,200 @@
+{
+  "id": "PUB-052",
+  "url": "https://www.odessaseparator.com/quick-release",
+  "title": "Quick Release | odessaseparator",
+  "meta_description": null,
+  "og_title": "Quick Release | odessaseparator",
+  "scraped_at": "2026-10-08T17:06:31.467Z",
+  "headings": [
+    {
+      "level": "h1",
+      "text": "QUICK RELEASE"
+    },
+    {
+      "level": "h2",
+      "text": "BENEFITS"
+    },
+    {
+      "level": "h2",
+      "text": "Chemical Composition"
+    },
+    {
+      "level": "h2",
+      "text": "HOW IT WORKS"
+    }
+  ],
+  "paragraphs": [
+    "Quick Release is a chemical shock treatment for wells with severe chemical problems. Its main advantage is that it treats the well from the bottom with a high concentration of chemical treatment to balance the downhole conditions of the system.",
+    "Quick Release is perfectly compatible with the Chem Screen, offering a total solution to provide a strong initial treatment.",
+    "- High concentration treatment. - Reduces paraffin, scale and corrosion failures.",
+    "- Treats from the bottom up. - Refillable tool design. - Fast, self release for a shock treatment. - Chemical treatment below the packer.",
+    "Learn more about this tool",
+    "Case Study",
+    "Webinar",
+    "Paraffin, scale, corrosion are a headache for oil wells, OSI has the solution",
+    "Before / After Installation",
+    "Click here to see this tool in 3D"
+  ],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_e5134fcb5bdd4dfb8ef320d3e77f75e3~mv2.png/v1/crop/x_4,y_0,w_4121,h_3450/fill/w_1168,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Quick%20Diagram%20(Brochure)%20Feb0424.png",
+      "alt": "Quick Diagram (Brochure) Feb0424.png",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [
+    {
+      "url": "https://youtu.be/ZGH4sdUJm_c",
+      "text": "Webinar"
+    },
+    {
+      "url": "https://portal.worldcast.io/show/J9aRgl2XyrOo4p71BrYX1xq3kKZmjY0eM6Bb-quick-release/",
+      "text": "Click here to see this tool in 3D"
+    }
+  ],
+  "videos": [
+    {
+      "url": "https://www.youtube.com/embed/hUNBKMqciO4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/W8gigP7T6q8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+      "text": "Case Study"
+    },
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+      "text": "Chemical Composition"
+    },
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_cd41b8aef5ad4ae285c527be3c1bc9e8.pdf",
+      "text": "Quick Release"
+    }
+  ],
+  "tables": [],
+  "dropped_widget": [
+    "Scott Vestal",
+    "Senior account manager"
+  ],
+  "items": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "QUICK RELEASE"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_e5134fcb5bdd4dfb8ef320d3e77f75e3~mv2.png/v1/crop/x_4,y_0,w_4121,h_3450/fill/w_1168,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Quick%20Diagram%20(Brochure)%20Feb0424.png",
+      "alt": "Quick Diagram (Brochure) Feb0424.png"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/hUNBKMqciO4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "paragraph",
+      "text": "Quick Release is a chemical shock treatment for wells with severe chemical problems. Its main advantage is that it treats the well from the bottom with a high concentration of chemical treatment to balance the downhole conditions of the system."
+    },
+    {
+      "type": "paragraph",
+      "text": "Quick Release is perfectly compatible with the Chem Screen, offering a total solution to provide a strong initial treatment."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "BENEFITS"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "High concentration treatment. - Reduces paraffin, scale and corrosion failures.",
+        "Treats from the bottom up. - Refillable tool design. - Fast, self release for a shock treatment. - Chemical treatment below the packer."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Learn more about this tool"
+    },
+    {
+      "type": "paragraph",
+      "text": "Case Study"
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+      "text": "Case Study"
+    },
+    {
+      "type": "paragraph",
+      "text": "Webinar"
+    },
+    {
+      "type": "link",
+      "url": "https://youtu.be/ZGH4sdUJm_c",
+      "text": "Webinar",
+      "external": true
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Chemical Composition"
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+      "text": "Chemical Composition"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/W8gigP7T6q8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "paragraph",
+      "text": "Paraffin, scale, corrosion are a headache for oil wells, OSI has the solution"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "HOW IT WORKS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Before / After Installation"
+    },
+    {
+      "type": "paragraph",
+      "text": "Click here to see this tool in 3D"
+    },
+    {
+      "type": "link",
+      "url": "https://portal.worldcast.io/show/J9aRgl2XyrOo4p71BrYX1xq3kKZmjY0eM6Bb-quick-release/",
+      "text": "Click here to see this tool in 3D",
+      "external": true
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_cd41b8aef5ad4ae285c527be3c1bc9e8.pdf",
+      "text": "Quick Release"
+    }
+  ],
+  "raw_text": "QUICK RELEASE\nQuick Release is a chemical shock treatment for wells with severe chemical problems. Its main advantage is that it treats the well from the bottom with a high concentration of chemical treatment to balance the downhole conditions of the system.\nQuick Release is perfectly compatible with the Chem Screen, offering a total solution to provide a strong initial treatment.\nBENEFITS\nHigh concentration treatment. - Reduces paraffin, scale and corrosion failures.\nTreats from the bottom up. - Refillable tool design. - Fast, self release for a shock treatment. - Chemical treatment below the packer.\nLearn more about this tool\nCase Study\nWebinar\nChemical Composition\nParaffin, scale, corrosion are a headache for oil wells, OSI has the solution\nHOW IT WORKS\nBefore / After Installation\nClick here to see this tool in 3D"
+}

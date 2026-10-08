@@ -1,0 +1,160 @@
+{
+  "id": "PUB-093",
+  "url": "https://www.odessaseparator.com/one-min-mgnr",
+  "title": "One min mgnr | odessaseparator",
+  "meta_description": null,
+  "og_title": "One min mgnr | odessaseparator",
+  "scraped_at": "2026-10-08T17:21:07.931Z",
+  "headings": [
+    {
+      "level": "h2",
+      "text": "One Minute Manager"
+    },
+    {
+      "level": "h2",
+      "text": "Back"
+    },
+    {
+      "level": "h2",
+      "text": "Power Point"
+    },
+    {
+      "level": "h2",
+      "text": "Introduction"
+    },
+    {
+      "level": "h2",
+      "text": "Flexibility"
+    },
+    {
+      "level": "h2",
+      "text": "Diagnosis"
+    },
+    {
+      "level": "h2",
+      "text": "Partnering for Performance"
+    }
+  ],
+  "paragraphs": [],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_692a804a4e94403c9c62393679102d60.png/v1/fill/w_327,h_387,al_c,lg_1,q_85,enc_avif,quality_auto/1ac9e9_692a804a4e94403c9c62393679102d60.png",
+      "alt": "",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_80cae6fe33774e83bfc6b1068a44d8f5.gif",
+      "alt": "",
+      "caption": null
+    }
+  ],
+  "internal_links": [
+    "https://www.odessaseparator.com/category"
+  ],
+  "external_links": [],
+  "videos": [
+    {
+      "url": "https://www.youtube.com/embed/SE2wi7zBvSg?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/LCUTRWLk-Z8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/sah4DSUgM4s?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/DuIDnLX6rUQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2e8a85632f8041d6baa4e741021d1e52.ppt?dn=LOMM%20PPT.ppt",
+      "text": ""
+    }
+  ],
+  "tables": [],
+  "dropped_widget": [],
+  "items": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "One Minute Manager"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_692a804a4e94403c9c62393679102d60.png/v1/fill/w_327,h_387,al_c,lg_1,q_85,enc_avif,quality_auto/1ac9e9_692a804a4e94403c9c62393679102d60.png",
+      "alt": ""
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_80cae6fe33774e83bfc6b1068a44d8f5.gif",
+      "alt": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Back"
+    },
+    {
+      "type": "link",
+      "url": "https://www.odessaseparator.com/category",
+      "text": "Back",
+      "external": false
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2e8a85632f8041d6baa4e741021d1e52.ppt?dn=LOMM%20PPT.ppt",
+      "text": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Power Point"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Introduction"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/SE2wi7zBvSg?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Flexibility"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/LCUTRWLk-Z8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Diagnosis"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/sah4DSUgM4s?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Partnering for Performance"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/DuIDnLX6rUQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=0&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    }
+  ],
+  "raw_text": "One Minute Manager\nBack\nPower Point\nIntroduction\nFlexibility\nDiagnosis\nPartnering for Performance"
+}

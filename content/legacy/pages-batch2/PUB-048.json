@@ -1,0 +1,169 @@
+{
+  "id": "PUB-048",
+  "url": "https://www.odessaseparator.com/gas-shield-osi",
+  "title": "Gas Shield | odessaseparator",
+  "meta_description": null,
+  "og_title": "Gas Shield | odessaseparator",
+  "scraped_at": "2026-10-08T17:04:56.522Z",
+  "headings": [
+    {
+      "level": "h1",
+      "text": "GAS SHIELD"
+    },
+    {
+      "level": "h2",
+      "text": "BENEFITS"
+    },
+    {
+      "level": "h2",
+      "text": "HOW IT WORKS"
+    }
+  ],
+  "paragraphs": [
+    "Wells that have both, gas interference and solids problems, require fluid conditioning tools that address both problems to prevent damage to the artificial lift system and to keep production at peak efficiency.",
+    "The OSI GAS SHIELD is specifically designed to reduce gas interference and prevent gas locking. It is combined with a three ft., 75 slot “V”-wire screen to shield the pump from solids intrusions.",
+    "- Mitigates gas slugs.",
+    "- Reduces gas interference, prevents gas locking.",
+    "- Provides large solids protection.",
+    "Test Horizontal Well",
+    "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+    "Odessa Separator’s Gas Shield for",
+    "Maximizing Gas Separation.",
+    "Click here to see this tool in 3D"
+  ],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_f6812a922a6e46e68736b0cdc093afad~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/SG%20(Brochure)%20July16%202021.png",
+      "alt": "Gas Shield - OSI",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [
+    {
+      "url": "https://portal.worldcast.io/show/XnxOrBajYW4q92Z1qEaL1M7mb53gRQLEl0eA-gas-shield/",
+      "text": "Click here to see this tool in 3D"
+    }
+  ],
+  "videos": [
+    {
+      "url": "https://www.youtube.com/embed/8obuemU-bM4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/-vaekULOFsg?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86316fc8106d4a76ac5c2ac09f31973f.pdf",
+      "text": "Gas Shield"
+    }
+  ],
+  "tables": [],
+  "dropped_widget": [
+    "Neil Johnson",
+    "Expert Engineer"
+  ],
+  "items": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "GAS SHIELD"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_f6812a922a6e46e68736b0cdc093afad~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/SG%20(Brochure)%20July16%202021.png",
+      "alt": "Gas Shield - OSI"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/8obuemU-bM4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/-vaekULOFsg?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "paragraph",
+      "text": "Wells that have both, gas interference and solids problems, require fluid conditioning tools that address both problems to prevent damage to the artificial lift system and to keep production at peak efficiency."
+    },
+    {
+      "type": "paragraph",
+      "text": "The OSI GAS SHIELD is specifically designed to reduce gas interference and prevent gas locking. It is combined with a three ft., 75 slot “V”-wire screen to shield the pump from solids intrusions."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "BENEFITS"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "Mitigates gas slugs.",
+        "Reduces gas interference, prevents gas locking.",
+        "Provides large solids protection."
+      ]
+    },
+    {
+      "type": "video",
+      "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+      "provider": "youtube"
+    },
+    {
+      "type": "paragraph",
+      "text": "Test Horizontal Well"
+    },
+    {
+      "type": "paragraph",
+      "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+      "alt": "Seal-for-web-V1.png"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "HOW IT WORKS"
+    },
+    {
+      "type": "paragraph",
+      "text": "Odessa Separator’s Gas Shield for"
+    },
+    {
+      "type": "paragraph",
+      "text": "Maximizing Gas Separation."
+    },
+    {
+      "type": "paragraph",
+      "text": "Click here to see this tool in 3D"
+    },
+    {
+      "type": "link",
+      "url": "https://portal.worldcast.io/show/XnxOrBajYW4q92Z1qEaL1M7mb53gRQLEl0eA-gas-shield/",
+      "text": "Click here to see this tool in 3D",
+      "external": true
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86316fc8106d4a76ac5c2ac09f31973f.pdf",
+      "text": "Gas Shield"
+    }
+  ],
+  "raw_text": "GAS SHIELD\nWells that have both, gas interference and solids problems, require fluid conditioning tools that address both problems to prevent damage to the artificial lift system and to keep production at peak efficiency.\nThe OSI GAS SHIELD is specifically designed to reduce gas interference and prevent gas locking. It is combined with a three ft., 75 slot “V”-wire screen to shield the pump from solids intrusions.\nBENEFITS\nMitigates gas slugs.\nReduces gas interference, prevents gas locking.\nProvides large solids protection.\nTest Horizontal Well\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.\nHOW IT WORKS\nOdessa Separator’s Gas Shield for\nMaximizing Gas Separation.\nClick here to see this tool in 3D"
+}

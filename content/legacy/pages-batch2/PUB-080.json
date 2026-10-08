@@ -1,0 +1,87 @@
+{
+  "id": "PUB-080",
+  "url": "https://www.odessaseparator.com/osihappyhour",
+  "title": "OSI Happy Hour | odessaseparator",
+  "meta_description": null,
+  "og_title": "OSI Happy Hour | odessaseparator",
+  "scraped_at": "2026-10-08T17:17:10.779Z",
+  "headings": [],
+  "paragraphs": [
+    "Tuesday, March 24th, 2026",
+    "Post Oak Ice House",
+    "5610 Richmond Ave., Houston, TX 77057",
+    "If you require more information",
+    "about our tech conference, contact us"
+  ],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/f1c0b06cbe134987a7c7b6462a7aa3eb.jpg/v1/fill/w_1440,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f1c0b06cbe134987a7c7b6462a7aa3eb.jpg",
+      "alt": "Bombillas",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/20719f_bb7af0ce78674bfba2dfa17adba96285~mv2.png/v1/fill/w_275,h_222,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/website-lable.png",
+      "alt": "website-lable.png",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/20719f_7ffa5b5b8b7b4316838fefb251243037~mv2.png/v1/fill/w_222,h_164,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/snacks.png",
+      "alt": "snacks.png",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [],
+  "videos": [
+    {
+      "url": "https://static.parastorage.com/services/editor-elements-library/dist/thunderbolt/media/googleMap.f3347ff6.html?defaultLocation=0&showZoom=true&showStreetView=true&showMapType=true&language=en&region=US&id=dataItem-mdexrbot&googleMapsScriptPath=%2Fservices%2Feditor-elements-library%2Fdist%2Fthunderbolt%2Fmedia%2Fgoogle-map.min.9a2bea98.js&origin=https%3A%2F%2Fwww.odessaseparator.com&hasFocus=true",
+      "provider": "other"
+    }
+  ],
+  "pdfs": [],
+  "tables": [],
+  "dropped_widget": [],
+  "items": [
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/f1c0b06cbe134987a7c7b6462a7aa3eb.jpg/v1/fill/w_1440,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f1c0b06cbe134987a7c7b6462a7aa3eb.jpg",
+      "alt": "Bombillas"
+    },
+    {
+      "type": "paragraph",
+      "text": "Tuesday, March 24th, 2026"
+    },
+    {
+      "type": "paragraph",
+      "text": "Post Oak Ice House"
+    },
+    {
+      "type": "paragraph",
+      "text": "5610 Richmond Ave., Houston, TX 77057"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/20719f_bb7af0ce78674bfba2dfa17adba96285~mv2.png/v1/fill/w_275,h_222,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/website-lable.png",
+      "alt": "website-lable.png"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/20719f_7ffa5b5b8b7b4316838fefb251243037~mv2.png/v1/fill/w_222,h_164,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/snacks.png",
+      "alt": "snacks.png"
+    },
+    {
+      "type": "paragraph",
+      "text": "If you require more information"
+    },
+    {
+      "type": "paragraph",
+      "text": "about our tech conference, contact us"
+    },
+    {
+      "type": "video",
+      "url": "https://static.parastorage.com/services/editor-elements-library/dist/thunderbolt/media/googleMap.f3347ff6.html?defaultLocation=0&showZoom=true&showStreetView=true&showMapType=true&language=en&region=US&id=dataItem-mdexrbot&googleMapsScriptPath=%2Fservices%2Feditor-elements-library%2Fdist%2Fthunderbolt%2Fmedia%2Fgoogle-map.min.9a2bea98.js&origin=https%3A%2F%2Fwww.odessaseparator.com&hasFocus=true",
+      "provider": "other"
+    }
+  ],
+  "raw_text": "Tuesday, March 24th, 2026\nPost Oak Ice House\n5610 Richmond Ave., Houston, TX 77057\nIf you require more information\nabout our tech conference, contact us"
+}

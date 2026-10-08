@@ -1,0 +1,51 @@
+{
+  "id": "PUB-079",
+  "url": "https://www.odessaseparator.com/osi-at-alf",
+  "title": "OSI at ALF | odessaseparator",
+  "meta_description": null,
+  "og_title": "OSI at ALF | odessaseparator",
+  "scraped_at": "2026-10-08T17:16:45.550Z",
+  "headings": [],
+  "paragraphs": [],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_6fe9cb15883e4892a3a22873c819fd87~mv2.jpg/v1/crop/x_0,y_57,w_1081,h_541/fill/w_980,h_490,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/01.jpg",
+      "alt": "01.jpg",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_910acbc4719d41dc8cd132bb8d7b17f5~mv2.jpg/v1/crop/x_0,y_0,w_1080,h_1051/fill/w_980,h_954,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/02.jpg",
+      "alt": "02.jpg",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_84a044c094df43c6961d64ba3c8302ba~mv2.jpg/v1/crop/x_0,y_0,w_1079,h_1050/fill/w_980,h_954,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/03.jpg",
+      "alt": "03.jpg",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [],
+  "videos": [],
+  "pdfs": [],
+  "tables": [],
+  "dropped_widget": [],
+  "items": [
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_6fe9cb15883e4892a3a22873c819fd87~mv2.jpg/v1/crop/x_0,y_57,w_1081,h_541/fill/w_980,h_490,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/01.jpg",
+      "alt": "01.jpg"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_910acbc4719d41dc8cd132bb8d7b17f5~mv2.jpg/v1/crop/x_0,y_0,w_1080,h_1051/fill/w_980,h_954,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/02.jpg",
+      "alt": "02.jpg"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_84a044c094df43c6961d64ba3c8302ba~mv2.jpg/v1/crop/x_0,y_0,w_1079,h_1050/fill/w_980,h_954,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/03.jpg",
+      "alt": "03.jpg"
+    }
+  ],
+  "raw_text": ""
+}

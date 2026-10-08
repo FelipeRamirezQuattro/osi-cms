@@ -1,0 +1,41 @@
+{
+  "id": "PUB-082",
+  "url": "https://www.odessaseparator.com/osi-lunch-and-learn",
+  "title": "OSI Lunch and learn | odessaseparator",
+  "meta_description": null,
+  "og_title": "OSI Lunch and learn | odessaseparator",
+  "scraped_at": "2026-10-08T17:17:44.100Z",
+  "headings": [],
+  "paragraphs": [],
+  "images": [
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_e6c96a0235f14907b741efceb6c1dc43~mv2.png/v1/fill/w_405,h_190,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/name.png",
+      "alt": "name.png",
+      "caption": null
+    },
+    {
+      "src": "https://static.wixstatic.com/media/1ac9e9_6e46d169e8cf4d48bf87b0529d3197ac~mv2.png/v1/crop/x_0,y_147,w_723,h_213/fill/w_506,h_149,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_6e46d169e8cf4d48bf87b0529d3197ac~mv2.png",
+      "alt": "",
+      "caption": null
+    }
+  ],
+  "internal_links": [],
+  "external_links": [],
+  "videos": [],
+  "pdfs": [],
+  "tables": [],
+  "dropped_widget": [],
+  "items": [
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_e6c96a0235f14907b741efceb6c1dc43~mv2.png/v1/fill/w_405,h_190,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/name.png",
+      "alt": "name.png"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_6e46d169e8cf4d48bf87b0529d3197ac~mv2.png/v1/crop/x_0,y_147,w_723,h_213/fill/w_506,h_149,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_6e46d169e8cf4d48bf87b0529d3197ac~mv2.png",
+      "alt": ""
+    }
+  ],
+  "raw_text": ""
+}
