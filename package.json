@@ -18,6 +18,8 @@
     "seed:static-pages": "tsx --env-file=.env.local scripts/seed-static-pages.ts",
     "seed:locations": "tsx --env-file=.env.local scripts/seed-locations.ts",
     "migrate:legacy": "tsx --env-file=.env.local scripts/migrate-legacy.ts",
+    "scrape:batch2": "tsx scripts/scrape-legacy-batch2.ts",
+    "migrate:batch2": "tsx --env-file=.env.local scripts/migrate-legacy-batch2.ts",
     "migrate:directory": "tsx --env-file=.env.local scripts/migrate-directory.ts",
     "create-admin": "tsx --env-file=.env.local scripts/create-admin-user.ts",
     "report:content-integrity": "tsx --env-file=.env.local scripts/report-content-integrity.ts",
