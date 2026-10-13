@@ -488,6 +488,17 @@
   color: var(--admin-ink-secondary);
 }
 
+/* Native dialog centering varies once resets and top-layer rendering are
+   involved. Make every admin modal explicit instead of relying on the
+   browser's default dialog margins. */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  max-height: calc(100dvh - 1rem);
+  margin: auto;
+  overscroll-behavior: contain;
+}
+
 .admin-mobile-dialog {
   opacity: 0;
   transition:
@@ -541,6 +552,12 @@
 
   .admin-page-header > :last-child:not(:first-child) .admin-button {
     flex: 1;
+  }
+}
+
+@media (min-width: 640px) {
+  .admin-modal {
+    max-height: calc(100dvh - 2rem);
   }
 }
 

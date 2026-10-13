@@ -90,6 +90,15 @@ describe("CampaignEditor", () => {
     expect(screen.getByRole("heading", { name: "3. Heading" })).toBeInTheDocument();
   });
 
+  it("keeps the block picker and Add block button in the same control row", () => {
+    render(editor());
+    const picker = screen.getByLabelText("Add a block");
+    const addButton = screen.getByRole("button", { name: "Add block" });
+
+    expect(picker.parentElement).toBe(addButton.parentElement);
+    expect(picker.parentElement).toHaveClass("sm:items-stretch");
+  });
+
   it("reorders and removes blocks", () => {
     render(editor());
     fireEvent.click(screen.getByRole("button", { name: "Move Heading down" }));

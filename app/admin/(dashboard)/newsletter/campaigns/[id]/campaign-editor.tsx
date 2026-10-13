@@ -360,26 +360,37 @@ export function CampaignEditor({
             </ol>
             {fields.length === 0 && <p className="text-sm opacity-60">No content yet. Add your first block below.</p>}
 
-            <div className="flex flex-wrap items-end gap-2">
-              <FormField label="Add a block" htmlFor="new-block-type" help={entries.get(newType)?.description}>
-                <Select id="new-block-type" value={newType} onChange={(event) => setNewType(event.target.value)}>
+            <FormField
+              label="Add a block"
+              htmlFor="new-block-type"
+              help={entries.get(newType)?.description}
+              className="w-full"
+            >
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
+                <Select
+                  id="new-block-type"
+                  value={newType}
+                  onChange={(event) => setNewType(event.target.value)}
+                  className="min-w-0 flex-1"
+                >
                   {palette.map((entry) => (
                     <option key={entry.type} value={entry.type}>
                       {entry.label}
                     </option>
                   ))}
                 </Select>
-              </FormField>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  const entry = entries.get(newType);
-                  if (entry) append({ type: entry.type, data: structuredClone(entry.defaults) });
-                }}
-              >
-                Add block
-              </Button>
-            </div>
+                <Button
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    const entry = entries.get(newType);
+                    if (entry) append({ type: entry.type, data: structuredClone(entry.defaults) });
+                  }}
+                >
+                  Add block
+                </Button>
+              </div>
+            </FormField>
           </section>
         </fieldset>
 

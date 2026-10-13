@@ -119,7 +119,7 @@ export function MediaPicker({
             ref={dialogRef}
             onClose={() => setIsOpen(false)}
             aria-labelledby="media-picker-dialog-title"
-            className="fixed inset-0 m-auto max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-3xl overflow-hidden rounded-[var(--admin-radius-dialog)] border border-[var(--admin-border)] bg-[var(--admin-surface)] p-0 text-[var(--admin-ink)] shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/60 sm:max-h-[calc(100dvh-2rem)] sm:w-[90vw]"
+            className="admin-modal w-[calc(100vw-1rem)] max-w-3xl overflow-hidden rounded-[var(--admin-radius-dialog)] border border-[var(--admin-border)] bg-[var(--admin-surface)] p-0 text-[var(--admin-ink)] shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/60 sm:w-[90vw]"
           >
             <div className="flex items-center justify-between border-b border-[var(--admin-border)] px-4 py-3 sm:px-5">
               <h2 id="media-picker-dialog-title" className="font-display text-sm tracking-wide-display uppercase">

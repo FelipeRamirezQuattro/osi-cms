@@ -71,6 +71,13 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("useConfirmDialog / ConfirmDialog — confirm()", () => {
+  it("uses the shared viewport-centered admin modal treatment", () => {
+    render(<ConfirmHarness />);
+    fireEvent.click(screen.getByText("Open confirm"));
+
+    expect(document.querySelector("dialog")).toHaveClass("admin-modal");
+  });
+
   it("resolves true and shows consequences when the user confirms", async () => {
     render(<ConfirmHarness />);
     fireEvent.click(screen.getByText("Open confirm"));

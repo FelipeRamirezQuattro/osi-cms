@@ -52,7 +52,7 @@ describe("MediaPicker", () => {
 
     const dialog = document.querySelector("dialog");
     expect(dialog).not.toBeNull();
-    expect(dialog).toHaveClass("fixed", "inset-0", "m-auto");
+    expect(dialog).toHaveClass("admin-modal");
     expect(dialog?.parentElement).toHaveClass("admin-root");
 
     adminRoot.remove();

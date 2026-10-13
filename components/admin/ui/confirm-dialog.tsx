@@ -17,7 +17,7 @@ import { Input } from "./input";
 /**
  * Accessible replacement for every `window.confirm()`/`window.prompt()`
  * call in the admin (Task 12) — a native `<dialog>` via `showModal()`,
- * same portal-to-`document.body` + "is this the client" pattern as
+ * same admin-root portal + "is this the client" pattern as
  * `components/admin/media-picker.tsx` (native dialogs get a real focus
  * trap for free; a from-scratch one is exactly what CLAUDE.md says not to
  * build). Unlike `window.confirm`/`window.prompt`, this can show
@@ -166,7 +166,7 @@ export const ConfirmDialog = forwardRef<ConfirmDialogHandle, object>(
         onClose={handleNativeClose}
         aria-labelledby={titleId}
         aria-describedby={pending?.options.message ? messageId : undefined}
-        className="admin-card w-[90vw] max-w-md rounded-[var(--admin-radius-dialog)] p-0 shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/50"
+        className="admin-modal admin-card w-[calc(100vw-1rem)] max-w-md overflow-y-auto rounded-[var(--admin-radius-dialog)] p-0 shadow-[var(--admin-shadow-floating)] backdrop:bg-slate-950/50 sm:w-[90vw]"
       >
         {pending && (
           <div className="space-y-4 p-5">
