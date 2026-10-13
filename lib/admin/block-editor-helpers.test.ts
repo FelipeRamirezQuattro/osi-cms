@@ -6,6 +6,7 @@ import {
   decideAutosave,
   deriveAutosaveDisplayStatus,
   isManualSaveActionBlocked,
+  markBlockInvalid,
   resolveBlockFocusTarget,
   shouldTrackFailedAutosaveValue,
 } from "@/lib/admin/block-editor-helpers";
@@ -294,5 +295,29 @@ describe("duplicate-near-source against real react-hook-form insert() (Task 13b)
     // Duplicating from getValues() (the fix) carries the live edit over.
     const liveSource = result.current.getValues("blocks.0") as Block;
     expect(cloneBlockForDuplicate(liveSource).data.body).toBe("edited by the user");
+  });
+});
+
+describe("markBlockInvalid (BLQ-02 — highlight the failing block/field)", () => {
+  it("flags the block and field, and clears both on the next edit inside the block", () => {
+    const container = document.createElement("div");
+    const input = document.createElement("input");
+    container.appendChild(input);
+
+    markBlockInvalid(container, input);
+    expect(container.getAttribute("data-block-invalid")).toBe("true");
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(container.hasAttribute("data-block-invalid")).toBe(false);
+    expect(input.hasAttribute("aria-invalid")).toBe(false);
+  });
+
+  it("works when no specific field resolved, and its cleanup removes the flag", () => {
+    const container = document.createElement("div");
+    const cleanup = markBlockInvalid(container, null);
+    expect(container.getAttribute("data-block-invalid")).toBe("true");
+    cleanup();
+    expect(container.hasAttribute("data-block-invalid")).toBe(false);
   });
 });

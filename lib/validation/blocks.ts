@@ -1,5 +1,6 @@
 import { getBlockDefinition } from "@/lib/blocks/registry";
-import { formatZodError } from "@/lib/validation/common";
+import { COMMON_ADMIN_FIELDS } from "@/lib/blocks/admin-fields";
+import { describeIssue, issueField } from "@/lib/validation/issue-messages";
 
 /**
  * Shared block-list validation, used by both lib/actions/pages.ts
@@ -27,12 +28,25 @@ export function validateBlockList(blocks: BlockValidationInput[]): BlockValidati
     }
     const parsed = definition.schema.safeParse(blocks[i].data);
     if (!parsed.success) {
-      const { message, field } = formatZodError(parsed.error);
+      const specs = [...COMMON_ADMIN_FIELDS, ...definition.adminFields];
+      // Every problem in the block (one per field), not just the first, so an editor fixes
+      // them in one pass — e.g. an AR model missing both its .glb and .usdz.
+      const seen = new Set<string>();
+      const sentences: string[] = [];
+      let total = 0;
+      for (const issue of parsed.error.issues) {
+        const key = issue.path.join(".");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        total += 1;
+        if (sentences.length < 4) sentences.push(describeIssue(issue, { specs, data: blocks[i].data }).replace(/\.$/, ""));
+      }
+      const more = total - sentences.length;
       return {
         status: "error",
-        message: `Block ${i + 1} (${definition.label}): ${message}`,
+        message: `${definition.label} block (position ${i + 1}): ${sentences.join("; ")}${more > 0 ? `; …and ${more} more` : ""}.`,
         blockIndex: i,
-        field,
+        field: issueField(parsed.error.issues[0]),
       };
     }
   }

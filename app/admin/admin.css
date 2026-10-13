@@ -600,3 +600,13 @@
     backdrop-filter: none;
   }
 }
+
+/* A block (and its field) a validation error points at — set by markBlockInvalid(). */
+.admin-root [data-block-invalid="true"] {
+  outline: 2px solid #b42318;
+  outline-offset: 2px;
+}
+.admin-root [data-block-invalid="true"] [aria-invalid="true"] {
+  border-color: #b42318;
+  background: #fef3f2;
+}

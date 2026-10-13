@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { isSafeHref } from "@/lib/routes";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { describeIssue, issueField } from "@/lib/validation/issue-messages";
 
 /**
  * Shared primitives for every file under lib/validation/ — the
@@ -137,16 +139,22 @@ export function optionalSafeHrefSchema(options: Omit<SafeHrefOptions, "defaultVa
 /**
  * Turns the first Zod issue of a failed parse into a `{ field, message }`
  * pair suitable for a SaveResult-shaped action return: `field` is the
- * dotted issue path (e.g. "category_id", "benefits.0.title"), and
- * `message` embeds it inline (e.g. "benefits.0.title: Benefit title is
- * required") so the error is actionable in plain text today, ahead of
- * the later task that uses `field` to scroll to/focus the control.
+ * dotted issue path (e.g. "category_id", "benefits.0.title") used to focus
+ * the control. `message` is plain English: a schema-authored message is
+ * kept (prefixed with the dotted path when no admin labels are supplied,
+ * as before), while Zod's own boilerplate is rewritten using the field's
+ * admin label from `specs` (see lib/validation/issue-messages.ts).
  */
-export function formatZodError(error: z.ZodError): { message: string; field?: string } {
+export function formatZodError(
+  error: z.ZodError,
+  options: { specs?: FieldSpec[]; data?: unknown } = {},
+): { message: string; field?: string } {
   const issue = error.issues[0];
   if (!issue) return { message: "Invalid input." };
-  const field = issue.path.length > 0 ? issue.path.join(".") : undefined;
-  return { message: field ? `${field}: ${issue.message}` : issue.message, field };
+  const field = issueField(issue);
+  const friendly = describeIssue(issue, options);
+  const rewritten = friendly !== issue.message;
+  return { message: field && !rewritten ? `${field}: ${friendly}` : friendly, field };
 }
 
 /** Postgres unique_violation (23505) — thrown as-is by every `lib/data/*` function that just does `if (error) throw error;`. */

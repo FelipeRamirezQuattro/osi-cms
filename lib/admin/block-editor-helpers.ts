@@ -169,3 +169,24 @@ export function decideAutosave(input: {
   }
   return "attempt";
 }
+
+/**
+ * Highlights the block (and the field, when one resolved) a validation
+ * error points at, until the editor next changes something inside it.
+ * Returns a cleanup that removes the highlight. DOM attributes rather than
+ * React state: it must not re-render the whole block list, and the CSS
+ * hooks (`[data-block-invalid]`, `[aria-invalid]`) live in admin.css.
+ */
+export function markBlockInvalid(container: HTMLElement, target: HTMLElement | null): () => void {
+  container.setAttribute("data-block-invalid", "true");
+  target?.setAttribute("aria-invalid", "true");
+  const clear = () => {
+    container.removeAttribute("data-block-invalid");
+    target?.removeAttribute("aria-invalid");
+    container.removeEventListener("input", clear);
+    container.removeEventListener("change", clear);
+  };
+  container.addEventListener("input", clear);
+  container.addEventListener("change", clear);
+  return clear;
+}

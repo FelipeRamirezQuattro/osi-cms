@@ -50,6 +50,7 @@ import {
   decideAutosave,
   deriveAutosaveDisplayStatus,
   isManualSaveActionBlocked,
+  markBlockInvalid,
   resolveBlockFocusTarget,
   shouldTrackFailedAutosaveValue,
   type AutosaveStatus,
@@ -105,6 +106,8 @@ export function PageEditor({
   // callback, after commit) — see AutosaveIndicator's derivation below for
   // why `isAutosaving` is separate from the "idle"/"saved"/"error" outcome.
   const [autosaveOutcome, setAutosaveOutcome] = useState<"idle" | "saved" | "error">("idle");
+  // What the failed autosave said (which block/field), so the indicator can name it.
+  const [autosaveError, setAutosaveError] = useState<string | null>(null);
   const [isAutosaving, setIsAutosaving] = useState(false);
   const [lastFailedAutosaveValue, setLastFailedAutosaveValue] = useState<string | null>(null);
 
@@ -222,6 +225,7 @@ export function PageEditor({
       field: pendingFocus.field,
     });
     target?.focus();
+    return markBlockInvalid(container, target);
   }, [pendingFocus]);
 
   // --- Manual save/publish -------------------------------------------------
@@ -538,6 +542,7 @@ export function PageEditor({
           if (shouldTrackFailedAutosaveValue(result)) {
             setLastFailedAutosaveValue(serializedAtAttempt);
             setAutosaveOutcome("error");
+            setAutosaveError(result.message);
           } else {
             // fix-round Finding 5: a conflict must NOT be recorded into
             // the "already failed, skip retrying this content" tracking —
@@ -607,7 +612,7 @@ export function PageEditor({
           actions={
             <>
               <StatusBadge label={status} />
-              <AutosaveIndicator status={autosaveDisplayStatus} />
+              <AutosaveIndicator status={autosaveDisplayStatus} detail={autosaveError} />
               <a
                 href={`/preview/${page.slug}`}
                 target="_blank"
@@ -817,7 +822,7 @@ export function PageEditor({
 }
 
 /** The small persistent status line next to Save draft — "Saving…" / "Saved" / "Unsaved changes"; a non-conflict autosave failure gets its own quiet text rather than the big error banner (a conflict still uses that banner, set by the caller). */
-function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+function AutosaveIndicator({ status, detail }: { status: AutosaveStatus; detail?: string | null }) {
   if (status === "idle") return null;
   const text =
     status === "saving"
@@ -825,7 +830,9 @@ function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
       : status === "saved"
         ? "Saved"
         : status === "error"
-          ? "Autosave failed — save manually to see the error"
+          ? detail
+            ? `Autosave failed — ${detail}`
+            : "Autosave failed — save manually to see the error"
           : "Unsaved changes";
   return (
     <span

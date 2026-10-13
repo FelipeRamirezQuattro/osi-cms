@@ -40,6 +40,7 @@ import {
   decideAutosave,
   deriveAutosaveDisplayStatus,
   isManualSaveActionBlocked,
+  markBlockInvalid,
   resolveBlockFocusTarget,
   shouldTrackFailedAutosaveValue,
   type AutosaveStatus,
@@ -79,6 +80,8 @@ export function SharedSectionEditor({
   // state rather than refs (decideAutosave reads lastFailedAutosaveValue
   // during render, which this codebase's lint rules forbid for a ref).
   const [autosaveOutcome, setAutosaveOutcome] = useState<"idle" | "saved" | "error">("idle");
+  // What the failed autosave said (which block/field), so the indicator can name it.
+  const [autosaveError, setAutosaveError] = useState<string | null>(null);
   const [isAutosaving, setIsAutosaving] = useState(false);
   const [lastFailedAutosaveValue, setLastFailedAutosaveValue] = useState<string | null>(null);
 
@@ -155,6 +158,7 @@ export function SharedSectionEditor({
       field: pendingFocus.field,
     });
     target?.focus();
+    return markBlockInvalid(container, target);
   }, [pendingFocus]);
 
   const onSaveDraft = handleSubmit((values) => {
@@ -322,6 +326,7 @@ export function SharedSectionEditor({
           if (shouldTrackFailedAutosaveValue(result)) {
             setLastFailedAutosaveValue(serializedAtAttempt);
             setAutosaveOutcome("error");
+            setAutosaveError(result.message);
           } else {
             // fix-round Finding 5: never record a conflict into the
             // "already failed, skip retrying this content" tracking —
@@ -382,7 +387,7 @@ export function SharedSectionEditor({
           actions={
             <>
               <StatusBadge label={status} />
-              <AutosaveIndicator status={autosaveDisplayStatus} />
+              <AutosaveIndicator status={autosaveDisplayStatus} detail={autosaveError} />
               <button
                 type="button"
                 onClick={onSaveDraft}
@@ -533,7 +538,7 @@ export function SharedSectionEditor({
 }
 
 /** See page-editor.tsx's identical component for the state -> text mapping rationale. */
-function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+function AutosaveIndicator({ status, detail }: { status: AutosaveStatus; detail?: string | null }) {
   if (status === "idle") return null;
   const text =
     status === "saving"
@@ -541,7 +546,9 @@ function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
       : status === "saved"
         ? "Saved"
         : status === "error"
-          ? "Autosave failed — save manually to see the error"
+          ? detail
+            ? `Autosave failed — ${detail}`
+            : "Autosave failed — save manually to see the error"
           : "Unsaved changes";
   return (
     <span
