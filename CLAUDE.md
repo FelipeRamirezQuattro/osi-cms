@@ -579,6 +579,10 @@ time. Real sends need `publish` (admin); drafting/preview/test need
 (`lib/newsletter/readiness.ts` reports what's missing). All four are unset
 in production until the client supplies them — see `docs/CONTENT-GAPS.md`.
 
+## Products: extra blocks and previews (batch-2 pass)
+
+`product_blocks` (0047) holds free-form blocks rendered after a product's fixed sections by `components/products/product-detail-view.tsx` (shared by `/products/...` and the staff-only `/preview/products/...`). Edited via `components/admin/product-blocks-field.tsx`; saved by `saveProductBlocks` (delete+insert — see docs/DECISIONS.md for why not atomic). Failed saves in the page/shared-section/product editors open `AlertDialog` (`components/admin/ui/alert*.tsx`, hook `use-block-problem-alert.tsx`) — use these, never `alert()` or a text line at the top of a page. Importer: `pnpm migrate:batch2 [--unpublish-batch2-edited] [--dry-run]`; helpers `rescrape:targeted`, `migrate:batch1-images`.
+
 ## Deployment
 
 `git push origin main` on `github.com/FelipeRamirezQuattro/osi-cms`

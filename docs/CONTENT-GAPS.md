@@ -160,3 +160,12 @@ items get struck through with the resolution, not deleted.
 ## Found during QA round "Entregable 1" (Oct 2026)
 
 - **The list of Applications is needed from OSI.** The `applications` table has 0 rows, so the product editor's Applications picker (and the public `/applications` pages) are empty. Nothing was seeded — the real application names/copy have to come from the client. Industries exist (9) but are all still draft.
+
+## Found in the batch-2 fidelity pass (Oct 2026)
+
+- **Careers has no job list to import.** The "Jobs Openings" section on Wix is an ADP WorkforceNow widget (`cid 4515c7ce-8f29-41b9-a6a8-de34302fcf11`). Decide: link out to ADP's public openings page, or leave it off until OSI says how openings should be shown.
+- **Case Study: the 14 case-study widgets are dead on the live Wix site too** ("App Unavailable"). Only the headings and 5 paragraphs exist. OSI needs to supply the case-study documents/videos if they should appear.
+- **`/directory` is archived (Sep 17, by an admin) and none of its 26 contacts is published.** The public "Directory" menu link therefore 404s. Publishing needs OSI's OK on putting staff phone numbers/emails online.
+- **5 products need an OSI category decision** (`esp-sand-d`, `esp-top-bypass-valve`, `osi-pmm-guardian`, `esp-vortex-desander-capillar`, `osi-top-intake-bypass`) — see `_category-proposal.json`; plus 5 flagged "CHECK" where the Wix group disagrees with the product's own copy.
+- **Duplicate/wrong-slug pages:** `osi-esp-guardian-shield` is actually the G-Force packer-type separator page (same title as `osi-esp-packer-type-gas-separat`); `copy-of-g-force` duplicates `g-force`. Changing a published slug needs a redirect, so they were not touched.
+- **Two test products are still published** (`test`, `test-product-1`, Sep 16).

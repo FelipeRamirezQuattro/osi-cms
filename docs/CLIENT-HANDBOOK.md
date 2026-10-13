@@ -483,3 +483,13 @@ this and when" without having to ask around.
   in a minute. If it keeps happening, contact your developer.
 - Something in the admin behaves unexpectedly — try refreshing the page
   first; if it persists, note what you were doing and reach out.
+
+## Extra content on a product page
+
+Besides the fixed sections (benefits, video, "How does it work?", specifications), a product can have **Extra content blocks** — shown below them. Open the product, scroll to "Extra content blocks" and add the same kinds of blocks you use on pages (video, image, text, a headed list of cards, …). Use the arrows to reorder, **Hide** to keep a block without showing it, **Remove** to delete it. Click **Save** as usual.
+
+Products that aren't published yet can be reviewed at `/preview/products/<category>/<product-slug>` (you must be signed in). In that preview a dashed note or a greyed button marks anything still missing, such as a PDF or 3D link; visitors never see those.
+
+## When something can't be saved
+
+If a block has a problem (for example a Columns block with only one column), a window opens saying which block and what to fix, with a **Go to block** button that opens and highlights it. While you're typing, problems found by autosave appear as a yellow alert above the blocks instead. If two people edited the same page you still get the red banner with **Reload page**.
