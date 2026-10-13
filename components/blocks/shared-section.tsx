@@ -4,6 +4,8 @@ import { defineBlock } from "@/lib/blocks/types";
 import { getPublishedSharedSectionByKey } from "@/lib/data/shared-sections";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import type { BlockRenderExtras } from "@/lib/blocks/types";
+import { SHARED_SECTIONS_RELATION } from "@/lib/admin/shared-section-options";
+import { PreviewPlaceholder } from "@/components/blocks/preview-placeholder";
 
 // Extends blockCommonSchema like every other block (COMMON_ADMIN_FIELDS is
 // always rendered for every block instance in the editor — see
@@ -19,7 +21,7 @@ const schema = blockCommonSchema.extend({
 export type SharedSectionBlockData = z.infer<typeof schema>;
 
 const adminFields: FieldSpec[] = [
-  { key: "key", label: "Shared section key", type: "text" },
+  { key: "key", label: "Shared section", type: "relation", relation: SHARED_SECTIONS_RELATION, optional: true },
 ];
 
 /**
@@ -41,32 +43,26 @@ export async function SharedSectionBlockRender({
   data,
   visitedSharedSectionKeys,
   sharedSectionDepth = 0,
+  isPreview = false,
 }: { data: SharedSectionBlockData } & BlockRenderExtras) {
+  // Staff preview explains why nothing shows; the public site and dev
+  // builds keep their existing behavior (nothing / red dev diagnostic).
+  const diagnose = (message: string) =>
+    isPreview ? <PreviewPlaceholder title="Shared section not shown">{message}</PreviewPlaceholder> : <DevDiagnostic>{message}</DevDiagnostic>;
+
   const visited = visitedSharedSectionKeys ?? new Set<string>();
 
   if (sharedSectionDepth >= MAX_SHARED_SECTION_DEPTH) {
-    return (
-      <DevDiagnostic>
-        Shared section &quot;{data.key}&quot; skipped — maximum nesting depth ({MAX_SHARED_SECTION_DEPTH}) reached.
-      </DevDiagnostic>
-    );
+    return diagnose(`Shared section "${data.key}" skipped — maximum nesting depth (${MAX_SHARED_SECTION_DEPTH}) reached.`);
   }
 
   if (visited.has(data.key)) {
-    return (
-      <DevDiagnostic>
-        Shared section &quot;{data.key}&quot; skipped — circular reference detected.
-      </DevDiagnostic>
-    );
+    return diagnose(`Shared section "${data.key}" skipped — circular reference detected.`);
   }
 
   const section = await getPublishedSharedSectionByKey(data.key);
   if (!section) {
-    return (
-      <DevDiagnostic>
-        Shared section &quot;{data.key}&quot; not found or not published.
-      </DevDiagnostic>
-    );
+    return diagnose(`Shared section "${data.key}" not found or not published.`);
   }
 
   const nextVisited = new Set(visited);
@@ -85,6 +81,7 @@ export async function SharedSectionBlockRender({
       blocks={section.blocks}
       visitedSharedSectionKeys={nextVisited}
       sharedSectionDepth={sharedSectionDepth + 1}
+      isPreview={isPreview}
     />
   );
 

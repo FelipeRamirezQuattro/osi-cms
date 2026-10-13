@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { listAllSharedSections } from "@/lib/data/shared-sections";
+import { RelationOptionsProvider } from "@/components/admin/relation-options";
+import { SHARED_SECTIONS_RELATION, sharedSectionOptions } from "@/lib/admin/shared-section-options";
 import { getPageById, listPageRevisions } from "@/lib/data/pages";
 import { getBlockPalette } from "@/lib/blocks/registry";
 import { PageEditor } from "@/app/admin/(dashboard)/pages/[id]/page-editor";
@@ -19,7 +22,18 @@ export default async function EditPagePage({ params }: PageProps<"/admin/pages/[
   const page = await getPageById(id);
   if (!page) notFound();
 
-  const [palette, revisions, branding] = await Promise.all([getBlockPalette(), listPageRevisions(id), getPublishedBranding()]);
+  const [palette, revisions, branding, sharedSections] = await Promise.all([
+    getBlockPalette(),
+    listPageRevisions(id),
+    getPublishedBranding(),
+    listAllSharedSections(),
+  ]);
 
-  return <PublishedBrandingOptionsProvider branding={branding?.config ?? OSI_SEED_BRANDING_CONFIG}><PageEditor page={page} palette={palette} revisions={revisions} role={session.role} /></PublishedBrandingOptionsProvider>;
+  return (
+    <PublishedBrandingOptionsProvider branding={branding?.config ?? OSI_SEED_BRANDING_CONFIG}>
+      <RelationOptionsProvider options={{ [SHARED_SECTIONS_RELATION]: sharedSectionOptions(sharedSections) }}>
+        <PageEditor page={page} palette={palette} revisions={revisions} role={session.role} />
+      </RelationOptionsProvider>
+    </PublishedBrandingOptionsProvider>
+  );
 }

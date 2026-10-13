@@ -111,9 +111,19 @@ export async function publishSharedSectionAction(
   }
 }
 
-export async function unpublishSharedSectionAction(sectionId: string): Promise<void> {
+export type UnpublishSharedSectionResult =
+  | { status: "success"; newStatus: "draft" }
+  | { status: "error"; message: string };
+
+/** Returns the resulting status so the editor's badge can follow the server, not guess. */
+export async function unpublishSharedSectionAction(sectionId: string): Promise<UnpublishSharedSectionResult> {
   await requireCapability("publish");
-  await unpublishSharedSection(sectionId);
+  try {
+    await unpublishSharedSection(sectionId);
+    return { status: "success", newStatus: "draft" };
+  } catch {
+    return { status: "error", message: "Unpublish failed. Please try again." };
+  }
 }
 
 export async function deleteSharedSectionAction(sectionId: string): Promise<void> {

@@ -94,3 +94,17 @@ describe("SharedSectionBlockRender — missing/unpublished section", () => {
     expect(screen.getByText(/not found or not published/i)).toBeInTheDocument();
   });
 });
+
+describe("SharedSectionBlockRender — missing section in preview (BLQ-30)", () => {
+  it("shows a staff-facing placeholder in preview", async () => {
+    mockGetPublishedSharedSectionByKey.mockResolvedValue(null);
+    render(await SharedSectionBlockRender({ data: baseData, isPreview: true }));
+    expect(screen.getByRole("note")).toHaveTextContent('Shared section "footer-cta" not found or not published.');
+  });
+
+  it("never renders the placeholder outside preview", async () => {
+    mockGetPublishedSharedSectionByKey.mockResolvedValue(null);
+    render(await SharedSectionBlockRender({ data: baseData }));
+    expect(screen.queryByRole("note")).toBeNull();
+  });
+});

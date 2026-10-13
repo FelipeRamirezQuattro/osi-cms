@@ -22,6 +22,8 @@ export type BlockRenderExtras = {
   visitedSharedSectionKeys?: ReadonlySet<string>;
   /** Recursion depth through nested shared_section blocks — depth guard. */
   sharedSectionDepth?: number;
+  /** True only for staff `/preview/*` renders — lets a block that renders nothing publicly explain why. */
+  isPreview?: boolean;
 };
 
 // Several blocks fetch their own data (news_feed, global_map,

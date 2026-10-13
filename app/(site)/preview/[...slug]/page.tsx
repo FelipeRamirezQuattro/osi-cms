@@ -18,7 +18,7 @@ export default async function PreviewPage({ params }: PageProps<"/preview/[...sl
         Preview — {page.status === "published" ? "published" : "draft"} — reflects the last saved draft, not
         unsaved edits
       </div>
-      <BlockRenderer blocks={page.blocks} />
+      <BlockRenderer blocks={page.blocks} isPreview />
     </div>
   );
 }

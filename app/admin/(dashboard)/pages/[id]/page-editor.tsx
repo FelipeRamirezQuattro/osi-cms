@@ -1,6 +1,5 @@
 "use client";
 
-import { RevisionsPanel } from "./revisions-panel";
 import { useEffect, useRef, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form";
@@ -55,6 +54,7 @@ import {
   shouldTrackFailedAutosaveValue,
   type AutosaveStatus,
 } from "@/lib/admin/block-editor-helpers";
+import { RevisionsPanel } from "./revisions-panel";
 
 // The page form mixes fixed page metadata with a `blocks` array whose
 // `data` shape varies per block type (see FieldRenderer's comment) — no

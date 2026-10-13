@@ -200,8 +200,13 @@ export function SharedSectionEditor({
 
   function onUnpublish() {
     startPublishing(async () => {
-      await unpublishSharedSectionAction(section.id);
-      setStatus("draft");
+      const result = await unpublishSharedSectionAction(section.id);
+      if (result.status === "error") {
+        setBanner({ kind: "error", message: result.message });
+        return;
+      }
+      setStatus(result.newStatus);
+      setBanner({ kind: "success", message: "Unpublished — this section no longer shows on the live site." });
       router.refresh();
     });
   }
@@ -394,7 +399,9 @@ export function SharedSectionEditor({
                   <button
                     type="button"
                     onClick={onUnpublish}
-                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
+                    // Unpublish doesn't read the form, so an in-flight autosave must not
+                    // swallow the click (it used to need two clicks — COM-05).
+                    disabled={isPublishing}
                     className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
                   >
                     Unpublish

@@ -9,6 +9,8 @@ import { listNewsPosts } from "@/lib/data/news";
 import type { Tables } from "@/lib/db/database.types";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { postHref } from "@/lib/routes";
+import { PreviewPlaceholder } from "@/components/blocks/preview-placeholder";
+import type { BlockRenderExtras } from "@/lib/blocks/types";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("OSI News"),
@@ -41,13 +43,19 @@ function PostCard({ post }: { post: Tables<"news_posts"> }) {
   );
 }
 
-async function Render({ data }: { data: Data }) {
+async function Render({ data, isPreview }: { data: Data } & BlockRenderExtras) {
   const posts = await listNewsPosts(data.kind === "all" ? undefined : data.kind);
   const limited = posts.slice(0, data.limit);
   const [featured, ...rest] = limited;
 
   if (!featured) {
-    return null;
+    if (!isPreview) return null;
+    const kindLabel = data.kind === "all" ? "" : ` of type ${data.kind.charAt(0).toUpperCase()}${data.kind.slice(1)}`;
+    return (
+      <PreviewPlaceholder title="News feed is empty">
+        No published posts{kindLabel} yet — this block is hidden on the live site until there are some.
+      </PreviewPlaceholder>
+    );
   }
 
   return (

@@ -23,7 +23,9 @@ function form(fields: Record<string, string>) {
   return fd;
 }
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe("confirmEmailTokenAction", () => {
   it("verifies the token and continues to reset-password on success", async () => {

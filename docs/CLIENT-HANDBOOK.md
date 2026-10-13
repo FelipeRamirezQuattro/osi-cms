@@ -118,7 +118,12 @@ because publishing updates *every* page that references it at once.
 Nothing changes on the live site until you click Publish, so it's safe
 to make changes and preview them first. A shared section's **key** is
 set when you create it and can't be changed afterward, since every page
-referencing it depends on that key staying put.
+referencing it depends on that key staying put. On a page, add a **Shared
+section** block and choose the section **by name** from the list (sections
+still in draft are marked — they show nothing on the live site until
+published). In **Preview**, a block that would be empty on the live site
+(a news feed with no published posts, or a shared section that isn't
+published) shows a dashed note explaining why.
 
 ## Forms
 

@@ -31,10 +31,13 @@ export function BlockRenderer({
   blocks,
   visitedSharedSectionKeys = EMPTY_VISITED_KEYS,
   sharedSectionDepth = 0,
+  isPreview = false,
 }: {
   blocks: RenderableBlock[];
   visitedSharedSectionKeys?: ReadonlySet<string>;
   sharedSectionDepth?: number;
+  /** Staff preview only — blocks that render nothing publicly show an explanatory placeholder. */
+  isPreview?: boolean;
 }) {
   return (
     <>
@@ -78,6 +81,7 @@ export function BlockRenderer({
               data={parsed.data}
               visitedSharedSectionKeys={visitedSharedSectionKeys}
               sharedSectionDepth={sharedSectionDepth}
+              isPreview={isPreview}
             />
           </div>
         );

@@ -81,3 +81,22 @@ describe("news_feed block generates routes via lib/routes.ts's newsHref", () => 
     expect(await renderNewsFeed()).toBe("");
   });
 });
+
+describe("news_feed with no posts (BLQ-20)", () => {
+  async function renderEmpty(kind: string, isPreview: boolean) {
+    mockListNewsPosts.mockResolvedValue([]);
+    const defaults = newsFeedBlock.defaults as Record<string, unknown>;
+    const element = await newsFeedBlock.Render({ data: { ...defaults, kind } as never, isPreview });
+    return element ? renderToStaticMarkup(element) : "";
+  }
+
+  it("renders nothing on the public site", async () => {
+    expect(await renderEmpty("blog", false)).toBe("");
+  });
+
+  it("explains itself in staff preview, naming the post type", async () => {
+    const html = await renderEmpty("blog", true);
+    expect(html).toContain("No published posts of type Blog yet");
+    expect(html).toContain("hidden on the live site");
+  });
+});

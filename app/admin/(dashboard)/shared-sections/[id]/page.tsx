@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { getSharedSectionById } from "@/lib/data/shared-sections";
+import { getSharedSectionById, listAllSharedSections } from "@/lib/data/shared-sections";
+import { RelationOptionsProvider } from "@/components/admin/relation-options";
+import { SHARED_SECTIONS_RELATION, sharedSectionOptions } from "@/lib/admin/shared-section-options";
 import { getBlockPalette } from "@/lib/blocks/registry";
 import { SharedSectionEditor } from "@/app/admin/(dashboard)/shared-sections/[id]/shared-section-editor";
 import { getPublishedBranding } from "@/lib/data/branding";
@@ -17,7 +19,17 @@ export default async function EditSharedSectionPage({ params }: { params: Promis
   const section = await getSharedSectionById(id);
   if (!section) notFound();
 
-  const [palette, branding] = await Promise.all([getBlockPalette(), getPublishedBranding()]);
+  const [palette, branding, allSections] = await Promise.all([
+    getBlockPalette(),
+    getPublishedBranding(),
+    listAllSharedSections(),
+  ]);
 
-  return <PublishedBrandingOptionsProvider branding={branding?.config ?? OSI_SEED_BRANDING_CONFIG}><SharedSectionEditor section={section} palette={palette} role={session.role} /></PublishedBrandingOptionsProvider>;
+  return (
+    <PublishedBrandingOptionsProvider branding={branding?.config ?? OSI_SEED_BRANDING_CONFIG}>
+      <RelationOptionsProvider options={{ [SHARED_SECTIONS_RELATION]: sharedSectionOptions(allSections, section.key) }}>
+        <SharedSectionEditor section={section} palette={palette} role={session.role} />
+      </RelationOptionsProvider>
+    </PublishedBrandingOptionsProvider>
+  );
 }
