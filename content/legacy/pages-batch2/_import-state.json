@@ -2,33 +2,33 @@
   "pages": {
     "wellbore-diagrams": {
       "id": "70598f55-1347-4a25-ba87-8986d9df5ef6",
-      "hash": "02e39ec74aee366611e6e59c7ca10bca74d34f52",
-      "updated_at": "2026-10-08T20:29:04.53002+00:00"
+      "hash": "9124074c69fe5572e8c7217a78bfe49e25e70b06",
+      "updated_at": "2026-10-13T20:26:04.000459+00:00"
     },
     "inquiry-services": {
       "id": "d732cf89-1a33-45b6-aabd-953a1b1fb4e6",
-      "hash": "b37cf24352ad13823fbaf6fa4ed63c0a7754e756",
-      "updated_at": "2026-10-08T20:29:06.545372+00:00"
+      "hash": "02ca0f095c3a2179cd0205c21b89e69aa2d5b861",
+      "updated_at": "2026-10-13T20:26:04.704011+00:00"
     },
     "case-study": {
       "id": "005b383d-966d-4b4f-847b-60ff1a252045",
-      "hash": "3cda5c16b22306774a813f5c516831eccc9d8b90",
-      "updated_at": "2026-10-08T20:29:07.85574+00:00"
+      "hash": "aabaf5d6e62a6e474547dcd0cc0979b7aa5677c1",
+      "updated_at": "2026-10-13T20:26:06.252908+00:00"
     },
     "osi-papers": {
       "id": "8f4a54fe-c5ac-4ac4-baea-03f70ec2ca7f",
-      "hash": "1a5e918bf5685ac8935f37790f0fa8005f002c34",
-      "updated_at": "2026-10-08T20:29:15.093644+00:00"
+      "hash": "706b579362a0273de0cceb2e53f0f10bcc0a6923",
+      "updated_at": "2026-10-13T20:26:06.961132+00:00"
     },
     "employee-survey": {
       "id": "cddb2879-772a-4d74-91c0-ed6eb626b68e",
-      "hash": "990b4edb79e59e17868f659d9e62fa0e82862b8d",
-      "updated_at": "2026-10-08T20:30:42.642915+00:00"
+      "hash": "76bcd4343aa6bda13fc0528d738d8003f1b321dc",
+      "updated_at": "2026-10-13T20:27:02.084385+00:00"
     },
     "esp-workshop-2026": {
       "id": "bb1258c5-e43b-40ba-b95b-8df53e6af761",
-      "hash": "e15d40dd8761e494b890228129d5e03f1681eded",
-      "updated_at": "2026-10-08T20:30:44.873+00:00"
+      "hash": "c3774b59b45b866788e3091019090fc772fb8fe7",
+      "updated_at": "2026-10-13T20:27:03.11282+00:00"
     },
     "form-sales-team-oil-show": {
       "id": "e29b35bb-4c8c-41c7-95f3-ca95e273d405",
@@ -42,43 +42,43 @@
     },
     "osi-at-alf": {
       "id": "c84dae75-e505-4053-a176-83aa5e21a6ef",
-      "hash": "b384c58224e15266e5d525df31590a6ac6c565c7",
-      "updated_at": "2026-10-08T20:30:48.149454+00:00"
+      "hash": "ed581600d37bfd7c3c773d5cc4de394b3fe31609",
+      "updated_at": "2026-10-13T20:27:03.781778+00:00"
     },
     "osihappyhour": {
       "id": "ff2b990b-547e-4d51-997a-fd4a77ddcd89",
-      "hash": "cfafd6dd95369ee485728fe23026e9c03175e433",
-      "updated_at": "2026-10-08T20:30:49.313712+00:00"
+      "hash": "3ca73b4566ec357d6f697892dd3041d01f45f074",
+      "updated_at": "2026-10-13T20:27:04.488758+00:00"
     },
     "osi-hh-alce": {
       "id": "1e02879e-5bb7-44a3-9589-881e8f15b2fe",
-      "hash": "4417f29166968eb712ca60045093f98f83cb0185",
-      "updated_at": "2026-10-08T20:30:51.408495+00:00"
+      "hash": "cccd33650bd0a83c845ac4bab15bfa710d2747be",
+      "updated_at": "2026-10-13T20:27:05.786642+00:00"
     },
     "osi-lunch-and-learn": {
       "id": "a881f03f-1f8e-4739-af35-b3a2207029d7",
-      "hash": "42b533ff1f81de7cfdd9bcfbff61d2e3f0da7022",
-      "updated_at": "2026-10-08T20:30:53.078368+00:00"
+      "hash": "e8dbe4fa3192a23aa0c8eecd0a2ada861e0e1550",
+      "updated_at": "2026-10-13T20:27:06.751478+00:00"
     },
     "reciclaje": {
       "id": "b6ad69d8-96fc-48bc-afd9-08ec897a501f",
-      "hash": "54f853c27bd07f8c2552fbf72aa48ce354bdd2ae",
-      "updated_at": "2026-10-08T20:30:54.227547+00:00"
+      "hash": "27a9efaae19532eed6c9d9c4451a397087be6258",
+      "updated_at": "2026-10-13T20:27:07.403775+00:00"
     },
     "spe-alce": {
       "id": "670d76f4-8e5f-41ca-bf02-b51908bb8351",
-      "hash": "a987be81224a378679910df97c6c71df8b6934e8",
-      "updated_at": "2026-10-08T20:31:02.180483+00:00"
+      "hash": "425fc73f2f9a85b41721b71b854255e6284da036",
+      "updated_at": "2026-10-13T20:27:12.439562+00:00"
     },
     "swpsc-oil-show": {
       "id": "c2757974-6ba4-47c9-86e8-ba0d8560e6b6",
-      "hash": "78ddaddea61130c491eee1cf8a38ebcc71002927",
-      "updated_at": "2026-10-08T20:31:03.214401+00:00"
+      "hash": "11db8e1d534f254bffd8ba06ee52d284ea305853",
+      "updated_at": "2026-10-13T20:27:13.163589+00:00"
     },
     "training": {
       "id": "e9f0932b-5c24-44d3-8663-85458cb4fdf2",
-      "hash": "5b62f1f3bfdd27180595d5c674e2763965b5560b",
-      "updated_at": "2026-10-08T20:31:04.302615+00:00"
+      "hash": "5411659358971bc0296ef2a90414dfd0a914885c",
+      "updated_at": "2026-10-13T20:27:13.873771+00:00"
     },
     "training-vid-1": {
       "id": "79a7f40e-48b1-4802-ac6b-d81246799b29",
@@ -102,8 +102,8 @@
     },
     "one-minute-manager": {
       "id": "95b3a26c-b6df-4d79-944d-8b26ad1b957c",
-      "hash": "715a2412a9f756cd91d947f8f54b323c561cdc40",
-      "updated_at": "2026-10-08T20:31:25.214092+00:00"
+      "hash": "ec36338e1a88a5c30c9c57f5a8d2b9f738b62cb8",
+      "updated_at": "2026-10-13T20:27:16.481275+00:00"
     }
   },
   "news_posts": {
@@ -116,208 +116,208 @@
   "products": {
     "esp-guardian-shield": {
       "id": "c7a0af71-0ff8-444e-bb51-6386820b2a89",
-      "hash": "54b91bb8f49d563c265fb651516054966e064679",
-      "updated_at": "2026-10-08T20:29:16.981409+00:00"
+      "hash": "90083854aeee37dfaf246ef5ac6ad4034c5c422e",
+      "updated_at": "2026-10-13T20:26:07.671412+00:00"
     },
     "esp-high-erosion-resistan": {
       "id": "c686b51f-6e9e-4006-b7f8-7642b4944e52",
-      "hash": "7d722b793d239ccccf2c23adead0e55757190972",
-      "updated_at": "2026-10-08T20:29:18.867123+00:00"
+      "hash": "5986ba93bac6452a1b95e9b8b13d774c5fd4525c",
+      "updated_at": "2026-10-13T20:26:08.84239+00:00"
     },
     "esp-no-go-catcher": {
       "id": "95069e3d-5cc7-4fa1-9f9c-126686a4834e",
-      "hash": "c86b29a58ad32980cc054715610d15e66e8c2cd0",
-      "updated_at": "2026-10-08T20:29:20.508392+00:00"
+      "hash": "845e16cf497d17e9db50f1b93f3e81b7e2d2501c",
+      "updated_at": "2026-10-13T20:26:09.992998+00:00"
     },
     "esp-sand-d": {
       "id": "798f6c25-df19-40f7-8c1c-00ddfcbf53a5",
-      "hash": "719c5bb9d7af93735d3244a38c36ea046f622a98",
-      "updated_at": "2026-10-08T20:29:21.776239+00:00"
+      "hash": "88b3cad6eceefd1dec1ff250d7d3877447173dd1",
+      "updated_at": "2026-10-13T20:26:10.805666+00:00"
     },
     "esp-sand-lift": {
       "id": "93e8873b-e0c5-4ce9-9ef1-b2d37f02edbd",
-      "hash": "b8ef50d73c94cf6c08343f25a7452c86ea8dcdba",
-      "updated_at": "2026-10-08T20:29:24.582377+00:00"
+      "hash": "efda02c7338bb1a228ef489408f4ea65cfaa3d66",
+      "updated_at": "2026-10-13T20:26:12.471532+00:00"
     },
     "esp-screen-vortex-desander": {
       "id": "45508247-9352-4d5d-ac64-63d57aabac3a",
-      "hash": "30d7ce6b57df71ec12a0908f222edaec3aefbce2",
-      "updated_at": "2026-10-08T20:29:26.315517+00:00"
+      "hash": "da27b866bb27ab947649d58da10f66dc372412d3",
+      "updated_at": "2026-10-13T20:26:13.66773+00:00"
     },
     "esp-surge-valve": {
       "id": "66a2ab58-f0e6-4e3f-8757-e8aafd251d5a",
-      "hash": "b1b50284412628dbfeb9af0bc02ee747cf6efd52",
-      "updated_at": "2026-10-08T20:29:28.043083+00:00"
+      "hash": "13f1a618dc6345184e3c4ffe0651d87e1469bd3b",
+      "updated_at": "2026-10-13T20:26:14.769713+00:00"
     },
     "esp-top-bypass-valve": {
       "id": "5221e70a-e5dd-479c-90ea-35ce2d891205",
-      "hash": "cd1935a26707a346db875750d267015aab6009c0",
-      "updated_at": "2026-10-08T20:29:30.185893+00:00"
+      "hash": "9a2c7a1c0d4aae2482a4db2ff6bc8d7900f17385",
+      "updated_at": "2026-10-13T20:26:16.138802+00:00"
     },
     "esp-vortex-desander-bypass-valve": {
       "id": "dea1e8d7-932e-4e62-b21c-f23db7cfcb1a",
-      "hash": "d2561644ddc8a28d14f84d947e2035075e5009e0",
-      "updated_at": "2026-10-08T20:29:33.204461+00:00"
+      "hash": "20cf1ff6f10fb4821383c83d003063a515687808",
+      "updated_at": "2026-10-13T20:26:17.390589+00:00"
     },
     "esp-vortex-desander-capillar": {
       "id": "8636c72f-075a-452b-ac59-c4f3ac99a790",
-      "hash": "e1f081c58b5b568b3845a70b90e0f6201856074c",
-      "updated_at": "2026-10-08T20:29:34.617727+00:00"
+      "hash": "5b541845ba1d07effd9e32415796931b8b145bce",
+      "updated_at": "2026-10-13T20:26:18.459973+00:00"
     },
     "esp-vortex-desander": {
       "id": "32a730b7-0f7d-4ab8-ae19-9a41fe921e19",
-      "hash": "23dc493de74988167077a09fa56c13e5d6106e34",
-      "updated_at": "2026-10-08T20:29:36.159114+00:00"
+      "hash": "1d8e2a43e6978e54a566ec44b7ce9f07415b8550",
+      "updated_at": "2026-10-13T20:26:19.551307+00:00"
     },
     "esp-vortex-desander-with-swivel": {
       "id": "02b9e4fd-45e2-451d-8602-126b0710a25e",
-      "hash": "24e7cf056824f284289f901567feaa2b63514959",
-      "updated_at": "2026-10-08T20:29:37.581088+00:00"
+      "hash": "bc9efbf7841e84f87084633cb919e3803140bf6b",
+      "updated_at": "2026-10-13T20:26:20.637537+00:00"
     },
     "esp-vortex-regulator": {
       "id": "02de085d-f0a3-4e8d-a9d9-3ea4b7dfcc64",
-      "hash": "77dc4d1b492640e23466a952ab04e3f7a61ef54c",
-      "updated_at": "2026-10-08T20:29:39.36336+00:00"
+      "hash": "7774342e948c3e5d3c1a2ce533a2d4f10a5b0c02",
+      "updated_at": "2026-10-13T20:26:21.72158+00:00"
     },
     "osi-esp-guardian-shield": {
       "id": "4ab2cef9-030e-4b71-891c-d0f1eba06759",
-      "hash": "8e61b272664e634acb0774764fc35fbdf0f7fa1b",
-      "updated_at": "2026-10-08T20:29:41.394295+00:00"
+      "hash": "e1aa9a7a7b0c1213129dfbdbddd5858cedf1c483",
+      "updated_at": "2026-10-13T20:26:23.184315+00:00"
     },
     "osi-esp-packer-type-gas-separat": {
       "id": "c8981bb2-d0ac-433e-affc-7b42642566d5",
-      "hash": "554b35f7706340ba35b4e07f418e5cd208191d97",
-      "updated_at": "2026-10-08T20:29:43.283548+00:00"
+      "hash": "615610fbc57f03a1140bd43bfa64ca059197375c",
+      "updated_at": "2026-10-13T20:26:24.226243+00:00"
     },
     "osi-pmm-guardian": {
       "id": "d30b7bfb-bc37-43b3-bb7d-394bb09e2015",
-      "hash": "57347c5aa36a806df25e7ec039fbd03e6009788f",
-      "updated_at": "2026-10-08T20:29:50.280013+00:00"
+      "hash": "76d93b0baf42ae5ec672b2cb45da234f32121f33",
+      "updated_at": "2026-10-13T20:26:25.315531+00:00"
     },
     "srp-retrievable-chem-tool": {
       "id": "583dda66-3fad-4c25-a02f-4dd030786a77",
-      "hash": "af44add5c9c18766f0a6e013d7198df2564743b9",
-      "updated_at": "2026-10-08T20:29:51.639193+00:00"
+      "hash": "3b849ecd9c10398cbb1bed0c9707f7c47017c7e9",
+      "updated_at": "2026-10-13T20:26:26.213265+00:00"
     },
     "bumper-spring": {
       "id": "253186cd-4640-47ce-b36a-417429d986d3",
-      "hash": "7a66749e6ba141d4a412b323f898b0faaee53afa",
-      "updated_at": "2026-10-08T20:29:52.902127+00:00"
+      "hash": "d790050810f8635afc5784487efeac732fef6c35",
+      "updated_at": "2026-10-13T20:26:27.303513+00:00"
     },
     "chamber-type-gas-separator": {
       "id": "864e78d0-c96b-4af2-8c69-bc492aacc6a0",
-      "hash": "87a2145a299e89e71617669b0cf31bc1b1b3e285",
-      "updated_at": "2026-10-08T20:29:54.769121+00:00"
+      "hash": "4ba32ed4a6344bf88487056e83db3308bc6344c7",
+      "updated_at": "2026-10-13T20:26:28.603162+00:00"
     },
     "copy-of-g-force": {
       "id": "349c1213-8859-4ed1-ba9a-e194eb71f01c",
-      "hash": "7c174c251f7e2b89b64a14333ec3d67b0452953e",
-      "updated_at": "2026-10-08T20:29:56.301185+00:00"
+      "hash": "bd4037579de99d15a4ecf836d6c7360b87491783",
+      "updated_at": "2026-10-13T20:26:29.74473+00:00"
     },
     "g-force": {
       "id": "689d8d05-83f8-4a50-9014-53616074e421",
-      "hash": "39d46e608b44f51676246bdde62da76772b5793d",
-      "updated_at": "2026-10-08T20:29:57.582473+00:00"
+      "hash": "c6c09440c67a4111e8555c0531c7f7c7c7dedff0",
+      "updated_at": "2026-10-13T20:26:30.892689+00:00"
     },
     "g-forcepackerless": {
       "id": "d5bf3746-4f26-41e2-a982-e0152acade46",
-      "hash": "5f9956748d97a0ee20f5401e6c8ea158b6ba74d7",
-      "updated_at": "2026-10-08T20:29:58.779158+00:00"
+      "hash": "6b547f9373c79c6ae0d462fe232437a66bd1437b",
+      "updated_at": "2026-10-13T20:26:32.023784+00:00"
     },
     "gas-shield": {
       "id": "821bf726-29cc-4cd9-b9ce-25ed8a1e1375",
-      "hash": "007e8acae5ff2f941fa56046e40d8b0c0001a22b",
-      "updated_at": "2026-10-08T20:30:00.648219+00:00"
+      "hash": "2fd4d8718ad009d31b100a72f20fd8163290cdc2",
+      "updated_at": "2026-10-13T20:26:33.383169+00:00"
     },
     "gas-vent-tac": {
       "id": "bab0fd61-aa4b-4e25-af73-a6ae91a4176f",
-      "hash": "25eff4c7af802ec88d988121b7f713d9778cc485",
-      "updated_at": "2026-10-08T20:30:02.503022+00:00"
+      "hash": "b7bb1eebbd6207c5d7db96bc0e48a2f2dc185305",
+      "updated_at": "2026-10-13T20:26:34.461316+00:00"
     },
     "osi-top-bypass-valve": {
       "id": "a9c16875-c363-415f-8c1b-92253691886f",
-      "hash": "767496e092cb46ef0f42375bc5b74506a78f8ec8",
-      "updated_at": "2026-10-08T20:30:03.651867+00:00"
+      "hash": "8a44051a0db8856a75bc59e856f6b896b5b3d0ba",
+      "updated_at": "2026-10-13T20:26:35.272105+00:00"
     },
     "packer-type-gas-separator": {
       "id": "81c7253f-d28d-4b76-8dc5-d453b3d64660",
-      "hash": "072148c474720c0132613fe8f983aa4d929010e7",
-      "updated_at": "2026-10-08T20:30:05.200982+00:00"
+      "hash": "d9b82ce87121665f20d9e3b86050a34c33517b3a",
+      "updated_at": "2026-10-13T20:26:36.498744+00:00"
     },
     "quick-release": {
       "id": "4bf88b90-ea21-42fe-b6ac-69f53b78a135",
-      "hash": "f52d6cdffa7b991cae56cb30387586b06c91d7e2",
-      "updated_at": "2026-10-08T20:30:06.540009+00:00"
+      "hash": "bb298255394b1844eec9f3b0dd58e0ef91c8c9ec",
+      "updated_at": "2026-10-13T20:26:37.588363+00:00"
     },
     "slotted-gas-shield": {
       "id": "a438005e-7ae3-47a9-8054-ce91b4d66720",
-      "hash": "58541264b2354b4226d60565e7f738cb59974ca9",
-      "updated_at": "2026-10-08T20:30:08.066059+00:00"
+      "hash": "12d59cf92742e51e90d0f489b99ab55e32b3353d",
+      "updated_at": "2026-10-13T20:26:38.669496+00:00"
     },
     "slotted-gas-shield-gas-vent": {
       "id": "454cc586-d7a7-4b7c-b85d-8db49d63e023",
-      "hash": "067f23d8d8d7f506f409295384c19c2d53dc92bd",
-      "updated_at": "2026-10-08T20:30:09.958691+00:00"
+      "hash": "41fea361d53623229f92d2a05a7f68f9b9ce1fb9",
+      "updated_at": "2026-10-13T20:26:39.7354+00:00"
     },
     "surge-valve-packer-type-gas-separat": {
       "id": "aceb5807-52bd-4d4f-9c27-a74c25388d8b",
-      "hash": "543c3106023135b409ce5c5c8966077b391edbf4",
-      "updated_at": "2026-10-08T20:30:11.411483+00:00"
+      "hash": "83fff93cb0b6a87579399644474a861bda5c7972",
+      "updated_at": "2026-10-13T20:26:40.90159+00:00"
     },
     "the-nozzle": {
       "id": "6fe39098-6e87-43c4-ba4e-5e1995a13ab0",
-      "hash": "2291216b6841fe392f82d3fb578595699f881392",
-      "updated_at": "2026-10-08T20:30:12.998681+00:00"
+      "hash": "b58efd1da156e92c22ca3928959aa2ec069e26fa",
+      "updated_at": "2026-10-13T20:26:42.285683+00:00"
     },
     "hot-oil-tool": {
       "id": "4c56e8c5-99b4-4c92-9272-8069b8a413fb",
-      "hash": "2e8c12afba87597ec0ad42049a5a5073725e6631",
-      "updated_at": "2026-10-08T20:30:14.528834+00:00"
+      "hash": "257c4b2ef4d1a20154e0a61157a8ef2ecc8d82e3",
+      "updated_at": "2026-10-13T20:26:43.423416+00:00"
     },
     "osi-mesh": {
       "id": "7871e580-6567-4a40-a53b-d09a9e0b7a9c",
-      "hash": "7f0cc21b06182f7d3882395a84d4af8cfe1ca9c0",
-      "updated_at": "2026-10-08T20:30:15.992501+00:00"
+      "hash": "8f2b226e7f54a00c4881922d66dcc8a7db02fc48",
+      "updated_at": "2026-10-13T20:26:44.484116+00:00"
     },
     "pump-guard-screen": {
       "id": "51bff3bc-53e1-4d6d-9d90-51b1e78a7c2b",
-      "hash": "ec669c863b55544d5f19d0b93268c70284685f0a",
-      "updated_at": "2026-10-08T20:30:17.929483+00:00"
+      "hash": "cd68631eb317408512f9a087a2d1f8aa276bc862",
+      "updated_at": "2026-10-13T20:26:45.842671+00:00"
     },
     "sandreleasevalve": {
       "id": "15d3f040-df36-45c8-8b1a-d433e1a4291f",
-      "hash": "8404b4b9c123f431dc838ff8dd34a85f17e09511",
-      "updated_at": "2026-10-08T20:30:19.280584+00:00"
+      "hash": "c5569d30ed4e155ab4dc2fb51d15de756e1a31f9",
+      "updated_at": "2026-10-13T20:26:46.888726+00:00"
     },
     "screen-vortex-desander": {
       "id": "139424be-b505-4209-a0cc-2422dec5f306",
-      "hash": "69f99558793029b364949a25ea93c880e6fc0ceb",
-      "updated_at": "2026-10-08T20:30:21.392359+00:00"
+      "hash": "6f08a47cde5e59993ffe0bfa473c12a3290aff49",
+      "updated_at": "2026-10-13T20:26:48.444911+00:00"
     },
     "super-perf": {
       "id": "7f51f3bd-4464-4d56-9b85-7a7426995af2",
-      "hash": "5f5fd91d2d134c4ce706dcb9b2fc21ed99e2de3e",
-      "updated_at": "2026-10-08T20:30:22.782997+00:00"
+      "hash": "314037504aafdf007b4e2a123420e12f9b82182d",
+      "updated_at": "2026-10-13T20:26:49.491234+00:00"
     },
     "tubing-screen": {
       "id": "35667b33-7b90-4ccb-94ef-f2e6bafe64cd",
-      "hash": "7501cb4e8a559272b95f8b9498e8b99474e0f69f",
-      "updated_at": "2026-10-08T20:30:24.152916+00:00"
+      "hash": "946890b72560de2f335b6998cdd74167881495fc",
+      "updated_at": "2026-10-13T20:26:50.640046+00:00"
     },
     "vortex-desander": {
       "id": "f567feaa-8634-4c14-b244-1fe02a742837",
-      "hash": "696e00e13844b7173d82806d2c9f4e2922c0b6d0",
-      "updated_at": "2026-10-08T20:30:25.659788+00:00"
+      "hash": "ceaf2b01bfdacb9bfb965853b73c6355ca0c4cf5",
+      "updated_at": "2026-10-13T20:26:51.750606+00:00"
     },
     "well-shock-kits": {
       "id": "58e1cba1-1b57-41b0-bedb-323fa1b3be0d",
-      "hash": "6592dabdc5c3f843ad2ed16d6eca78ccfe74e504",
-      "updated_at": "2026-10-08T20:30:28.449586+00:00"
+      "hash": "65b77cd020e0146799e02bb93329a1387c11d184",
+      "updated_at": "2026-10-13T20:26:52.694766+00:00"
     },
     "chem-filter-tool": {
       "id": "5b1d9450-4c79-4f73-b0b2-92abdd7254f5",
-      "hash": "bf7b68515e35eacf128bab9983bc6a6585d09c58",
-      "updated_at": "2026-10-08T20:30:29.638997+00:00"
+      "hash": "c5f305b15f2660d2191ed9d9ad9d26ae15171b04",
+      "updated_at": "2026-10-13T20:26:53.666458+00:00"
     },
     "chem-screen": {
       "id": "725fcf16-6130-4366-8939-6b9dc645a6c8",
@@ -326,38 +326,38 @@
     },
     "chem-sticks": {
       "id": "f210c6f6-ba74-4814-86f2-36f10bc646c2",
-      "hash": "74c2648c91ab1e7126c4b819338ff4674ad7af04",
-      "updated_at": "2026-10-08T20:30:32.25622+00:00"
+      "hash": "d11af49640b65127620b5f936c6802bff4409c68",
+      "updated_at": "2026-10-13T20:26:54.497192+00:00"
     },
     "chemicalinjectionmandrel": {
       "id": "6bd0a37b-346d-4511-bd6b-e37cf8caa193",
-      "hash": "9ab355fbb098397272829159f0e1a35c2937224c",
-      "updated_at": "2026-10-08T20:30:35.030132+00:00"
+      "hash": "dba255baa248ac6401d4f9bd37a6ac77e6043284",
+      "updated_at": "2026-10-13T20:26:56.0428+00:00"
     },
     "combination-tool": {
       "id": "99795ea1-7b7a-4760-b367-3facce79cf9a",
-      "hash": "c5a1f4a5eb0cfe994f13279c9279403caf855c2f",
-      "updated_at": "2026-10-08T20:30:36.70842+00:00"
+      "hash": "777fe56b4584114abb1132e84a27240cd78044d0",
+      "updated_at": "2026-10-13T20:26:56.966826+00:00"
     },
     "osi-chem-screen-gas-lift": {
       "id": "8f3f314a-f334-4b49-926d-73b8a1fb1fbc",
-      "hash": "14e505822f779754c7e78e2c5c4a5a18d9b84c66",
-      "updated_at": "2026-10-08T20:30:38.276805+00:00"
+      "hash": "3dab9b6ce841c7612d3f968f0477adb9265b9074",
+      "updated_at": "2026-10-13T20:26:58.081852+00:00"
     },
     "retrievable-chem-tool": {
       "id": "52298b26-b224-4845-976f-a850dcca0882",
-      "hash": "2ccb10862eb88739db4977888eb26fa521e54adf",
-      "updated_at": "2026-10-08T20:30:39.77123+00:00"
+      "hash": "440597286782caa95a1b545554038fd3c8bb4ca0",
+      "updated_at": "2026-10-13T20:26:59.278043+00:00"
     },
     "super-lube": {
       "id": "669d0b03-dcc5-4af8-a45d-d0cbecd8e81d",
-      "hash": "d8079e84d5776c61707fb6e14f68a203acf560d2",
-      "updated_at": "2026-10-08T20:30:41.046311+00:00"
+      "hash": "0c4377c66da0621ed356cfc23b9c21f230122543",
+      "updated_at": "2026-10-13T20:27:00.576177+00:00"
     },
     "osi-top-intake-bypass": {
       "id": "94a1f33c-b5c2-401d-8273-8f8fcdab8d59",
-      "hash": "dda4822d2816aadd63cba1f29de2689745e9a900",
-      "updated_at": "2026-10-08T20:31:28.01424+00:00"
+      "hash": "34996ce1e4e33349c5c4ec19ae3fadf86adf8ed1",
+      "updated_at": "2026-10-13T20:27:18.302272+00:00"
     }
   },
   "resources": {

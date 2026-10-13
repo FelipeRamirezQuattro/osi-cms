@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T20:11:38.797Z",
+  "generated_at": "2026-10-13T20:25:48.349Z",
   "dry_run": true,
   "unpublish_batch2_edited": [
     {
@@ -194,8 +194,8 @@
   ],
   "summary": {
     "pages": {
-      "unchanged": 10,
-      "update": 10,
+      "update": 15,
+      "unchanged": 5,
       "skip_edited": 1
     },
     "news_posts": {
@@ -1249,7 +1249,7 @@
       "path": "/wellbore-diagrams",
       "table": "pages",
       "slug": "wellbore-diagrams",
-      "action": "unchanged",
+      "action": "update",
       "flags": [
         "pdfs:39"
       ],
@@ -1291,7 +1291,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "1.1 GSS - BP"
+                        "text": "1.1 GSS - BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67d7e26fb36d4901b4f28f8edd86b4fc.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1300,7 +1308,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "1.2 GSS MJ-BP"
+                        "text": "1.2 GSS MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_644aabcb44864536a8b19503d7f5dfcc.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1309,7 +1325,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.5 SGSS 68FT-CS-BP"
+                        "text": "4.5 SGSS 68FT-CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_51511f3b0f8a422ebe1445f6437ebb25.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1318,7 +1342,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.6 SGSS 48FT-MJ-EXT.CS"
+                        "text": "4.6 SGSS 48FT-MJ-EXT.CS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_91630df9d25c4b09935bc9b491bd151e.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1327,7 +1359,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "2.1 GS - BP"
+                        "text": "2.1 GS - BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_5b62739074614ec393134f52c4117984.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1336,7 +1376,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.7 SGSS 48FT-MJ2-CS"
+                        "text": "4.7 SGSS 48FT-MJ2-CS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_394d87bbdcc0471da6e87663bd440ff0.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1345,7 +1393,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "6.3 TS-BV-BP"
+                        "text": "6.3 TS-BV-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_e0cc1139a4e94c3a9a91c679a42da795.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1363,7 +1419,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "6.5 TS2-BV-BP"
+                        "text": "6.5 TS2-BV-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_5dfca00d77724301a56d6e5f212d906a.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1372,7 +1436,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "8.3 DBGSS 110'-2TS-MJ-CS"
+                        "text": "8.3 DBGSS 110'-2TS-MJ-CS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_65b82571325d47c3a3276df8c9ec4abb.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1381,7 +1453,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "9.1 TS3-CS-BP-W/ESP"
+                        "text": "9.1 TS3-CS-BP-W/ESP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_813b2b2ff35043d8a17283f0470e6dd1.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1390,7 +1470,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "9.2 TS3-MJ-CS-BP-W/ESP"
+                        "text": "9.2 TS3-MJ-CS-BP-W/ESP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_b6ac0e6f060941d18478d3170d8d5766.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1399,7 +1487,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "2.2 GS MJ-BP"
+                        "text": "2.2 GS MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1d1257f7b4f745bfaf3d85d3b195376f.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1408,7 +1504,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "3.1 SGS - BP"
+                        "text": "3.1 SGS - BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_6920beb4cbe547fb90ebc507faa2b3c6.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1417,7 +1521,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "3.2 SGS MJ-BP"
+                        "text": "3.2 SGS MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_8fe0ba0f5926466c86bfb07b5ce18d4a.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1426,7 +1538,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.1 SGSS 48FT-BP"
+                        "text": "4.1 SGSS 48FT-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1a7f3940c62a4a40b7b7395a39ab15cb.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1435,7 +1555,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.2 SGSS 48FT-MJ-BP"
+                        "text": "4.2 SGSS 48FT-MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_702284744581484d8b412c1b53e9006c.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1444,7 +1572,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.3 SGSS 68FT-BP"
+                        "text": "4.3 SGSS 68FT-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2dd0d80af8e042ebb8efee97adb12ddf.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1462,7 +1598,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "4.8 SGSS 48FT-MJ-CS"
+                        "text": "4.8 SGSS 48FT-MJ-CS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_c07844781f834cde91901d3169304ba2.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1471,7 +1615,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "5.1 SP - BP"
+                        "text": "5.1 SP - BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1a6bad1c3a36422484c29e0100968359.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1480,7 +1632,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "5.2 SP- MJ-BP"
+                        "text": "5.2 SP- MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_be5b3a1162d94fee9afc95bafdbe7d2d.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1489,7 +1649,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "5.3 SP-CS-BP"
+                        "text": "5.3 SP-CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_e46c5a62070641c991bf9a6133698e68.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1498,7 +1666,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "5.4 SP-MJS-BP-W/RP"
+                        "text": "5.4 SP-MJS-BP-W/RP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_04b012b3a4274daeaf982a4a200281fc.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1507,7 +1683,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "6.1 TS - BP"
+                        "text": "6.1 TS - BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_394250ecb13f465f854423a6b5282d09.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1525,7 +1709,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "6.6 TS2-BP"
+                        "text": "6.6 TS2-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_cbb297ebac4d43a8990e50cbe81bdf39.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1534,7 +1726,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "7.1 TS-CS-BP"
+                        "text": "7.1 TS-CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_3d27b8ab9e974a82b12623d314a6fa58.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1543,7 +1743,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "7.2 TS-MJ-CS-BP"
+                        "text": "7.2 TS-MJ-CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_ce674a13d72e4902ba1ebd0533e78f1a.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1552,7 +1760,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "7.3 TS-EXT.CS-BP"
+                        "text": "7.3 TS-EXT.CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_b73e4afbd7d94de897ee0479ceca26cd.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1561,7 +1777,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "7.4 TS-MJ-EXT.CS-BP"
+                        "text": "7.4 TS-MJ-EXT.CS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_026bfc1692a7479aa2fee7256740c062.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1570,7 +1794,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "8.1 DBGSS 110'-3TS-BP"
+                        "text": "8.1 DBGSS 110'-3TS-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2cf996e714644c1897f101a1b23e9b77.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1579,7 +1811,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "8.2 DBGSS 110'-2TS-MJ"
+                        "text": "8.2 DBGSS 110'-2TS-MJ",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_ec4f5556949e42088e255bedc528cb11.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1588,7 +1828,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "9.3 TS3-BP-W/ESP"
+                        "text": "9.3 TS3-BP-W/ESP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2753ca1be33d4b2fb5366559f1046fa3.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1597,7 +1845,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "9.4 TS3-MJ-BP-W/ESP"
+                        "text": "9.4 TS3-MJ-BP-W/ESP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_d431f4a5a4fb4e95adfa3244fd4a5a4e.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1606,7 +1862,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "10.1 DBGSS 110'-MJ-BP"
+                        "text": "10.1 DBGSS 110'-MJ-BP",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_965e464177dc4e4d9536b4415f03988b.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1615,7 +1879,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "11.1 DBGSS 110'-TS-MJ-"
+                        "text": "11.1 DBGSS 110'-TS-MJ-",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_9e1a3177b6d444ed9bc0a872d7c505eb.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1633,7 +1905,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "11.2 TS-DB3 110'-MJ-PS-"
+                        "text": "11.2 TS-DB3 110'-MJ-PS-",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_eb54f38e3b6148cd8723c69a68f47da2.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1651,7 +1931,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "11.3 SGS-WBODY 48' Dip- Tube-MJ-PS-ON'OFF- DS-EXT CS"
+                        "text": "11.3 SGS-WBODY 48' Dip- Tube-MJ-PS-ON'OFF- DS-EXT CS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_9d0593a184a24f7e834d2bc63867c817.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -1664,6 +1952,40 @@
                       {
                         "type": "text",
                         "text": "Brochure"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Brochure",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_c3da08ff473a42d799917b684e735c7a.pdf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Wellbore Diagrams",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2c9043a59a284781bcf0faf8c3ba9d2b.pdf"
+                            }
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1683,8 +2005,10 @@
       "path": "/inquiry-services-page",
       "table": "pages",
       "slug": "inquiry-services",
-      "action": "unchanged",
-      "flags": [],
+      "action": "update",
+      "flags": [
+        "alt_needs_review"
+      ],
       "payload": {
         "slug": "inquiry-services",
         "title": "Inquiry Services Page",
@@ -1717,51 +2041,127 @@
                         "text": "Our Services"
                       }
                     ]
-                  },
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "image",
+            "data": {
+              "background": "cream",
+              "imageUrl": "https://static.wixstatic.com/media/1ac9e9_8945542d98df424790e2e7d0795b7f03~mv2.jpg",
+              "alt": "Our Services",
+              "decorative": false
+            }
+          },
+          {
+            "type": "rich_text",
+            "data": {
+              "background": "cream",
+              "content": {
+                "type": "doc",
+                "content": [
                   {
-                    "type": "bulletList",
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
                     "content": [
                       {
-                        "type": "listItem",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "content": [
-                              {
-                                "type": "text",
-                                "text": "01. Custom Project Planning We specialize in tailoring solutions to meet your unique requirements. Our team works closely with you to understand your specific needs and deliver a bespoke outcome, ensuring maximum satisfaction and alignment with your goals. This service is designed for projects that require a unique approach. Show more"
-                              }
-                            ]
-                          }
-                        ]
-                      },
+                        "type": "text",
+                        "text": "01. Custom Project Planning"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
                       {
-                        "type": "listItem",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "content": [
-                              {
-                                "type": "text",
-                                "text": "02. Personal Solution Planning Get a personalized plan designed just for you. We listen to your challenges and aspirations to craft an actionable strategy. Our approach ensures that your individual circumstances are considered, leading to effective and achievable outcomes. Show more"
-                              }
-                            ]
-                          }
-                        ]
-                      },
+                        "type": "text",
+                        "text": "We specialize in tailoring solutions to meet your unique requirements. Our team works closely with you to understand your specific needs and deliver a bespoke outcome, ensuring maximum satisfaction and alignment with your goals. This service is designed for projects that require a unique approach."
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "image",
+            "data": {
+              "background": "cream",
+              "imageUrl": "https://static.wixstatic.com/media/1ac9e9_bb7f19e37da54b8894019939979f730d~mv2.jpg",
+              "alt": "01. Custom Project Planning",
+              "decorative": false
+            }
+          },
+          {
+            "type": "rich_text",
+            "data": {
+              "background": "cream",
+              "content": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
                       {
-                        "type": "listItem",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "content": [
-                              {
-                                "type": "text",
-                                "text": "03. Expert Guidance Package Leverage our extensive knowledge base and industry insights. This package provides you with the strategic direction and support needed to navigate complex challenges. We offer clear, actionable advice to help you make informed decisions and achieve your objectives. Show more"
-                              }
-                            ]
-                          }
-                        ]
+                        "type": "text",
+                        "text": "02. Personal Solution Planning"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Get a personalized plan designed just for you. We listen to your challenges and aspirations to craft an actionable strategy. Our approach ensures that your individual circumstances are considered, leading to effective and achievable outcomes."
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "image",
+            "data": {
+              "background": "cream",
+              "imageUrl": "https://static.wixstatic.com/media/1ac9e9_31c502d5e4bf4671a32cbe51f4c767ae~mv2.jpg",
+              "alt": "02. Personal Solution Planning",
+              "decorative": false
+            }
+          },
+          {
+            "type": "rich_text",
+            "data": {
+              "background": "cream",
+              "content": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "03. Expert Guidance Package"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Leverage our extensive knowledge base and industry insights. This package provides you with the strategic direction and support needed to navigate complex challenges. We offer clear, actionable advice to help you make informed decisions and achieve your objectives."
                       }
                     ]
                   }
@@ -1770,7 +2170,9 @@
             }
           }
         ],
-        "flags": [],
+        "flags": [
+          "alt_needs_review"
+        ],
         "formFields": []
       }
     },
@@ -1779,7 +2181,7 @@
       "path": "/case-study",
       "table": "pages",
       "slug": "case-study",
-      "action": "unchanged",
+      "action": "update",
       "flags": [],
       "payload": {
         "slug": "case-study",
@@ -1810,28 +2212,22 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "GAS SEPARATOR using OSI Packer Type Gas Separator"
+                        "text": "GAS SEPARATOR"
                       }
                     ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcgr6418&viewerCompId=comp-kcgr6418&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=92&height=93&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "using OSI Packer Type Gas Separator"
+                      }
+                    ]
+                  },
                   {
                     "type": "paragraph",
                     "content": [
@@ -1849,62 +2245,10 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SAND CONTROL in ESP using two-stages filtration system"
+                        "text": "SAND CONTROL"
                       }
                     ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjisdmy&viewerCompId=comp-kcjisdmy&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=83&height=93&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
-                  {
-                    "type": "paragraph",
-                    "content": [
-                      {
-                        "type": "text",
-                        "text": "The well was completed since the beginning with the two stages filtration system to avoid damages in the pump by the frac sand. After its completion in April 2019, the well run for 367 days long"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcgqwzha&viewerCompId=comp-kcgqwzha&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=498&height=717&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjiufrt&viewerCompId=comp-kcjiufrt&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=499&height=717&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
+                  },
                   {
                     "type": "heading",
                     "attrs": {
@@ -1913,28 +2257,55 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "CHEM SCREENS Technical Evaluation of Installing Chem Screens through a pilot project with 27 wells"
+                        "text": "in ESP using two-stages filtration system"
                       }
                     ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjknnbf&viewerCompId=comp-kcjknnbf&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=90&height=94&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "The well was completed since the beginning with the two stages filtration system to avoid damages in the pump by the frac sand. After its completion in April 2019, the well run for 367 days long"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "CHEM SCREENS"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Technical Evaluation of Installing Chem Screens"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "through a pilot project with 27 wells"
+                      }
+                    ]
+                  },
                   {
                     "type": "paragraph",
                     "content": [
@@ -1952,62 +2323,10 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "GUARDIAN SHIELD Well Performance Before & After OSI’s BHA Design"
+                        "text": "GUARDIAN SHIELD"
                       }
                     ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjkwhk3&viewerCompId=comp-kcjkwhk3&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=91&height=94&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
-                  {
-                    "type": "paragraph",
-                    "content": [
-                      {
-                        "type": "text",
-                        "text": "Average motor temperature and Fluid temperature almost dropped by 100ᵒ F. Average motor temperature dropped from 182.3ᵒ F to 139.3ᵒ F after OSI’s tool installation"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjkpo4y&viewerCompId=comp-kcjkpo4y&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=500&height=725&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjkuldd&viewerCompId=comp-kcjkuldd&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=500&height=725&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
+                  },
                   {
                     "type": "heading",
                     "attrs": {
@@ -2016,35 +2335,43 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Don't get used to poor performance when your pump can do better. COMBINATION TOOL"
+                        "text": "Well Performance Before & After OSI’s BHA Design"
                       }
                     ]
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjl9ztn&viewerCompId=comp-kcjl9ztn&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=705&height=582&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-kcjl231n&viewerCompId=comp-kcjl231n&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=119&height=97&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "rich_text",
-            "data": {
-              "background": "cream",
-              "content": {
-                "type": "doc",
-                "content": [
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Average motor temperature and Fluid temperature almost dropped by 100ᵒ F. Average motor temperature dropped from 182.3ᵒ F to 139.3ᵒ F after OSI’s tool installation"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Don't get used to poor performance when your pump can do better."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "COMBINATION TOOL"
+                      }
+                    ]
+                  },
                   {
                     "type": "paragraph",
                     "content": [
@@ -2062,40 +2389,36 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SAND CONTROL IN ESP GAS SEPARATION IN ROD PUMP - SURGE VALVE"
+                        "text": "SAND CONTROL IN ESP"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "GAS SEPARATION"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "attrs": {
+                      "level": 2
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "IN ROD PUMP - SURGE VALVE"
                       }
                     ]
                   }
                 ]
               }
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-koaj417p&viewerCompId=comp-koaj417p&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=396&height=398&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-koajfsq0&viewerCompId=comp-koajfsq0&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=119&height=97&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-koaj6v5w&viewerCompId=comp-koaj6v5w&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=396&height=398&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
-            }
-          },
-          {
-            "type": "video_embed",
-            "data": {
-              "background": "cream",
-              "videoUrl": "https://dev-wix-languages.appspot.com/widget?pageId=sfulh&compId=comp-koajgux2&viewerCompId=comp-koajgux2&siteRevision=4443&viewMode=site&deviceType=desktop&locale=en&tz=America%2FChicago&regionalLanguage=en&width=119&height=97&instance=Fs87ZsRmp_bgH0TwFRS4YL5RZA9A0VMp7mWp4jQV0nk.eyJpbnN0YW5jZUlkIjoiMDcyMmFlNDItYzI4Yy00ZjFiLTliZmEtNTU5YjU5MDFlNDE5IiwiYXBwRGVmSWQiOiIxM2VlMTBhMy1lY2I5LTdlZmYtNDI5OC1kMmY5ZjM0YWNmMGQiLCJtZXRhU2l0ZUlkIjoiNzc5M2VkN2EtMjkzMy00YTlmLWEzNmEtMTQ3ZDUyYWFmZjBkIiwic2lnbkRhdGUiOiIyMDI2LTEwLTA4VDE2OjU1OjE2Ljc0OFoiLCJkZW1vTW9kZSI6ZmFsc2UsImFpZCI6IjczZWE4NzU5LWQzYTgtNDI5NC1hYTU1LWUyNTQyOGY0MjNmMyIsImJpVG9rZW4iOiI3MGIxNDMzOC1lYmJmLTA1ODQtMzg5MC00MWU2MGJhYjFiMTQiLCJzaXRlT3duZXJJZCI6IjFhYzllOTA4LTQ4ZTAtNDZlZS04ZTg3LWRjNzExNjgwZDY0OSIsImJzIjoiRFBBQlAyeXI5aTZGczNiTThaOEZLZElZQTdCNWs5c2VsM05LaEpvQ0pRVSIsInNjZCI6IjIwMTQtMDMtMDRUMTc6MDg6MTAuMzQ3WiJ9&commonConfig=%7B%22brand%22%3A%22wix%22%2C%22host%22%3A%22VIEWER%22%2C%22bsi%22%3Anull%2C%22siteRevision%22%3A%224443%22%2C%22renderingFlow%22%3A%22NONE%22%2C%22language%22%3A%22en%22%2C%22locale%22%3A%22en-us%22%2C%22BSI%22%3Anull%7D&currentRoute=.%2Fcase-study&consent-policy=%7B%22func%22%3A0%2C%22anl%22%3A0%2C%22adv%22%3A0%2C%22dt3%22%3A1%2C%22ess%22%3A1%7D&vsi=f518dacc-99f0-4a0d-9b9c-e33be222d781"
             }
           }
         ],
@@ -2108,7 +2431,7 @@
       "path": "/services-2",
       "table": "pages",
       "slug": "osi-papers",
-      "action": "unchanged",
+      "action": "update",
       "flags": [],
       "payload": {
         "slug": "osi-papers",
@@ -2136,7 +2459,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies"
+                        "text": "Controlling Gas Slugs in ESP Using a New Downhole Gas Regulator: Case Studies",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201289-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2145,7 +2476,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-201289-MS"
+                        "text": "SPE-201289-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201289-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2154,7 +2493,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia"
+                        "text": "New Mechanism of Sand Management Above ESPs: Cases Study in Colombia",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-209734-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2163,7 +2510,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-209734-MS"
+                        "text": "SPE-209734-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-209734-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2172,7 +2527,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump"
+                        "text": "Increasing Production by Using A 2-stages Filtration System With A Gas Separator In Rod Pump",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213079-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2181,7 +2544,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-213079-MS"
+                        "text": "SPE-213079-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213079-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2190,7 +2561,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin"
+                        "text": "Improving ESPs Performance Using Sand Control and Downhole Chemical Treatment: Case Studies in the Permian Basin",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201477-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2199,7 +2578,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-201477-MS"
+                        "text": "SPE-201477-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201477-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2208,7 +2595,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells"
+                        "text": "A Revolutionary Packer Type Gas Separator Tthat Involves Gravity force to Exceed traditional Gas Separation Efficiency in oil and Gas Wells",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-209749-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2217,7 +2612,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-209749-MS"
+                        "text": "SPE-209749-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-209749-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2226,7 +2629,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation"
+                        "text": "Slow-Release Downhole Chemical Treatment in Rod Pump, ESP And Gas Lift, Including A Non-Pulling Tubing Method of Installation",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213056-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2235,7 +2646,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-213056-MS"
+                        "text": "SPE-213056-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213056-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2244,7 +2663,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study"
+                        "text": "Improving ESP Perforamance with Two Stages of Gas Separation in 7 Casing Case Study",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201744-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2253,7 +2680,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-201744-MS"
+                        "text": "SPE-201744-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://onepetro.org/search-results?page=1&q=SPE-201744-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2262,7 +2697,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency"
+                        "text": "Management Of Gas Slugging Along With Sand Handling To Improve ESP Performance And Efficiency",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213064-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2271,7 +2714,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "SPE-213064-MS"
+                        "text": "SPE-213064-MS",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://doi.org/10.2118/213064-MS"
+                            }
+                          }
+                        ]
                       }
                     ]
                   }
@@ -10264,7 +10715,15 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Follow this link to send your resume"
+                        "text": "Follow this link to send your resume",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/careers#employmentapplication"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -10694,7 +11153,7 @@
       "path": "/training",
       "table": "pages",
       "slug": "training",
-      "action": "unchanged",
+      "action": "update",
       "flags": [
         "pdfs:4",
         "needs_osi_decision"
@@ -10780,7 +11239,32 @@
                     "content": [
                       {
                         "type": "text",
-                        "text": "Webinar"
+                        "text": "Case Study",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_a619aeb2b24047d2864a07dc1953a6a7.pdf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Webinar",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://youtu.be/mk-r0gAMcQ0"
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -10840,6 +11324,23 @@
                 "type": "doc",
                 "content": [
                   {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Case Study",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_0a64936bbf9a4bb7b296201b4adc533e.pdf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
                     "type": "heading",
                     "attrs": {
                       "level": 2
@@ -10885,6 +11386,23 @@
               "content": {
                 "type": "doc",
                 "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Case Study",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
                   {
                     "type": "heading",
                     "attrs": {
@@ -10961,6 +11479,34 @@
             "data": {
               "background": "cream",
               "videoUrl": "https://www.youtube.com/embed/HgCM4Qu9Rpc?autoplay=0&mute=0&controls=1&loop=0&origin=https%3A%2F%2Fwww.odessaseparator.com&playsinline=1&enablejsapi=1&widgetid=9&forigin=https%3A%2F%2Fwww.odessaseparator.com%2Ftraining&aoriginsup=1&vf=1"
+            }
+          },
+          {
+            "type": "rich_text",
+            "data": {
+              "background": "cream",
+              "content": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Case Study",
+                        "marks": [
+                          {
+                            "type": "link",
+                            "attrs": {
+                              "href": "https://www.odessaseparator.com/_files/ugd/1ac9e9_a74a1ad488614a71aa3ec31a0679fd76.pdf"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           }
         ],
