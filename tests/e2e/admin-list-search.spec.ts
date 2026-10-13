@@ -9,10 +9,11 @@ test.describe("admin list search", () => {
 
   for (const path of ["/admin/redirects", "/admin/news"]) {
     test(`${path}: keeps every typed character and survives sort changes`, async ({ page }) => {
-      const errors = trackPageErrors(page);
       await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
       await page.goto(path);
       await page.waitForLoadState("networkidle"); // let React hydrate before typing
+      // Tracked only from here: WebKit reports the login action's fetch, cancelled by the post-login redirect, as "Load failed".
+      const errors = trackPageErrors(page);
 
       const search = page.locator('input[inputmode="search"]');
       await search.pressSequentially("redirects", { delay: 30 });
