@@ -23,3 +23,31 @@ describe("FieldRenderer", () => {
     expect(screen.getByRole("combobox", { name: "Status" })).toHaveClass("admin-status-select");
   });
 });
+
+function RelationHarness({ type, relation }: { type: "relation" | "multi-relation"; relation: string }) {
+  const form = useForm({ defaultValues: { f: type === "relation" ? "" : [] } });
+  return (
+    <FormProvider {...form}>
+      <FieldRenderer name="f" spec={{ key: "f", label: "Applications", type, relation }} />
+    </FormProvider>
+  );
+}
+
+describe("FieldRenderer relation empty states (CAT-04)", () => {
+  it("tells the editor where to create the records, with a link", () => {
+    render(<RelationHarness type="multi-relation" relation="applications" />);
+    expect(screen.getByText(/No applications yet — create them in/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Applications →/ })).toHaveAttribute("href", "/admin/applications");
+  });
+
+  it("does the same for a single-select relation", () => {
+    render(<RelationHarness type="relation" relation="shared-sections" />);
+    expect(screen.getByRole("link", { name: /Shared sections →/ })).toHaveAttribute("href", "/admin/shared-sections");
+  });
+
+  it("falls back to a plain message for relations with no admin section", () => {
+    render(<RelationHarness type="multi-relation" relation="related_products" />);
+    expect(screen.getByText("No options available.")).toBeInTheDocument();
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+});

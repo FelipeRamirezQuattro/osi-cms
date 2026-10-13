@@ -156,3 +156,7 @@ items get struck through with the resolution, not deleted.
   exports — the `ar_model` block ships fully working but with no real
   content to use it with until the client supplies Blender exports (a
   `.glb` and a matching `.usdz`) for at least one product.
+
+## Found during QA round "Entregable 1" (Oct 2026)
+
+- **The list of Applications is needed from OSI.** The `applications` table has 0 rows, so the product editor's Applications picker (and the public `/applications` pages) are empty. Nothing was seeded — the real application names/copy have to come from the client. Industries exist (9) but are all still draft.

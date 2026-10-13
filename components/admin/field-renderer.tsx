@@ -4,7 +4,7 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
-import { useRelationOptions } from "@/components/admin/relation-options";
+import { RelationEmptyState, useRelationOptions } from "@/components/admin/relation-options";
 import { getTextInputAttrs } from "@/lib/admin/field-input-attrs";
 import { reorderAriaLabel } from "@/lib/admin/reorder-label";
 
@@ -181,6 +181,7 @@ function RelationFieldRenderer({ spec, name }: { spec: Extract<FieldSpec, { type
           </option>
         ))}
       </select>
+      {options.length === 0 && <RelationEmptyState relation={spec.relation} />}
     </LabeledField>
   );
 }
@@ -209,7 +210,7 @@ function MultiRelationFieldRenderer({
           }
           return (
             <div className="max-h-48 space-y-1 overflow-y-auto rounded border border-osi-sand-300 p-3">
-              {options.length === 0 && <p className="text-xs text-osi-slate-400">No options available.</p>}
+              {options.length === 0 && <RelationEmptyState relation={spec.relation} />}
               {options.map((opt) => (
                 <label key={opt.value} className="flex items-center gap-2 text-sm">
                   <input
