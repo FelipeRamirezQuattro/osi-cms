@@ -1,6 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { RecommendationsClient, type RecommendableProduct } from "@/components/blocks/recommendations-client";
+import {
+  RecommendationsClient,
+  getViewedSnapshot,
+  parseViewedSlugs,
+  type RecommendableProduct,
+} from "@/components/blocks/recommendations-client";
 import { productHref } from "@/lib/routes";
 
 /**
@@ -11,21 +17,8 @@ import { productHref } from "@/lib/routes";
  * matches productHref(categorySlug, slug) for that product, plus the
  * /products fallback for a product with no resolved category.
  *
- * Uses react-dom/server's renderToStaticMarkup rather than
- * @testing-library/react's render(): RecommendationsClient reads
- * recently-viewed slugs via useSyncExternalStore, whose client snapshot
- * function (getViewedSlugs) does `JSON.parse(localStorage.getItem(...) ??
- * "[]")` — a fresh array on every call, which violates
- * useSyncExternalStore's "getSnapshot must return a cached/stable
- * reference" contract. That's a genuine, pre-existing bug in
- * components/blocks/recommendations-client.tsx (found while writing this
- * test, out of scope for this task — see task-1-report.md): mounting this
- * component with React's interactive renderer immediately throws "Maximum
- * update depth exceeded" in this repo's React 19 dev build, in a plain
- * render with no interaction at all. renderToStaticMarkup never runs
- * effects and always uses getServerSnapshot (a stable `[]`), so it
- * sidesteps the bug entirely and still proves what this test cares about:
- * the hrefs LabelPlateGrid/LabelPlateCard render.
+ * Uses react-dom/server's renderToStaticMarkup (server snapshot) for the href
+ * checks; the interactive-mount regression is covered separately below.
  */
 
 function firstLinkHref(fallback: RecommendableProduct[], limit = 4): string | null {
@@ -58,5 +51,34 @@ describe("RecommendationsClient generates routes via lib/routes.ts's productHref
   it("renders nothing when there are no products to recommend", () => {
     const html = renderToStaticMarkup(<RecommendationsClient fallback={[]} limit={4} />);
     expect(html).toBe("");
+  });
+});
+
+describe("recently-viewed snapshot (BLQ-26)", () => {
+  afterEach(() => localStorage.clear());
+
+  it("returns an identical value across calls, so useSyncExternalStore never loops", () => {
+    localStorage.setItem("osi:viewed", JSON.stringify(["a", "b"]));
+    expect(getViewedSnapshot()).toBe(getViewedSnapshot());
+    localStorage.clear();
+    expect(getViewedSnapshot()).toBe(getViewedSnapshot());
+  });
+
+  it("parses defensively", () => {
+    expect(parseViewedSlugs(null)).toEqual([]);
+    expect(parseViewedSlugs("not json")).toEqual([]);
+    expect(parseViewedSlugs('{"a":1}')).toEqual([]);
+    expect(parseViewedSlugs('["a",1,"b"]')).toEqual(["a", "b"]);
+  });
+
+  it("mounts interactively without 'Maximum update depth' and prefers viewed products", () => {
+    localStorage.setItem("osi:viewed", JSON.stringify(["two"]));
+    const fallback: RecommendableProduct[] = [
+      { slug: "one", name: "Product One", summary: null, categorySlug: "c" },
+      { slug: "two", name: "Product Two", summary: null, categorySlug: "c" },
+    ];
+    render(<RecommendationsClient fallback={fallback} limit={4} />);
+    expect(screen.getByText("Product Two")).toBeTruthy();
+    expect(screen.queryByText("Product One")).toBeNull();
   });
 });

@@ -21,7 +21,11 @@ function subscribeSidebarPreference(callback: () => void) {
 }
 
 function getSidebarPreference() {
-  return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true";
+  try {
+    return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true";
+  } catch {
+    return false; // storage blocked (private mode / site data off)
+  }
 }
 
 function getServerSidebarPreference() {

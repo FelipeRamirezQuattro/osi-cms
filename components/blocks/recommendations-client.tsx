@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { LabelPlateGrid, type LabelPlateItem } from "@/components/blocks/label-plate-grid";
 import { productHref } from "@/lib/routes";
 
@@ -25,16 +25,29 @@ function subscribeToNothing() {
   return () => {};
 }
 
-function getViewedSlugs(): string[] {
+// The snapshot is the raw localStorage string (or null) — a primitive, so
+// React's "getSnapshot must be cached" contract holds. Parsing a fresh
+// array here made every call look like a store change and looped forever.
+export function getViewedSnapshot(): string | null {
   try {
-    return JSON.parse(localStorage.getItem("osi:viewed") ?? "[]");
+    return localStorage.getItem("osi:viewed");
   } catch {
-    return [];
+    return null;
   }
 }
 
-function getServerSnapshot(): string[] {
-  return [];
+function getServerSnapshot(): string | null {
+  return null;
+}
+
+export function parseViewedSlugs(raw: string | null): string[] {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((s): s is string => typeof s === "string") : [];
+  } catch {
+    return [];
+  }
 }
 
 // Reads recently-viewed product slugs from localStorage (written by the
@@ -49,7 +62,8 @@ export function RecommendationsClient({
   fallback: RecommendableProduct[];
   limit?: number;
 }) {
-  const viewedSlugs = useSyncExternalStore(subscribeToNothing, getViewedSlugs, getServerSnapshot);
+  const rawViewed = useSyncExternalStore(subscribeToNothing, getViewedSnapshot, getServerSnapshot);
+  const viewedSlugs = useMemo(() => parseViewedSlugs(rawViewed), [rawViewed]);
 
   const bySlug = new Map(fallback.map((p) => [p.slug, p]));
   const viewed = viewedSlugs
