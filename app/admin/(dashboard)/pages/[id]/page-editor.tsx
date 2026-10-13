@@ -1,5 +1,6 @@
 "use client";
 
+import { RevisionsPanel } from "./revisions-panel";
 import { useEffect, useRef, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form";
@@ -806,23 +807,7 @@ export function PageEditor({
               </section>
             )}
 
-            {revisions.length > 0 && (
-              <section className="space-y-2 rounded border border-osi-sand-300 bg-osi-white p-4">
-                <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">
-                  Revisions ({revisions.length})
-                </h2>
-                <ul className="space-y-1 text-xs">
-                  {revisions.map((rev) => (
-                    <li key={rev.id} className="flex items-center justify-between">
-                      <span className="opacity-70">{new Date(rev.created_at).toLocaleString()}</span>
-                      <button type="button" onClick={() => onRestoreRevision(rev.id)} className="hover:underline">
-                        Restore
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+            <RevisionsPanel revisions={revisions} onRestore={onRestoreRevision} />
           </aside>
         </div>
       </div>
