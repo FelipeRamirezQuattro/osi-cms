@@ -41,6 +41,8 @@ export interface LegacyEntry {
   needsOsiDecision?: boolean;
   language?: "es";
   note?: string;
+  /** Display name when the page's own <title> is ambiguous (two pages share one). */
+  name?: string;
 }
 
 const e = (
@@ -119,7 +121,12 @@ export const LEGACY_ENTRIES: LegacyEntry[] = [
   product(34, "/esp-vortex-desander-osi", "ESP Vortex Desander OSI", "esp"),
   product(35, "/esp-vortex-desander-with-swivel", "ESP Vortex Desander With Swivel", "esp"),
   product(36, "/esp-vortex-regulator", "ESP Vortex Regulator", "esp"),
-  product(37, "/osi-esp-guardian-shield", "OSI ESP Guardian Shield", "esp", { duplicateOf: "/esp-guardian-shield" }),
+  // Not a duplicate of /esp-guardian-shield: different intro, benefits and diagram (compared Oct 13). Its H1 is
+  // "The G-Force ESP Packer Type Gas Separator" but its <title> equals PUB-038's, hence the explicit slug and name.
+  product(37, "/osi-esp-guardian-shield", "OSI ESP Guardian Shield", "esp", {
+    slug: "g-force-esp-packer-type-gas-separator",
+    name: "The G-Force ESP Packer Type Gas Separator",
+  }),
   product(38, "/osi-esp-packer-type-gas-separat", "OSI ESP Packer Type Gas Separat", "esp"),
   product(39, "/osi-pmm-guardian", "OSI PMM Guardian", "esp"),
   // SRP
@@ -128,7 +135,8 @@ export const LEGACY_ENTRIES: LegacyEntry[] = [
   // Gas separation
   product(42, "/bumper-spring", "Bumper Spring", "gas-separation"),
   product(43, "/chamber-type-gas-separator", "Chamber Type Gas Separator", "gas-separation"),
-  product(44, "/copy-of-g-force", "Copy of G Force", "gas-separation", { duplicateOf: "/gforce" }),
+  // The ESP variant of the G-Force page, not a copy of /gforce: different intro, diagram, PDF and benefits (compared Oct 13).
+  product(44, "/copy-of-g-force", "ESP G-Force", "gas-separation", { slug: "esp-g-force" }),
   product(45, "/gforce", "G Force", "gas-separation", { slug: "g-force" }),
   product(46, "/g-forcepackerless", "G Force Packerless", "gas-separation"),
   e(47, "/gasreleasesystem", "Gas Release System", "gas-separation", "already_migrated", { slug: "gas-release-system" }),

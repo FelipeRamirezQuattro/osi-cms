@@ -104,7 +104,14 @@ export function AdminDataTable<T>({
   return (
     <div className="admin-table-panel">
       {toolbar}
-      <div className={overflow === "auto" ? "overflow-x-auto" : "overflow-hidden"}>{table}</div>
+      {overflow === "auto" ? (
+        // A horizontally scrollable region must be reachable by keyboard (axe: scrollable-region-focusable).
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Table, scrolls sideways when narrow">
+          {table}
+        </div>
+      ) : (
+        <div className="overflow-hidden">{table}</div>
+      )}
     </div>
   );
 }

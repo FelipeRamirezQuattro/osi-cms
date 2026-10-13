@@ -265,7 +265,7 @@ function isPseudoHeading(item: ScrapedItem, next: ScrapedItem | undefined): bool
 
 export function mapProduct(entry: LegacyEntry, page: ScrapedPage, ctx: MapContext): MappedProduct {
   const flags: string[] = [];
-  const name = cleanProductName(page.title) || entry.title;
+  const name = entry.name ?? (cleanProductName(page.title) || entry.title);
   if (name !== entry.title) flags.push("title_from_page");
 
   const noChrome = page.items.filter((i) => i.type !== "image" || isContentImage(i, ctx));

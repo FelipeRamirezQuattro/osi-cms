@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T20:37:00.233Z",
+  "generated_at": "2026-10-13T20:51:32.895Z",
   "dry_run": true,
   "unpublish_batch2_edited": [],
   "titles_changed": [
@@ -39,9 +39,9 @@
       "to": "ESP Vortex Desander With Flex Tool"
     },
     {
-      "slug": "osi-esp-guardian-shield",
+      "slug": "g-force-esp-packer-type-gas-separator",
       "from": "OSI ESP Guardian Shield",
-      "to": "ESP Packer Type Gas Separator"
+      "to": "The G-Force ESP Packer Type Gas Separator"
     },
     {
       "slug": "osi-esp-packer-type-gas-separat",
@@ -52,11 +52,6 @@
       "slug": "osi-pmm-guardian",
       "from": "OSI PMM Guardian",
       "to": "ESP PMM Guardian"
-    },
-    {
-      "slug": "copy-of-g-force",
-      "from": "Copy of G Force",
-      "to": "ESP G-Force"
     },
     {
       "slug": "g-force",
@@ -129,34 +124,22 @@
   ],
   "summary": {
     "pages": {
-      "unchanged": 20,
-      "skip_edited": 1
+      "unchanged": 19,
+      "skip_edited": 2
     },
     "news_posts": {
       "unchanged": 1
     },
     "products": {
-      "unchanged": 48,
+      "unchanged": 46,
+      "update": 2,
       "skip_exists": 1
     },
     "resources": {
       "unchanged": 105
     }
   },
-  "duplicates": [
-    {
-      "duplicate": "/osi-esp-guardian-shield",
-      "canonical": "/esp-guardian-shield",
-      "similarity": 0.29,
-      "merged": false
-    },
-    {
-      "duplicate": "/copy-of-g-force",
-      "canonical": "/gforce",
-      "similarity": 0.41,
-      "merged": false
-    }
-  ],
+  "duplicates": [],
   "product_matches": [
     {
       "entry": "PUB-024",
@@ -238,7 +221,7 @@
     },
     {
       "entry": "PUB-037",
-      "name": "ESP Packer Type Gas Separator",
+      "name": "The G-Force ESP Packer Type Gas Separator",
       "match": "—",
       "confidence": "none"
     },
@@ -4628,8 +4611,8 @@
       "id": "PUB-037",
       "path": "/osi-esp-guardian-shield",
       "table": "products",
-      "slug": "osi-esp-guardian-shield",
-      "action": "unchanged",
+      "slug": "g-force-esp-packer-type-gas-separator",
+      "action": "update",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -4637,8 +4620,8 @@
         "category_needs_review"
       ],
       "payload": {
-        "slug": "osi-esp-guardian-shield",
-        "name": "ESP Packer Type Gas Separator",
+        "slug": "g-force-esp-packer-type-gas-separator",
+        "name": "The G-Force ESP Packer Type Gas Separator",
         "manifestName": "OSI ESP Guardian Shield",
         "categorySlug": null,
         "summary": "Odessa Separator’s ESP G-FORCE™ is used for\n\nmaximizing artificial lift run life.\n\nTest Horizontal Well\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
@@ -5386,18 +5369,17 @@
       "id": "PUB-044",
       "path": "/copy-of-g-force",
       "table": "products",
-      "slug": "copy-of-g-force",
-      "action": "unchanged",
+      "slug": "esp-g-force",
+      "action": "update",
       "flags": [
-        "title_from_page",
         "pseudo_heading_promoted",
         "how_it_works_text_kept_as_block",
         "has_3d_viewer_link"
       ],
       "payload": {
-        "slug": "copy-of-g-force",
+        "slug": "esp-g-force",
         "name": "ESP G-Force",
-        "manifestName": "Copy of G Force",
+        "manifestName": "ESP G-Force",
         "categorySlug": "gas-separation",
         "summary": "The G-FORCE is a revolution in Gas Separation design!\n\nThe 1.89 in. I.D. at the outlet section provides a greater volumetric area and a straight path for gas to escape the separator.\n\nThe packer forces production fluid into the G-Force separator section where phase separation is maximized, and minimum flow resistance is encountered.",
         "diagramImageUrl": "https://static.wixstatic.com/media/1ac9e9_bdaf256cd02b49c4ad85814f5b28b01b~mv2.png",
@@ -5514,7 +5496,6 @@
           "https://portal.worldcast.io/show/9AnpORlYwVyJq5B1lE4B8EKQ4GzPWgekXmod-esp-gforce/"
         ],
         "flags": [
-          "title_from_page",
           "pseudo_heading_promoted",
           "how_it_works_text_kept_as_block",
           "has_3d_viewer_link"
@@ -12554,7 +12535,8 @@
       "path": "/one-min-mgnr",
       "table": "pages",
       "slug": "one-minute-manager",
-      "action": "unchanged",
+      "action": "skip_edited",
+      "note": "edited in admin since import",
       "flags": [
         "alt_needs_review",
         "pdfs:1"
@@ -13943,7 +13925,7 @@
         "title": "ESP G-Force",
         "kind": "datasheet",
         "file_url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_788d9e5feb654ad3aede6175efdbe726.pdf",
-        "productSlug": "copy-of-g-force"
+        "productSlug": "esp-g-force"
       }
     },
     {

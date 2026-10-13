@@ -179,11 +179,6 @@
       "hash": "7774342e948c3e5d3c1a2ce533a2d4f10a5b0c02",
       "updated_at": "2026-10-13T20:26:21.72158+00:00"
     },
-    "osi-esp-guardian-shield": {
-      "id": "4ab2cef9-030e-4b71-891c-d0f1eba06759",
-      "hash": "e1aa9a7a7b0c1213129dfbdbddd5858cedf1c483",
-      "updated_at": "2026-10-13T20:26:23.184315+00:00"
-    },
     "osi-esp-packer-type-gas-separat": {
       "id": "c8981bb2-d0ac-433e-affc-7b42642566d5",
       "hash": "615610fbc57f03a1140bd43bfa64ca059197375c",
@@ -208,11 +203,6 @@
       "id": "864e78d0-c96b-4af2-8c69-bc492aacc6a0",
       "hash": "4ba32ed4a6344bf88487056e83db3308bc6344c7",
       "updated_at": "2026-10-13T20:26:28.603162+00:00"
-    },
-    "copy-of-g-force": {
-      "id": "349c1213-8859-4ed1-ba9a-e194eb71f01c",
-      "hash": "bd4037579de99d15a4ecf836d6c7360b87491783",
-      "updated_at": "2026-10-13T20:26:29.74473+00:00"
     },
     "g-force": {
       "id": "689d8d05-83f8-4a50-9014-53616074e421",
@@ -358,6 +348,16 @@
       "id": "94a1f33c-b5c2-401d-8273-8f8fcdab8d59",
       "hash": "34996ce1e4e33349c5c4ec19ae3fadf86adf8ed1",
       "updated_at": "2026-10-13T20:27:18.302272+00:00"
+    },
+    "esp-g-force": {
+      "id": "349c1213-8859-4ed1-ba9a-e194eb71f01c",
+      "hash": "bd4037579de99d15a4ecf836d6c7360b87491783",
+      "updated_at": "2026-10-13T20:51:17.080246+00:00"
+    },
+    "g-force-esp-packer-type-gas-separator": {
+      "id": "4ab2cef9-030e-4b71-891c-d0f1eba06759",
+      "hash": "e1aa9a7a7b0c1213129dfbdbddd5858cedf1c483",
+      "updated_at": "2026-10-13T20:51:17.232541+00:00"
     }
   },
   "resources": {

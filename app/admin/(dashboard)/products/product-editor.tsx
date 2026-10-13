@@ -14,6 +14,7 @@ import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { ProductAdminDetail } from "@/lib/data/products";
 import { FormCard, SubmitButton } from "@/components/admin/ui/form-card";
+import { ProductPreviewLink } from "@/components/admin/product-preview-link";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Same reasoning as page-editor.tsx / entity-editor.tsx.
@@ -83,6 +84,7 @@ export function ProductEditor({
           backHref="/admin/products"
           backLabel="Products"
           onDelete={product && canDelete ? onDelete : undefined}
+          headerActions={product && <ProductPreviewLink categorySlug={product.categorySlug} slug={product.slug} />}
           onSubmit={form.handleSubmit(onSubmit)}
         >
           {PRODUCT_FIELDS.map((field) => (

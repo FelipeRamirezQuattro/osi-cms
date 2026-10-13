@@ -303,7 +303,7 @@ function ArrayFieldRenderer({
                 <FieldRenderer key={sub.key} spec={sub} name={`${name}.${index}.${sub.key}`} />
               ))
             ) : (
-              <input {...register(`${name}.${index}` as const)} className={INPUT_CLASS} />
+              <input {...register(`${name}.${index}` as const)} aria-label={`${spec.label} ${index + 1}`} className={INPUT_CLASS} />
             )}
           </div>
         ))}

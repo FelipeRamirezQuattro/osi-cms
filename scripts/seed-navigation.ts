@@ -11,7 +11,6 @@ type ItemInput = { label: string; href: string; badge?: string; children?: ItemI
 
 const UTILITY_ITEMS: ItemInput[] = [
   { label: "Customer Cloud", href: "/services" },
-  { label: "Directory", href: "/directory" },
   { label: "Careers", href: "/careers" },
   { label: "About Us", href: "/about-us" },
 ];
@@ -85,7 +84,6 @@ const FOOTER_COLUMNS: Record<string, ItemInput[]> = {
     { label: "Downloads", href: "/resources" },
   ],
   "footer-3": [
-    { label: "Directory", href: "/directory" },
     { label: "Components", href: "/products" },
     { label: "Locations", href: "/locations" },
   ],

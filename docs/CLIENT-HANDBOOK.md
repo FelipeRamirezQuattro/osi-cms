@@ -488,7 +488,7 @@ this and when" without having to ask around.
 
 Besides the fixed sections (benefits, video, "How does it work?", specifications), a product can have **Extra content blocks** — shown below them. Open the product, scroll to "Extra content blocks" and add the same kinds of blocks you use on pages (video, image, text, a headed list of cards, …). Use the arrows to reorder, **Hide** to keep a block without showing it, **Remove** to delete it. Click **Save** as usual.
 
-Products that aren't published yet can be reviewed at `/preview/products/<category>/<product-slug>` (you must be signed in). In that preview a dashed note or a greyed button marks anything still missing, such as a PDF or 3D link; visitors never see those.
+Products that aren't published yet can be reviewed with the **Preview** button at the top of the product's edit screen (it opens `/preview/products/<category>/<product-slug>` in a new tab; you must be signed in, the product needs a saved category, and it shows the last saved version). In that preview a dashed note or a greyed button marks anything still missing, such as a PDF or 3D link; visitors never see those.
 
 ## When something can't be saved
 

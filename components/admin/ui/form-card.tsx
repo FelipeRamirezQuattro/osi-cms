@@ -24,6 +24,7 @@ export function FormCard({
   backLabel,
   onDelete,
   deleteLabel = "Delete",
+  headerActions,
   maxWidth = "max-w-3xl",
   onSubmit,
   children,
@@ -33,6 +34,8 @@ export function FormCard({
   backLabel?: string;
   onDelete?: () => void;
   deleteLabel?: string;
+  /** Extra controls in the title row (e.g. a Preview link), shown before Delete. */
+  headerActions?: ReactNode;
   maxWidth?: string;
   onSubmit: (event: FormEvent) => void;
   children: ReactNode;
@@ -50,6 +53,8 @@ export function FormCard({
         )}
         <div className="flex items-center justify-between">
           <h1 className="admin-page-title">{title}</h1>
+          <div className="flex items-center gap-2">
+          {headerActions}
           {onDelete && (
             <Button
               variant="ghost"
@@ -59,6 +64,7 @@ export function FormCard({
               {deleteLabel}
             </Button>
           )}
+          </div>
         </div>
       </div>
 

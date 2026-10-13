@@ -156,6 +156,8 @@ export type ProductAdminDetail = Tables<"products"> & {
   applications: string[];
   related_product_ids: string[];
   blocks: { type: string; is_visible: boolean; data: Json }[];
+  /** Saved category's slug — what `/preview/products/<category>/<slug>` needs. */
+  categorySlug: string | null;
 };
 
 /**
@@ -189,9 +191,10 @@ export async function listAllProducts(): Promise<Tables<"products">[]> {
 
 export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetail | null> {
   const db = createServerDbClient();
-  const { data: product, error } = await db.from("products").select("*").eq("id", id).maybeSingle();
+  const { data: row, error } = await db.from("products").select("*, product_categories(slug)").eq("id", id).maybeSingle();
   if (error) throw error;
-  if (!product) return null;
+  if (!row) return null;
+  const { product_categories, ...product } = row;
 
   const [benefits, stages, specs, industries, applications, related, blocks] = await Promise.all([
     db
@@ -235,6 +238,7 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
     applications: (applications.data ?? []).map((r) => r.application_id),
     related_product_ids: (related.data ?? []).map((r) => r.related_product_id),
     blocks: blocks.data ?? [],
+    categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
   };
 }
 
