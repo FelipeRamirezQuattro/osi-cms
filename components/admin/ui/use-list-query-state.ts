@@ -52,7 +52,10 @@ export function useListQueryState(defaultSort = ""): ListQueryState {
       }
       if (resetPage) params.delete("page");
       const qs = params.toString();
-      window.history.replaceState(window.history.state, "", qs ? `${pathname}?${qs}` : pathname);
+      // `null`, NOT window.history.state: Next's patched replaceState only syncs useSearchParams
+      // (and so re-filters the list) when the state it receives is not its own — a state object
+      // carrying Next's `__NA` marker is passed straight through and the URL changes silently.
+      window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
     },
     [pathname],
   );
