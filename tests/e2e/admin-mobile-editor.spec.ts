@@ -15,7 +15,8 @@ test.describe("admin editors at 390px", () => {
   test("page editor, with the first block open", async ({ page }, testInfo) => {
     await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
     await page.goto("/admin/pages");
-    await page.getByRole("link", { name: /edit|home/i }).first().click();
+    await page.waitForLoadState("networkidle");
+    await page.locator('a[href^="/admin/pages/"]:not([href$="/new"])').first().click();
     await page.waitForURL(/\/admin\/pages\/[0-9a-f-]{36}/);
     await page.locator("[data-block-toggle]").first().click();
     await expectNoHorizontalScroll(page);
@@ -25,7 +26,10 @@ test.describe("admin editors at 390px", () => {
   test("an entity editor", async ({ page }, testInfo) => {
     await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
     await page.goto("/admin/industries");
-    await page.getByRole("link", { name: /edit|new/i }).first().click();
+    await page.waitForLoadState("networkidle");
+    await page.locator('a[href^="/admin/industries/"]:not([href$="/new"])').first().click();
+    await page.waitForURL(/\/admin\/industries\/[^/]+$/);
+    await page.getByRole("button", { name: /save/i }).first().waitFor({ state: "visible" }); // past the loading skeleton
     await page.waitForLoadState("networkidle");
     await expectNoHorizontalScroll(page);
     await page.screenshot({ path: testInfo.outputPath("entity-editor-390.png"), fullPage: true });
