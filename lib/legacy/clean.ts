@@ -7,7 +7,7 @@
 
 export type ScrapedItem =
   | { type: "heading"; level: number; text: string }
-  | { type: "paragraph"; text: string }
+  | { type: "paragraph"; text: string; href?: string }
   | { type: "list"; ordered: boolean; items: string[] }
   | { type: "table"; rows: string[][] }
   | { type: "image"; src: string; alt: string; caption?: string }

@@ -19,6 +19,8 @@
     "seed:locations": "tsx --env-file=.env.local scripts/seed-locations.ts",
     "migrate:legacy": "tsx --env-file=.env.local scripts/migrate-legacy.ts",
     "scrape:batch2": "tsx scripts/scrape-legacy-batch2.ts",
+    "rescrape:targeted": "tsx scripts/rescrape-targeted.ts",
+    "migrate:batch1-images": "tsx --env-file=.env.local scripts/add-batch1-images.ts",
     "migrate:batch2": "tsx --env-file=.env.local scripts/migrate-legacy-batch2.ts",
     "migrate:directory": "tsx --env-file=.env.local scripts/migrate-directory.ts",
     "create-admin": "tsx --env-file=.env.local scripts/create-admin-user.ts",

@@ -1,0 +1,67 @@
+{
+  "slug": "hse",
+  "url": "https://www.odessaseparator.com/certifications",
+  "scraped_at": "2026-10-13T20:18:04.561Z",
+  "items": [
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/3e4a29ecd5284fadabe7da520d9970e6.jpg/v1/fill/w_1309,h_365,al_l,q_85,enc_avif,quality_auto/3e4a29ecd5284fadabe7da520d9970e6.jpg",
+      "alt": "Well Drill"
+    },
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "Our Commitment to Quality"
+    },
+    {
+      "type": "paragraph",
+      "text": "At Odessa Separator Inc. (OSI), we are dedicated to maintaining the highest standards"
+    },
+    {
+      "type": "paragraph",
+      "text": "of quality and performance. Our industry certifications demonstrate our ongoing commitment"
+    },
+    {
+      "type": "paragraph",
+      "text": "to excellence, reliability, and continuous improvement in every product and service we deliver worldwide."
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_1fde555c695c43d6ac4a85923d375860~mv2.jpg/v1/fill/w_480,h_488,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_1fde555c695c43d6ac4a85923d375860~mv2.jpg",
+      "alt": "iso-45001.jpg"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "ISO 45001 Health & Safety Management"
+    },
+    {
+      "type": "paragraph",
+      "text": "OSI has achieved ISO 45001 Certification, reaffirming our commitment to a safe, healthy, and sustainable workplace. Safety and excellence go hand in hand in everything we do."
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_7441745e809b4158a33caa1cd8130ae2.pdf",
+      "text": "Document"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_97f5a053529440e19aa11773f41dd1d3~mv2.jpg/v1/fill/w_480,h_463,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_97f5a053529440e19aa11773f41dd1d3~mv2.jpg",
+      "alt": "ISO-9001.jpg"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "ISO 9001 Quality Management"
+    },
+    {
+      "type": "paragraph",
+      "text": "Odessa Separator Inc. (OSI) is proud to be ISO 9001 Certified, recognizing our commitment to quality, consistency, and customer satisfaction. This achievement reflects our dedication to delivering reliable, high-performance solutions worldwide."
+    },
+    {
+      "type": "pdf",
+      "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1b199a8daebc4b0a93412a1a918c85b1.pdf",
+      "text": "Document"
+    }
+  ]
+}

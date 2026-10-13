@@ -11,6 +11,11 @@
  * Usage:
  *   pnpm migrate:batch2 --dry-run   plan only; writes _dry-run.json, no DB writes
  *   pnpm migrate:batch2             apply
+ *   pnpm migrate:batch2 --unpublish-batch2-edited [--dry-run]
+ *       First moves batch-2 products that an admin only PUBLISHED (content
+ *       identical to what batch 2 wrote on Oct 8) back to draft, so the
+ *       normal guards below let this run update them. A product whose
+ *       content was edited by a person is reported and left alone.
  */
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -36,6 +41,7 @@ import {
 } from "../lib/legacy/map";
 
 const DRY_RUN = process.argv.includes("--dry-run");
+const UNPUBLISH_EDITED = process.argv.includes("--unpublish-batch2-edited");
 const DIR = path.join(import.meta.dirname, "..", "content", "legacy", "pages-batch2");
 const STATE_FILE = path.join(DIR, "_import-state.json");
 const DUP_THRESHOLD = 0.8;
@@ -63,9 +69,19 @@ interface PlanRow {
 const hash = (v: unknown) => crypto.createHash("sha1").update(JSON.stringify(v)).digest("hex");
 const loadState = (): State => (fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf-8")) : {});
 
+const TARGETED_DIR = path.join(import.meta.dirname, "..", "content", "legacy", "pages-targeted");
+
 function loadScraped(entry: LegacyEntry): ScrapedPage | null {
   const f = path.join(DIR, `${entry.id}.json`);
-  return fs.existsSync(f) ? (JSON.parse(fs.readFileSync(f, "utf-8")) as ScrapedPage) : null;
+  if (!fs.existsSync(f)) return null;
+  const page = JSON.parse(fs.readFileSync(f, "utf-8")) as ScrapedPage;
+  // A targeted, document-order re-scrape (scripts/rescrape-targeted.ts) replaces the
+  // items of pages whose first scrape lost structure; everything else stays as scraped.
+  const targeted = entry.slug ? path.join(TARGETED_DIR, entry.slug.replace(/\//g, "__") + ".json") : null;
+  if (targeted && fs.existsSync(targeted)) {
+    page.items = (JSON.parse(fs.readFileSync(targeted, "utf-8")) as { items: ScrapedPage["items"] }).items;
+  }
+  return page;
 }
 
 function validateBlocks(blocks: { type: string; data: Record<string, unknown> }[]): string[] {
@@ -82,9 +98,60 @@ function validateBlocks(blocks: { type: string; data: Record<string, unknown> }[
   return errors;
 }
 
+/**
+ * Decision 2a: batch-2 products an admin published on Oct 10 went live
+ * without QA's review. Send them back to draft — but only when the admin did
+ * nothing except publish (every content field still equals what batch 2
+ * wrote, from the committed _last-run.json). Never touches category.
+ */
+async function unpublishBatch2Edited(db: ReturnType<typeof createServiceRoleDbClient>, state: State) {
+  const lastRun = JSON.parse(fs.readFileSync(path.join(DIR, "_last-run.json"), "utf-8")) as {
+    plan: { table: string; slug: string; payload?: Record<string, unknown> }[];
+  };
+  const wrote = new Map(lastRun.plan.filter((r) => r.table === "products" && r.payload).map((r) => [r.slug, r.payload!]));
+  const slugs = Object.keys(state.products ?? {});
+  const { data: rows, error } = await db
+    .from("products")
+    .select("id,slug,name,status,summary,diagram_image_url,video_url,brochure_pdf_url,seo_title,seo_description,updated_at")
+    .in("slug", slugs);
+  if (error) throw error;
+  const report: { slug: string; result: string }[] = [];
+  for (const row of rows ?? []) {
+    const st = state.products[row.slug];
+    if (row.status !== "published" || st.id !== row.id) continue;
+    const w = wrote.get(row.slug) as Record<string, unknown> | undefined;
+    const { data: ben, error: benError } = await db.from("product_benefits").select("title").eq("product_id", row.id).order("position");
+    if (benError) throw benError;
+    const same =
+      !!w &&
+      row.name === w.name &&
+      row.summary === w.summary &&
+      row.diagram_image_url === w.diagramImageUrl &&
+      row.video_url === w.videoUrl &&
+      row.brochure_pdf_url === w.brochurePdfUrl &&
+      row.seo_title === w.seoTitle &&
+      row.seo_description === w.seoDescription &&
+      JSON.stringify((ben ?? []).map((b) => b.title)) === JSON.stringify(((w.benefits as { title: string }[]) ?? []).map((b) => b.title));
+    if (!same) {
+      report.push({ slug: row.slug, result: "LEFT PUBLISHED — content differs from what batch 2 wrote (edited by a person?)" });
+      continue;
+    }
+    report.push({ slug: row.slug, result: DRY_RUN ? "would move to draft" : "moved to draft" });
+    if (DRY_RUN) continue;
+    const { error: upError } = await db.from("products").update({ status: "draft" }).eq("id", row.id);
+    if (upError) throw upError;
+    // Our own change must not read as "edited in admin" to the guards below.
+    state.products[row.slug].updated_at = await refreshUpdatedAt(db, "products", row.id);
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+  }
+  console.log("unpublish-batch2-edited:", JSON.stringify(report, null, 1));
+  return report;
+}
+
 async function main() {
   const db = createServiceRoleDbClient();
   const state = loadState();
+  const unpublishReport = UNPUBLISH_EDITED ? await unpublishBatch2Edited(db, state) : [];
 
   const scraped = new Map<string, ScrapedPage>();
   for (const e of LEGACY_ENTRIES) {
@@ -110,6 +177,14 @@ async function main() {
     pages: new Map((pages ?? []).map((r) => [r.slug, r])),
     news_posts: new Map((posts ?? []).map((r) => [r.slug, r])),
   };
+
+  if (UNPUBLISH_EDITED && DRY_RUN) {
+    // Plan as if the move had happened, so the dry-run shows what the real run will do.
+    for (const r of unpublishReport.filter((x) => x.result === "would move to draft")) {
+      const row = existing.products.get(r.slug);
+      if (row) existing.products.set(r.slug, { ...row, status: "draft", updated_at: state.products[r.slug].updated_at });
+    }
+  }
 
   // Rows batch 2 created itself must not count as "existing products" on re-runs.
   const preexisting = (products ?? []).filter((p) => state.products?.[p.slug]?.id !== p.id);
@@ -164,8 +239,18 @@ async function main() {
       matches.push({ entry: entry.id, name: m.name, match: match.slug ?? "—", confidence: match.confidence });
       const payload = { ...m, categoryId: m.categorySlug ? catId.get(m.categorySlug) ?? null : null };
       const h = hash(payload);
+      const blockErrors = validateBlocks(m.blocks);
       const d = match.confidence === "none" ? decide("products", m.slug, h) : { action: "skip_exists" as Action, note: `matches existing product ${match.slug} (${match.confidence})` };
-      plan.push({ id: entry.id, path: entry.path, table, slug: m.slug, action: d.action, note: d.note, flags: m.flags, payload });
+      plan.push({
+        id: entry.id,
+        path: entry.path,
+        table,
+        slug: m.slug,
+        action: blockErrors.length ? "not_scraped" : d.action,
+        note: blockErrors.length ? `BLOCK VALIDATION: ${blockErrors.join(" | ")}` : d.note,
+        flags: m.flags,
+        payload,
+      });
     } else if (entry.target === "page") {
       const m = mapPage(entry, page, ctx);
       const errors = validateBlocks(m.blocks);
@@ -239,9 +324,15 @@ async function main() {
     summary[r.table][r.action] = (summary[r.table][r.action] ?? 0) + 1;
   }
 
+  const titlesChanged = plan
+    .filter((r) => r.table === "products" && r.flags.includes("title_from_page"))
+    .map((r) => ({ slug: r.slug, from: (r.payload as { manifestName: string }).manifestName, to: (r.payload as { name: string }).name }));
+
   const report = {
     generated_at: new Date().toISOString(),
     dry_run: DRY_RUN,
+    unpublish_batch2_edited: unpublishReport,
+    titles_changed: titlesChanged,
     chrome_images: [...ctx.chromeImages],
     summary,
     duplicates,
@@ -266,27 +357,32 @@ async function apply(
     state[row.table] ??= {};
     if (row.table === "products") {
       const m = row.payload as ReturnType<typeof mapProduct> & { categoryId: string | null };
-      const { data, error } = await db
-        .from("products")
-        .upsert(
-          {
-            slug: m.slug,
-            locale: "en",
-            name: m.name,
-            category_id: m.categoryId,
-            summary: m.summary,
-            diagram_image_url: m.diagramImageUrl,
-            video_url: m.videoUrl,
-            brochure_pdf_url: m.brochurePdfUrl,
-            seo_title: m.seoTitle,
-            seo_description: m.seoDescription,
-            status: "draft",
-          },
-          { onConflict: "slug,locale" },
-        )
-        .select("id,updated_at")
-        .single();
+      const row_ = {
+        slug: m.slug,
+        locale: "en",
+        name: m.name,
+        summary: m.summary,
+        diagram_image_url: m.diagramImageUrl,
+        video_url: m.videoUrl,
+        brochure_pdf_url: m.brochurePdfUrl,
+        model_3d_url: m.model3dUrl,
+        seo_title: m.seoTitle,
+        seo_description: m.seoDescription,
+        // Category and status are never rewritten on an update: a person may have
+        // set the category (W5 decides those), and batch 2 never publishes.
+        ...(row.action === "create" ? { category_id: m.categoryId, status: "draft" as const } : {}),
+      };
+      const { data, error } = await db.from("products").upsert(row_, { onConflict: "slug,locale" }).select("id,updated_at").single();
       if (error) throw error;
+      // Extra content blocks: replaced as a set (this run owns them while the product is an unedited batch-2 draft).
+      const { error: blocksDeleteError } = await db.from("product_blocks").delete().eq("product_id", data.id);
+      if (blocksDeleteError) throw blocksDeleteError;
+      if (m.blocks.length) {
+        const { error: blocksError } = await db.from("product_blocks").insert(
+          m.blocks.map((b, i) => ({ product_id: data.id, type: b.type, position: (i + 1) * 10, is_visible: true, data: b.data as never })),
+        );
+        if (blocksError) throw blocksError;
+      }
       await db.from("product_benefits").delete().eq("product_id", data.id);
       await db.from("product_specs").delete().eq("product_id", data.id);
       if (m.benefits.length) {

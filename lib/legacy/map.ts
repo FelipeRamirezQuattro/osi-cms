@@ -46,7 +46,36 @@ const isContentImage = (i: ScrapedItem, ctx: MapContext) =>
 
 // ---------- rich text ----------
 
-const text = (t: string): Json => ({ type: "text", text: t });
+const text = (t: string, href?: string): Json =>
+  href ? { type: "text", text: t, marks: [{ type: "link", attrs: { href } }] } : { type: "text", text: t };
+
+/**
+ * Wix draws a link as a separate element next to its label. Fold the pairs
+ * back together so the label becomes a real link:
+ *   paragraph "T" + link "T"        → paragraph "T" linking to the URL (OSI Papers)
+ *   pdf + paragraph "label"         → paragraph "label" linking to the PDF (Wellbore Diagrams)
+ *   pdf with its own text           → paragraph with that text linking to the PDF
+ * Anything else is left exactly as scraped.
+ */
+export function foldLinks(items: ScrapedItem[]): ScrapedItem[] {
+  const out: ScrapedItem[] = [];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    const next = items[i + 1];
+    if (it.type === "paragraph" && next?.type === "link" && next.text.trim().toLowerCase() === it.text.trim().toLowerCase()) {
+      out.push({ type: "paragraph", text: it.text, href: next.url });
+      i += 1;
+    } else if (it.type === "pdf" && !it.text.trim() && next?.type === "paragraph" && next.text.length <= 120 && !next.href) {
+      out.push({ type: "paragraph", text: next.text, href: it.url });
+      i += 1;
+    } else if (it.type === "pdf" && it.text.trim()) {
+      out.push({ type: "paragraph", text: it.text.trim(), href: it.url });
+    } else {
+      out.push(it);
+    }
+  }
+  return out;
+}
 
 /** Tiptap doc in the restricted shape components/blocks/rich-text.tsx reads. */
 export function toRichTextDoc(items: ScrapedItem[]): { doc: Json; flags: string[] } | null {
@@ -56,7 +85,7 @@ export function toRichTextDoc(items: ScrapedItem[]): { doc: Json; flags: string[
     if (item.type === "heading") {
       content.push({ type: "heading", attrs: { level: item.level <= 2 ? 2 : 3 }, content: [text(item.text)] });
     } else if (item.type === "paragraph") {
-      content.push({ type: "paragraph", content: [text(item.text)] });
+      content.push({ type: "paragraph", content: [text(item.text, item.href)] });
     } else if (item.type === "list") {
       content.push({
         type: item.ordered ? "orderedList" : "bulletList",
@@ -113,7 +142,7 @@ export function mapPage(entry: LegacyEntry, page: ScrapedPage, ctx: MapContext):
   const title = entry.title;
   blocks.push({ type: "hero_page", data: { background: "navy", title } });
 
-  const items = page.items.filter((i) => i.type !== "image" || isContentImage(i, ctx));
+  const items = foldLinks(page.items).filter((i) => i.type !== "image" || isContentImage(i, ctx));
   // Heading equal to the page title duplicates the hero; drop the first such.
   const firstH1 = items.findIndex((i) => i.type === "heading" && i.level === 1);
   if (firstH1 >= 0) items.splice(firstH1, 1);
@@ -151,7 +180,7 @@ export function mapPage(entry: LegacyEntry, page: ScrapedPage, ctx: MapContext):
       flushImages();
       blocks.push({ type: "video_embed", data: { background: "cream", videoUrl: item.url } });
     } else if (item.type === "pdf" || item.type === "link") {
-      // Links/PDFs are surfaced in the report and resources, not inlined.
+      // PDFs and labelled links were folded into linked paragraphs above; anything left is surfaced in the report and resources.
     } else {
       flushImages();
       buffer.push(item);

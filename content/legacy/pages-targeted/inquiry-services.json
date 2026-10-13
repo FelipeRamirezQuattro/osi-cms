@@ -1,0 +1,59 @@
+{
+  "slug": "inquiry-services",
+  "url": "https://www.odessaseparator.com/inquiry-services-page",
+  "scraped_at": "2026-10-13T20:19:25.989Z",
+  "items": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "Explore our services and get in touch"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Our Services"
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_8945542d98df424790e2e7d0795b7f03~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/1ac9e9_8945542d98df424790e2e7d0795b7f03~mv2.jpg",
+      "alt": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "01. Custom Project Planning"
+    },
+    {
+      "type": "paragraph",
+      "text": "We specialize in tailoring solutions to meet your unique requirements. Our team works closely with you to understand your specific needs and deliver a bespoke outcome, ensuring maximum satisfaction and alignment with your goals. This service is designed for projects that require a unique approach."
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_bb7f19e37da54b8894019939979f730d~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/1ac9e9_bb7f19e37da54b8894019939979f730d~mv2.jpg",
+      "alt": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "02. Personal Solution Planning"
+    },
+    {
+      "type": "paragraph",
+      "text": "Get a personalized plan designed just for you. We listen to your challenges and aspirations to craft an actionable strategy. Our approach ensures that your individual circumstances are considered, leading to effective and achievable outcomes."
+    },
+    {
+      "type": "image",
+      "src": "https://static.wixstatic.com/media/1ac9e9_31c502d5e4bf4671a32cbe51f4c767ae~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/1ac9e9_31c502d5e4bf4671a32cbe51f4c767ae~mv2.jpg",
+      "alt": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "03. Expert Guidance Package"
+    },
+    {
+      "type": "paragraph",
+      "text": "Leverage our extensive knowledge base and industry insights. This package provides you with the strategic direction and support needed to navigate complex challenges. We offer clear, actionable advice to help you make informed decisions and achieve your objectives."
+    }
+  ]
+}
