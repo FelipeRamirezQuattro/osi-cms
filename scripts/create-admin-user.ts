@@ -6,7 +6,11 @@
  * their password); if the auth user already exists, just upserts their
  * admin_profiles row instead of re-inviting.
  *
- * Usage: pnpm create-admin <email> [--role=admin|editor] [--name="Full Name"]
+ * Usage: pnpm create-admin <email> [--role=admin|editor] [--name="Full Name"] [--redirect=<url>]
+ *
+ * The invite link lands on --redirect (default: the production /admin/reset-password page, which
+ * must be in Supabase → Auth → Redirect URLs). With the token-hash email template the link goes to
+ * /admin/auth/confirm instead and this value is unused.
  */
 import { createServiceRoleDbClient } from "../lib/db/client";
 
@@ -19,6 +23,9 @@ async function main() {
   const role = (process.argv.find((a) => a.startsWith("--role="))?.split("=")[1] ??
     "admin") as "admin" | "editor";
   const fullName = process.argv.find((a) => a.startsWith("--name="))?.split("=")[1];
+  const redirectTo =
+    process.argv.find((a) => a.startsWith("--redirect="))?.slice("--redirect=".length) ??
+    "https://osi-cms.vercel.app/admin/reset-password";
 
   const db = createServiceRoleDbClient();
 
@@ -29,7 +36,7 @@ async function main() {
     if (error) throw error;
   }
 
-  const { data, error } = await db.auth.admin.inviteUserByEmail(email);
+  const { data, error } = await db.auth.admin.inviteUserByEmail(email, { redirectTo });
 
   if (error) {
     if (!error.message.toLowerCase().includes("already")) throw error;
