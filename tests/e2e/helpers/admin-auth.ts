@@ -10,6 +10,7 @@ export const SKIP_REASON = "Set E2E_ADMIN_EMAIL/E2E_ADMIN_PASSWORD in .env.local
 
 export async function signIn(page: Page, email: string, password: string) {
   await page.goto("/admin/login");
+  await page.waitForLoadState("networkidle"); // submit only after hydration
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/password/i).fill(password);
   await page.getByRole("button", { name: /sign in|log in/i }).click();

@@ -1,5 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Local runs read the QA credentials (E2E_*) from .env.local; CI supplies real env vars.
+try {
+  process.loadEnvFile(".env.local");
+} catch {
+  /* no .env.local — fine */
+}
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,

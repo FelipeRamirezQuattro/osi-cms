@@ -12,8 +12,9 @@ test.describe("admin list search", () => {
       const errors = trackPageErrors(page);
       await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
       await page.goto(path);
+      await page.waitForLoadState("networkidle"); // let React hydrate before typing
 
-      const search = page.getByPlaceholder("Search…");
+      const search = page.locator('input[inputmode="search"]');
       await search.pressSequentially("redirects", { delay: 30 });
       await expect(search).toHaveValue("redirects");
       await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe("redirects");
