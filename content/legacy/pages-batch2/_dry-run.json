@@ -1,72 +1,7 @@
 {
-  "generated_at": "2026-10-13T20:25:48.349Z",
+  "generated_at": "2026-10-13T20:37:00.233Z",
   "dry_run": true,
-  "unpublish_batch2_edited": [
-    {
-      "slug": "esp-no-go-catcher",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-sand-lift",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-sand-d",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-surge-valve",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-top-bypass-valve",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-vortex-desander-with-swivel",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "osi-pmm-guardian",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "osi-esp-guardian-shield",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-vortex-desander-bypass-valve",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-vortex-desander",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "osi-esp-packer-type-gas-separat",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-guardian-shield",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-high-erosion-resistan",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-screen-vortex-desander",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-vortex-desander-capillar",
-      "result": "would move to draft"
-    },
-    {
-      "slug": "esp-vortex-regulator",
-      "result": "would move to draft"
-    }
-  ],
+  "unpublish_batch2_edited": [],
   "titles_changed": [
     {
       "slug": "esp-high-erosion-resistan",
@@ -194,15 +129,14 @@
   ],
   "summary": {
     "pages": {
-      "update": 15,
-      "unchanged": 5,
+      "unchanged": 20,
       "skip_edited": 1
     },
     "news_posts": {
       "unchanged": 1
     },
     "products": {
-      "update": 48,
+      "unchanged": 48,
       "skip_exists": 1
     },
     "resources": {
@@ -1249,7 +1183,7 @@
       "path": "/wellbore-diagrams",
       "table": "pages",
       "slug": "wellbore-diagrams",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "pdfs:39"
       ],
@@ -2005,7 +1939,7 @@
       "path": "/inquiry-services-page",
       "table": "pages",
       "slug": "inquiry-services",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review"
       ],
@@ -2181,7 +2115,7 @@
       "path": "/case-study",
       "table": "pages",
       "slug": "case-study",
-      "action": "update",
+      "action": "unchanged",
       "flags": [],
       "payload": {
         "slug": "case-study",
@@ -2431,7 +2365,7 @@
       "path": "/services-2",
       "table": "pages",
       "slug": "osi-papers",
-      "action": "update",
+      "action": "unchanged",
       "flags": [],
       "payload": {
         "slug": "osi-papers",
@@ -2931,7 +2865,7 @@
       "path": "/esp-guardian-shield",
       "table": "products",
       "slug": "esp-guardian-shield",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "pseudo_heading_promoted",
         "has_3d_viewer_link",
@@ -3046,7 +2980,7 @@
       "path": "/esp-high-erosion-resistan",
       "table": "products",
       "slug": "esp-high-erosion-resistan",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link",
@@ -3132,7 +3066,7 @@
       "path": "/esp-no-go-catcher",
       "table": "products",
       "slug": "esp-no-go-catcher",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -3179,7 +3113,7 @@
       "path": "/esp-sand-d",
       "table": "products",
       "slug": "esp-sand-d",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -3528,7 +3462,7 @@
       "path": "/esp-sand-lift",
       "table": "products",
       "slug": "esp-sand-lift",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "has_3d_viewer_link",
@@ -3680,7 +3614,7 @@
       "path": "/esp-screen-vortex-desander-osi",
       "table": "products",
       "slug": "esp-screen-vortex-desander",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -3849,7 +3783,7 @@
       "path": "/esp-surge-valve",
       "table": "products",
       "slug": "esp-surge-valve",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "no_summary",
         "has_3d_viewer_link",
@@ -4053,7 +3987,7 @@
       "path": "/esp-top-bypass-valve",
       "table": "products",
       "slug": "esp-top-bypass-valve",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link",
         "category_needs_review"
@@ -4147,7 +4081,7 @@
       "path": "/esp-vortex-desander-bypass-valve",
       "table": "products",
       "slug": "esp-vortex-desander-bypass-valve",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "how_it_works_text_kept_as_block",
@@ -4250,7 +4184,7 @@
       "path": "/esp-vortex-desander-capillar-osi",
       "table": "products",
       "slug": "esp-vortex-desander-capillar",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link",
@@ -4339,7 +4273,7 @@
       "path": "/esp-vortex-desander-osi",
       "table": "products",
       "slug": "esp-vortex-desander",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link",
@@ -4416,7 +4350,7 @@
       "path": "/esp-vortex-desander-with-swivel",
       "table": "products",
       "slug": "esp-vortex-desander-with-swivel",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -4534,7 +4468,7 @@
       "path": "/esp-vortex-regulator",
       "table": "products",
       "slug": "esp-vortex-regulator",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "how_it_works_text_kept_as_block",
@@ -4695,7 +4629,7 @@
       "path": "/osi-esp-guardian-shield",
       "table": "products",
       "slug": "osi-esp-guardian-shield",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -4802,7 +4736,7 @@
       "path": "/osi-esp-packer-type-gas-separat",
       "table": "products",
       "slug": "osi-esp-packer-type-gas-separat",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -4968,7 +4902,7 @@
       "path": "/osi-pmm-guardian",
       "table": "products",
       "slug": "osi-pmm-guardian",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -5015,7 +4949,7 @@
       "path": "/srp-retrievable-chem-tool",
       "table": "products",
       "slug": "srp-retrievable-chem-tool",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link",
         "category_needs_review"
@@ -5147,7 +5081,7 @@
       "path": "/bumper-spring",
       "table": "products",
       "slug": "bumper-spring",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "pseudo_heading_promoted",
@@ -5348,7 +5282,7 @@
       "path": "/chamber-type-gas-separator",
       "table": "products",
       "slug": "chamber-type-gas-separator",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "no_benefits",
         "how_it_works_text_kept_as_block",
@@ -5453,7 +5387,7 @@
       "path": "/copy-of-g-force",
       "table": "products",
       "slug": "copy-of-g-force",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -5595,7 +5529,7 @@
       "path": "/gforce",
       "table": "products",
       "slug": "g-force",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -5735,7 +5669,7 @@
       "path": "/g-forcepackerless",
       "table": "products",
       "slug": "g-forcepackerless",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -5919,7 +5853,7 @@
       "path": "/gas-shield-osi",
       "table": "products",
       "slug": "gas-shield",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -6062,7 +5996,7 @@
       "path": "/gas-vent-tac",
       "table": "products",
       "slug": "gas-vent-tac",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "no_benefits",
         "has_3d_viewer_link"
@@ -6103,7 +6037,7 @@
       "path": "/osi-top-bypass-valve",
       "table": "products",
       "slug": "osi-top-bypass-valve",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link"
@@ -6235,7 +6169,7 @@
       "path": "/packer-type-gas-separator-osi",
       "table": "products",
       "slug": "packer-type-gas-separator",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link"
@@ -6320,7 +6254,7 @@
       "path": "/quick-release",
       "table": "products",
       "slug": "quick-release",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "how_it_works_text_kept_as_block",
@@ -6472,7 +6406,7 @@
       "path": "/slotted-gas-shield",
       "table": "products",
       "slug": "slotted-gas-shield",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link"
       ],
@@ -6609,7 +6543,7 @@
       "path": "/slotted-gas-shield-gas-vent",
       "table": "products",
       "slug": "slotted-gas-shield-gas-vent",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "pseudo_heading_promoted",
@@ -6746,7 +6680,7 @@
       "path": "/surge-valve-packer-type-gas-separat",
       "table": "products",
       "slug": "surge-valve-packer-type-gas-separat",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -6916,7 +6850,7 @@
       "path": "/the-nozzle",
       "table": "products",
       "slug": "the-nozzle",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "no_benefits",
@@ -6973,7 +6907,7 @@
       "path": "/hot-oil-tool",
       "table": "products",
       "slug": "hot-oil-tool",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link"
       ],
@@ -7025,7 +6959,7 @@
       "path": "/osi-mesh",
       "table": "products",
       "slug": "osi-mesh",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -7193,7 +7127,7 @@
       "path": "/pump-guard-screen-osi",
       "table": "products",
       "slug": "pump-guard-screen",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link"
@@ -7271,7 +7205,7 @@
       "path": "/sandreleasevalve",
       "table": "products",
       "slug": "sandreleasevalve",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "how_it_works_text_kept_as_block"
@@ -7390,7 +7324,7 @@
       "path": "/screen-vortex-desander-osi",
       "table": "products",
       "slug": "screen-vortex-desander",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link"
@@ -7444,7 +7378,7 @@
       "path": "/super-perf",
       "table": "products",
       "slug": "super-perf",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "how_it_works_text_kept_as_block",
         "has_3d_viewer_link"
@@ -7528,7 +7462,7 @@
       "path": "/tubing-screen",
       "table": "products",
       "slug": "tubing-screen",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link"
       ],
@@ -7598,7 +7532,7 @@
       "path": "/vortex-desander-osi",
       "table": "products",
       "slug": "vortex-desander",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "has_3d_viewer_link"
@@ -7652,7 +7586,7 @@
       "path": "/well-shock-kits-osi",
       "table": "products",
       "slug": "well-shock-kits",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "no_benefits"
@@ -7724,7 +7658,7 @@
       "path": "/chem-filter-tool",
       "table": "products",
       "slug": "chem-filter-tool",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "no_benefits",
         "has_3d_viewer_link"
@@ -7900,7 +7834,7 @@
       "path": "/chem-sticks",
       "table": "products",
       "slug": "chem-sticks",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "no_summary"
@@ -8113,7 +8047,7 @@
       "path": "/chemicalinjectionmandrel",
       "table": "products",
       "slug": "chemicalinjectionmandrel",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review"
       ],
@@ -8175,7 +8109,7 @@
       "path": "/combination-tool",
       "table": "products",
       "slug": "combination-tool",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "has_3d_viewer_link"
       ],
@@ -8261,7 +8195,7 @@
       "path": "/osi-chem-screen-gas-lift",
       "table": "products",
       "slug": "osi-chem-screen-gas-lift",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
@@ -8345,7 +8279,7 @@
       "path": "/retrievable-chem-tool",
       "table": "products",
       "slug": "retrievable-chem-tool",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "no_summary",
@@ -8456,7 +8390,7 @@
       "path": "/super-lube",
       "table": "products",
       "slug": "super-lube",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "has_3d_viewer_link"
@@ -8574,7 +8508,7 @@
       "path": "/employee-survey-osi",
       "table": "pages",
       "slug": "employee-survey",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -8643,7 +8577,7 @@
       "path": "/esp-workshop-2026",
       "table": "pages",
       "slug": "esp-workshop-2026",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -8777,7 +8711,7 @@
       "path": "/osi-at-alf",
       "table": "pages",
       "slug": "osi-at-alf",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -8828,7 +8762,7 @@
       "path": "/osihappyhour",
       "table": "pages",
       "slug": "osihappyhour",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -8958,7 +8892,7 @@
       "path": "/osi-hh-alce",
       "table": "pages",
       "slug": "osi-hh-alce",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -9041,7 +8975,7 @@
       "path": "/osi-lunch-and-learn",
       "table": "pages",
       "slug": "osi-lunch-and-learn",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -9088,7 +9022,7 @@
       "path": "/reciclaje",
       "table": "pages",
       "slug": "reciclaje",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "pdfs:3",
@@ -11066,7 +11000,7 @@
       "path": "/spe-alce",
       "table": "pages",
       "slug": "spe-alce",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -11106,7 +11040,7 @@
       "path": "/swpsc-oil-show",
       "table": "pages",
       "slug": "swpsc-oil-show",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "needs_osi_decision"
@@ -11153,7 +11087,7 @@
       "path": "/training",
       "table": "pages",
       "slug": "training",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "pdfs:4",
         "needs_osi_decision"
@@ -12620,7 +12554,7 @@
       "path": "/one-min-mgnr",
       "table": "pages",
       "slug": "one-minute-manager",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "alt_needs_review",
         "pdfs:1"
@@ -12835,7 +12769,7 @@
       "path": "/osi-top-intake-bypass",
       "table": "products",
       "slug": "osi-top-intake-bypass",
-      "action": "update",
+      "action": "unchanged",
       "flags": [
         "title_from_page",
         "alt_needs_review",
