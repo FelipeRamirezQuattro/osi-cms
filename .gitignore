@@ -50,3 +50,6 @@ next-env.d.ts
 .claude/
 .superpowers/
 skills-lock.json
+
+# Client QA documents (public repo) — never commit
+docs/*.docx
