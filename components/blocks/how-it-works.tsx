@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import type { BlockRenderExtras } from "@/lib/blocks/types";
 
 export const howItWorksSchema = blockCommonSchema.extend({
   title: z.string().default("How does it work?"),
@@ -21,7 +22,25 @@ export const howItWorksSchema = blockCommonSchema.extend({
 
 export type HowItWorksData = z.infer<typeof howItWorksSchema>;
 
-export function HowItWorksRender({ data }: { data: HowItWorksData }) {
+const BUTTON =
+  "inline-flex min-h-12 items-center justify-center rounded-full border border-current/35 px-6 text-center text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-white/8 active:scale-[0.98]";
+// WCAG 1.4.3 exempts genuinely inactive UI text from the contrast
+// requirement, but opacity-40 (3.73:1) still fails Lighthouse's automated
+// check, which can't see that exemption — opacity-70 reads just as "disabled".
+const PLACEHOLDER =
+  "inline-flex min-h-12 items-center justify-center rounded-full border border-current/25 px-6 text-center text-sm font-medium opacity-70";
+
+/**
+ * On the public site only the actions that actually have a URL render (a
+ * dead "pending client file" button read as a broken link on every
+ * product), and the whole block disappears when there's nothing to show.
+ * Staff preview keeps the placeholders so what's still missing is visible.
+ */
+export function HowItWorksRender({ data, isPreview = false }: { data: HowItWorksData } & BlockRenderExtras) {
+  const hasBody = Boolean(data.body);
+  if (!isPreview && !hasBody && !data.pdfUrl && !data.model3dUrl) return null;
+  const showActions = isPreview || Boolean(data.pdfUrl) || Boolean(data.model3dUrl);
+
   return (
     <Section
       background={data.background}
@@ -31,49 +50,35 @@ export function HowItWorksRender({ data }: { data: HowItWorksData }) {
     >
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
         <div>
-          <h2 className="font-editorial text-section font-semibold text-balance">
-            {data.title}
-          </h2>
+          <h2 className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
           {data.body && <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-osi-slate-200">{data.body}</p>}
         </div>
-        <div className="flex flex-col gap-3">
-          {data.pdfUrl ? (
-            <a
-              href={data.pdfUrl}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/35 px-6 text-center text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-white/8 active:scale-[0.98]"
-            >
-              Download PDF
-            </a>
-          ) : (
-            // WCAG 1.4.3 exempts genuinely inactive UI text from the
-            // contrast requirement, but opacity-40 (3.73:1) still fails
-            // Lighthouse's automated check, which can't see that
-            // exemption — opacity-60 (6.86:1) reads just as "disabled"
-            // and passes outright.
-            <span
-              aria-disabled
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/25 px-6 text-center text-sm font-medium opacity-70"
-            >
-              Download PDF — pending client file
-            </span>
-          )}
-          {data.model3dUrl ? (
-            <a
-              href={data.model3dUrl}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/35 px-6 text-center text-sm font-semibold transition-[background-color,transform] duration-200 hover:bg-white/8 active:scale-[0.98]"
-            >
-              See this tool in 3D
-            </a>
-          ) : (
-            // Same WCAG 1.4.3 reasoning as the PDF fallback above.
-            <span
-              aria-disabled
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-current/25 px-6 text-center text-sm font-medium opacity-70"
-            >
-              See this tool in 3D — pending client file
-            </span>
-          )}
-        </div>
+        {showActions && (
+          <div className="flex flex-col gap-3">
+            {data.pdfUrl ? (
+              <a href={data.pdfUrl} className={BUTTON}>
+                Download PDF
+              </a>
+            ) : (
+              isPreview && (
+                <span aria-disabled className={PLACEHOLDER}>
+                  Download PDF — pending client file (staff preview only)
+                </span>
+              )
+            )}
+            {data.model3dUrl ? (
+              <a href={data.model3dUrl} className={BUTTON}>
+                See this tool in 3D
+              </a>
+            ) : (
+              isPreview && (
+                <span aria-disabled className={PLACEHOLDER}>
+                  See this tool in 3D — pending client file (staff preview only)
+                </span>
+              )
+            )}
+          </div>
+        )}
       </div>
     </Section>
   );
@@ -90,7 +95,7 @@ export const howItWorksBlock = defineBlock({
   type: "how_it_works",
   label: "How it works",
   category: "commerce",
-  description: "Title/body plus PDF-download and 3D-model links (each a disabled placeholder until a real URL is set) — used by the product detail page template.",
+  description: "Title/body plus PDF-download and 3D-model links (each shown only when a real URL is set; staff preview shows a placeholder) — used by the product detail page template.",
   schema: howItWorksSchema,
   adminFields,
   defaults: {

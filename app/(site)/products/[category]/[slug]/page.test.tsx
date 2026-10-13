@@ -53,6 +53,7 @@ function product(overrides: Partial<ProductDetail> = {}): ProductDetail {
     product_benefits: [],
     product_stages: [],
     product_specs: [],
+    product_blocks: [],
     ...overrides,
   } as unknown as ProductDetail;
 }
@@ -157,5 +158,44 @@ describe("Product detail page — resources (item #7)", () => {
 
     const html = await renderPage();
     expect(html).not.toContain("Resources");
+  });
+});
+
+describe("Product detail page — QA findings repeated across every product", () => {
+  const SUMMARY = "First paragraph about the tool.\n\nSecond paragraph about the tool.";
+
+  it("shows the intro once (hero only), split into real paragraphs — not duplicated under How It Works", async () => {
+    mockGetProductBySlug.mockResolvedValue(product({ summary: SUMMARY, brochure_pdf_url: "https://x.test/b.pdf" }));
+    const html = await renderPage();
+    expect(html.split("<p>First paragraph about the tool.</p>").length - 1).toBe(1);
+    expect(html).toMatch(/<p>First paragraph about the tool\.<\/p>\s*<p>Second paragraph about the tool\.<\/p>/);
+  });
+
+  it("public page has no dead 'pending client file' buttons when there is no PDF or 3D URL", async () => {
+    mockGetProductBySlug.mockResolvedValue(product({ summary: SUMMARY, brochure_pdf_url: null, model_3d_url: null }));
+    const html = await renderPage();
+    expect(html).not.toContain("pending client file");
+    expect(html).not.toContain("How does it work?");
+  });
+
+  it("renders the product's extra content blocks after the fixed sections", async () => {
+    mockGetProductBySlug.mockResolvedValue(
+      product({
+        summary: SUMMARY,
+        product_blocks: [
+          {
+            id: "b1",
+            product_id: "p1",
+            type: "benefits_cards",
+            position: 10,
+            is_visible: true,
+            data: { background: "navy", title: "Advantages", items: [{ title: "Provides sand and gas separation" }] },
+          },
+        ] as never,
+      }),
+    );
+    const html = await renderPage();
+    expect(html).toContain("Advantages");
+    expect(html).toContain("Provides sand and gas separation");
   });
 });

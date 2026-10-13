@@ -7,6 +7,8 @@ export type ProductDetail = Tables<"products"> & {
   product_benefits: Tables<"product_benefits">[];
   product_stages: Tables<"product_stages">[];
   product_specs: Tables<"product_specs">[];
+  /** Extra content blocks (visible ones only), rendered after the fixed sections. */
+  product_blocks: Tables<"product_blocks">[];
   categorySlug: string | null;
 };
 
@@ -109,24 +111,37 @@ export async function listRelatedProducts(
     }));
 }
 
-export async function getProductBySlug(slug: string, locale = "en"): Promise<ProductDetail | null> {
+/**
+ * `includeUnpublished` is for the staff-only `/preview/products/...` route
+ * (which gates on requireAdmin()) — it drops the `published` filter so a
+ * draft can be reviewed before it goes live. Every public caller leaves it off.
+ */
+export async function getProductBySlug(
+  slug: string,
+  locale = "en",
+  options: { includeUnpublished?: boolean } = {},
+): Promise<ProductDetail | null> {
   const db = createServerDbClient();
-  const { data, error } = await db
+  let query = db
     .from("products")
-    .select("*, product_benefits(*), product_stages(*), product_specs(*), product_categories(slug)")
+    .select("*, product_benefits(*), product_stages(*), product_specs(*), product_blocks(*), product_categories(slug)")
     .eq("slug", slug)
-    .eq("locale", locale)
-    .eq("status", "published")
+    .eq("locale", locale);
+  if (!options.includeUnpublished) query = query.eq("status", "published");
+  const { data, error } = await query
     .order("position", { referencedTable: "product_benefits", ascending: true })
     .order("position", { referencedTable: "product_stages", ascending: true })
     .order("position", { referencedTable: "product_specs", ascending: true })
+    .order("position", { referencedTable: "product_blocks", ascending: true })
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
 
-  const { product_categories, ...product } = data;
+  const { product_categories, product_blocks, ...product } = data;
   return {
     ...product,
+    // RLS already hides invisible blocks from the public; staff can see them, so filter here too.
+    product_blocks: (product_blocks ?? []).filter((b) => b.is_visible),
     categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
   };
 }
@@ -140,6 +155,7 @@ export type ProductAdminDetail = Tables<"products"> & {
   industries: string[];
   applications: string[];
   related_product_ids: string[];
+  blocks: { type: string; is_visible: boolean; data: Json }[];
 };
 
 /**
@@ -177,7 +193,7 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
   if (error) throw error;
   if (!product) return null;
 
-  const [benefits, stages, specs, industries, applications, related] = await Promise.all([
+  const [benefits, stages, specs, industries, applications, related, blocks] = await Promise.all([
     db
       .from("product_benefits")
       .select("*")
@@ -200,7 +216,9 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
       .select("related_product_id")
       .eq("product_id", id)
       .order("position", { ascending: true }),
+    db.from("product_blocks").select("type,is_visible,data").eq("product_id", id).order("position", { ascending: true }),
   ]);
+  if (blocks.error) throw blocks.error;
   if (benefits.error) throw benefits.error;
   if (stages.error) throw stages.error;
   if (specs.error) throw specs.error;
@@ -216,6 +234,7 @@ export async function getProductByIdAdmin(id: string): Promise<ProductAdminDetai
     industries: (industries.data ?? []).map((r) => r.industry_id),
     applications: (applications.data ?? []).map((r) => r.application_id),
     related_product_ids: (related.data ?? []).map((r) => r.related_product_id),
+    blocks: blocks.data ?? [],
   };
 }
 
@@ -261,6 +280,33 @@ export async function saveProduct(
   const { data, error } = await db.rpc("save_product_atomic", args);
   if (error) throw error;
   return data;
+}
+
+/**
+ * Replaces a product's extra content blocks (product_blocks). Delete then
+ * insert under the caller's session — staff RLS allows both — rather than an
+ * atomic RPC (the extra migration wasn't approved): a failure between the two
+ * steps would leave the product with no blocks until it is saved again, so the
+ * caller reports an error and the editor still holds the unsaved form.
+ */
+export async function saveProductBlocks(
+  productId: string,
+  blocks: { type: string; is_visible: boolean; data: Json }[],
+): Promise<void> {
+  const db = createServerDbClient();
+  const { error: deleteError } = await db.from("product_blocks").delete().eq("product_id", productId);
+  if (deleteError) throw deleteError;
+  if (blocks.length === 0) return;
+  const { error } = await db.from("product_blocks").insert(
+    blocks.map((b, i) => ({
+      product_id: productId,
+      type: b.type,
+      is_visible: b.is_visible,
+      data: b.data,
+      position: (i + 1) * 10,
+    })),
+  );
+  if (error) throw error;
 }
 
 /**

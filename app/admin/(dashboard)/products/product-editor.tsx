@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { FieldRenderer } from "@/components/admin/field-renderer";
+import { ProductBlocksField } from "@/components/admin/product-blocks-field";
+import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import { RelationOptionsProvider, type RelationOptionsMap } from "@/components/admin/relation-options";
 import { deleteProductAction, saveProductAction } from "@/lib/actions/products";
 import { PRODUCT_DEFAULTS, PRODUCT_FIELDS } from "@/lib/admin/product-fields";
@@ -20,10 +22,12 @@ import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 export function ProductEditor({
   product,
   relationOptions,
+  palette,
   role = "editor",
 }: {
   product: ProductAdminDetail | null;
   relationOptions: RelationOptionsMap;
+  palette: BlockPaletteEntry[];
   role?: AdminRole;
 }) {
   const canDelete = hasCapability(role, "delete_content");
@@ -38,6 +42,7 @@ export function ProductEditor({
           ...product,
           category_id: product.category_id ?? "",
           badge: product.badge ?? "none",
+          blocks: product.blocks,
         }
       : PRODUCT_DEFAULTS,
   });
@@ -82,6 +87,8 @@ export function ProductEditor({
           {PRODUCT_FIELDS.map((field) => (
             <FieldRenderer key={field.key} spec={field} name={field.key} />
           ))}
+
+          <ProductBlocksField palette={palette} />
 
           <AsyncMessage message={error ? { kind: "error", text: error } : null} />
 

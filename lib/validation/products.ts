@@ -42,6 +42,12 @@ export const productSpecSchema = z.object({
   unit: optionalNullableString(),
 });
 
+const productBlockInputSchema = z.object({
+  type: z.string().min(1),
+  is_visible: z.boolean().default(true),
+  data: z.record(z.string(), z.unknown()),
+});
+
 export const productSaveInputSchema = z
   .object({
     name: requiredString("Name"),
@@ -78,6 +84,9 @@ export const productSaveInputSchema = z
     industries: z.array(z.string()).default([]),
     applications: z.array(z.string()).default([]),
     related_product_ids: z.array(z.string()).default([]),
+    // Extra content blocks; each block's data is validated against its own
+    // schema in saveProductAction (validateBlockList), not here.
+    blocks: z.array(productBlockInputSchema).default([]),
   })
   .superRefine((data, ctx) => {
     // A product's canonical URL (/products/[category]/[slug]) is built

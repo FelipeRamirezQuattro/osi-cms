@@ -7,6 +7,7 @@ import {
   getProductByIdAdmin,
   listAllProducts,
   saveProduct,
+  saveProductBlocks,
   type ProductAdminDetail,
 } from "@/lib/data/products";
 import { getEntityRow, listEntityRows, listRelationOptions, moveEntityRow, updateEntityRow } from "@/lib/data/admin-entities";
@@ -15,6 +16,11 @@ import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables } from "@/lib/db/database.types";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { productSaveInputSchema } from "@/lib/validation/products";
+import { validateBlockList } from "@/lib/validation/blocks";
+import { validateBlockAppearanceReferences } from "@/lib/validation/block-appearance";
+import { getPublishedBranding } from "@/lib/data/branding";
+import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
+import type { Json } from "@/lib/db/database.types";
 
 export async function listProductsAction(): Promise<Tables<"products">[]> {
   await requireCapability("edit_drafts");
@@ -51,7 +57,7 @@ export async function moveProductAction(id: string, direction: "up" | "down"): P
 
 export type SaveProductResult =
   | { status: "success"; id: string }
-  | { status: "error"; message: string; field?: string };
+  | { status: "error"; message: string; field?: string; blockIndex?: number };
 
 // The product form's flat values, as produced by FieldRenderer against
 // PRODUCT_FIELDS (lib/admin/product-fields.ts) — untyped for the same
@@ -65,7 +71,19 @@ export async function saveProductAction(id: string | null, values: any): Promise
     const { message, field } = formatZodError(parsed.error);
     return { status: "error", message, field };
   }
-  const { benefits, stages, specs, industries, applications, related_product_ids, ...rest } = parsed.data;
+  const { benefits, stages, specs, industries, applications, related_product_ids, blocks, ...rest } = parsed.data;
+
+  const blockError = validateBlockList(blocks as { type: string; data: Record<string, unknown> }[]);
+  if (blockError) return blockError;
+  let brandingConfig = OSI_SEED_BRANDING_CONFIG;
+  try {
+    const published = await getPublishedBranding();
+    if (published) brandingConfig = published.config;
+  } catch {
+    // Same fail-open as saveSharedSectionDraftAction: don't block every save on a bad branding row.
+  }
+  const appearanceError = validateBlockAppearanceReferences(blocks as { type: string; data: Record<string, unknown> }[], brandingConfig);
+  if (appearanceError) return appearanceError;
 
   const meta: Record<string, unknown> = { ...rest, locale: "en" };
 
@@ -105,6 +123,15 @@ export async function saveProductAction(id: string | null, values: any): Promise
       applications ?? [],
       relatedProductIds,
     );
+
+    try {
+      await saveProductBlocks(productId, blocks as { type: string; is_visible: boolean; data: Json }[]);
+    } catch {
+      return {
+        status: "error",
+        message: "The product was saved, but its extra content blocks could not be. Save again to retry.",
+      };
+    }
 
     return { status: "success", id: productId };
   } catch (err) {

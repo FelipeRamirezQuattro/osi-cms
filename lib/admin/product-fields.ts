@@ -84,6 +84,7 @@ export const PRODUCT_DEFAULTS: Record<string, unknown> = {
   industries: [],
   applications: [],
   related_product_ids: [],
+  blocks: [],
 };
 
 export const PRODUCT_RELATIONS = [

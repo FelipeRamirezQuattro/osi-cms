@@ -10,9 +10,9 @@ import { HowItWorksRender, howItWorksBlock, type HowItWorksData } from "@/compon
  * file: a real link when set, a disabled placeholder when not.
  */
 
-function render(data: Partial<HowItWorksData> = {}) {
+function render(data: Partial<HowItWorksData> = {}, isPreview = false) {
   const defaults = howItWorksBlock.defaults as HowItWorksData;
-  return renderToStaticMarkup(<HowItWorksRender data={{ ...defaults, ...data }} />);
+  return renderToStaticMarkup(<HowItWorksRender data={{ ...defaults, ...data }} isPreview={isPreview} />);
 }
 
 describe("HowItWorksRender's 3D CTA", () => {
@@ -24,13 +24,22 @@ describe("HowItWorksRender's 3D CTA", () => {
     expect(link?.getAttribute("href")).toBe("https://cdn.example.com/model.glb");
   });
 
-  it("renders a disabled placeholder (no href, no dead link) when model3dUrl is absent", () => {
-    const html = render({ model3dUrl: null });
-    const container = document.createElement("div");
-    container.innerHTML = html;
-    const links = [...container.querySelectorAll("a")].filter((a) => a.textContent?.includes("3D"));
-    expect(links).toHaveLength(0);
-    expect(container.textContent).toContain("See this tool in 3D — pending client file");
+  it("public site: no dead 'pending client file' button — the 3D action is simply absent", () => {
+    const html = render({ model3dUrl: null, pdfUrl: "https://cdn.example.com/brochure.pdf" });
+    expect(html).not.toContain("pending client file");
+    expect(html).not.toContain("See this tool in 3D");
+    expect(html).toContain("Download PDF");
+  });
+
+  it("public site: the whole block disappears when there is nothing to show", () => {
+    expect(render({ model3dUrl: null, pdfUrl: null })).toBe("");
+  });
+
+  it("staff preview keeps a labelled placeholder so what's missing is visible", () => {
+    const html = render({ model3dUrl: null, pdfUrl: null }, true);
+    expect(html).toContain("See this tool in 3D — pending client file (staff preview only)");
+    expect(html).toContain("Download PDF — pending client file (staff preview only)");
+    expect(html).not.toMatch(/<a [^>]*>[^<]*3D/);
   });
 });
 

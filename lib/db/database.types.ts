@@ -1178,6 +1178,47 @@ export type Database = {
           },
         ]
       }
+      product_blocks: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          is_visible: boolean
+          product_id: string
+          position: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          product_id: string
+          position?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          product_id?: string
+          position?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_blocks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_categories: {
         Row: {
           created_at: string

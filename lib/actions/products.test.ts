@@ -41,15 +41,18 @@ vi.mock("@/lib/data/admin-entities", () => ({
   updateEntityRow: mockUpdateEntityRow,
 }));
 
-const { mockSaveProduct, mockDeleteProduct } = vi.hoisted(() => ({
+const { mockSaveProduct, mockDeleteProduct, mockSaveProductBlocks } = vi.hoisted(() => ({
   mockSaveProduct: vi.fn(),
   mockDeleteProduct: vi.fn(),
+  mockSaveProductBlocks: vi.fn(),
 }));
+vi.mock("@/lib/data/branding", () => ({ getPublishedBranding: vi.fn(async () => null) }));
 vi.mock("@/lib/data/products", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/data/products")>();
   return {
     ...actual,
     saveProduct: mockSaveProduct,
+    saveProductBlocks: mockSaveProductBlocks,
     deleteProduct: mockDeleteProduct,
   };
 });
@@ -58,6 +61,7 @@ const adminSession = { userId: "admin-1", email: "admin@example.com", role: "adm
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockSaveProductBlocks.mockResolvedValue(undefined);
   mockRequireCapability.mockResolvedValue(adminSession);
   mockRedirect.mockImplementation((url: string) => {
     throw new Error(`REDIRECT:${url}`);
@@ -236,5 +240,39 @@ describe("restoreProductAction", () => {
 
     expect(mockUpdateEntityRow).toHaveBeenCalledWith("products", "p1", { status: "draft" });
     expect(result).toEqual({ status: "success" });
+  });
+});
+
+
+describe("saveProductAction — extra content blocks", () => {
+  const base = { name: "Widget", slug: "widget", category_id: "cat-1", status: "draft" };
+
+  it("saves the blocks after the product, and keeps them out of the product row's meta", async () => {
+    mockSaveProduct.mockResolvedValue("p1");
+    const block = { type: "video_embed", is_visible: true, data: { background: "cream", videoUrl: "https://www.youtube.com/embed/abc" } };
+    const result = await saveProductAction("p1", { ...base, blocks: [block] });
+    expect(result).toEqual({ status: "success", id: "p1" });
+    expect(mockSaveProductBlocks).toHaveBeenCalledWith("p1", [block]);
+    const meta = mockSaveProduct.mock.calls[0][1] as Record<string, unknown>;
+    expect(meta).not.toHaveProperty("blocks");
+  });
+
+  it("rejects an invalid block with a plain-English message and does not save anything", async () => {
+    const result = await saveProductAction("p1", {
+      ...base,
+      blocks: [{ type: "columns", is_visible: true, data: { background: "cream", columns: [] } }],
+    });
+    expect(result).toMatchObject({ status: "error", blockIndex: 0 });
+    expect((result as { message: string }).message).toMatch(/Columns block \(position 1\): add at least 2 columns/);
+    expect(mockSaveProduct).not.toHaveBeenCalled();
+    expect(mockSaveProductBlocks).not.toHaveBeenCalled();
+  });
+
+  it("says so when the product saved but its blocks did not", async () => {
+    mockSaveProduct.mockResolvedValue("p1");
+    mockSaveProductBlocks.mockRejectedValue(new Error("rls"));
+    const result = await saveProductAction("p1", { ...base, blocks: [] });
+    expect(result).toMatchObject({ status: "error" });
+    expect((result as { message: string }).message).toMatch(/product was saved, but its extra content blocks could not be/i);
   });
 });

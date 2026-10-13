@@ -3,38 +3,14 @@ import type { Metadata } from "next";
 import { getProductBySlug, listRelatedProducts } from "@/lib/data/products";
 import { listResourcesForProduct } from "@/lib/data/resources";
 import { getSiteSettings } from "@/lib/data/settings";
-import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl, resolveOgImage } from "@/lib/seo";
-import { Section } from "@/components/ui/section";
-import { ProductHeroRender } from "@/components/blocks/product-hero";
-import { BenefitsCardsRender } from "@/components/blocks/benefits-cards";
-import { StagesCarouselRender } from "@/components/blocks/stages-carousel";
-import { HowItWorksRender } from "@/components/blocks/how-it-works";
-import { SpecTableRender } from "@/components/blocks/spec-table";
-import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text";
-import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
-import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
-import { RecordProductView } from "@/components/blocks/record-product-view";
-import { productHref } from "@/lib/routes";
-
-// products.body is a Tiptap jsonb doc, same shape rich_text blocks store —
-// an empty doc (no content array, or an empty one) means "never
-// written", not "an intentional blank section", so it's treated the same
-// as null.
-function hasRichTextContent(value: unknown): value is { type: "doc"; content: unknown[] } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "content" in value &&
-    Array.isArray((value as { content: unknown }).content) &&
-    (value as { content: unknown[] }).content.length > 0
-  );
-}
+import { resolveOgImage } from "@/lib/seo";
+import { ProductDetailView } from "@/components/products/product-detail-view";
 
 // Product detail renders directly from products + its child tables
-// rather than through page_blocks/BlockRenderer — its structure is
-// fixed/relational (benefits, stages, specs), not freeform CMS content.
-// See docs/DECISIONS.md.
+// (and its extra product_blocks) rather than through page_blocks — its
+// structure is fixed/relational, not freeform CMS content. The body lives
+// in ProductDetailView, shared with the staff draft preview. See
+// docs/DECISIONS.md.
 
 export async function generateMetadata({
   params,
@@ -62,156 +38,5 @@ export default async function ProductDetailPage({
     listResourcesForProduct(product.id),
   ]);
 
-  const productUrl = absoluteUrl(productHref(category, slug));
-  const productImage = product.hero_image_url ?? product.diagram_image_url;
-
-  return (
-    <>
-      <JsonLd
-        data={productJsonLd({
-          name: product.name,
-          description: product.summary,
-          url: productUrl,
-          image: productImage ? resolveOgImage(productImage, null) : undefined,
-        })}
-      />
-      <JsonLd
-        data={breadcrumbJsonLd([
-          { name: "Home", url: absoluteUrl("/") },
-          { name: "Products", url: absoluteUrl("/products") },
-          { name: product.name, url: productUrl },
-        ])}
-      />
-      <RecordProductView slug={product.slug} />
-      <ProductHeroRender
-        data={{
-          background: "navy",
-          spacingTop: "md",
-          spacingBottom: "lg",
-          eyebrow: product.eyebrow ?? undefined,
-          title: product.name,
-          paragraphs: product.summary ? [product.summary] : [],
-          diagramImageUrl: product.diagram_image_url ?? undefined,
-          ctaLabel: "Find a distributor",
-          ctaHref: "/contact",
-        }}
-      />
-      {product.product_benefits.length > 0 && (
-        <BenefitsCardsRender
-          data={{
-            background: "navy",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "Benefits",
-            items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })),
-          }}
-        />
-      )}
-      {product.product_stages.length > 0 && (
-        <StagesCarouselRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "Stages",
-            stages: product.product_stages.map((s) => ({
-              title: s.title,
-              body: s.body ?? undefined,
-              imageUrl: s.image_url ?? undefined,
-            })),
-          }}
-        />
-      )}
-      <VideoEmbedRender
-        data={{
-          background: "cream",
-          spacingTop: "md",
-          spacingBottom: "md",
-          title: undefined,
-          videoUrl: product.video_url ?? null,
-          posterImageUrl: product.diagram_image_url ?? undefined,
-        }}
-      />
-      <HowItWorksRender
-        data={{
-          background: "navy",
-          spacingTop: "md",
-          spacingBottom: "md",
-          title: "How does it work?",
-          body: product.summary ?? undefined,
-          pdfUrl: product.brochure_pdf_url ?? null,
-          model3dUrl: product.model_3d_url ?? null,
-        }}
-      />
-      {hasRichTextContent(product.body) && (
-        <RichTextRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            content: product.body as RichTextData["content"],
-          }}
-        />
-      )}
-      {product.product_specs.length > 0 && (
-        <SpecTableRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "Specifications",
-            specs: product.product_specs.map((s) => ({
-              label: s.label,
-              value: s.value,
-              unit: s.unit ?? undefined,
-            })),
-          }}
-        />
-      )}
-      {relatedProducts.length > 0 && (
-        <Section background="navy" spacingTop="md" spacingBottom="md">
-          <h2 className="font-editorial text-section font-semibold text-balance">Related products</h2>
-          <div className="mt-8">
-            {/*
-              LabelPlateGrid directly, not RecommendationsClient: this is
-              the admin's curated product_related list, not the
-              algorithmic "based on your browsing history" recommendations
-              block — RecommendationsClient re-filters to recently-viewed
-              items whenever the visitor has viewed any of them, which
-              would silently drop curated entries the visitor hasn't
-              viewed yet (and swap post-hydration). LabelPlateGrid renders
-              the shared, fully scannable discovery cards directly, with
-              no extra recommendation or disclosure state here.
-            */}
-            <LabelPlateGrid
-              items={relatedProducts.map((p) => ({
-                title: p.name,
-                body: p.summary ?? undefined,
-                href: p.categorySlug ? productHref(p.categorySlug, p.slug) : "/products",
-              }))}
-            />
-          </div>
-        </Section>
-      )}
-      {resources.length > 0 && (
-        <Section background="cream" spacingTop="md" spacingBottom="md">
-          <h2 className="font-editorial text-section font-semibold text-balance">Resources</h2>
-          <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-            {resources.map((resource) => (
-              <li key={resource.id}>
-                <a
-                  href={resource.file_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex min-h-16 items-center justify-between gap-4 rounded-[var(--site-radius-md)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] px-5 py-3 text-sm font-semibold transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-osi-steel-500/35"
-                >
-                  <span>{resource.title}</span><span aria-hidden className="text-osi-gold-700">↗</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-    </>
-  );
+  return <ProductDetailView product={product} relatedProducts={relatedProducts} resources={resources} />;
 }
