@@ -951,7 +951,7 @@ function SortableBlockRow({
 
   return (
     <div ref={setRefs} style={style} className="rounded border border-osi-sand-300 bg-osi-white">
-      <div className="flex items-center gap-2 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2">
         <button
           type="button"
           {...attributes}
@@ -972,19 +972,22 @@ function SortableBlockRow({
           type="button"
           data-block-toggle
           onClick={onToggleOpen}
-          className="flex-1 text-left text-sm font-medium"
+          className="min-w-0 flex-1 basis-32 text-left text-sm font-medium"
         >
           {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
         </button>
-        <button type="button" onClick={onToggleVisible} className="text-xs opacity-70 hover:underline">
-          {isVisible ? "Hide" : "Show"}
-        </button>
-        <button type="button" onClick={onDuplicate} className="text-xs opacity-70 hover:underline">
-          Duplicate
-        </button>
-        <button type="button" onClick={onRemove} className="text-xs text-red-600 hover:underline">
-          Remove
-        </button>
+        {/* Wraps to its own line on a phone instead of pushing past the margin (CAL-02). */}
+        <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
+          <button type="button" onClick={onToggleVisible} className="min-h-8 text-xs opacity-70 hover:underline">
+            {isVisible ? "Hide" : "Show"}
+          </button>
+          <button type="button" onClick={onDuplicate} className="min-h-8 text-xs opacity-70 hover:underline">
+            Duplicate
+          </button>
+          <button type="button" onClick={onRemove} className="min-h-8 text-xs text-red-600 hover:underline">
+            Remove
+          </button>
+        </div>
       </div>
       {isOpen && definition && (
         <div data-block-fields className="border-t border-osi-sand-300 p-4">

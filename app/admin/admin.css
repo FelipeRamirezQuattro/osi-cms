@@ -610,3 +610,12 @@
   border-color: #b42318;
   background: #fef3f2;
 }
+
+/* CAL-02: nothing in a block editor may push past the phone viewport. */
+.admin-root [data-block-fields] {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-root [data-block-fields] :where(input, select, textarea) {
+  max-width: 100%;
+}
