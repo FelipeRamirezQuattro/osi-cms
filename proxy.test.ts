@@ -51,6 +51,31 @@ describe("proxy — admin gating", () => {
   });
 });
 
+describe("proxy — expired one-time auth links", () => {
+  it("sends a public URL carrying error_code=otp_expired to /admin/forgot-password?expired=1", async () => {
+    const res = await proxy(
+      makeRequest("/?error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired"),
+    );
+    expect(res.status).toBe(307);
+    const location = new URL(res.headers.get("location")!);
+    expect(location.pathname).toBe("/admin/forgot-password");
+    expect(location.search).toBe("?expired=1");
+    expect(mockPublicSlugIsResolvable).not.toHaveBeenCalled();
+  });
+
+  it("does not loop on the forgot-password page itself", async () => {
+    mockGuardAdminRequest.mockResolvedValue(new Response(null, { status: 200 }));
+    const res = await proxy(makeRequest("/admin/forgot-password?error_code=otp_expired"));
+    expect(res.status).toBe(200);
+  });
+
+  it("ignores unrelated error codes", async () => {
+    mockPublicSlugIsResolvable.mockResolvedValue(true);
+    const res = await proxy(makeRequest("/?error_code=something_else"));
+    expect(res.headers.get("location")).toBeNull();
+  });
+});
+
 describe("proxy — public soft-404 fix", () => {
   it("passes home through without checking anything", async () => {
     const response = await proxy(makeRequest("/"));

@@ -10,7 +10,7 @@ const initialState: ForgotPasswordState = { status: "idle" };
 const fieldClass =
   "w-full rounded border border-osi-steel-500/50 bg-transparent px-4 py-2 text-sm text-osi-white placeholder:text-osi-slate-400 focus:outline-2 focus:outline-osi-gold-500";
 
-export function ForgotPasswordForm() {
+export function ForgotPasswordForm({ expired = false }: { expired?: boolean }) {
   const [state, formAction, pending] = useActionState(forgotPasswordAction, initialState);
 
   if (state.status === "sent") {
@@ -44,6 +44,11 @@ export function ForgotPasswordForm() {
           className={fieldClass}
         />
       </label>
+      {expired && state.status === "idle" && (
+        <p role="status" className="text-sm text-osi-gold-500">
+          This link has expired or was already used — request a new one.
+        </p>
+      )}
       <AsyncMessage
         variant="dark"
         message={state.status === "error" ? { kind: "error", text: state.message ?? "Something went wrong." } : null}

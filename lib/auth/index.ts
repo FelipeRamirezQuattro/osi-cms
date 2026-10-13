@@ -56,7 +56,8 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
     isLoginPage ||
     isDevelopmentStyleguide ||
     request.nextUrl.pathname === "/admin/forgot-password" ||
-    request.nextUrl.pathname === "/admin/reset-password";
+    request.nextUrl.pathname === "/admin/reset-password" ||
+    request.nextUrl.pathname === "/admin/auth/confirm";
 
   if (!user) {
     if (isPublicAuthPage) return response;
@@ -155,6 +156,20 @@ export async function signOutCurrentUser() {
 export async function requestPasswordReset(email: string, redirectTo: string) {
   const db = createServerDbClient();
   return db.auth.resetPasswordForEmail(email, { redirectTo });
+}
+
+export type EmailTokenType = "recovery" | "invite";
+
+/**
+ * Verifies a token-hash email link (password reset / staff invite) and, on
+ * success, sets the session cookie. Call ONLY from a button-press Server
+ * Action — mail scanners (Outlook Safelinks) prefetch every link in a
+ * message, so verifying on GET would burn the one-time token before the
+ * human clicks it. See app/admin/auth/confirm.
+ */
+export async function verifyEmailToken(tokenHash: string, type: EmailTokenType) {
+  const db = createServerDbClient();
+  return db.auth.verifyOtp({ token_hash: tokenHash, type });
 }
 
 /** Server Components / Server Actions only — reads the current session. */

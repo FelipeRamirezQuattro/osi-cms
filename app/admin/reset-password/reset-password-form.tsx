@@ -28,8 +28,18 @@ export function ResetPasswordForm() {
     const accessToken = hash.get("access_token");
     const refreshToken = hash.get("refresh_token");
 
-    if (errorCode || !accessToken || !refreshToken) {
+    if (errorCode) {
       Promise.resolve().then(() => setStatus("expired"));
+      return;
+    }
+
+    // Token-hash flow (/admin/auth/confirm): the server already verified
+    // the link on a button press and set the session cookie, so there is
+    // no hash to read — an existing session is enough.
+    if (!accessToken || !refreshToken) {
+      getBrowserAuth()
+        .getSession()
+        .then(({ data }) => setStatus(data.session ? "ready" : "expired"));
       return;
     }
 

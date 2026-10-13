@@ -70,6 +70,18 @@ import { logBotVisitIfMatched } from "@/lib/analytics/log-bot-visit";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // A dead one-time auth link (already used, or burned by a mail scanner)
+  // that Supabase bounced to the Site URL with the error in the query
+  // string — send it to the page that can issue a new one instead of
+  // leaving the person on the public home page with no explanation.
+  if (
+    request.method === "GET" &&
+    request.nextUrl.searchParams.get("error_code") === "otp_expired" &&
+    pathname !== "/admin/forgot-password"
+  ) {
+    return NextResponse.redirect(new URL("/admin/forgot-password?expired=1", request.url));
+  }
+
   // `x-osi-branding-preview` switches a public request to draft branding
   // (see app/(site)/layout.tsx). It must never be attacker-controlled: an
   // anonymous request that supplied this header itself would otherwise ride

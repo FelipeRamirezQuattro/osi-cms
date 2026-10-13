@@ -11,7 +11,11 @@ email and password. New staff accounts are set up by an existing admin
 (see **Users**, below) — there's no public sign-up.
 
 If you forget your password, use the "forgot password" link on the sign-in
-page.
+page. The email contains a link to a page with a **Continue** button — click
+the button to choose a new password. (The extra click is deliberate: some
+email systems, like Outlook, open links automatically to scan them, which
+would otherwise use up the one-time link before you do.) If you see "This link
+has expired or was already used", just request a new one.
 
 ## The dashboard
 
@@ -451,7 +455,10 @@ can fix the chain instead.
 **Users** (visible to admins only) is where you invite new staff. Choose
 a role: **editor** can create and edit content but not publish it or
 manage users; **admin** can do everything. You can also disable an
-account here if someone leaves.
+account here if someone leaves. An invited person gets an email with a link
+to a page with an **Accept invitation** button; clicking it lets them set their
+password. If the link has expired, they can use "forgot password" on the
+sign-in page instead.
 
 ## Audit log
 

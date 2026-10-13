@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { requestPasswordReset, signInWithPassword, signOutCurrentUser } from "@/lib/auth";
+import { requestPasswordReset, signInWithPassword, signOutCurrentUser, verifyEmailToken } from "@/lib/auth";
 import { siteUrl } from "@/lib/seo";
 
 const loginSchema = z.object({
@@ -52,4 +52,30 @@ export async function forgotPasswordAction(
   // email has an admin account would let anyone enumerate staff emails.
   await requestPasswordReset(parsed.data, `${siteUrl()}/admin/reset-password`);
   return { status: "sent" };
+}
+
+const EMAIL_TOKEN_TYPES = ["recovery", "invite"] as const;
+
+/**
+ * The button-press half of the token-hash email flow (password reset and
+ * staff invite). Verifying here, on a POST, rather than on the page's GET
+ * is the whole point: mail scanners prefetch links and would consume a
+ * one-time token before the person clicks it.
+ */
+export async function confirmEmailTokenAction(formData: FormData) {
+  const tokenHash = formData.get("token_hash");
+  const type = formData.get("type");
+  if (
+    typeof tokenHash !== "string" ||
+    tokenHash.length === 0 ||
+    typeof type !== "string" ||
+    !(EMAIL_TOKEN_TYPES as readonly string[]).includes(type)
+  ) {
+    redirect("/admin/forgot-password?expired=1");
+  }
+
+  const { error } = await verifyEmailToken(tokenHash, type as (typeof EMAIL_TOKEN_TYPES)[number]);
+  if (error) redirect("/admin/forgot-password?expired=1");
+
+  redirect("/admin/reset-password");
 }
