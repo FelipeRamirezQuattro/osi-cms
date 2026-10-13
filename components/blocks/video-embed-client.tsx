@@ -6,7 +6,11 @@ import { Clipped } from "@/components/ui/clipped";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import type { VideoEmbedData } from "@/components/blocks/video-embed";
 
-function toEmbedUrl(url: string): string {
+export function toEmbedUrl(url: string): string {
+  // Imported Wix embeds are already /embed/ URLs carrying `autoplay=0`; the visitor just clicked our
+  // poster, so start playing instead of making them click Play a second time inside YouTube.
+  const embed = url.match(/youtube\.com\/embed\/([\w-]+)/);
+  if (embed) return `https://www.youtube.com/embed/${embed[1]}?autoplay=1&rel=0`;
   const youtube = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
   if (youtube) return `https://www.youtube.com/embed/${youtube[1]}?autoplay=1`;
   const vimeo = url.match(/vimeo\.com\/(\d+)/);

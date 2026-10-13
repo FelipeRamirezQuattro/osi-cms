@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { VideoEmbedRender } from "@/components/blocks/video-embed-client";
+import { VideoEmbedRender, toEmbedUrl } from "@/components/blocks/video-embed-client";
 import type { VideoEmbedData } from "@/components/blocks/video-embed";
 
 /**
@@ -32,5 +32,17 @@ describe("VideoEmbedRender", () => {
     const container = document.createElement("div");
     container.innerHTML = html;
     expect(container.querySelector('button[aria-label="Play video"]')).not.toBeNull();
+  });
+});
+
+describe("toEmbedUrl", () => {
+  it("starts playback right after the poster click for the imported Wix /embed/ URLs (autoplay=0 → 1)", () => {
+    expect(
+      toEmbedUrl("https://www.youtube.com/embed/HgCM4Qu9Rpc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1"),
+    ).toBe("https://www.youtube.com/embed/HgCM4Qu9Rpc?autoplay=1&rel=0");
+  });
+  it("still converts watch and short links, and passes anything else through", () => {
+    expect(toEmbedUrl("https://youtu.be/abc123")).toBe("https://www.youtube.com/embed/abc123?autoplay=1");
+    expect(toEmbedUrl("https://example.com/v")).toBe("https://example.com/v");
   });
 });
