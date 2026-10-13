@@ -100,6 +100,17 @@ export function imageIdentity(src: string): string {
   return m ? m[1] : src;
 }
 
+/**
+ * Wix serves resized/cropped renditions at `<file>/v1/(crop|fill|fit)/…`.
+ * The scrape captured those, so a stored URL could point at a CROPPED copy
+ * (QA: "product image not shown complete"). The bare `/media/<file>` URL is
+ * the original, uncropped asset — store that.
+ */
+export function wixOriginalUrl(src: string): string {
+  const m = src.match(/^(https?:\/\/static\.wixstatic\.com\/media\/[^/?#]+)/i);
+  return m ? m[1] : src;
+}
+
 /** Drops exact repeats (Wix repeats blocks for responsive layouts). First occurrence wins. */
 export function dedupeItems(items: ScrapedItem[]): ScrapedItem[] {
   const seen = new Set<string>();
