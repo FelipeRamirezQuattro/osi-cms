@@ -34,6 +34,9 @@ import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { AsyncMessage, type AsyncMessageState } from "@/components/admin/ui/async-message";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
+import { Alert } from "@/components/admin/ui/alert";
+import { Button } from "@/components/admin/ui/button";
+import { useSaveProblemAlert } from "@/components/admin/use-block-problem-alert";
 import { ReorderButtons } from "@/components/admin/ui/row-actions";
 import {
   cloneBlockForDuplicate,
@@ -75,6 +78,8 @@ export function SharedSectionEditor({
   );
   const [addType, setAddType] = useState(palette[0]?.type ?? "");
   const { confirm, dialog } = useConfirmDialog();
+  // Latest "Go to block" target for autosave problems (an inline alert above the blocks, since a modal would interrupt typing).
+  const [autosaveProblem, setAutosaveProblem] = useState<{ message: string; blockIndex?: number; field?: string } | null>(null);
 
   // See page-editor.tsx's identical declarations for why these are plain
   // state rather than refs (decideAutosave reads lastFailedAutosaveValue
@@ -148,6 +153,9 @@ export function SharedSectionEditor({
     setPendingFocus({ index: result.blockIndex, field: result.field });
   }
 
+  // Save/publish failures open an alert dialog (with "Go to block" when a block is at fault) instead of a line at the top of the page; conflicts keep the banner.
+  const { reportProblem, alertDialog } = useSaveProblemAlert(revealValidationTarget);
+
   useEffect(() => {
     if (!pendingFocus) return;
     const container = blockRowRefs.current.get(pendingFocus.index);
@@ -165,12 +173,13 @@ export function SharedSectionEditor({
     startSaving(async () => {
       const result = await saveDraft(values);
       if (result.status === "error") {
-        setBanner({ kind: "error", message: result.message, conflict: result.conflict });
-        revealValidationTarget(result);
+        if (result.conflict) setBanner({ kind: "error", message: result.message, conflict: true });
+        else void reportProblem(result);
         if (shouldTrackFailedAutosaveValue(result)) setLastFailedAutosaveValue(JSON.stringify(values));
       } else {
         setVersion(result.newVersion);
         setBanner({ kind: "success", message: "Draft saved." });
+        setAutosaveProblem(null);
         setLastFailedAutosaveValue(null);
         setAutosaveOutcome("saved");
         form.reset(values, { keepValues: true, keepDirty: false });
@@ -183,8 +192,8 @@ export function SharedSectionEditor({
     startPublishing(async () => {
       const saveResult = await saveDraft(values);
       if (saveResult.status === "error") {
-        setBanner({ kind: "error", message: saveResult.message, conflict: saveResult.conflict });
-        revealValidationTarget(saveResult);
+        if (saveResult.conflict) setBanner({ kind: "error", message: saveResult.message, conflict: true });
+        else void reportProblem(saveResult);
         return;
       }
       setVersion(saveResult.newVersion);
@@ -193,7 +202,8 @@ export function SharedSectionEditor({
       setAutosaveOutcome("saved");
       const publishResult = await publishSharedSectionAction(section.id, saveResult.newVersion);
       if (publishResult.status === "error") {
-        setBanner({ kind: "error", message: publishResult.message, conflict: publishResult.conflict });
+        if (publishResult.conflict) setBanner({ kind: "error", message: publishResult.message, conflict: true });
+        else void reportProblem(publishResult);
         return;
       }
       setStatus("published");
@@ -327,6 +337,7 @@ export function SharedSectionEditor({
             setLastFailedAutosaveValue(serializedAtAttempt);
             setAutosaveOutcome("error");
             setAutosaveError(result.message);
+            setAutosaveProblem({ message: result.message, blockIndex: result.blockIndex, field: result.field });
           } else {
             // fix-round Finding 5: never record a conflict into the
             // "already failed, skip retrying this content" tracking —
@@ -335,6 +346,7 @@ export function SharedSectionEditor({
           }
         } else {
           setLastFailedAutosaveValue(null);
+          setAutosaveProblem(null);
           setVersion(result.newVersion);
           form.reset(values, { keepValues: true, keepDirty: false });
           setAutosaveOutcome("saved");
@@ -442,6 +454,22 @@ export function SharedSectionEditor({
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="space-y-4">
+            {autosaveProblem && (
+              <Alert
+                tone="warning"
+                title="Autosave is paused — a block needs attention"
+                onDismiss={() => setAutosaveProblem(null)}
+                actions={
+                  autosaveProblem.blockIndex !== undefined ? (
+                    <Button variant="secondary" onClick={() => revealValidationTarget(autosaveProblem)}>
+                      Go to block
+                    </Button>
+                  ) : undefined
+                }
+              >
+                {autosaveProblem.message}
+              </Alert>
+            )}
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
               <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
                 {fields.map((field, index) => (
@@ -533,6 +561,7 @@ export function SharedSectionEditor({
         </div>
       </div>
       {dialog}
+      {alertDialog}
     </FormProvider>
   );
 }

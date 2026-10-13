@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { FieldRenderer } from "@/components/admin/field-renderer";
-import { ProductBlocksField } from "@/components/admin/product-blocks-field";
+import { ProductBlocksField, type ProductBlocksHandle } from "@/components/admin/product-blocks-field";
+import { useSaveProblemAlert } from "@/components/admin/use-block-problem-alert";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import { RelationOptionsProvider, type RelationOptionsMap } from "@/components/admin/relation-options";
 import { deleteProductAction, saveProductAction } from "@/lib/actions/products";
@@ -13,7 +14,6 @@ import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
 import type { ProductAdminDetail } from "@/lib/data/products";
 import { FormCard, SubmitButton } from "@/components/admin/ui/form-card";
-import { AsyncMessage } from "@/components/admin/ui/async-message";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 
 // Same reasoning as page-editor.tsx / entity-editor.tsx.
@@ -33,8 +33,10 @@ export function ProductEditor({
   const canDelete = hasCapability(role, "delete_content");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirmDialog();
+  const blocksRef = useRef<ProductBlocksHandle>(null);
+  // A failed save opens an alert dialog ("Go to block" when a block is at fault) instead of a line at the bottom of a long form.
+  const { reportProblem, alertDialog } = useSaveProblemAlert((problem) => blocksRef.current?.reveal(problem));
 
   const form = useForm<any>({
     defaultValues: product
@@ -48,11 +50,10 @@ export function ProductEditor({
   });
 
   function onSubmit(values: any) {
-    setError(null);
     startTransition(async () => {
       const result = await saveProductAction(product?.id ?? null, values);
       if (result.status === "error") {
-        setError(result.message);
+        void reportProblem(result);
         return;
       }
       router.push("/admin/products");
@@ -88,13 +89,12 @@ export function ProductEditor({
             <FieldRenderer key={field.key} spec={field} name={field.key} />
           ))}
 
-          <ProductBlocksField palette={palette} />
-
-          <AsyncMessage message={error ? { kind: "error", text: error } : null} />
+          <ProductBlocksField ref={blocksRef} palette={palette} />
 
           <SubmitButton pending={isPending} />
         </FormCard>
         {dialog}
+        {alertDialog}
       </RelationOptionsProvider>
     </FormProvider>
   );

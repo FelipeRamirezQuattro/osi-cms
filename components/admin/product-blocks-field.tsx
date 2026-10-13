@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { BlockFieldsForm } from "@/components/admin/block-fields-form";
 import { BlockPalettePicker } from "@/components/admin/block-palette-picker";
 import { ReorderButtons } from "@/components/admin/ui/row-actions";
+import { markBlockInvalid, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 
 // The product form is one untyped RHF instance, same as page-editor.tsx.
@@ -17,12 +18,46 @@ import type { BlockPaletteEntry } from "@/lib/blocks/registry";
  * second headed list. Rendered after the fixed sections on the public page.
  * Plain up/down reordering (no drag), which is all a handful of blocks needs.
  */
-export function ProductBlocksField({ palette }: { palette: BlockPaletteEntry[] }) {
+export type ProductBlocksHandle = {
+  /** Opens the block a save problem points at, scrolls to it, focuses the field and outlines it. */
+  reveal: (problem: { blockIndex?: number; field?: string }) => void;
+};
+
+export const ProductBlocksField = forwardRef<ProductBlocksHandle, { palette: BlockPaletteEntry[] }>(function ProductBlocksField(
+  { palette },
+  ref,
+) {
   const { control, setValue } = useFormContext<any>();
   const { fields, append, remove, move } = useFieldArray({ control, name: "blocks" });
   const watched: { type: string; is_visible: boolean }[] = useWatch({ control, name: "blocks" }) ?? [];
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
   const paletteByType = Object.fromEntries(palette.map((p) => [p.type, p]));
+  const listRef = useRef<HTMLUListElement>(null);
+  // Plain state (a fresh object per call) so the effect re-fires even for a repeat failure on the same block.
+  const [pendingFocus, setPendingFocus] = useState<{ index: number; field?: string } | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      reveal: ({ blockIndex, field }) => {
+        if (blockIndex === undefined) return;
+        const id = fields[blockIndex]?.id;
+        if (id) setOpenIds((prev) => new Set(prev).add(id));
+        setPendingFocus({ index: blockIndex, field });
+      },
+    }),
+    [fields],
+  );
+
+  useEffect(() => {
+    if (!pendingFocus) return;
+    const container = listRef.current?.children[pendingFocus.index] as HTMLElement | undefined;
+    if (!container) return;
+    container.scrollIntoView({ behavior: "smooth", block: "center" });
+    const target = resolveBlockFocusTarget(container, { namePrefix: `blocks.${pendingFocus.index}.data`, field: pendingFocus.field });
+    target?.focus();
+    return markBlockInvalid(container, target);
+  }, [pendingFocus]);
 
   function toggleOpen(id: string) {
     setOpenIds((prev) => {
@@ -47,7 +82,7 @@ export function ProductBlocksField({ palette }: { palette: BlockPaletteEntry[] }
 
       {fields.length === 0 && <p className="text-xs text-[var(--admin-ink-secondary)]">No extra blocks yet.</p>}
 
-      <ul className="space-y-2">
+      <ul ref={listRef} className="space-y-2">
         {fields.map((field, index) => {
           const type = watched[index]?.type ?? (field as any).type;
           const definition = paletteByType[type];
@@ -106,4 +141,4 @@ export function ProductBlocksField({ palette }: { palette: BlockPaletteEntry[] }
       />
     </section>
   );
-}
+});
