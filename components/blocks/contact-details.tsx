@@ -7,6 +7,9 @@ import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { SocialIcon } from "@/components/ui/social-icon";
 import { TrackedLink } from "@/components/analytics/tracked-link";
+import { toEmbedSrc } from "@/components/blocks/embed";
+import { PreviewPlaceholder } from "@/components/blocks/preview-placeholder";
+import type { BlockRenderExtras } from "@/lib/blocks/types";
 
 const schema = blockCommonSchema.extend({
   // Rendered directly as an <iframe src> below — not a click-navigable
@@ -25,9 +28,17 @@ const SOCIAL_LINKS = [
   { key: "social_instagram", label: "Instagram" },
 ] as const;
 
-async function Render({ data }: { data: Data }) {
+async function Render({ data, isPreview = false }: { data: Data } & BlockRenderExtras) {
   const settings = await getSiteSettings();
   const mapUrl = data.mapEmbedUrl ?? settings.map_embed_url;
+  // Only a URL we recognize as a Google Maps page becomes an <iframe> (a plain
+  // maps link is converted to its embeddable form). Anything else — a short
+  // maps.app.goo.gl link, an arbitrary site — is never framed blind; it's
+  // shown as an "Open map" link so the link the editor added still appears.
+  const mapEmbedSrc = mapUrl ? toEmbedSrc("google_maps", mapUrl) : null;
+  const hasContactSettings = Boolean(
+    settings.phone || settings.email || settings.address_lines?.length || SOCIAL_LINKS.some((s) => settings[s.key]),
+  );
   const address = settings.address_lines?.filter(Boolean).join(", ") ?? "";
   const directionsUrl = address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
@@ -40,8 +51,14 @@ async function Render({ data }: { data: Data }) {
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
     >
+      {isPreview && !hasContactSettings && (
+        <PreviewPlaceholder title="No contact details to show yet">
+          Phone, email, address and social links come from Admin → Settings — none are filled in, so this card is
+          nearly empty on the live site.
+        </PreviewPlaceholder>
+      )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:gap-10">
-        {mapUrl ? (
+        {mapEmbedSrc ? (
           // Sandboxed to the same minimal Google Maps value the new
           // `embed` block uses (components/blocks/embed.tsx) — same risk
           // class (an editor-configurable iframe src), same fix. Maps
@@ -49,7 +66,7 @@ async function Render({ data }: { data: Data }) {
           // internally, and allow-popups for its own "open in new tab"
           // controls.
           <iframe
-            src={mapUrl}
+            src={mapEmbedSrc}
             title="Map"
             className="min-h-72 w-full rounded-[var(--site-radius-lg)] border-0 bg-osi-white/8"
             loading="lazy"
@@ -65,7 +82,12 @@ async function Render({ data }: { data: Data }) {
           >
             <p className="font-editorial text-xl font-semibold text-current">Visit OSI</p>
             <p className="mt-2">Map preview unavailable. Use the address or open directions.</p>
-            {directionsUrl && (
+            {mapUrl && (
+              <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold underline underline-offset-4">
+                Open map <span aria-hidden>↗</span>
+              </a>
+            )}
+            {!mapUrl && directionsUrl && (
               <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold underline underline-offset-4">
                 Open directions <span aria-hidden>↗</span>
               </a>
@@ -99,7 +121,7 @@ async function Render({ data }: { data: Data }) {
             )}
             {settings.address_lines?.map((line) => <p key={line}>{line}</p>)}
           </address>
-          {directionsUrl && mapUrl && (
+          {directionsUrl && mapEmbedSrc && (
             <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">
               Open directions <span aria-hidden>↗</span>
             </a>
@@ -127,8 +149,8 @@ async function Render({ data }: { data: Data }) {
 }
 
 const adminFields: FieldSpec[] = [
-  { key: "mapEmbedUrl", label: "Map embed URL (overrides site setting)", type: "text", optional: true },
-  { key: "showSocial", label: "Show social links", type: "boolean" },
+  { key: "mapEmbedUrl", label: "Google Maps link (overrides the Settings map) — paste a maps.google link or an Embed-a-map src", type: "text", optional: true },
+  { key: "showSocial", label: "Show social links (the links themselves are set in Settings)", type: "boolean" },
 ];
 
 export const contactDetailsBlock = defineBlock({
