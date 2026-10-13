@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { SortDirection } from "@/lib/admin/list-query";
 
 export type ListQueryState = {
@@ -31,10 +31,8 @@ export type ListQueryState = {
  * changing `sort`/`page` themselves does not.
  */
 export function useListQueryState(defaultSort = ""): ListQueryState {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchParamsString = searchParams.toString();
 
   const q = searchParams.get("q") ?? "";
   const status = searchParams.get("status") ?? "";
@@ -45,16 +43,18 @@ export function useListQueryState(defaultSort = ""): ListQueryState {
 
   const update = useCallback(
     (patch: Record<string, string | null>, resetPage: boolean) => {
-      const params = new URLSearchParams(searchParamsString);
+      // Read the live URL, not the render-time snapshot: two writes inside
+      // one render (e.g. setStatus then setPage) must see each other.
+      const params = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(patch)) {
         if (value === null || value === "") params.delete(key);
         else params.set(key, value);
       }
       if (resetPage) params.delete("page");
       const qs = params.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      window.history.replaceState(window.history.state, "", qs ? `${pathname}?${qs}` : pathname);
     },
-    [router, pathname, searchParamsString],
+    [pathname],
   );
 
   return useMemo(

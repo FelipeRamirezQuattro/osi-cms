@@ -137,3 +137,55 @@ describe("AdminListControls", () => {
     expect(screen.queryByText("Prev")).not.toBeInTheDocument();
   });
 });
+
+describe("AdminListControls search echo (ACC-07, MOD-01/02/03, RED-01)", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  const baseProps = { page: 1, totalPages: 1, onPageChange: () => {}, resultCount: 1 };
+
+  it("keeps every typed character when the URL echo of an older commit arrives late", () => {
+    const onSearchChange = vi.fn();
+    const { rerender } = render(
+      <AdminListControls searchValue="" onSearchChange={onSearchChange} {...baseProps} />,
+    );
+    const input = screen.getByPlaceholderText("Search…") as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "red" } });
+    act(() => vi.advanceTimersByTime(260)); // commit #1: "red" (echo is delayed)
+    fireEvent.change(input, { target: { value: "redirect" } });
+    act(() => vi.advanceTimersByTime(260)); // commit #2: "redirect"
+    expect(onSearchChange.mock.calls.map((c) => c[0])).toEqual(["red", "redirect"]);
+
+    // Echoes arrive in order, late. Neither may overwrite the input.
+    rerender(<AdminListControls searchValue="red" onSearchChange={onSearchChange} {...baseProps} />);
+    expect(input.value).toBe("redirect");
+    rerender(<AdminListControls searchValue="redirect" onSearchChange={onSearchChange} {...baseProps} />);
+    expect(input.value).toBe("redirect");
+  });
+
+  it("keeps characters typed after a commit while its echo is still in flight", () => {
+    const { rerender } = render(
+      <AdminListControls searchValue="" onSearchChange={() => {}} {...baseProps} />,
+    );
+    const input = screen.getByPlaceholderText("Search…") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "red" } });
+    act(() => vi.advanceTimersByTime(260));
+    fireEvent.change(input, { target: { value: "redir" } }); // still debouncing
+    rerender(<AdminListControls searchValue="red" onSearchChange={() => {}} {...baseProps} />);
+    expect(input.value).toBe("redir");
+  });
+
+  it("still resyncs the input when the value changes from outside (Clear filters / Back)", () => {
+    const { rerender } = render(
+      <AdminListControls searchValue="gas" onSearchChange={() => {}} {...baseProps} />,
+    );
+    const input = screen.getByPlaceholderText("Search…") as HTMLInputElement;
+    expect(input.value).toBe("gas");
+    rerender(<AdminListControls searchValue="" onSearchChange={() => {}} {...baseProps} />);
+    expect(input.value).toBe("");
+  });
+});

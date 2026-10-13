@@ -52,21 +52,34 @@ export function AdminListControls({
   resultCount: number;
 }) {
   const [draft, setDraft] = useState(searchValue);
-  // Keep the input in sync if the URL changes from outside this component
-  // (browser back/forward, or a "Clear filters" link elsewhere on the
-  // page) — adjusted during render (React's documented pattern for
-  // "reset state when a prop changes") rather than an effect, which would
-  // set state synchronously on every mount/prop-change and trip the
-  // cascading-render lint rule for no benefit over branching here.
+  // Values this component already pushed up via `onSearchChange` whose echo
+  // (the prop catching up to them) hasn't arrived yet. When the prop changes
+  // to one of these it is OUR OWN write coming back — the draft may already
+  // be several keystrokes ahead of it, so overwriting the draft would drop
+  // characters (typing "redirect" ended up as `q=rectoy`). Only a value
+  // that isn't in the queue came from outside (Back/Forward, a "Clear
+  // filters" link) and resyncs the input. Adjusted during render (React's
+  // documented "reset state when a prop changes" pattern) rather than in an
+  // effect, which would trip the set-state-in-effect lint rule.
+  const [pendingEchoes, setPendingEchoes] = useState<string[]>([]);
   const [prevSearchValue, setPrevSearchValue] = useState(searchValue);
   if (searchValue !== prevSearchValue) {
     setPrevSearchValue(searchValue);
-    setDraft(searchValue);
+    const echoIndex = pendingEchoes.indexOf(searchValue);
+    if (echoIndex >= 0) {
+      setPendingEchoes(pendingEchoes.slice(echoIndex + 1));
+    } else {
+      setPendingEchoes([]);
+      setDraft(searchValue);
+    }
   }
 
   useEffect(() => {
     if (draft === searchValue) return;
-    const timeout = setTimeout(() => onSearchChange(draft), 250);
+    const timeout = setTimeout(() => {
+      setPendingEchoes((queue) => [...queue, draft]);
+      onSearchChange(draft);
+    }, 250);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only the debounce timer should re-run on `draft` changes
   }, [draft]);
