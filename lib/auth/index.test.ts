@@ -23,6 +23,9 @@ vi.mock("@/lib/db/client", () => ({
   createServerDbClient: mockCreateServerDbClient,
 }));
 
+const { mockCreateClient } = vi.hoisted(() => ({ mockCreateClient: vi.fn() }));
+vi.mock("@supabase/supabase-js", () => ({ createClient: mockCreateClient }));
+
 const { mockRedirect } = vi.hoisted(() => ({ mockRedirect: vi.fn() }));
 vi.mock("next/navigation", () => ({
   redirect: mockRedirect,
@@ -183,5 +186,16 @@ describe("publicSlugIsResolvable", () => {
     await publicSlugIsResolvable("about-us");
 
     expect(capturedGetAll?.()).toEqual([]);
+  });
+});
+
+describe("requestPasswordReset", () => {
+  it("uses the implicit flow, so the emailed link works from any browser (PKCE codes need the requester's cookie)", async () => {
+    const { requestPasswordReset } = await import("@/lib/auth");
+    const resetPasswordForEmail = vi.fn().mockResolvedValue({ data: {}, error: null });
+    mockCreateClient.mockReturnValue({ auth: { resetPasswordForEmail } });
+    await requestPasswordReset("a@b.com", "https://osi-cms.vercel.app/admin/reset-password");
+    expect(mockCreateClient.mock.calls[0][2]).toMatchObject({ auth: { flowType: "implicit", persistSession: false } });
+    expect(resetPasswordForEmail).toHaveBeenCalledWith("a@b.com", { redirectTo: "https://osi-cms.vercel.app/admin/reset-password" });
   });
 });

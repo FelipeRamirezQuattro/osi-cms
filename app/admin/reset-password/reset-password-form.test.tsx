@@ -1,9 +1,9 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { mockSetSession, mockGetSession } = vi.hoisted(() => ({ mockSetSession: vi.fn(), mockGetSession: vi.fn() }));
+const { mockSetSession, mockGetSession, mockExchange } = vi.hoisted(() => ({ mockSetSession: vi.fn(), mockGetSession: vi.fn(), mockExchange: vi.fn() }));
 vi.mock("@/lib/auth/client", () => ({
-  getBrowserAuth: () => ({ setSession: mockSetSession, getSession: mockGetSession, updateUser: vi.fn() }),
+  getBrowserAuth: () => ({ setSession: mockSetSession, getSession: mockGetSession, exchangeCodeForSession: mockExchange, updateUser: vi.fn() }),
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
 
@@ -12,6 +12,7 @@ import { ResetPasswordForm } from "./reset-password-form";
 beforeEach(() => {
   mockSetSession.mockReset();
   mockGetSession.mockReset();
+  mockExchange.mockReset();
 });
 afterEach(() => {
   cleanup();
@@ -42,6 +43,21 @@ describe("ResetPasswordForm sources of a recovery session", () => {
 
   it("an error in the hash shows the expired message", async () => {
     window.history.replaceState(null, "", "/admin/reset-password#error=access_denied&error_code=otp_expired");
+    render(<ResetPasswordForm />);
+    await waitFor(() => expect(screen.getByText(/invalid or has expired/i)).toBeTruthy());
+  });
+
+  it("a PKCE link (?code=) is exchanged for a session and then shows the form", async () => {
+    window.history.replaceState(null, "", "/admin/reset-password?code=abc-123");
+    mockExchange.mockResolvedValue({ error: null });
+    render(<ResetPasswordForm />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /set password/i })).toBeTruthy());
+    expect(mockExchange).toHaveBeenCalledWith("abc-123");
+  });
+
+  it("a PKCE code that can't be exchanged (other browser / used) shows the expired message", async () => {
+    window.history.replaceState(null, "", "/admin/reset-password?code=abc-123");
+    mockExchange.mockResolvedValue({ error: { message: "PKCE code verifier not found in storage" } });
     render(<ResetPasswordForm />);
     await waitFor(() => expect(screen.getByText(/invalid or has expired/i)).toBeTruthy());
   });

@@ -13,6 +13,7 @@ import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import { resolveMediaUrl } from "@/lib/media";
 import { AnalyticsBeacon } from "@/components/analytics/analytics-beacon";
+import { RecoveryLinkRedirect } from "@/components/auth/recovery-link-redirect";
 
 // Every route here reads live, draft/published-gated content straight
 // from Supabase (and lib/db/client.ts touches cookies() for session
@@ -59,6 +60,7 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
     <PublicThemeBoundary branding={branding} className="flex min-h-dvh flex-1 flex-col">
       <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
       <AnalyticsBeacon />
+      <RecoveryLinkRedirect />
       {/*
        * Skip link (Task 14) — invisible until it receives keyboard focus
        * (first Tab stop on every page), then it's the first thing a

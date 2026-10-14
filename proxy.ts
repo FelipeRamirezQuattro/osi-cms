@@ -82,6 +82,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/forgot-password?expired=1", request.url));
   }
 
+  // A PKCE reset link (`/?code=…`) that fell back to the Site URL because its redirect wasn't allow-listed.
+  // Only forward it when this browser holds the matching code-verifier cookie — i.e. it asked for the reset.
+  if (
+    request.method === "GET" &&
+    pathname === "/" &&
+    request.nextUrl.searchParams.has("code") &&
+    request.cookies.getAll().some((c) => c.name.endsWith("-code-verifier"))
+  ) {
+    const target = new URL("/admin/reset-password", request.url);
+    target.searchParams.set("code", request.nextUrl.searchParams.get("code")!);
+    return NextResponse.redirect(target);
+  }
+
   // `x-osi-branding-preview` switches a public request to draft branding
   // (see app/(site)/layout.tsx). It must never be attacker-controlled: an
   // anonymous request that supplied this header itself would otherwise ride

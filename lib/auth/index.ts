@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { redirect } from "next/navigation";
@@ -146,16 +147,21 @@ export async function signOutCurrentUser() {
 }
 
 /**
- * Sends a password-reset email. Supabase's link redirects the browser to
- * `redirectTo` with the recovery session in the URL *hash fragment*
- * (`#access_token=...&type=recovery`, implicit flow — confirmed by a
- * real expired-link error landing on `/#error=...&error_code=otp_expired`)
- * — that's never sent to the server, so establishing the session from it
- * has to happen client-side. See app/admin/reset-password/.
+ * Sends a password-reset email. Uses the IMPLICIT flow on purpose: the
+ * server cookie client defaults to PKCE, whose emailed link carries a `?code=`
+ * that can only be exchanged in the browser that asked for the reset (it
+ * needs a code-verifier cookie set there) — so a link opened in another
+ * browser, on a phone, or from the Outlook desktop app just dead-ends. The
+ * implicit link redirects with the session in the URL *hash fragment*
+ * (`#access_token=…&type=recovery`), which works from any browser; the hash is
+ * never sent to the server, so establishing the session happens client-side.
+ * See app/admin/reset-password/.
  */
 export async function requestPasswordReset(email: string, redirectTo: string) {
-  const db = createServerDbClient();
-  return db.auth.resetPasswordForEmail(email, { redirectTo });
+  const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+  return client.auth.resetPasswordForEmail(email, { redirectTo });
 }
 
 export type EmailTokenType = "recovery" | "invite";

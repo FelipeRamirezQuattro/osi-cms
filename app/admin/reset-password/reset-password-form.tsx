@@ -23,6 +23,23 @@ export function ResetPasswordForm() {
   // below goes through a promise .then(), not synchronously in the
   // effect body, to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
+    // A PKCE link (`?code=`) — e.g. one requested before reset emails switched to the implicit flow.
+    // Exchanging it needs the code-verifier cookie from the browser that asked for the reset.
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      getBrowserAuth()
+        .exchangeCodeForSession(code)
+        .then(({ error: exchangeError }) => {
+          if (exchangeError) {
+            setStatus("expired");
+            return;
+          }
+          window.history.replaceState(null, "", window.location.pathname);
+          setStatus("ready");
+        });
+      return;
+    }
+
     const hash = new URLSearchParams(window.location.hash.slice(1));
     const errorCode = hash.get("error_code");
     const accessToken = hash.get("access_token");

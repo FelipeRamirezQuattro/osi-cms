@@ -76,6 +76,24 @@ describe("proxy — expired one-time auth links", () => {
   });
 });
 
+describe("proxy — PKCE reset link that fell back to the site root", () => {
+  it("forwards /?code=… to the reset page when this browser holds the code-verifier cookie", async () => {
+    const res = await proxy(
+      makeRequest("/?code=aa0c3ea0-0d2e", { headers: { cookie: "sb-abc-auth-token-code-verifier=xyz" } }),
+    );
+    expect(res.status).toBe(307);
+    const location = new URL(res.headers.get("location")!);
+    expect(location.pathname).toBe("/admin/reset-password");
+    expect(location.searchParams.get("code")).toBe("aa0c3ea0-0d2e");
+  });
+
+  it("leaves /?code=… alone without that cookie (not our reset)", async () => {
+    mockPublicSlugIsResolvable.mockResolvedValue(true);
+    const res = await proxy(makeRequest("/?code=abc"));
+    expect(res.headers.get("location")).toBeNull();
+  });
+});
+
 describe("proxy — public soft-404 fix", () => {
   it("passes home through without checking anything", async () => {
     const response = await proxy(makeRequest("/"));
