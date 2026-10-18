@@ -1904,8 +1904,17 @@ export type Database = {
         Args: { p_expected_version: number; p_section_id: string }
         Returns: undefined
       }
+      record_audit: {
+        Args: {
+          p_action: string
+          p_diff?: Json
+          p_entity: string
+          p_entity_id?: string
+        }
+        Returns: undefined
+      }
       redirect_index: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           category_slug: string
           fallback_path: string
@@ -1918,15 +1927,6 @@ export type Database = {
           target_kind: string
           to_path: string
         }[]
-      }
-      record_audit: {
-        Args: {
-          p_action: string
-          p_diff?: Json
-          p_entity: string
-          p_entity_id?: string
-        }
-        Returns: undefined
       }
       replace_branding_logo_asset_atomic: {
         Args: { p_new_asset_id: string; p_old_asset_id: string }
