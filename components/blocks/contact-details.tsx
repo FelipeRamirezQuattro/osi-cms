@@ -57,6 +57,12 @@ async function Render({ data, isPreview = false }: { data: Data } & BlockRenderE
           nearly empty on the live site.
         </PreviewPlaceholder>
       )}
+      {isPreview && mapUrl && !mapEmbedSrc && (
+        <PreviewPlaceholder title="This map link can't be embedded">
+          Only full Google Maps links (place, search, coordinates or an &quot;Embed a map&quot; src) can be shown as a map.
+          Short maps.app.goo.gl links and other sites show an &quot;Open map&quot; button instead.
+        </PreviewPlaceholder>
+      )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:gap-10">
         {mapEmbedSrc ? (
           // Sandboxed to the same minimal Google Maps value the new

@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { Clipped } from "@/components/ui/clipped";
+import { googleMapsEmbedSrc } from "@/lib/maps/embed";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 
@@ -197,17 +198,10 @@ export function toEmbedSrc(provider: EmbedProvider, url: string): string | null 
     const match = url.match(VIMEO_PATTERN);
     return match ? `https://player.vimeo.com/video/${match[1]}` : null;
   }
-  // google_maps: checked by pathname, not a substring match anywhere in
-  // the URL (the pre-fix version matched "google.com/maps" even inside
-  // an unrelated query parameter value).
-  if (parsed.pathname.includes("/maps/embed") || parsed.searchParams.get("output") === "embed") {
-    return url;
-  }
-  if (parsed.pathname.startsWith("/maps")) {
-    parsed.searchParams.set("output", "embed");
-    return parsed.toString();
-  }
-  return null;
+  // google_maps: path/query-shape conversion lives in lib/maps/embed.ts —
+  // appending output=embed to any /maps URL is refused by Google for
+  // /maps/place/… pages.
+  return googleMapsEmbedSrc(parsed);
 }
 
 // Sandboxed per CLAUDE.md's Task 9 ruling: every provider needs
