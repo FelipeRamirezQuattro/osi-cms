@@ -35,7 +35,12 @@ export default async function ResourcesPage() {
         <EmptyState
           title="The resource library is being prepared"
           description="Brochures, datasheets, certificates, and manuals will appear here when they are published. In the meantime, explore OSI products or contact a specialist."
-          action={<ArrowButton href="/products" variant="outline-dark">Explore products</ArrowButton>}
+          action={
+            <div className="flex flex-wrap justify-center gap-3">
+              <ArrowButton href="/products" variant="outline-dark">Explore products</ArrowButton>
+              <ArrowButton href="/contact" variant="outline-dark">Contact OSI</ArrowButton>
+            </div>
+          }
         />
       )}
     </Section>
