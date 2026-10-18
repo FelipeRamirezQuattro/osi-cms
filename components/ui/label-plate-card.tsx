@@ -25,6 +25,7 @@ export function LabelPlateCard({
   return (
     <Link
       href={href}
+      data-card="label-plate"
       className={`group flex h-full min-h-80 flex-col overflow-hidden rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] shadow-[0_1px_0_rgba(0,27,51,0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-osi-steel-500/35 hover:shadow-[0_18px_45px_rgba(0,27,51,0.12)] active:translate-y-0 ${className}`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-osi-navy-700">

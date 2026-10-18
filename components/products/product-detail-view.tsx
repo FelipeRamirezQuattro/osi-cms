@@ -1,4 +1,5 @@
 import { Section } from "@/components/ui/section";
+import { BlockScope } from "@/components/blocks/block-scope";
 import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, resolveOgImage } from "@/lib/seo";
 import { ProductHeroRender } from "@/components/blocks/product-hero";
@@ -80,90 +81,104 @@ export function ProductDetailView({
       />
       )}
       {!isPreview && <RecordProductView slug={product.slug} />}
-      <ProductHeroRender
-        data={{
-          background: "navy",
-          spacingTop: "md",
-          spacingBottom: "lg",
-          eyebrow: product.eyebrow ?? undefined,
-          title: product.name,
-          paragraphs: splitParagraphs(product.summary),
-          diagramImageUrl: product.diagram_image_url ?? undefined,
-          ctaLabel: "Find a distributor",
-          ctaHref: "/contact",
-        }}
-      />
+      <BlockScope type="product_hero">
+        <ProductHeroRender
+          data={{
+            background: "navy",
+            spacingTop: "md",
+            spacingBottom: "lg",
+            eyebrow: product.eyebrow ?? undefined,
+            title: product.name,
+            paragraphs: splitParagraphs(product.summary),
+            diagramImageUrl: product.diagram_image_url ?? undefined,
+            ctaLabel: "Find a distributor",
+            ctaHref: "/contact",
+          }}
+        />
+      </BlockScope>
       {product.product_benefits.length > 0 && (
-        <BenefitsCardsRender
+        <BlockScope type="benefits_cards">
+          <BenefitsCardsRender
+            data={{
+              background: "navy",
+              spacingTop: "md",
+              spacingBottom: "md",
+              title: "Benefits",
+              items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })),
+            }}
+          />
+        </BlockScope>
+      )}
+      {product.product_stages.length > 0 && (
+        <BlockScope type="stages_carousel">
+          <StagesCarouselRender
+            data={{
+              background: "cream",
+              spacingTop: "md",
+              spacingBottom: "md",
+              title: "Stages",
+              stages: product.product_stages.map((s) => ({
+                title: s.title,
+                body: s.body ?? undefined,
+                imageUrl: s.image_url ?? undefined,
+              })),
+            }}
+          />
+        </BlockScope>
+      )}
+      <BlockScope type="video_embed">
+        <VideoEmbedRender
+          data={{
+            background: "cream",
+            spacingTop: "md",
+            spacingBottom: "md",
+            title: undefined,
+            videoUrl: product.video_url ?? null,
+            posterImageUrl: product.diagram_image_url ?? undefined,
+          }}
+        />
+      </BlockScope>
+      <BlockScope type="how_it_works">
+        <HowItWorksRender
           data={{
             background: "navy",
             spacingTop: "md",
             spacingBottom: "md",
-            title: "Benefits",
-            items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })),
+            title: "How does it work?",
+            pdfUrl: product.brochure_pdf_url ?? null,
+            model3dUrl: product.model_3d_url ?? null,
           }}
+          isPreview={isPreview}
         />
-      )}
-      {product.product_stages.length > 0 && (
-        <StagesCarouselRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "Stages",
-            stages: product.product_stages.map((s) => ({
-              title: s.title,
-              body: s.body ?? undefined,
-              imageUrl: s.image_url ?? undefined,
-            })),
-          }}
-        />
-      )}
-      <VideoEmbedRender
-        data={{
-          background: "cream",
-          spacingTop: "md",
-          spacingBottom: "md",
-          title: undefined,
-          videoUrl: product.video_url ?? null,
-          posterImageUrl: product.diagram_image_url ?? undefined,
-        }}
-      />
-      <HowItWorksRender
-        data={{
-          background: "navy",
-          spacingTop: "md",
-          spacingBottom: "md",
-          title: "How does it work?",
-          pdfUrl: product.brochure_pdf_url ?? null,
-          model3dUrl: product.model_3d_url ?? null,
-        }}
-        isPreview={isPreview}
-      />
+      </BlockScope>
       {hasRichTextContent(product.body) && (
-        <RichTextRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            content: product.body as RichTextData["content"],
-          }}
-        />
+        <BlockScope type="rich_text">
+          <RichTextRender
+            data={{
+              background: "cream",
+              spacingTop: "md",
+              spacingBottom: "md",
+              content: product.body as RichTextData["content"],
+            }}
+          />
+        </BlockScope>
       )}
       {product.product_specs.length > 0 && (
-        <SpecTableRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "Specifications",
-            specs: product.product_specs.map((s) => ({
-              label: s.label,
-              value: s.value,
-              unit: s.unit ?? undefined,
-            })),
-          }}
-        />
+        <BlockScope type="spec_table">
+          <SpecTableRender
+            data={{
+              background: "cream",
+              spacingTop: "md",
+              spacingBottom: "md",
+              title: "Specifications",
+              specs: product.product_specs.map((s) => ({
+                label: s.label,
+                value: s.value,
+                unit: s.unit ?? undefined,
+              })),
+            }}
+          />
+        </BlockScope>
       )}
       {product.product_blocks.length > 0 && <BlockRenderer blocks={product.product_blocks} isPreview={isPreview} />}
       {relatedProducts.length > 0 && (

@@ -30,7 +30,7 @@ export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
   const columns = [footer1, footer2, footer3, footer4];
 
   return (
-    <footer className="border-t border-white/10 bg-brand-surface-dark px-5 py-12 text-brand-text-dark md:px-10 md:py-16">
+    <footer data-site-footer className="border-t border-white/10 bg-brand-surface-dark px-5 py-12 text-brand-text-dark md:px-10 md:py-16">
       <div className="mx-auto max-w-[var(--site-container)]">
         <div className="mb-12 grid gap-8 border-b border-white/12 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-xl">

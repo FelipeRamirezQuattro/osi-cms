@@ -15,6 +15,7 @@ export function DuotoneImage({
   intensity = 0.55,
   sizes,
   loading,
+  priority,
 }: {
   src?: string;
   alt?: string;
@@ -22,6 +23,8 @@ export function DuotoneImage({
   intensity?: number;
   sizes?: string;
   loading?: "eager" | "lazy";
+  /** Above-the-fold LCP image: preloads and disables lazy loading. Mutually exclusive with `loading`. */
+  priority?: boolean;
 }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
@@ -31,17 +34,21 @@ export function DuotoneImage({
           alt={alt}
           fill
           sizes={sizes ?? "100vw"}
-          loading={loading}
+          loading={priority ? undefined : loading}
+          priority={priority}
+          data-duotone-image
           className="object-cover grayscale-[35%]"
         />
       ) : (
         <div
           aria-hidden
+          data-image-fallback
           className="absolute inset-0 bg-gradient-to-br from-osi-slate-400 to-osi-navy-700"
         />
       )}
       <div
         aria-hidden
+        data-duotone-overlay
         className="absolute inset-0 bg-osi-navy-900 mix-blend-multiply"
         style={{ opacity: intensity }}
       />

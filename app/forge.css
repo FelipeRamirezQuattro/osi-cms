@@ -1,0 +1,599 @@
+/*
+ * Forge — cinematic industrial layout theme for the public site.
+ *
+ * Applied only when the published (or previewed) branding config has
+ * `layout: "forge"`, which PublicThemeBoundary renders as
+ * `data-theme="forge"`. Every selector here is scoped under that attribute,
+ * so classic is untouched and going back is one branding change.
+ *
+ * Rules this file follows (docs/BRANDING.md, "Layout themes"):
+ *  - Colors come only from the --brand-color-* / --site-* roles (translucent
+ *    variants via color-mix). No raw hex; the prototype's charcoal/orange are
+ *    never used. Gold is scarce: accent, rules, one band — never body text.
+ *  - Forge composition = full-bleed hero + navy shade, oversized uppercase
+ *    condensed display type, numbered section indexes, ruled (hairline) card
+ *    grids, a gold metrics band, square corners. Colors stay OSI's.
+ *  - Blocks are targeted through BlockRenderer's data-block-type wrapper (and
+ *    a few data-* hooks). No block type is added.
+ *  - Motion is CSS-light here; JS motion lives in lib/motion/forge-motion.ts.
+ *    Every CSS transition is `motion-safe`-guarded through the media query
+ *    at the bottom (globals.css also truncates durations under reduce).
+ */
+
+/* ---------------------------------------------------------------------
+   Tokens and type
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"],
+.public-site[data-theme="forge"] .brand-block {
+  /* Rajdhani replaces both display and heading roles inside Forge. It is
+     fixed in code (lib/branding/theme.ts); body/label faces still follow
+     branding. */
+  --font-display: var(--forge-font-display, var(--font-display-source)), "Rajdhani", sans-serif;
+  --font-editorial: var(--forge-font-display, var(--font-editorial-source)), "Rajdhani", sans-serif;
+  --font-display-soft: var(--forge-font-display, var(--font-editorial-source)), "Rajdhani", sans-serif;
+}
+
+.public-site[data-theme="forge"] {
+  /* Rajdhani is condensed: the whole display scale runs larger than classic. */
+  --text-hero: clamp(3.5rem, 8vw, 7.75rem);
+  --text-hero--line-height: 0.92;
+  --text-section: clamp(2.25rem, 4.4vw, 4.125rem);
+  --text-section--line-height: 1;
+  --text-card-label: clamp(1.5rem, 2.4vw, 2.375rem);
+  --text-card-label--line-height: 1;
+  --tracking-tightest-display: -0.035em;
+  --tracking-wide-display: 0.02em;
+  --site-radius-sm: 0;
+  --site-radius-md: 0;
+  --site-radius-lg: 0;
+  --site-container: 88rem;
+  --forge-gutter: clamp(1.25rem, 5vw, 4.75rem);
+  --forge-rule-light: var(--brand-color-border-on-light);
+  --forge-rule-dark: var(--brand-color-border-on-dark);
+  --forge-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  counter-reset: forge-index;
+}
+
+/* Headings: short, uppercase, tight. Long-form content (rich text) keeps its
+   own case — all-caps paragraphs are an accessibility regression. */
+.public-site[data-theme="forge"] :is(h1, h2, h3) {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.public-site[data-theme="forge"] :is(h1, h2),
+.public-site[data-theme="forge"] [data-block-type]:not([data-block-type="rich_text"]) h3 {
+  text-transform: uppercase;
+}
+
+.public-site[data-theme="forge"] [data-block-type="rich_text"] :is(h2, h3) {
+  text-transform: none;
+  letter-spacing: -0.015em;
+}
+
+/* Square corners everywhere the classic theme rounds a surface. Pill
+   controls become cut, rectangular ones. */
+.public-site[data-theme="forge"] :where(.rounded-full, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl) {
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Section index — "02  Outcome pathways". A CSS counter on the section
+   title, so no block type or data field is needed. The number is
+   decorative (alt text "" keeps it out of the accessible name).
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] :is(
+  [data-block-type="section_heading"],
+  [data-block-type="feature_tiles"],
+  [data-block-type="benefits_cards"],
+  [data-block-type="how_it_works"],
+  [data-block-type="stages_carousel"],
+  [data-block-type="spec_table"],
+  [data-block-type="news_feed"],
+  [data-block-type="split_feature"],
+  [data-block-type="recommendations"],
+  [data-block-type="resource_list"],
+  [data-block-type="team_directory"],
+  [data-block-type="image_gallery"],
+  [data-block-type="product_grid"]
+) h2 {
+  counter-increment: forge-index;
+}
+
+.public-site[data-theme="forge"] :is(
+  [data-block-type="section_heading"],
+  [data-block-type="feature_tiles"],
+  [data-block-type="benefits_cards"],
+  [data-block-type="how_it_works"],
+  [data-block-type="stages_carousel"],
+  [data-block-type="spec_table"],
+  [data-block-type="news_feed"],
+  [data-block-type="split_feature"],
+  [data-block-type="recommendations"],
+  [data-block-type="resource_list"],
+  [data-block-type="team_directory"],
+  [data-block-type="image_gallery"],
+  [data-block-type="product_grid"]
+) h2::before {
+  content: counter(forge-index, decimal-leading-zero) / "";
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+/* Gold index on dark, gold-on-light on light — both from role variables. */
+.public-site[data-theme="forge"] .brand-section-dark h2::before {
+  color: var(--block-accent, var(--brand-color-accent-on-dark));
+}
+.public-site[data-theme="forge"] .brand-section-light h2::before {
+  color: var(--block-accent, var(--brand-color-accent-on-light));
+}
+
+/* ---------------------------------------------------------------------
+   Header — translucent over a full-bleed hero, solid after scroll.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-site-header] {
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 78%, transparent);
+  border-bottom-color: var(--forge-rule-dark);
+  box-shadow: none;
+  padding-inline: var(--forge-gutter);
+  transition: background-color 220ms var(--forge-ease), backdrop-filter 220ms var(--forge-ease);
+}
+
+.public-site[data-theme="forge"] [data-site-header][data-scrolled] {
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 96%, transparent);
+}
+
+/* When the page opens on a full-bleed hero the header floats over it. */
+.public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header] {
+  margin-bottom: -4.5rem;
+}
+
+.public-site[data-theme="forge"] [data-site-header] > div {
+  max-width: none;
+}
+
+.public-site[data-theme="forge"] [data-site-header] nav a,
+.public-site[data-theme="forge"] [data-site-header] button {
+  border-radius: 0;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.public-site[data-theme="forge"] [data-site-header] button[aria-haspopup]:last-of-type {
+  border-radius: 0;
+  background: var(--brand-color-accent-on-dark);
+  border-color: var(--brand-color-accent-on-dark);
+  color: var(--brand-color-primary);
+}
+
+/* Dialogs (search + full-screen menu) */
+.public-site[data-theme="forge"] dialog.site-dialog {
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 98%, transparent);
+}
+
+.public-site[data-theme="forge"] dialog.site-dialog a[class*="font-editorial"] {
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+/* ---------------------------------------------------------------------
+   Buttons — square, gold, arrow on the right.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] a.group[class*="rounded-full"],
+.public-site[data-theme="forge"] button.group[class*="rounded-full"] {
+  border-radius: 0;
+  min-height: 3.25rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.public-site[data-theme="forge"] a.group[class*="rounded-full"] > span:last-child,
+.public-site[data-theme="forge"] button.group[class*="rounded-full"] > span:last-child {
+  border-radius: 0;
+  border-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.public-site[data-theme="forge"] a.group[class*="rounded-full"]:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------------------
+   Hero — full-bleed image, navy shade guaranteeing contrast, giant title.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-block-type="hero_full"] > section {
+  min-height: max(46rem, 94vh);
+  clip-path: none;
+}
+
+.public-site[data-theme="forge"] [data-block-type="hero_full"] > section > div {
+  min-height: max(46rem, 94vh);
+  max-width: none;
+  justify-content: flex-end;
+  padding-inline: var(--forge-gutter);
+  padding-top: 10rem;
+  padding-bottom: clamp(5rem, 9vw, 8rem);
+}
+
+/* Image: true colour (no duotone multiply); the shade does the work. */
+.public-site[data-theme="forge"] [data-hero-backdrop] [data-duotone-overlay] {
+  opacity: 0 !important;
+}
+.public-site[data-theme="forge"] [data-hero-backdrop] [data-duotone-image] {
+  filter: brightness(0.86);
+}
+
+/* The classic scrim is replaced. Worst case is a pure-white photo pixel:
+   under the text column the shade stays >= 66% navy, which still gives white
+   text >= 5:1 (checked in tests/e2e/forge-contrast.spec.ts). */
+.public-site[data-theme="forge"] [data-hero-scrim] {
+  background-image:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--brand-color-dark-surface) 94%, transparent) 0%,
+      color-mix(in srgb, var(--brand-color-dark-surface) 78%, transparent) 46%,
+      color-mix(in srgb, var(--brand-color-dark-surface) 26%, transparent) 82%,
+      color-mix(in srgb, var(--brand-color-dark-surface) 12%, transparent) 100%),
+    linear-gradient(0deg,
+      color-mix(in srgb, var(--brand-color-dark-surface) 88%, transparent) 0%,
+      transparent 48%);
+}
+
+/* No photo yet: navy gradient + hairline grid, never an empty box. */
+.public-site[data-theme="forge"] [data-hero-backdrop] [data-image-fallback] {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--brand-color-text-on-dark) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--brand-color-text-on-dark) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(135deg, var(--brand-color-secondary), var(--brand-color-dark-surface) 70%);
+  background-size: 5rem 5rem, 5rem 5rem, auto;
+}
+
+.public-site[data-theme="forge"] [data-block-type="hero_full"] h1 {
+  max-width: 14ch;
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: var(--text-hero--line-height);
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.public-site[data-theme="forge"] [data-block-type="hero_full"] p {
+  max-width: 34rem;
+}
+
+/* ---------------------------------------------------------------------
+   Page hero + product hero — compact version of the same language.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] :is([data-block-type="hero_page"], [data-block-type="product_hero"]) > section {
+  clip-path: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent) 1px, transparent 1px);
+  background-size: 5rem 5rem;
+}
+
+.public-site[data-theme="forge"] [data-block-type="hero_page"] > section.brand-section-light {
+  background-image: none;
+}
+
+.public-site[data-theme="forge"] [data-block-type="hero_page"] > section {
+  padding-top: clamp(7rem, 12vw, 10rem);
+  padding-bottom: clamp(3rem, 6vw, 5.5rem);
+}
+
+.public-site[data-theme="forge"] :is([data-block-type="hero_page"], [data-block-type="product_hero"]) h1 {
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.public-site[data-theme="forge"] [data-block-type="product_hero"] > section {
+  padding-top: clamp(7rem, 11vw, 9rem);
+}
+
+.public-site[data-theme="forge"] :is([data-block-type="hero_page"], [data-block-type="product_hero"]) [data-image-fallback],
+.public-site[data-theme="forge"] [data-block-type="hero_page"] [data-duotone-overlay] {
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Cards — ruled grid, no radius, no shadow, tall. The grid itself draws
+   the hairlines (outer top/left border + each cell's right/bottom).
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-card="label-plate"] {
+  min-height: 29rem;
+  border-width: 0 1px 1px 0;
+  border-style: solid;
+  border-color: var(--forge-rule-light);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color 220ms var(--forge-ease), transform 220ms var(--forge-ease);
+}
+
+.public-site[data-theme="forge"] [data-card="label-plate"]:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: color-mix(in srgb, var(--brand-color-text-on-light) 4%, transparent);
+}
+
+.public-site[data-theme="forge"] .brand-section-dark [data-card="label-plate"] {
+  border-color: var(--forge-rule-dark);
+  color: var(--brand-color-text-on-dark);
+}
+.public-site[data-theme="forge"] .brand-section-dark [data-card="label-plate"]:hover {
+  background-color: color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent);
+}
+
+/* The grid wrapper: top + left rule so every cell closes its own box. */
+.public-site[data-theme="forge"] :has(> [data-card="label-plate"]) {
+  gap: 0;
+  border-top: 1px solid var(--forge-rule-light);
+  border-left: 1px solid var(--forge-rule-light);
+}
+.public-site[data-theme="forge"] .brand-section-dark :has(> [data-card="label-plate"]) {
+  border-color: var(--forge-rule-dark);
+}
+
+.public-site[data-theme="forge"] [data-card="label-plate"] > div:first-child {
+  aspect-ratio: 16 / 10;
+}
+
+.public-site[data-theme="forge"] [data-card="label-plate"] h3 {
+  font-size: clamp(1.5rem, 2.2vw, 2.125rem);
+  line-height: 1;
+  color: inherit;
+}
+
+.public-site[data-theme="forge"] [data-card="label-plate"] p {
+  color: var(--brand-color-muted-text-on-light);
+}
+.public-site[data-theme="forge"] .brand-section-dark [data-card="label-plate"] p {
+  color: var(--brand-color-muted-text-on-dark);
+}
+
+.public-site[data-theme="forge"] [data-card="label-plate"] > div:last-child > span:last-child {
+  border-top: 1px solid var(--forge-rule-light);
+  margin-top: auto;
+  padding-top: 1rem;
+  justify-content: space-between;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: inherit;
+}
+.public-site[data-theme="forge"] .brand-section-dark [data-card="label-plate"] > div:last-child > span:last-child {
+  border-top-color: var(--forge-rule-dark);
+}
+
+/* Benefits (navy section): the bordered boxes become ruled cells. */
+.public-site[data-theme="forge"] [data-block-type="benefits_cards"] [class*="border-osi-steel-500"] {
+  min-height: 15rem;
+  border-color: var(--forge-rule-dark);
+  background: transparent;
+}
+.public-site[data-theme="forge"] [data-block-type="benefits_cards"] h3 {
+  font-size: clamp(1.5rem, 2vw, 1.875rem);
+  line-height: 1.05;
+}
+
+/* ---------------------------------------------------------------------
+   Metrics band — stat_grid. Navy/transparent => a gold band with navy
+   text (Forge's one big gold moment). Cream stays a ruled cream band.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] > section:not(.brand-section-light) {
+  background-color: var(--brand-color-accent-on-dark);
+  color: var(--brand-color-primary);
+}
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] > section > div {
+  max-width: none;
+  padding-inline: var(--forge-gutter);
+}
+
+/* The classic hairline overlay is replaced by real cell borders. */
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] [aria-hidden="true"][class*="pointer-events-none"] {
+  display: none;
+}
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] .grid > * {
+  border-left: 1px solid color-mix(in srgb, var(--brand-color-primary) 28%, transparent);
+}
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] .grid > *:last-child {
+  border-right: 1px solid color-mix(in srgb, var(--brand-color-primary) 28%, transparent);
+}
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] .grid > * > div,
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] .grid > * > a > div {
+  min-height: 11rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] p:first-child {
+  order: 2;
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 0.9;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: inherit;
+}
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] p:last-child {
+  order: 1;
+  max-width: 14rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+/* On the gold band the muted/slate labels are replaced by navy text, which
+   is the only pairing guaranteed AA on gold. */
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] > section:not(.brand-section-light) p {
+  color: var(--brand-color-primary);
+}
+
+/* ---------------------------------------------------------------------
+   Story / split feature, CTA band, news, rich text
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-block-type="split_feature"] [class*="aspect-"] {
+  aspect-ratio: 4 / 5;
+  border-radius: 0;
+}
+
+.public-site[data-theme="forge"] [data-block-type="cta_band"] > section {
+  padding-block: clamp(5rem, 9vw, 8.5rem);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent) 1px, transparent 1px);
+  background-size: 5rem 5rem;
+}
+.public-site[data-theme="forge"] [data-block-type="cta_band"] > section.brand-section-light {
+  background-image: none;
+  border-top: 1px solid var(--forge-rule-light);
+}
+.public-site[data-theme="forge"] [data-block-type="cta_band"] > section > div {
+  max-width: none;
+  padding-inline: var(--forge-gutter);
+}
+.public-site[data-theme="forge"] [data-block-type="cta_band"] h2 {
+  font-size: clamp(3rem, 6.2vw, 6.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  max-width: 16ch;
+}
+
+.public-site[data-theme="forge"] [data-block-type="news_feed"] a {
+  border-radius: 0;
+}
+.public-site[data-theme="forge"] [data-block-type="news_feed"] h3 {
+  font-size: clamp(1.375rem, 2vw, 1.875rem);
+  line-height: 1.05;
+}
+
+.public-site[data-theme="forge"] [data-block-type="section_heading"] h2 {
+  max-width: 18ch;
+}
+
+/* Forge section headings are always left-aligned (the index and rule read
+   from the left edge); the block's "center" option is a classic-only layout. */
+.public-site[data-theme="forge"] [data-block-type="section_heading"] .text-center {
+  text-align: left;
+}
+.public-site[data-theme="forge"] [data-block-type="section_heading"] .text-center p {
+  margin-inline: 0;
+}
+
+/* Generic section padding follows the gutter so wide screens fill out. */
+.public-site[data-theme="forge"] .brand-section > div:first-child {
+  max-width: var(--site-container);
+  padding-inline: var(--forge-gutter);
+}
+
+/* ---------------------------------------------------------------------
+   Forms — ruled, square, visible focus (global :focus-visible ring stays).
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] :is(input, select, textarea):not([type="checkbox"], [type="radio"]) {
+  border-radius: 0;
+}
+
+.public-site[data-theme="forge"] form button[type="submit"] {
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------
+   Footer — ruled columns, display-face wordmark/tagline.
+   --------------------------------------------------------------------- */
+
+.public-site[data-theme="forge"] [data-site-footer] {
+  padding-inline: var(--forge-gutter);
+  border-top-color: var(--forge-rule-dark);
+}
+.public-site[data-theme="forge"] [data-site-footer] > div {
+  max-width: none;
+}
+.public-site[data-theme="forge"] [data-site-footer] p[class*="font-editorial"] {
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.public-site[data-theme="forge"] [data-site-footer] h2 {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--forge-rule-dark);
+}
+
+/* ---------------------------------------------------------------------
+   Reduced motion: no lifts, no translate hovers.
+   --------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site[data-theme="forge"] a.group[class*="rounded-full"]:hover,
+  .public-site[data-theme="forge"] [data-card="label-plate"]:hover {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Small screens
+   --------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header] {
+    margin-bottom: -4rem;
+  }
+
+  .public-site[data-theme="forge"] [data-block-type="hero_full"] > section,
+  .public-site[data-theme="forge"] [data-block-type="hero_full"] > section > div {
+    min-height: max(40rem, 88svh);
+  }
+
+  .public-site[data-theme="forge"] [data-hero-scrim] {
+    background-image: linear-gradient(0deg,
+      color-mix(in srgb, var(--brand-color-dark-surface) 96%, transparent) 0%,
+      color-mix(in srgb, var(--brand-color-dark-surface) 72%, transparent) 60%,
+      color-mix(in srgb, var(--brand-color-dark-surface) 40%, transparent) 100%);
+  }
+
+  .public-site[data-theme="forge"] [data-card="label-plate"] {
+    min-height: 22rem;
+  }
+
+  .public-site[data-theme="forge"] [data-block-type="stat_grid"] .grid > * {
+    border-right: 1px solid color-mix(in srgb, var(--brand-color-primary) 28%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--brand-color-primary) 28%, transparent);
+  }
+}

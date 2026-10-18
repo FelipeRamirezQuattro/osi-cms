@@ -52,7 +52,7 @@ function Render({ data }: { data: Data }) {
             src={data.imageUrl}
             className="aspect-video w-full rounded-[var(--site-radius-lg)]"
             sizes="(min-width: 768px) 50vw, 100vw"
-            loading="eager"
+            priority
           />
         )}
       </div>

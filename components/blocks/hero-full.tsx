@@ -46,8 +46,8 @@ function Render({ data }: { data: Data }) {
       // mockup's hero shows.
       contentClassName="mx-auto flex min-h-[calc(88vh-8rem)] max-w-[var(--site-container)] flex-col justify-center px-5 md:px-10"
     >
-      <div className="absolute inset-0 -z-10">
-        <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} sizes="100vw" loading="eager" />
+      <div data-hero-backdrop className="absolute inset-0 -z-10">
+        <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} sizes="100vw" priority />
         {/* Scrim. The duotone alone was enough over the gradient
             placeholder, but a real photograph has bright regions (the sky
             in the yard shot) where slate-200 subhead copy drops under 4.5:1.
@@ -56,6 +56,7 @@ function Render({ data }: { data: Data }) {
             image the way a higher duotone intensity would. */}
         <div
           aria-hidden
+          data-hero-scrim
           className="absolute inset-0 bg-gradient-to-r from-osi-navy-900/85 via-osi-navy-900/55 to-osi-navy-900/20"
         />
       </div>
