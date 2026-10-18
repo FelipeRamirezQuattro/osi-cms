@@ -15,6 +15,8 @@ const navItemFieldsSchema = z.object({
   badge: optionalNullableString(),
   is_external: z.boolean().default(false),
   parent_id: z.string().nullable().default(null),
+  // Set when the item references a product by identity (see 0048_nav_items_product_ref.sql).
+  product_id: z.string().nullable().default(null),
 });
 
 export const navItemCreateSchema = navItemFieldsSchema.extend({

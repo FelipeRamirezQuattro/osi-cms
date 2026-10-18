@@ -1,6 +1,6 @@
 import { createServerDbClient } from "@/lib/db/client";
 import { recordAudit } from "@/lib/data/audit";
-import { listProductsWithCategorySlug } from "@/lib/data/products";
+import { listAllProductsWithCategorySlug, listProductsWithCategorySlug } from "@/lib/data/products";
 import { listAllPages } from "@/lib/data/pages";
 import { pageHref, productHref } from "@/lib/routes";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/db/database.types";
@@ -38,29 +38,51 @@ export async function getNavMenu(key: Tables<"nav_menus">["key"]): Promise<NavIt
     .order("position", { ascending: true });
   if (itemsError) throw itemsError;
 
-  const nested = nestItems(items ?? []);
-  if (key !== "mega") return nested;
-
-  // The legacy mega-menu names more products than the client has
-  // published content for. Keep those names in the CMS, but never expose
-  // a public link that resolves to the not-found boundary. As products
-  // are published they appear automatically, without another code edit.
-  const products = await listProductsWithCategorySlug();
-  const publishedProductHrefs = new Set(
-    products
-      .filter((product) => product.categorySlug)
-      .map((product) => productHref(product.categorySlug!, product.slug)),
-  );
-
-  return nested.map((column) => ({
-    ...column,
-    children: column.children.filter(
-      (child) => !child.href.startsWith("/products/") || publishedProductHrefs.has(child.href),
-    ),
-  }));
+  return resolveProductLinks(nestItems(items ?? []), key === "mega");
 }
 
-export type LinkableResource = { id: string; label: string; href: string; group: "Page" | "Product" };
+/**
+ * Items that reference a product (`product_id`) link to that product's
+ * *current* category + slug and hide while it isn't published — publishing a
+ * product makes its menu entry appear, unpublishing hides it, and a category
+ * change can't break the link. Plain items keep their stored href. As a last
+ * safety net for hand-typed hrefs, a plain mega-menu `/products/…` link that
+ * doesn't resolve to a published product is dropped rather than shown as a 404.
+ */
+async function resolveProductLinks(nodes: NavItemNode[], guardPlainProductHrefs: boolean): Promise<NavItemNode[]> {
+  const referencesProduct = (list: NavItemNode[]): boolean =>
+    list.some((node) => node.product_id !== null || referencesProduct(node.children));
+  if (!guardPlainProductHrefs && !referencesProduct(nodes)) return nodes;
+
+  const products = await listProductsWithCategorySlug();
+  const hrefByProductId = new Map(
+    products.filter((p) => p.categorySlug).map((p) => [p.id, productHref(p.categorySlug!, p.slug)]),
+  );
+  const publishedHrefs = new Set(hrefByProductId.values());
+
+  const resolve = (list: NavItemNode[]): NavItemNode[] =>
+    list.flatMap((node) => {
+      const children = resolve(node.children);
+      if (node.product_id) {
+        const href = hrefByProductId.get(node.product_id);
+        return href ? [{ ...node, href, children }] : [];
+      }
+      if (guardPlainProductHrefs && node.href.startsWith("/products/") && !publishedHrefs.has(node.href)) return [];
+      return [{ ...node, children }];
+    });
+  return resolve(nodes);
+}
+
+export type LinkableResource = {
+  id: string;
+  label: string;
+  href: string;
+  group: "Page" | "Product";
+  /** Products only: a link to an unpublished product stays hidden on the live site until it's published. */
+  status?: string;
+  /** Products only: the product's id, stored as nav_items.product_id when picked. */
+  productId?: string;
+};
 
 /**
  * Real pages/products an editor can point a nav item at, for the admin nav
@@ -72,12 +94,15 @@ export type LinkableResource = { id: string; label: string; href: string; group:
  * modeled as a page/product.
  */
 export async function listLinkableResourcesForNav(): Promise<LinkableResource[]> {
-  const [pages, products] = await Promise.all([listAllPages(), listProductsWithCategorySlug()]);
+  const [pages, products] = await Promise.all([listAllPages(), listAllProductsWithCategorySlug()]);
 
   const pageResources: LinkableResource[] = pages
     .filter((page) => page.status === "published")
     .map((page) => ({ id: `page:${page.id}`, label: page.title, href: pageHref(page.slug), group: "Page" }));
 
+  // Every product, drafts included: a menu entry can be set up before the
+  // product is published and appears on its own once it is. Products without a
+  // category can't form a URL yet, so they're left out of the picker.
   const productResources: LinkableResource[] = products
     .filter((product) => product.categorySlug)
     .map((product) => ({
@@ -85,6 +110,8 @@ export async function listLinkableResourcesForNav(): Promise<LinkableResource[]>
       label: product.name,
       href: productHref(product.categorySlug!, product.slug),
       group: "Product",
+      status: product.status,
+      productId: product.id,
     }));
 
   return [...pageResources, ...productResources].sort((a, b) => a.label.localeCompare(b.label));

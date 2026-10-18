@@ -14,9 +14,9 @@ import type { LinkableResource } from "@/lib/data/navigation";
 
 type NavItem = Tables<"nav_items">;
 
-type FormValues = { label: string; href: string; badge: string; is_external: boolean };
+type FormValues = { label: string; href: string; badge: string; is_external: boolean; product_id: string | null };
 
-const EMPTY_FORM: FormValues = { label: "", href: "", badge: "", is_external: false };
+const EMPTY_FORM: FormValues = { label: "", href: "", badge: "", is_external: false, product_id: null };
 
 export function NavEditor({
   menuId,
@@ -32,6 +32,17 @@ export function NavEditor({
   const [addingUnder, setAddingUnder] = useState<string | null | undefined>(undefined);
   const [editingId, setEditingId] = useState<string | null>(null);
   const { confirm, dialog } = useConfirmDialog();
+
+  // An item that references a product is hidden on the live site until that
+  // product is published — say so next to it so "where did my link go" is answered here.
+  const productStatusById = new Map(
+    linkableResources.filter((r) => r.productId).map((r) => [r.productId!, r.status ?? "draft"]),
+  );
+  const hiddenNote = (item: NavItem) => {
+    if (!item.product_id) return null;
+    const status = productStatusById.get(item.product_id);
+    return status === "published" ? null : "hidden until the product is published";
+  };
 
   const topLevel = items.filter((i) => !i.parent_id);
   const childrenOf = (parentId: string) => items.filter((i) => i.parent_id === parentId);
@@ -65,6 +76,7 @@ export function NavEditor({
         href: values.href,
         badge: values.badge || null,
         is_external: values.is_external,
+        product_id: values.product_id,
       });
       setAddingUnder(undefined);
       refresh();
@@ -79,6 +91,7 @@ export function NavEditor({
         badge: values.badge || null,
         is_external: values.is_external,
         parent_id: parentId,
+        product_id: values.product_id,
       });
       setEditingId(null);
       refresh();
@@ -92,6 +105,7 @@ export function NavEditor({
           <div className="flex items-center gap-2 px-3 py-2">
             <span className="flex-1 text-sm font-medium">
               {item.label} <span className="text-xs opacity-50">{item.href}</span>
+              {hiddenNote(item) && <span className="ml-2 text-xs text-osi-slate-400">· {hiddenNote(item)}</span>}
               {item.badge && <span className="ml-2 rounded bg-osi-gold-500/20 px-1.5 py-0.5 text-[10px] uppercase">{item.badge}</span>}
             </span>
             <button type="button" onClick={() => move(item.id, "up")} disabled={isPending || index === 0} className="text-xs disabled:opacity-30">
@@ -119,7 +133,7 @@ export function NavEditor({
           {editingId === item.id && (
             <div className="border-t border-osi-sand-300 p-3">
               <NavItemForm
-                initial={{ label: item.label, href: item.href, badge: item.badge ?? "", is_external: item.is_external }}
+                initial={{ label: item.label, href: item.href, badge: item.badge ?? "", is_external: item.is_external, product_id: item.product_id }}
                 linkableResources={linkableResources}
                 onCancel={() => setEditingId(null)}
                 onSubmit={(values) => update(item.id, item.parent_id, values)}
@@ -133,6 +147,7 @@ export function NavEditor({
                 <div className="flex items-center gap-2 py-1">
                   <span className="flex-1 text-sm">
                     {child.label} <span className="text-xs opacity-50">{child.href}</span>
+                    {hiddenNote(child) && <span className="ml-2 text-xs text-osi-slate-400">· {hiddenNote(child)}</span>}
                   </span>
                   <button
                     type="button"
@@ -159,7 +174,7 @@ export function NavEditor({
                 </div>
                 {editingId === child.id && (
                   <NavItemForm
-                    initial={{ label: child.label, href: child.href, badge: child.badge ?? "", is_external: child.is_external }}
+                    initial={{ label: child.label, href: child.href, badge: child.badge ?? "", is_external: child.is_external, product_id: child.product_id }}
                     linkableResources={linkableResources}
                     onCancel={() => setEditingId(null)}
                     onSubmit={(values) => update(child.id, child.parent_id, values)}
@@ -206,12 +221,15 @@ function NavItemForm({
   onCancel: () => void;
 }) {
   const [values, setValues] = useState(initial);
-  // A stored href that happens to match a real page/product's current href
-  // starts the picker on that resource; anything else (an external URL, a
-  // "#" category header, a since-renamed slug) starts it on "Custom URL" so
-  // existing items are never silently reinterpreted.
-  const matchingResource = linkableResources.find((resource) => resource.href === initial.href);
+  // The picker starts on the item's product when it references one, or on a
+  // page whose href matches; anything else (an external URL, a "#" category
+  // header, a plain typed href) starts on "Custom URL" so existing items are
+  // never silently reinterpreted.
+  const matchingResource = linkableResources.find((resource) =>
+    initial.product_id ? resource.productId === initial.product_id : resource.group === "Page" && resource.href === initial.href,
+  );
   const [linkSelection, setLinkSelection] = useState<string>(matchingResource?.id ?? CUSTOM_LINK_VALUE);
+  const selectedResource = linkableResources.find((resource) => resource.id === linkSelection);
   const pageResources = linkableResources.filter((resource) => resource.group === "Page");
   const productResources = linkableResources.filter((resource) => resource.group === "Product");
 
@@ -245,9 +263,14 @@ function NavItemForm({
         onChange={(e) => {
           const nextId = e.target.value;
           setLinkSelection(nextId);
-          if (nextId === CUSTOM_LINK_VALUE) return;
+          if (nextId === CUSTOM_LINK_VALUE) {
+            setValues((prev) => ({ ...prev, product_id: null }));
+            return;
+          }
           const resource = linkableResources.find((r) => r.id === nextId);
-          if (resource) setValues((prev) => ({ ...prev, href: resource.href }));
+          // Picking a product stores its id (the live link follows its category/slug);
+          // picking a page stores the page's URL and detaches any product.
+          if (resource) setValues((prev) => ({ ...prev, href: resource.href, product_id: resource.productId ?? null }));
         }}
         aria-label="Link to a page or product"
         className="rounded border border-osi-sand-300 px-2 py-1 text-sm"
@@ -267,6 +290,7 @@ function NavItemForm({
             {productResources.map((resource) => (
               <option key={resource.id} value={resource.id}>
                 {resource.label}
+                {resource.status && resource.status !== "published" ? ` (${resource.status})` : ""}
               </option>
             ))}
           </optgroup>
@@ -285,7 +309,12 @@ function NavItemForm({
           className="col-span-2 rounded border border-osi-sand-300 px-2 py-1 text-sm"
         />
       ) : (
-        <p className="col-span-2 truncate text-xs opacity-60">→ {values.href}</p>
+        <p className="col-span-2 truncate text-xs opacity-60">
+          → {values.href}
+          {selectedResource?.productId && selectedResource.status !== "published" && (
+            <span className="block">Hidden on the live site until this product is published; it then appears automatically.</span>
+          )}
+        </p>
       )}
       <input
         value={values.badge}

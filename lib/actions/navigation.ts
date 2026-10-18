@@ -35,6 +35,7 @@ export async function createNavItemAction(input: {
   href: string;
   badge?: string | null;
   is_external: boolean;
+  product_id?: string | null;
 }): Promise<void> {
   await requireCapability("manage_navigation");
   const parsed = navItemCreateSchema.safeParse(input);
@@ -44,7 +45,14 @@ export async function createNavItemAction(input: {
 
 export async function updateNavItemAction(
   id: string,
-  input: { label: string; href: string; badge?: string | null; is_external: boolean; parent_id: string | null },
+  input: {
+    label: string;
+    href: string;
+    badge?: string | null;
+    is_external: boolean;
+    parent_id: string | null;
+    product_id?: string | null;
+  },
 ): Promise<void> {
   await requireCapability("manage_navigation");
   const parsed = navItemUpdateSchema.safeParse(input);

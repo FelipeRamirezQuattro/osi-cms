@@ -193,9 +193,14 @@ export async function listBrokenLinks(): Promise<BrokenLinkEntry[]> {
     }
   }
 
-  const { data: navItems, error: navError } = await db.from("nav_items").select("id, parent_id, label, href, is_external");
+  const { data: navItems, error: navError } = await db
+    .from("nav_items")
+    .select("id, parent_id, label, href, is_external, product_id");
   if (navError) throw navError;
-  for (const item of findBrokenNavLinks((navItems ?? []) as NavItemRow[], knownPaths)) {
+  // An item that references a product hides itself until the product is published
+  // (getNavMenu), so its stored href can never reach a visitor as a broken link.
+  const plainNavItems = (navItems ?? []).filter((item) => !item.product_id);
+  for (const item of findBrokenNavLinks(plainNavItems as NavItemRow[], knownPaths)) {
     record(`"${item.label}" — navigation link`, adminHref("navigation"), item.href);
   }
 

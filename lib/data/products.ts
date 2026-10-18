@@ -43,6 +43,21 @@ export async function listProductsWithCategorySlug(
   }));
 }
 
+/** Every product (any status) with its category slug — for admin pickers. */
+export async function listAllProductsWithCategorySlug(locale = "en"): Promise<ProductWithCategorySlug[]> {
+  const db = createServerDbClient();
+  const { data, error } = await db
+    .from("products")
+    .select("*, product_categories(slug)")
+    .eq("locale", locale)
+    .order("position", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(({ product_categories, ...product }) => ({
+    ...product,
+    categorySlug: (product_categories as { slug: string } | null)?.slug ?? null,
+  }));
+}
+
 export async function listProductsByCategory(
   categorySlug: string,
   locale = "en",

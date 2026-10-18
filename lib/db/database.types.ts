@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -617,6 +617,7 @@ export type Database = {
           menu_id: string
           parent_id: string | null
           position: number
+          product_id: string | null
           updated_at: string
         }
         Insert: {
@@ -629,6 +630,7 @@ export type Database = {
           menu_id: string
           parent_id?: string | null
           position?: number
+          product_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -641,6 +643,7 @@ export type Database = {
           menu_id?: string
           parent_id?: string | null
           position?: number
+          product_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -656,6 +659,13 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "nav_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nav_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -1184,8 +1194,8 @@ export type Database = {
           data: Json
           id: string
           is_visible: boolean
-          product_id: string
           position: number
+          product_id: string
           type: string
           updated_at: string
         }
@@ -1194,8 +1204,8 @@ export type Database = {
           data?: Json
           id?: string
           is_visible?: boolean
-          product_id: string
           position?: number
+          product_id: string
           type: string
           updated_at?: string
         }
@@ -1204,8 +1214,8 @@ export type Database = {
           data?: Json
           id?: string
           is_visible?: boolean
-          product_id?: string
           position?: number
+          product_id?: string
           type?: string
           updated_at?: string
         }

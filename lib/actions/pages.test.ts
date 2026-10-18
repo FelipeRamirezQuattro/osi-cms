@@ -171,8 +171,8 @@ describe("navigation mutations require the manage_navigation capability", () => 
 
     await createNavItemAction(input);
     // navItemCreateSchema (lib/validation/navigation.ts) normalizes the
-    // absent optional `badge` to `null` rather than leaving it undefined.
-    expect(mockCreateNavItem).toHaveBeenCalledWith({ ...input, badge: null });
+    // absent optional `badge` and `product_id` to `null` rather than leaving them undefined.
+    expect(mockCreateNavItem).toHaveBeenCalledWith({ ...input, badge: null, product_id: null });
   });
 });
 
