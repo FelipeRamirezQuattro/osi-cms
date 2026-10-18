@@ -1,78 +1,53 @@
+import { normalizePath } from "@/lib/redirects/matcher";
+
 /**
- * Task 15: redirect loop/chain rejection — pure, DB-independent logic so
- * it's directly unit-testable (see redirects.test.ts). The caller
- * (lib/actions/entities.ts's saveEntityAction, special-cased for the
- * `redirects` entity) supplies the candidate row plus every *other*
- * existing redirect row; this never touches the database itself.
+ * Redirect loop/chain rejection — pure, DB-independent logic so it's directly
+ * unit-testable (see redirects.test.ts). The caller (lib/actions/entities.ts's
+ * saveEntityAction, special-cased for the `redirects` entity) supplies the
+ * candidate row plus every *other* existing redirect row; this never touches the
+ * database itself.
  *
- * `MAX_REDIRECT_CHAIN_HOPS = 3` is this task's "agreed limit" (the brief
- * left the exact number to the implementer) — chosen because a real
- * browser/crawler chain of 3 redirects (A -> B -> C -> D) is already at
- * the edge of what most crawlers/CDNs will follow before giving up, and
- * because the legacy site being migrated (content/legacy/) never had
- * more than one redirect hop for any URL. A page that's been renamed 4
- * times without anyone cleaning up the old redirects is a sign the
- * redirect table itself needs tidying, not a case to silently support
- * forever.
- *
- * This only walks the chain *forward* from the candidate's own to_path —
- * it does not search for some other, unrelated existing redirect whose
- * chain would be pushed over the limit by this new row landing in the
- * middle of it. That's a deliberate scope limit (see docs/DECISIONS.md):
- * checking every existing redirect's chain on every save is unbounded
- * work as the table grows, whereas checking the one row being saved is
- * O(existing redirects) and catches the common real-world case (an
- * editor extending a chain they can see, one hop at a time).
+ * The table is kept FLAT: no redirect may point at another redirect's source,
+ * and no redirect may be pointed at by one. A crawler then always reaches the
+ * final page in a single 301 (proxy.ts also flattens at runtime as a safety net,
+ * and publish_page_atomic repoints rows on a slug change — migration 0050).
+ * Each message names the conflicting row so the editor knows exactly what to fix.
  */
 
 export type RedirectEdge = { id: string; from_path: string; to_path: string };
 
-export const MAX_REDIRECT_CHAIN_HOPS = 3;
-
 export type RedirectCandidate = { id?: string; from_path: string; to_path: string };
 
-/**
- * Returns a user-facing error message if saving `candidate` would create
- * a self-loop, a multi-hop loop with existing redirects, or a resolution
- * chain longer than `maxHops` — `null` if the redirect is fine to save.
- *
- * `existing` should be every other redirect row in the table (the row
- * being edited, if any, is excluded via `candidate.id` so a no-op edit
- * doesn't "loop" against its own prior value).
- */
-export function findRedirectChainIssue(
-  candidate: RedirectCandidate,
-  existing: RedirectEdge[],
-  maxHops: number = MAX_REDIRECT_CHAIN_HOPS,
-): string | null {
-  const from = candidate.from_path;
-  const to = candidate.to_path;
+const same = (a: string, b: string) => normalizePath(a).toLowerCase() === normalizePath(b).toLowerCase();
 
-  if (from === to) {
+/**
+ * Returns a user-facing error message if saving `candidate` would create a
+ * self-loop, a loop, or a chain with an existing redirect — `null` if it's fine.
+ *
+ * `existing` should be every other redirect row (the row being edited, if any, is
+ * excluded via `candidate.id` so a no-op edit doesn't conflict with its own prior value).
+ */
+export function findRedirectChainIssue(candidate: RedirectCandidate, existing: RedirectEdge[]): string | null {
+  const { from_path: from, to_path: to } = candidate;
+
+  if (same(from, to)) {
     return "A redirect can't point to itself — \"From\" and \"To\" are the same path.";
   }
 
-  const byFrom = new Map(
-    existing.filter((edge) => edge.id !== candidate.id).map((edge) => [edge.from_path, edge.to_path]),
-  );
+  const others = existing.filter((edge) => edge.id !== candidate.id);
 
-  const visited = new Set<string>([from]);
-  let current = to;
-  let hops = 1; // the candidate redirect itself is the first hop (from -> to)
+  // A -> B while B already redirects somewhere: this would be a chain (or a loop).
+  const next = others.find((edge) => same(edge.from_path, to));
+  if (next) {
+    return same(next.to_path, from)
+      ? `${next.from_path} already redirects back to ${next.to_path} — this would create a loop.`
+      : `${next.from_path} already redirects to ${next.to_path} — point this one straight to ${next.to_path}.`;
+  }
 
-  while (byFrom.has(current)) {
-    if (hops >= maxHops) {
-      return `This redirect would chain more than ${maxHops} hops deep (via ${current}) — simplify the existing chain first.`;
-    }
-    if (visited.has(current)) {
-      return "This redirect would create a loop with existing redirects.";
-    }
-    visited.add(current);
-    current = byFrom.get(current)!;
-    hops += 1;
-    if (current === from) {
-      return "This redirect would create a loop with existing redirects.";
-    }
+  // X -> A while A is about to redirect: the new row would put A in the middle of a chain.
+  const previous = others.find((edge) => same(edge.to_path, from));
+  if (previous) {
+    return `${previous.from_path} already redirects to ${previous.to_path} — point that redirect straight to ${to} first, otherwise ${previous.from_path} → ${from} → ${to} would be a chain.`;
   }
 
   return null;

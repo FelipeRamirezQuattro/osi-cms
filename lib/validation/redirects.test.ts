@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { findRedirectChainIssue, MAX_REDIRECT_CHAIN_HOPS, type RedirectEdge } from "@/lib/validation/redirects";
+import { findRedirectChainIssue, type RedirectEdge } from "@/lib/validation/redirects";
 
-describe("findRedirectChainIssue", () => {
+describe("findRedirectChainIssue (flat table: no chains, no loops)", () => {
   it("rejects a one-step self-loop", () => {
-    const issue = findRedirectChainIssue({ from_path: "/old", to_path: "/old" }, []);
-    expect(issue).toMatch(/can't point to itself/i);
+    expect(findRedirectChainIssue({ from_path: "/old", to_path: "/old" }, [])).toMatch(/can't point to itself/i);
+    expect(findRedirectChainIssue({ from_path: "/Old/", to_path: "/old" }, [])).toMatch(/can't point to itself/i);
   });
 
   it("allows a simple, non-conflicting redirect", () => {
@@ -12,53 +12,40 @@ describe("findRedirectChainIssue", () => {
     expect(findRedirectChainIssue({ from_path: "/x", to_path: "/y" }, existing)).toBeNull();
   });
 
-  it("allows a redirect that chains into one existing hop (2 hops total)", () => {
-    const existing: RedirectEdge[] = [{ id: "1", from_path: "/b", to_path: "/c" }];
-    // /a -> /b -> /c : 2 hops, within the default limit of 3.
-    expect(findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing)).toBeNull();
-  });
-
-  it("rejects a chain longer than the configured limit", () => {
-    const existing: RedirectEdge[] = [
-      { id: "1", from_path: "/b", to_path: "/c" },
-      { id: "2", from_path: "/c", to_path: "/d" },
-      { id: "3", from_path: "/d", to_path: "/e" },
-    ];
-    // Candidate /a -> /b, combined with existing b->c->d->e, is 4 hops total.
-    const issue = findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing);
-    expect(issue).toMatch(/chain more than 3 hops/i);
-  });
-
-  it("respects a custom maxHops", () => {
-    const existing: RedirectEdge[] = [{ id: "1", from_path: "/b", to_path: "/c" }];
-    // /a -> /b -> /c is 2 hops; with maxHops=1 that's already too long.
-    const issue = findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing, 1);
-    expect(issue).toMatch(/chain more than 1 hop/i);
-  });
-
-  it("detects a multi-hop loop (A -> B, existing B -> A)", () => {
-    const existing: RedirectEdge[] = [{ id: "1", from_path: "/b", to_path: "/a" }];
-    const issue = findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing);
-    expect(issue).toMatch(/loop/i);
-  });
-
-  it("detects a longer loop (A -> B, existing B -> C -> A)", () => {
-    const existing: RedirectEdge[] = [
-      { id: "1", from_path: "/b", to_path: "/c" },
-      { id: "2", from_path: "/c", to_path: "/a" },
-    ];
-    const issue = findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing, 5);
-    expect(issue).toMatch(/loop/i);
-  });
-
-  it("excludes the row being edited from the existing set (no false self-loop on a no-op edit)", () => {
+  it("allows two redirects to the same destination", () => {
     const existing: RedirectEdge[] = [{ id: "1", from_path: "/a", to_path: "/b" }];
-    // Editing redirect id "1" to point .../a -> /b again (unchanged) must
-    // not be flagged as looping against its own prior value.
-    expect(findRedirectChainIssue({ id: "1", from_path: "/a", to_path: "/b" }, existing)).toBeNull();
+    expect(findRedirectChainIssue({ from_path: "/c", to_path: "/b" }, existing)).toBeNull();
   });
 
-  it("uses 3 as the documented default limit", () => {
-    expect(MAX_REDIRECT_CHAIN_HOPS).toBe(3);
+  it("refuses A -> B when B -> C exists, naming the conflicting row and the fix", () => {
+    const existing: RedirectEdge[] = [{ id: "1", from_path: "/b", to_path: "/c" }];
+    expect(findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing)).toBe(
+      "/b already redirects to /c — point this one straight to /c.",
+    );
+  });
+
+  it("refuses X -> A already existing when adding A -> B, naming that row", () => {
+    const existing: RedirectEdge[] = [{ id: "1", from_path: "/x", to_path: "/a" }];
+    const issue = findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing);
+    expect(issue).toMatch(/^\/x already redirects to \/a — point that redirect straight to \/b first/);
+  });
+
+  it("detects a two-way loop (A -> B, existing B -> A)", () => {
+    const existing: RedirectEdge[] = [{ id: "1", from_path: "/b", to_path: "/a" }];
+    expect(findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing)).toBe(
+      "/b already redirects back to /a — this would create a loop.",
+    );
+  });
+
+  it("compares paths ignoring case and a trailing slash", () => {
+    const existing: RedirectEdge[] = [{ id: "1", from_path: "/B/", to_path: "/c" }];
+    expect(findRedirectChainIssue({ from_path: "/a", to_path: "/b" }, existing)).toMatch(/already redirects to \/c/);
+  });
+
+  it("excludes the row being edited from the existing set (no false conflict on a no-op edit)", () => {
+    const existing: RedirectEdge[] = [{ id: "1", from_path: "/a", to_path: "/b" }];
+    expect(findRedirectChainIssue({ id: "1", from_path: "/a", to_path: "/b" }, existing)).toBeNull();
+    // ...and re-pointing the same row elsewhere is judged against the *other* rows only.
+    expect(findRedirectChainIssue({ id: "1", from_path: "/a", to_path: "/z" }, existing)).toBeNull();
   });
 });
