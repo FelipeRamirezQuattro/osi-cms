@@ -143,20 +143,21 @@
    --------------------------------------------------------------------- */
 
 .public-site[data-theme="forge"] [data-site-header] {
-  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 78%, transparent);
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 97%, transparent);
   border-bottom-color: var(--forge-rule-dark);
   box-shadow: none;
   padding-inline: var(--forge-gutter);
   transition: background-color 220ms var(--forge-ease), backdrop-filter 220ms var(--forge-ease);
 }
 
-.public-site[data-theme="forge"] [data-site-header][data-scrolled] {
-  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 96%, transparent);
-}
-
-/* When the page opens on a full-bleed hero the header floats over it. */
+/* When the page opens on a full-bleed hero the header floats over it,
+   translucent until the visitor scrolls (data-scrolled), then solid. */
 .public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header] {
   margin-bottom: -4.5rem;
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 72%, transparent);
+}
+.public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header][data-scrolled] {
+  background-color: color-mix(in srgb, var(--brand-color-dark-surface) 97%, transparent);
 }
 
 .public-site[data-theme="forge"] [data-site-header] > div {
@@ -230,6 +231,11 @@
   padding-inline: var(--forge-gutter);
   padding-top: 10rem;
   padding-bottom: clamp(5rem, 9vw, 8rem);
+}
+
+/* The copy wrapper animates in Forge; classic renders it display:contents. */
+.public-site[data-theme="forge"] [data-hero-content] {
+  display: block;
 }
 
 /* Image: true colour (no duotone multiply); the shade does the work. */
@@ -322,13 +328,19 @@
 
 .public-site[data-theme="forge"] [data-card="label-plate"] {
   min-height: 29rem;
-  border-width: 0 1px 1px 0;
+  border-width: 1px;
   border-style: solid;
+  margin: 0 -1px -1px 0;
   border-color: var(--forge-rule-light);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   transition: background-color 220ms var(--forge-ease), transform 220ms var(--forge-ease);
+}
+
+.public-site[data-theme="forge"] :has(> [data-card="label-plate"]) {
+  gap: 0;
+  padding: 0 1px 1px 0;
 }
 
 .public-site[data-theme="forge"] [data-card="label-plate"]:hover {
@@ -343,16 +355,6 @@
 }
 .public-site[data-theme="forge"] .brand-section-dark [data-card="label-plate"]:hover {
   background-color: color-mix(in srgb, var(--brand-color-text-on-dark) 5%, transparent);
-}
-
-/* The grid wrapper: top + left rule so every cell closes its own box. */
-.public-site[data-theme="forge"] :has(> [data-card="label-plate"]) {
-  gap: 0;
-  border-top: 1px solid var(--forge-rule-light);
-  border-left: 1px solid var(--forge-rule-light);
-}
-.public-site[data-theme="forge"] .brand-section-dark :has(> [data-card="label-plate"]) {
-  border-color: var(--forge-rule-dark);
 }
 
 .public-site[data-theme="forge"] [data-card="label-plate"] > div:first-child {
@@ -393,8 +395,12 @@
   background: transparent;
 }
 .public-site[data-theme="forge"] [data-block-type="benefits_cards"] h3 {
-  font-size: clamp(1.5rem, 2vw, 1.875rem);
-  line-height: 1.05;
+  /* Benefit titles are full sentences — sentence case, not all-caps. */
+  font-size: clamp(1.375rem, 1.8vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: none;
 }
 
 /* ---------------------------------------------------------------------

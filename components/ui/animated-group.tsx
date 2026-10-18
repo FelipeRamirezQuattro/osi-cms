@@ -2,14 +2,8 @@
 
 import { motion } from "motion/react";
 import { useRef, type ReactNode } from "react";
-import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { useRevealInView } from "@/lib/motion/use-reveal-in-view";
-import {
-  fadeRiseVariants,
-  fadeRiseVariantsReduced,
-  staggerContainerVariants,
-  staggerContainerVariantsReduced,
-} from "@/lib/motion/variants";
+import { useRevealVariants } from "@/lib/motion/use-reveal-variants";
 
 /**
  * Stagger-aware pair for grids: wrap the grid in <AnimatedGroup>, each
@@ -27,7 +21,7 @@ export function AnimatedGroup({
   children: ReactNode;
   className?: string;
 }) {
-  const reduceMotion = useHydratedReducedMotion();
+  const { stagger } = useRevealVariants();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useRevealInView(ref);
 
@@ -37,7 +31,7 @@ export function AnimatedGroup({
       className={className}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      variants={reduceMotion ? staggerContainerVariantsReduced : staggerContainerVariants}
+      variants={stagger}
     >
       {children}
     </motion.div>
@@ -51,12 +45,12 @@ export function AnimatedItem({
   children: ReactNode;
   className?: string;
 }) {
-  const reduceMotion = useHydratedReducedMotion();
+  const { reveal } = useRevealVariants();
 
   return (
     <motion.div
       className={className}
-      variants={reduceMotion ? fadeRiseVariantsReduced : fadeRiseVariants}
+      variants={reveal}
     >
       {children}
     </motion.div>

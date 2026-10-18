@@ -4,6 +4,7 @@ import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { ArrowButton } from "@/components/ui/arrow-button";
+import { HeroMotion } from "@/components/ui/hero-motion";
 import { GradientText } from "@/components/ui/gradient-text";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
@@ -46,7 +47,9 @@ function Render({ data }: { data: Data }) {
       // mockup's hero shows.
       contentClassName="mx-auto flex min-h-[calc(88vh-8rem)] max-w-[var(--site-container)] flex-col justify-center px-5 md:px-10"
     >
-      <div data-hero-backdrop className="absolute inset-0 -z-10">
+      {/* overflow-hidden parent: the Forge media entrance scales the inner layer 1.035 -> 1 and must not widen the page. */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+      <HeroMotion part="media" className="absolute inset-0">
         <DuotoneImage src={data.imageUrl} className="h-full w-full" intensity={0.5} sizes="100vw" priority />
         {/* Scrim. The duotone alone was enough over the gradient
             placeholder, but a real photograph has bright regions (the sky
@@ -59,7 +62,9 @@ function Render({ data }: { data: Data }) {
           data-hero-scrim
           className="absolute inset-0 bg-gradient-to-r from-osi-navy-900/85 via-osi-navy-900/55 to-osi-navy-900/20"
         />
+      </HeroMotion>
       </div>
+      <HeroMotion part="content" className="contents">
       {data.eyebrow && (
         <p className="mb-3 font-display text-small-label tracking-wide-label uppercase">
           {/* No `data.background` branch here, unlike hero_page/
@@ -98,6 +103,7 @@ function Render({ data }: { data: Data }) {
           ))}
         </div>
       )}
+      </HeroMotion>
     </Section>
   );
 }

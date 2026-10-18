@@ -2,9 +2,8 @@
 
 import { motion } from "motion/react";
 import { useRef, type ReactNode } from "react";
-import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { useRevealInView } from "@/lib/motion/use-reveal-in-view";
-import { fadeRiseVariants, fadeRiseVariantsReduced } from "@/lib/motion/variants";
+import { useRevealVariants } from "@/lib/motion/use-reveal-variants";
 
 /**
  * Scroll-reveal for a whole <section>. The motion element IS the
@@ -29,7 +28,7 @@ export function RevealSection({
   className?: string;
   children: ReactNode;
 }) {
-  const reduceMotion = useHydratedReducedMotion();
+  const { reveal } = useRevealVariants();
   const ref = useRef<HTMLElement>(null);
   const inView = useRevealInView(ref);
 
@@ -40,7 +39,7 @@ export function RevealSection({
       className={className}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      variants={reduceMotion ? fadeRiseVariantsReduced : fadeRiseVariants}
+      variants={reveal}
     >
       {children}
     </motion.section>
