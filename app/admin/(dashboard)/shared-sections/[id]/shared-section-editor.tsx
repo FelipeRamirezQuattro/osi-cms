@@ -470,7 +470,7 @@ export function SharedSectionEditor({
                 {autosaveProblem.message}
               </Alert>
             )}
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <DndContext id="shared-section-blocks" sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
               <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
                 {fields.map((field, index) => (
                   <SortableBlockRow

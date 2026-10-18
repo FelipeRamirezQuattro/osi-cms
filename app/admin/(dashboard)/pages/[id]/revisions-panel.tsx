@@ -25,7 +25,7 @@ export function RevisionsPanel({
       {revisions.length === 0 ? (
         <p className="text-xs opacity-70">Versions are saved each time you publish.</p>
       ) : (
-        <ul className="space-y-1 text-xs">
+        <ul className="max-h-48 space-y-1 overflow-y-auto text-xs">
           {revisions.map((rev) => (
             <li key={rev.id} className="flex items-center justify-between gap-2">
               <span className="opacity-70">{new Date(rev.created_at).toLocaleString()}</span>

@@ -711,8 +711,14 @@ export function PageEditor({
 
         <PreflightPanel preflight={preflight} isChecking={isCheckingPreflight} onCheck={checkPreflight} />
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-4">
+        {/* Three grid children so version history can lead the right column at
+            lg+ (visible without scrolling) and still sit above the blocks on a
+            phone, where it used to land at the very bottom of the page (C2). */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:grid-rows-[auto_1fr]">
+          <div className="lg:col-start-2 lg:row-start-1">
+            <RevisionsPanel revisions={revisions} onRestore={onRestoreRevision} />
+          </div>
+          <div className="space-y-4 lg:col-start-1 lg:row-span-2 lg:row-start-1">
             {autosaveProblem && (
               <Alert
                 tone="warning"
@@ -729,7 +735,7 @@ export function PageEditor({
                 {autosaveProblem.message}
               </Alert>
             )}
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <DndContext id="page-blocks" sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
               <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
                 {fields.map((field, index) => (
                   <SortableBlockRow
@@ -762,7 +768,7 @@ export function PageEditor({
             <BlockPalettePicker entries={palette} onAdd={addBlock} />
           </div>
 
-          <aside className="space-y-6">
+          <aside className="space-y-6 lg:col-start-2 lg:row-start-2">
             <section className="space-y-3 rounded border border-osi-sand-300 bg-osi-white p-4">
               <h2 className="font-display text-xs tracking-wide-display uppercase opacity-70">Page settings</h2>
               <label className="block space-y-1 text-sm">
@@ -839,8 +845,6 @@ export function PageEditor({
                 )}
               </section>
             )}
-
-            <RevisionsPanel revisions={revisions} onRestore={onRestoreRevision} />
           </aside>
         </div>
       </div>
