@@ -6,7 +6,7 @@ vi.mock("server-only", () => ({}));
 const { mockGetPublishedBranding } = vi.hoisted(() => ({ mockGetPublishedBranding: vi.fn() }));
 vi.mock("@/lib/data/branding", () => ({ getPublishedBranding: mockGetPublishedBranding }));
 
-import { resolvePublishedBranding } from "@/lib/branding/resolve";
+import { applyLayoutOverride, resolvePublishedBranding } from "@/lib/branding/resolve";
 
 describe("resolvePublishedBranding", () => {
   beforeEach(() => {
@@ -45,5 +45,22 @@ describe("resolvePublishedBranding", () => {
     expect(resolved.config).toEqual(OSI_SEED_BRANDING_CONFIG);
     expect(consoleError).toHaveBeenCalledOnce();
     consoleError.mockRestore();
+  });
+});
+
+describe("applyLayoutOverride", () => {
+  const env = (vars: Record<string, string>) => vars as unknown as NodeJS.ProcessEnv;
+
+  it("forces a valid layout outside Vercel production", () => {
+    expect(applyLayoutOverride(OSI_SEED_BRANDING_CONFIG, env({ OSI_LAYOUT_OVERRIDE: "forge" })).layout).toBe("forge");
+    expect(applyLayoutOverride(OSI_SEED_BRANDING_CONFIG, env({ OSI_LAYOUT_OVERRIDE: "classic" })).layout).toBe("classic");
+  });
+
+  it("does nothing when unset or invalid, and never on Vercel production", () => {
+    expect(applyLayoutOverride(OSI_SEED_BRANDING_CONFIG, env({}))).toBe(OSI_SEED_BRANDING_CONFIG);
+    expect(applyLayoutOverride(OSI_SEED_BRANDING_CONFIG, env({ OSI_LAYOUT_OVERRIDE: "vector" }))).toBe(OSI_SEED_BRANDING_CONFIG);
+    expect(
+      applyLayoutOverride(OSI_SEED_BRANDING_CONFIG, env({ OSI_LAYOUT_OVERRIDE: "forge", VERCEL_ENV: "production" })),
+    ).toBe(OSI_SEED_BRANDING_CONFIG);
   });
 });

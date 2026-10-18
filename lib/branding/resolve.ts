@@ -1,7 +1,7 @@
 import "server-only";
 
 import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
-import type { BrandingConfig } from "@/lib/branding/schema";
+import { layoutThemeSchema, type BrandingConfig } from "@/lib/branding/schema";
 import { getBrandingDraft, getPublishedBranding } from "@/lib/data/branding";
 
 export type ResolvedPublicBranding = {
@@ -9,6 +9,18 @@ export type ResolvedPublicBranding = {
   source: "published" | "draft" | "fallback";
   publishedVersion: number | null;
 };
+
+/**
+ * Local QA escape hatch: `OSI_LAYOUT_OVERRIDE=classic|forge` forces the layout
+ * theme on top of whatever branding resolved, so both themes can be rendered
+ * (screenshots, axe, Lighthouse) without writing to the shared database.
+ * Ignored on Vercel production and for any value that isn't a known layout.
+ */
+export function applyLayoutOverride(config: BrandingConfig, env: NodeJS.ProcessEnv = process.env): BrandingConfig {
+  if (env.VERCEL_ENV === "production") return config;
+  const parsed = layoutThemeSchema.safeParse(env.OSI_LAYOUT_OVERRIDE);
+  return parsed.success ? { ...config, layout: parsed.data } : config;
+}
 
 /**
  * Resolves only the public publication. Draft/history tables are never read
@@ -20,7 +32,7 @@ export async function resolvePublishedBranding(): Promise<ResolvedPublicBranding
     const publication = await getPublishedBranding();
     if (publication) {
       return {
-        config: publication.config,
+        config: applyLayoutOverride(publication.config),
         source: "published",
         publishedVersion: publication.published_version,
       };
@@ -33,7 +45,7 @@ export async function resolvePublishedBranding(): Promise<ResolvedPublicBranding
   }
 
   return {
-    config: OSI_SEED_BRANDING_CONFIG,
+    config: applyLayoutOverride(OSI_SEED_BRANDING_CONFIG),
     source: "fallback",
     publishedVersion: null,
   };
@@ -43,7 +55,7 @@ export async function resolvePublishedBranding(): Promise<ResolvedPublicBranding
 export async function resolveDraftBranding(): Promise<ResolvedPublicBranding> {
   try {
     const draft = await getBrandingDraft();
-    return { config: draft.config, source: "draft", publishedVersion: draft.draft_version };
+    return { config: applyLayoutOverride(draft.config), source: "draft", publishedVersion: draft.draft_version };
   } catch (error) {
     console.error("[branding] Draft branding could not be resolved; using the public publication.", error);
     return resolvePublishedBranding();
