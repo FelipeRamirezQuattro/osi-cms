@@ -1,24 +1,15 @@
-import { createProxyDbClient, createServerDbClient } from "@/lib/db/client";
-import { buildRedirectIndex, type RedirectIndex } from "@/lib/redirects/matcher";
-import type { Tables } from "@/lib/db/database.types";
-
-/**
- * Resolves the `redirects` table (legacy URL map, master prompt §7/§9)
- * against the catch-all route — checked only when no `pages` row matches
- * the slug, so a real CMS page always wins over a stale redirect entry.
- */
-export async function getRedirectByPath(fromPath: string): Promise<Tables<"redirects"> | null> {
-  const db = createServerDbClient();
-  const { data, error } = await db.from("redirects").select("*").eq("from_path", fromPath).maybeSingle();
-  if (error) throw error;
-  return data;
-}
+import { createProxyDbClient } from "@/lib/db/client";
+import { buildRedirectIndex, matchRedirect, type RedirectIndex } from "@/lib/redirects/matcher";
+import { resolveRedirectTarget } from "@/lib/redirects/resolver";
 
 /**
  * The whole `redirects` table (tiny — a few dozen rows) as a lookup index, for
- * proxy.ts. Cached in module memory for REDIRECT_CACHE_TTL_MS so a warm instance
- * costs one query a minute instead of one per request; an admin edit therefore
- * takes up to a minute to apply.
+ * proxy.ts. Product/page targets are resolved here, from the status, category and
+ * slug that `redirect_index()` (migration 0052) returns in the same single query —
+ * so a publish or a category change is picked up on the next refresh, never per
+ * request. Cached in module memory for REDIRECT_CACHE_TTL_MS, so a warm instance
+ * costs one query a minute instead of one per request; an admin edit or a publish
+ * therefore takes up to a minute to apply.
  *
  * The cache is an optimisation only (Next's proxy docs say not to rely on
  * globals there): a cold or different instance simply fetches again. It fails
@@ -40,12 +31,21 @@ export function resetRedirectCacheForTests() {
 async function fetchRedirectIndex(): Promise<RedirectIndex | null> {
   try {
     const db = createProxyDbClient();
-    const { data, error } = await db
+    const { data, error } = await db.rpc("redirect_index").abortSignal(AbortSignal.timeout(REDIRECT_FETCH_TIMEOUT_MS));
+    if (!error && data) {
+      return buildRedirectIndex(
+        data.map((row) => ({ from_path: row.from_path, to_path: resolveRedirectTarget(row), status_code: row.status_code })),
+      );
+    }
+    // Migration 0052 not applied yet (or the RPC failed): plain path redirects still work.
+    const plain = await db
       .from("redirects")
       .select("from_path, to_path, status_code")
       .abortSignal(AbortSignal.timeout(REDIRECT_FETCH_TIMEOUT_MS));
-    if (error || !data) return null;
-    return buildRedirectIndex(data);
+    if (plain.error || !plain.data) return null;
+    return buildRedirectIndex(
+      plain.data.flatMap((row) => (row.to_path ? [{ from_path: row.from_path, to_path: row.to_path, status_code: row.status_code }] : [])),
+    );
   } catch {
     return null;
   }
@@ -63,4 +63,14 @@ export async function getRedirectIndex(now: number = Date.now()): Promise<Redire
     return fresh;
   }
   return cached?.index ?? null; // stale-on-error
+}
+
+/**
+ * The resolved redirect for a path, for the catch-all page's fallback (a path the proxy
+ * couldn't answer, e.g. the index was unavailable at that moment). Same resolution as the proxy.
+ */
+export async function getRedirectByPath(fromPath: string): Promise<{ to_path: string; status_code: number } | null> {
+  const index = await getRedirectIndex();
+  const hit = index ? matchRedirect(index, fromPath) : null;
+  return hit ? { to_path: hit.location, status_code: hit.status } : null;
 }

@@ -1487,29 +1487,56 @@ export type Database = {
       redirects: {
         Row: {
           created_at: string
+          fallback_path: string | null
           from_path: string
           id: string
+          note: string | null
           status_code: number
-          to_path: string
+          target_page_id: string | null
+          target_product_id: string | null
+          to_path: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          fallback_path?: string | null
           from_path: string
           id?: string
+          note?: string | null
           status_code?: number
-          to_path: string
+          target_page_id?: string | null
+          target_product_id?: string | null
+          to_path?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          fallback_path?: string | null
           from_path?: string
           id?: string
+          note?: string | null
           status_code?: number
-          to_path?: string
+          target_page_id?: string | null
+          target_product_id?: string | null
+          to_path?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "redirects_target_page_id_fkey"
+            columns: ["target_page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "redirects_target_product_id_fkey"
+            columns: ["target_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       resources: {
         Row: {
@@ -1876,6 +1903,21 @@ export type Database = {
       publish_shared_section_atomic: {
         Args: { p_expected_version: number; p_section_id: string }
         Returns: undefined
+      }
+      redirect_index: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category_slug: string
+          fallback_path: string
+          from_path: string
+          page_published: boolean
+          page_slug: string
+          product_published: boolean
+          product_slug: string
+          status_code: number
+          target_kind: string
+          to_path: string
+        }[]
       }
       record_audit: {
         Args: {
