@@ -31,6 +31,17 @@ export function createServerDbClient() {
   });
 }
 
+/**
+ * Anonymous, cookie-less client for proxy.ts — proxy runs before a request has
+ * any `next/headers` context, and its lookups (public redirects/pages) need no
+ * session. RLS applies exactly as for any signed-out visitor.
+ */
+export function createProxyDbClient() {
+  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+    cookies: { getAll: () => [], setAll: () => {} },
+  });
+}
+
 export function createBrowserDbClient() {
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 }
