@@ -465,9 +465,7 @@ minute to go live. The list is kept **flat**: a redirect can't point to
 itself, can't point at an address that is itself redirected, and can't be
 the destination of another redirect. If you try, the error names the
 redirect in the way ("/a already redirects to /b — point this one
-straight to /b") so you can point it directly at the final page. When you
-rename a page that already had redirects pointing at its old address, they
-are updated to the new address automatically.
+straight to /b") so you can point it directly at the final page.
 
 ## Users
 
