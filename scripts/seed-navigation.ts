@@ -2,6 +2,8 @@
  * Seeds nav_menus/nav_items from the master prompt §7 (mega menu,
  * utility bar, footer columns). Idempotent: clears each menu's items
  * before reinserting, so it's safe to re-run after editing this file.
+ * WARNING: that also drops every nav_items.product_id reference (0048) and any
+ * item added in the admin — the live mega menu is edited in /admin/navigation now.
  *
  * Run: pnpm seed:navigation
  */
@@ -10,6 +12,8 @@ import { createServiceRoleDbClient } from "../lib/db/client";
 type ItemInput = { label: string; href: string; badge?: string; children?: ItemInput[] };
 
 const UTILITY_ITEMS: ItemInput[] = [
+  // Opens the products menu (components/layout/mega-menu-client.tsx); a plain link to /products without JS.
+  { label: "Products", href: "/products" },
   { label: "Customer Cloud", href: "/services" },
   { label: "Careers", href: "/careers" },
   { label: "About Us", href: "/about-us" },

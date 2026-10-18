@@ -19,6 +19,7 @@ function navItem(overrides: Partial<NavItemNode>): NavItemNode {
     badge: null,
     is_external: false,
     position: 0,
+    product_id: null,
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-01-01T00:00:00Z",
     children: [],
@@ -60,5 +61,22 @@ describe("MegaMenuClient utility nav honors is_external", () => {
     expect(menuTrigger?.getAttribute("aria-haspopup")).toBe("dialog");
     expect(menuDialog?.tagName).toBe("DIALOG");
     expect(menuDialog?.getAttribute("aria-labelledby")).toBe("site-menu-title");
+  });
+});
+
+describe("MegaMenuClient utility 'Products' entry", () => {
+  it("renders as a link to /products that advertises the products dialog, and is not repeated inside the menu", () => {
+    const container = render([
+      navItem({ id: "p", label: "Products", href: "/products" }),
+      navItem({ id: "c", label: "Careers", href: "/careers" }),
+    ]);
+    const triggers = [...container.querySelectorAll("a")].filter((a) => a.textContent?.includes("Products"));
+    expect(triggers).toHaveLength(1); // the desktop bar only — the dialog's "Explore" list omits it
+    expect(triggers[0].getAttribute("href")).toBe("/products");
+    expect(triggers[0].getAttribute("aria-haspopup")).toBe("dialog");
+    expect(triggers[0].getAttribute("aria-controls")).toBe("mega-menu-panel");
+    const careers = [...container.querySelectorAll("a")].filter((a) => a.textContent?.includes("Careers"));
+    expect(careers).toHaveLength(2); // bar + dialog
+    expect(careers[0].getAttribute("aria-haspopup")).toBeNull();
   });
 });

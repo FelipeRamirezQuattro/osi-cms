@@ -32,6 +32,16 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
+/**
+ * The utility-bar entry that points at the products listing opens the products
+ * menu (the same dialog as "Menu") instead of navigating — the mockup's top bar
+ * has a products entry, and this keeps it a data-driven nav item. Without JS it
+ * is still a working link to /products.
+ */
+function opensProductsMenu(item: NavItemNode) {
+  return item.href === "/products" && !item.is_external;
+}
+
 export function MegaMenuClient({
   utilityItems,
   megaColumns,
@@ -84,6 +94,17 @@ export function MegaMenuClient({
               key={item.id}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
+              {...(opensProductsMenu(item)
+                ? {
+                    "aria-haspopup": "dialog" as const,
+                    "aria-expanded": menuOpen,
+                    "aria-controls": "mega-menu-panel",
+                    onClick: (event: React.MouseEvent) => {
+                      event.preventDefault();
+                      openMenu();
+                    },
+                  }
+                : {})}
               className="group relative inline-flex min-h-11 items-center rounded-full px-4 font-body text-sm font-medium text-white/74 transition-[color,background-color] duration-200 hover:bg-white/7 hover:text-white aria-[current=page]:text-white"
               {...externalLinkAttrs(item.is_external)}
             >
@@ -191,7 +212,7 @@ export function MegaMenuClient({
             <div>
               <p className="mb-5 text-xs font-semibold tracking-[0.12em] text-brand-accent-dark uppercase">Explore</p>
               <nav aria-label="Featured pages" className="flex flex-col items-start gap-2">
-                {utilityItems.map((item) => (
+                {utilityItems.filter((item) => !opensProductsMenu(item)).map((item) => (
                   <Link
                     key={item.id}
                     href={item.href}
