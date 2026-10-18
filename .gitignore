@@ -53,3 +53,4 @@ skills-lock.json
 
 # Client QA documents (public repo) — never commit
 docs/*.docx
+/screenshots/

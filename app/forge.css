@@ -164,8 +164,8 @@
   max-width: none;
 }
 
-.public-site[data-theme="forge"] [data-site-header] nav a,
-.public-site[data-theme="forge"] [data-site-header] button {
+/* Bar controls only — the menu/search dialogs also live inside the header. */
+.public-site[data-theme="forge"] [data-site-header] > div > div :is(nav a, button) {
   border-radius: 0;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -173,7 +173,7 @@
   font-size: 0.75rem;
 }
 
-.public-site[data-theme="forge"] [data-site-header] button[aria-haspopup]:last-of-type {
+.public-site[data-theme="forge"] [data-site-header] > div > div > button[aria-haspopup]:last-of-type {
   border-radius: 0;
   background: var(--brand-color-accent-on-dark);
   border-color: var(--brand-color-accent-on-dark);
