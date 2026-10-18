@@ -263,7 +263,7 @@ describe("saveProductAction — extra content blocks", () => {
       blocks: [{ type: "columns", is_visible: true, data: { background: "cream", columns: [] } }],
     });
     expect(result).toMatchObject({ status: "error", blockIndex: 0 });
-    expect((result as { message: string }).message).toMatch(/Columns block \(position 1\): add at least 2 columns/);
+    expect((result as { message: string }).message).toMatch(/Block 1 \(Columns\): add at least 2 columns/);
     expect(mockSaveProduct).not.toHaveBeenCalled();
     expect(mockSaveProductBlocks).not.toHaveBeenCalled();
   });

@@ -661,7 +661,7 @@ function SortableBlockRow({
           onClick={onToggleOpen}
           className="flex-1 text-left text-sm font-medium"
         >
-          {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
+          <span className="opacity-60">Block {index + 1}</span> · {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
         </button>
         <button type="button" onClick={onToggleVisible} className="text-xs opacity-70 hover:underline">
           {isVisible ? "Hide" : "Show"}

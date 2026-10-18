@@ -9,7 +9,7 @@ describe("validateBlockList — plain-English messages (BLQ-02, BLQ-05, BLQ-34)"
       { type: "columns", data: { ...common, columns: [{ type: "text", heading: "One" }] } },
     ]);
     expect(result).toMatchObject({ status: "error", blockIndex: 0 });
-    expect(result!.message).toBe("Columns block (position 1): add at least 2 columns (you have 1).");
+    expect(result!.message).toBe("Block 1 (Columns): add at least 2 columns — you have 1.");
     expect(result!.message).not.toMatch(/Too small|expected array/);
   });
 
@@ -17,7 +17,7 @@ describe("validateBlockList — plain-English messages (BLQ-02, BLQ-05, BLQ-34)"
     const result = validateBlockList([
       { type: "ar_model", data: { ...common, glbUrl: "", usdzUrl: "", alt: "" } },
     ]);
-    expect(result!.message).toContain("AR model block (position 1):");
+    expect(result!.message).toContain("Block 1 (AR model):");
     expect(result!.message).toContain("3D model (.glb) is required");
     expect(result!.message).toContain("iOS AR model (.usdz) is required");
     expect(result!.message).toContain("Alt text is required");
@@ -31,6 +31,6 @@ describe("validateBlockList — plain-English messages (BLQ-02, BLQ-05, BLQ-34)"
       { type: "columns", data: { ...common, columns: [] } },
     ]);
     expect(result).toMatchObject({ blockIndex: 1 });
-    expect(result!.message).toContain("(position 2)");
+    expect(result!.message).toContain("Block 2 (Columns):");
   });
 });

@@ -27,7 +27,7 @@ function Harness({ problem, reveal }: { problem: SaveProblem; reveal: (p: SavePr
 describe("useSaveProblemAlert (a failed save is an alert, not a line at the top of the page)", () => {
   it("a block problem opens a warning dialog and 'Go to block' reveals that block", async () => {
     const reveal = vi.fn();
-    const problem = { message: "Columns block (position 3): add at least 2 columns (you have 1).", blockIndex: 2, field: "columns" };
+    const problem = { message: "Block 3 (Columns): add at least 2 columns — you have 1.", blockIndex: 2, field: "columns" };
     render(<Harness problem={problem} reveal={reveal} />);
     fireEvent.click(screen.getByText("go"));
     expect(await screen.findByText("This block can't be saved yet")).toBeInTheDocument();

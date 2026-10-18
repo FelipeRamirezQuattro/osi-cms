@@ -31,7 +31,7 @@ describe("Alert", () => {
     const onGo = vi.fn();
     render(
       <Alert
-        title="Columns block needs attention"
+        title="Block 3 (Columns) needs attention"
         details={["Add at least 2 columns (you have 1).", "Heading is required."]}
         actions={<button onClick={onGo}>Go to block</button>}
         onDismiss={onDismiss}
@@ -56,7 +56,7 @@ function Harness() {
             await alert({
               tone: "warning",
               title: "This block can't be saved yet",
-              message: "Columns block (position 3): add at least 2 columns (you have 1).",
+              message: "Block 3 (Columns): add at least 2 columns — you have 1.",
               details: ["Add at least 2 columns (you have 1)."],
               actionLabel: "Go to block",
             }),

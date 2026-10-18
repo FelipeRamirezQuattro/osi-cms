@@ -1003,7 +1003,7 @@ function SortableBlockRow({
           onClick={onToggleOpen}
           className="min-w-0 flex-1 basis-32 text-left text-sm font-medium"
         >
-          {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
+          <span className="opacity-60">Block {index + 1}</span> · {typeLabel} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
         </button>
         {/* Wraps to its own line on a phone instead of pushing past the margin (CAL-02). */}
         <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">

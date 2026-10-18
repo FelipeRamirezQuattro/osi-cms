@@ -106,7 +106,7 @@ export const ProductBlocksField = forwardRef<ProductBlocksHandle, { palette: Blo
                   aria-expanded={isOpen}
                   className="min-w-0 flex-1 basis-32 text-left text-sm font-medium"
                 >
-                  {label} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
+                  <span className="opacity-60">Block {index + 1}</span> · {label} {!isVisible && <span className="text-xs opacity-50">(hidden)</span>}
                 </button>
                 <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
                   <button

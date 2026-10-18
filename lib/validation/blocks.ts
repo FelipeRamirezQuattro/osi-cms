@@ -20,6 +20,16 @@ export type BlockValidationError = {
   field?: string;
 };
 
+/** "Block 3 (Columns)" — the number matches the one shown on the block's row in the editor. */
+export function blockLabel(index: number, typeLabel: string): string {
+  return `Block ${index + 1} (${typeLabel})`;
+}
+
+// "add at least 2 columns (you have 1)" -> "add at least 2 columns — you have 1"
+function plainSentence(text: string): string {
+  return text.replace(/\.$/, "").replace(/ \(you have (\d+)\)/, " — you have $1");
+}
+
 export function validateBlockList(blocks: BlockValidationInput[]): BlockValidationError | null {
   for (let i = 0; i < blocks.length; i++) {
     const definition = getBlockDefinition(blocks[i].type);
@@ -39,12 +49,12 @@ export function validateBlockList(blocks: BlockValidationInput[]): BlockValidati
         if (seen.has(key)) continue;
         seen.add(key);
         total += 1;
-        if (sentences.length < 4) sentences.push(describeIssue(issue, { specs, data: blocks[i].data }).replace(/\.$/, ""));
+        if (sentences.length < 4) sentences.push(plainSentence(describeIssue(issue, { specs, data: blocks[i].data })));
       }
       const more = total - sentences.length;
       return {
         status: "error",
-        message: `${definition.label} block (position ${i + 1}): ${sentences.join("; ")}${more > 0 ? `; …and ${more} more` : ""}.`,
+        message: `${blockLabel(i, definition.label)}: ${sentences.join("; ")}${more > 0 ? `; …and ${more} more` : ""}.`,
         blockIndex: i,
         field: issueField(parsed.error.issues[0]),
       };
