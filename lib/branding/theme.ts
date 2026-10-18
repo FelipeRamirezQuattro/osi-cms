@@ -3,6 +3,7 @@ import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
 import {
   brandingConfigSchema,
   type BrandingConfig,
+  type LayoutTheme,
   type RoleColorRef,
   type SemanticRoles,
 } from "@/lib/branding/schema";
@@ -12,12 +13,21 @@ export type BrandingThemeStyle = CSSProperties & Record<`--${string}`, string | 
 
 export type CompiledBrandingTheme = {
   config: BrandingConfig;
+  /** Resolved layout theme; configs saved before the field existed are "classic". */
+  layout: LayoutTheme;
   style: BrandingThemeStyle;
   usedFontKeys: FontCatalogKey[];
   usedFallback: boolean;
 };
 
 const FALLBACK_CONFIG = brandingConfigSchema.parse(OSI_SEED_BRANDING_CONFIG);
+
+/** The Forge display face. Fixed in code (not editor-selectable) so the theme's type contract can't drift. */
+const FORGE_DISPLAY_FONT = "rajdhani" as const;
+
+export function getLayoutTheme(config: Pick<BrandingConfig, "layout">): LayoutTheme {
+  return config.layout ?? "classic";
+}
 
 const ROLE_VARIABLES = {
   primary: "--brand-color-primary",
@@ -196,17 +206,25 @@ export function compileBrandingTheme(input: unknown): CompiledBrandingTheme {
   add(entries, "--site-border", colorValue(config.roles.borderOnLight, swatches));
   add(entries, "--site-border-on-dark", colorValue(config.roles.borderOnDark, swatches));
 
+  const layout = getLayoutTheme(config);
+  if (layout === "forge") {
+    // Forge swaps the display and heading faces for Rajdhani through scoped
+    // CSS (app/forge.css) that reads this variable; classic never emits it.
+    add(entries, "--forge-font-display", getFontCssStack(FORGE_DISPLAY_FONT));
+  }
+
   const style = Object.fromEntries(
     entries.toSorted(([a], [b]) => a.localeCompare(b)),
   ) as BrandingThemeStyle;
   const usedFontKeys = [
     ...new Set([
       ...Object.values(config.typography),
+      ...(layout === "forge" ? [FORGE_DISPLAY_FONT] : []),
       ...Object.values(config.blockDefaults).flatMap((defaults) =>
         defaults ? Object.values(defaults.typography).filter((key): key is FontCatalogKey => Boolean(key)) : [],
       ),
     ]),
   ].toSorted() as FontCatalogKey[];
 
-  return { config, style, usedFontKeys, usedFallback };
+  return { config, layout, style, usedFontKeys, usedFallback };
 }

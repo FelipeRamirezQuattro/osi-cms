@@ -192,3 +192,18 @@ describe("brandingConfigSchema", () => {
     expect(brandingConfigSchema.safeParse(config).success).toBe(false);
   });
 });
+
+describe("layout theme field", () => {
+  it("accepts a missing layout, classic and forge", () => {
+    expect(safeParseBrandingConfig(OSI_SEED_BRANDING_CONFIG).success).toBe(true);
+    for (const layout of ["classic", "forge"]) {
+      expect(safeParseBrandingConfig({ ...OSI_SEED_BRANDING_CONFIG, layout }).success).toBe(true);
+    }
+  });
+
+  it("rejects any other layout value", () => {
+    for (const layout of ["vector", "", null, 1]) {
+      expect(safeParseBrandingConfig({ ...OSI_SEED_BRANDING_CONFIG, layout }).success).toBe(false);
+    }
+  });
+});

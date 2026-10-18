@@ -376,6 +376,18 @@ export type Favicon = z.infer<typeof faviconSchema>;
 export const BRANDING_CONFIG_VERSION_LATEST = 1 as const;
 
 /**
+ * Public-site layout theme. "classic" is the original OSI presentation;
+ * "forge" is the cinematic-industrial presentation (docs/BRANDING.md,
+ * "Layout themes"). It is an OPTIONAL v1 field that defaults to "classic":
+ * every stored v1 document (draft, publication, revisions) predates it and
+ * stays valid and visually identical, so no version bump or data migration
+ * is needed — see docs/DECISIONS.md.
+ */
+export const LAYOUT_THEMES = ["classic", "forge"] as const;
+export type LayoutTheme = (typeof LAYOUT_THEMES)[number];
+export const layoutThemeSchema = z.enum(LAYOUT_THEMES);
+
+/**
  * v1 of the branding configuration schema. `configVersion` is a Zod
  * literal so `brandingConfigSchema` below (a discriminated union) can
  * dispatch on it — an unsupported version number (or a missing one)
@@ -392,6 +404,7 @@ export const brandingConfigV1Schema = z
     blockDefaults: blockDefaultsSchema,
     logo: primaryLogoSchema,
     favicon: faviconSchema.optional(),
+    layout: layoutThemeSchema.optional(),
   })
   .superRefine((config, ctx) => {
     // --- Swatches: unique IDs/names, active-brand-palette cap ---

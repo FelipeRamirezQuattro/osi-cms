@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
-import { compileBrandingTheme } from "@/lib/branding/theme";
+import { compileBrandingTheme, getLayoutTheme } from "@/lib/branding/theme";
 
 function cloneSeed(): Record<string, unknown> {
   return structuredClone(OSI_SEED_BRANDING_CONFIG) as unknown as Record<string, unknown>;
@@ -60,5 +60,36 @@ describe("compileBrandingTheme", () => {
 
     expect(compileBrandingTheme(badHex).usedFallback).toBe(true);
     expect(compileBrandingTheme(badId).usedFallback).toBe(true);
+  });
+
+  describe("layout theme", () => {
+    it("treats a config with no layout field as classic and emits no Forge variables", () => {
+      const result = compileBrandingTheme(OSI_SEED_BRANDING_CONFIG);
+      expect(getLayoutTheme(OSI_SEED_BRANDING_CONFIG)).toBe("classic");
+      expect(result.layout).toBe("classic");
+      expect(result.style["--forge-font-display"]).toBeUndefined();
+      expect(result.usedFontKeys).not.toContain("rajdhani");
+    });
+
+    it("forge emits the Rajdhani stack and attaches its font class", () => {
+      const result = compileBrandingTheme({ ...cloneSeed(), layout: "forge" });
+      expect(result.usedFallback).toBe(false);
+      expect(result.layout).toBe("forge");
+      expect(result.style["--forge-font-display"]).toBe("var(--font-catalog-rajdhani), sans-serif");
+      expect(result.usedFontKeys).toContain("rajdhani");
+    });
+
+    it("an unknown layout value falls back as a unit to the built-in classic theme", () => {
+      const result = compileBrandingTheme({ ...cloneSeed(), layout: "vector" });
+      expect(result.usedFallback).toBe(true);
+      expect(result.layout).toBe("classic");
+    });
+
+    it("forge changes only the Forge variables and the font list, never a color role", () => {
+      const classic = compileBrandingTheme(OSI_SEED_BRANDING_CONFIG).style;
+      const forge = compileBrandingTheme({ ...cloneSeed(), layout: "forge" }).style;
+      const { ["--forge-font-display"]: _added, ...rest } = forge;
+      expect(rest).toEqual(classic);
+    });
   });
 });

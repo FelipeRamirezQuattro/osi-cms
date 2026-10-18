@@ -19,6 +19,7 @@ export function PublicThemeBoundary({
     <div
       className={`public-site site-shell ${fontClasses} ${className}`.trim()}
       style={theme.style}
+      data-theme={theme.layout}
       data-branding-source={theme.usedFallback ? "fallback" : branding.source}
       data-branding-version={
         theme.usedFallback ? undefined : (branding.publishedVersion ?? undefined)
