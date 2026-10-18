@@ -459,7 +459,13 @@ everyone, even people who dismissed the old wording.
 
 **Redirects** sends visitors from an old web address to a new one — use
 this any time you change a page's slug or remove a page that other sites
-might still link to. Search engines get a real permanent redirect (301),
+might still link to. Each redirect has **one** destination: a path you
+type, **or** a product, **or** a page picked from a list. A product or page
+destination follows that content: while a product is still a draft its old
+address sends visitors to that category's product list, and once you
+publish it the same address goes straight to the product (the same for a
+page, using the optional "fallback path" you set for the time it is a
+draft). Search engines get a real permanent redirect (301),
 and any `?query` on the old address is carried over. Changes take up to a
 minute to go live. The list is kept **flat**: a redirect can't point to
 itself, can't point at an address that is itself redirected, and can't be
