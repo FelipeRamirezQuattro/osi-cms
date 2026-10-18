@@ -159,4 +159,34 @@ describe("validateEntityInput — redirects", () => {
     const result = validateEntityInput("redirects", { from_path: "/a", to_path: "/a", status_code: 301 });
     expect(result.success).toBe(false);
   });
+
+  describe("reference targets (0052): exactly one of path / product / page", () => {
+    const PRODUCT = "11111111-1111-4111-8111-111111111111";
+    const PAGE = "22222222-2222-4222-8222-222222222222";
+    const ok = (over: Record<string, unknown>) =>
+      validateEntityInput("redirects", { from_path: "/old", status_code: 301, ...over }).success;
+
+    it("accepts each single kind of target (blank form values count as unset)", () => {
+      expect(ok({ to_path: "/new", target_product_id: "", target_page_id: "", fallback_path: "" })).toBe(true);
+      expect(ok({ to_path: "", target_product_id: PRODUCT, target_page_id: "" })).toBe(true);
+      expect(ok({ to_path: "", target_product_id: "", target_page_id: PAGE, fallback_path: "/news" })).toBe(true);
+    });
+
+    it("rejects no target and more than one target", () => {
+      expect(ok({ to_path: "", target_product_id: "", target_page_id: "" })).toBe(false);
+      expect(ok({ to_path: "/new", target_product_id: PRODUCT })).toBe(false);
+      expect(ok({ target_product_id: PRODUCT, target_page_id: PAGE })).toBe(false);
+    });
+
+    it("only allows a fallback path with a page target, and it must be a path", () => {
+      expect(ok({ to_path: "/new", fallback_path: "/news" })).toBe(false);
+      expect(ok({ target_product_id: PRODUCT, fallback_path: "/news" })).toBe(false);
+      expect(ok({ target_page_id: PAGE, fallback_path: "news" })).toBe(false);
+      expect(ok({ target_page_id: PAGE, fallback_path: "//evil.example" })).toBe(false);
+    });
+
+    it("rejects a target id that isn't a uuid", () => {
+      expect(ok({ target_product_id: "not-a-uuid" })).toBe(false);
+    });
+  });
 });

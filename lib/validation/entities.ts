@@ -151,6 +151,8 @@ const directorySchema = z.object({
 
 const REDIRECT_STATUS_CODES = [301, 302, 307, 308] as const;
 
+const idOrNull = z.preprocess(emptyStringToNull, z.string().uuid("Pick a valid item from the list").nullable().default(null));
+
 const redirectSchema = z
   .object({
     from_path: z
@@ -158,19 +160,39 @@ const redirectSchema = z
       .trim()
       .min(1, "From path is required")
       .regex(/^\/\S*$/, 'From path must start with "/" and contain no spaces'),
-    to_path: safeHrefSchema({ label: "To path" }),
+    to_path: optionalSafeHrefSchema({ label: "To path" }),
+    target_product_id: idOrNull,
+    target_page_id: idOrNull,
+    fallback_path: z.preprocess(
+      emptyStringToNull,
+      z
+        .string()
+        .regex(/^\/[^\s/]\S*$|^\/$/, 'Fallback path must start with "/" and contain no spaces')
+        .nullable()
+        .default(null),
+    ),
+    note: optionalNullableString(500),
     status_code: z.union(
       REDIRECT_STATUS_CODES.map((code) => z.literal(code)) as [z.ZodLiteral<number>, ...z.ZodLiteral<number>[]],
     ),
   })
+  // Exactly one target. (The database allows zero only as the state after a target row is deleted.)
+  .refine((data) => [data.to_path, data.target_product_id, data.target_page_id].filter((v) => v !== null).length === 1, {
+    message: "Set exactly one target: a path, a product, or a page.",
+    path: ["to_path"],
+  })
+  .refine((data) => data.fallback_path === null || data.target_page_id !== null, {
+    message: "A fallback path only applies when the target is a page.",
+    path: ["fallback_path"],
+  })
   // The one-step self-loop case (`from_path === to_path`) is checked here
   // (and, as a DB-level backstop, by redirects_no_self_loop_check —
-  // migration 0030) since it needs no other rows to detect. Multi-hop
-  // chain/loop rejection needs the *other* existing redirect rows, which
-  // this synchronous schema has no access to — that's
+  // migration 0030) since it needs no other rows to detect. Chain/loop
+  // rejection needs the *other* existing redirect rows, which this
+  // synchronous schema has no access to — that's
   // lib/validation/redirects.ts's findRedirectChainIssue, called
   // separately from lib/actions/entities.ts's saveEntityAction.
-  .refine((data) => data.from_path !== data.to_path, {
+  .refine((data) => data.to_path === null || data.from_path !== data.to_path, {
     message: "A redirect can't point to itself — \"From\" and \"To\" are the same path.",
     path: ["to_path"],
   });

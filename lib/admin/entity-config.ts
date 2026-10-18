@@ -224,15 +224,34 @@ export const ENTITY_CONFIGS: Record<EntityKey, EntityConfig> = {
     hasStatus: false,
     listColumns: [
       { key: "from_path", label: "From" },
-      { key: "to_path", label: "To" },
+      // Derived in listEntitiesAction: the typed path, or "Product: …" / "Page: …" for a reference.
+      { key: "target", label: "Goes to" },
       { key: "status_code", label: "Code" },
     ],
+    // Exactly one target: type a path, or pick a product or a page (it then follows that
+    // content — published URL, or a fallback while it's a draft; see lib/redirects/resolver.ts).
     fields: [
-      { key: "from_path", label: "From path", type: "text" },
-      { key: "to_path", label: "To path", type: "text" },
+      { key: "from_path", label: "From path (the old address, e.g. /old-page)", type: "text" },
+      { key: "to_path", label: "To path — type a path…", type: "text", optional: true },
+      { key: "target_product_id", label: "…or send visitors to a product (its current page; its category's list while it's a draft)", type: "relation", relation: "products", optional: true },
+      { key: "target_page_id", label: "…or send visitors to a page (its address once published)", type: "relation", relation: "pages", optional: true },
+      { key: "fallback_path", label: "Page target only: where to send visitors while that page is a draft (default: the home page)", type: "text", optional: true },
+      { key: "note", label: "Note (internal, optional)", type: "text", optional: true },
       { key: "status_code", label: "Status code", type: "select", options: ["301", "302", "307", "308"] },
     ],
-    defaults: { from_path: "", to_path: "", status_code: "301" },
+    defaults: {
+      from_path: "",
+      to_path: "",
+      target_product_id: "",
+      target_page_id: "",
+      fallback_path: "",
+      note: "",
+      status_code: "301",
+    },
+    relations: [
+      { key: "products", table: "products", valueColumn: "id", labelColumn: "name" },
+      { key: "pages", table: "pages", valueColumn: "id", labelColumn: "title" },
+    ],
   },
 };
 

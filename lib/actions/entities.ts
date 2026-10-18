@@ -25,7 +25,30 @@ export async function listEntitiesAction(entity: EntityKey): Promise<EntityRow[]
   const orderBy = config.hasPosition
     ? [{ column: "position", ascending: true }]
     : [{ column: "created_at", ascending: false }];
-  return listEntityRows(config.table, orderBy);
+  const rows = await listEntityRows(config.table, orderBy);
+  return entity === "redirects" ? withRedirectTargetLabels(rows) : rows;
+}
+
+/** The redirects list's "Goes to" column: the typed path, or the name of the referenced product/page. */
+async function withRedirectTargetLabels(rows: EntityRow[]): Promise<EntityRow[]> {
+  const [products, pages] = await Promise.all([
+    listRelationOptions("products", "id", "name"),
+    listRelationOptions("pages", "id", "title"),
+  ]);
+  const productName = new Map(products.map((o) => [o.value, o.label]));
+  const pageTitle = new Map(pages.map((o) => [o.value, o.label]));
+  return rows.map((row) => {
+    const product = typeof row.target_product_id === "string" ? productName.get(row.target_product_id) : undefined;
+    const page = typeof row.target_page_id === "string" ? pageTitle.get(row.target_page_id) : undefined;
+    const target = product
+      ? `Product: ${product}`
+      : page
+        ? `Page: ${page}${row.fallback_path ? ` (draft → ${String(row.fallback_path)})` : ""}`
+        : typeof row.to_path === "string"
+          ? row.to_path
+          : "(target removed)";
+    return { ...row, target };
+  });
 }
 
 export async function getEntityAction(entity: EntityKey, id: string): Promise<EntityRow | null> {
@@ -89,15 +112,15 @@ export async function saveEntityAction(
   // schema) can provide. Walks the chain at save time rather than
   // relying solely on the DB (which can only ever see the one-step
   // self-loop case via redirects_no_self_loop_check, migration 0030).
-  if (entity === "redirects") {
+  // Only plain-path rows take part: a product/page target resolves to a content URL at
+  // request time, never to another redirect's source.
+  if (entity === "redirects" && typeof payload.to_path === "string") {
     const existingRows = await listEntityRows("redirects", [{ column: "from_path" }]);
-    const existingEdges: RedirectEdge[] = existingRows.map((row) => ({
-      id: row.id,
-      from_path: String(row.from_path),
-      to_path: String(row.to_path),
-    }));
+    const existingEdges: RedirectEdge[] = existingRows
+      .filter((row) => typeof row.to_path === "string")
+      .map((row) => ({ id: row.id, from_path: String(row.from_path), to_path: String(row.to_path) }));
     const issue = findRedirectChainIssue(
-      { id: id ?? undefined, from_path: payload.from_path as string, to_path: payload.to_path as string },
+      { id: id ?? undefined, from_path: payload.from_path as string, to_path: payload.to_path },
       existingEdges,
     );
     if (issue) return { status: "error", message: issue, field: "to_path" };
