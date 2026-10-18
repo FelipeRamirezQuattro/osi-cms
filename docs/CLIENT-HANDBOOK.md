@@ -459,11 +459,15 @@ everyone, even people who dismissed the old wording.
 
 **Redirects** sends visitors from an old web address to a new one — use
 this any time you change a page's slug or remove a page that other sites
-might still link to. Two things it won't let you save: a redirect that
-points to itself, and one that would chain more than 3 hops deep through
-other existing redirects (an old-address-to-old-address-to-old-address
-pileup) — either one gets a clear error message explaining why, so you
-can fix the chain instead.
+might still link to. Search engines get a real permanent redirect (301),
+and any `?query` on the old address is carried over. Changes take up to a
+minute to go live. The list is kept **flat**: a redirect can't point to
+itself, can't point at an address that is itself redirected, and can't be
+the destination of another redirect. If you try, the error names the
+redirect in the way ("/a already redirects to /b — point this one
+straight to /b") so you can point it directly at the final page. When you
+rename a page that already had redirects pointing at its old address, they
+are updated to the new address automatically.
 
 ## Users
 
