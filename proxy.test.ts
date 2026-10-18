@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { proxy, SKIPPED_TOP_SEGMENTS } from "@/proxy";
+import { buildRedirectIndex } from "@/lib/redirects/matcher";
 
 /**
  * Task 8 item #8 — the soft-404 fix. See proxy.ts's top comment for the
@@ -27,6 +28,9 @@ vi.mock("@/lib/auth", () => ({
   publicSlugIsResolvable: mockPublicSlugIsResolvable,
 }));
 
+const { mockGetRedirectIndex } = vi.hoisted(() => ({ mockGetRedirectIndex: vi.fn() }));
+vi.mock("@/lib/data/redirects", () => ({ getRedirectIndex: mockGetRedirectIndex }));
+
 function makeRequest(path: string, init?: { method?: string; headers?: Record<string, string> }) {
   return new NextRequest(new URL(path, "http://localhost:3000"), {
     method: init?.method ?? "GET",
@@ -36,6 +40,7 @@ function makeRequest(path: string, init?: { method?: string; headers?: Record<st
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockGetRedirectIndex.mockResolvedValue(null); // redirects unknown unless a test says otherwise
 });
 
 describe("proxy — admin gating", () => {
@@ -142,7 +147,7 @@ describe("proxy — public soft-404 fix", () => {
 
     const response = await proxy(makeRequest("/about-us"));
 
-    expect(mockPublicSlugIsResolvable).toHaveBeenCalledWith("about-us");
+    expect(mockPublicSlugIsResolvable).toHaveBeenCalledWith("about-us", { checkRedirects: true });
     expect(response.status).toBe(200);
   });
 
@@ -151,7 +156,7 @@ describe("proxy — public soft-404 fix", () => {
 
     await proxy(makeRequest("/careers/hiring"));
 
-    expect(mockPublicSlugIsResolvable).toHaveBeenCalledWith("careers/hiring");
+    expect(mockPublicSlugIsResolvable).toHaveBeenCalledWith("careers/hiring", { checkRedirects: true });
   });
 
   it("rewrites to the chrome-preserving genuine-404 route when nothing resolves", async () => {
@@ -170,6 +175,69 @@ describe("proxy — public soft-404 fix", () => {
     const rewriteTarget = response.headers.get("x-middleware-rewrite");
     expect(rewriteTarget).toBeTruthy();
     expect(new URL(rewriteTarget!).pathname).toBe("/system-not-found");
+  });
+});
+
+describe("proxy — legacy redirects answered before render", () => {
+  const index = buildRedirectIndex([
+    { from_path: "/services-4", to_path: "/services", status_code: 301 },
+    { from_path: "/old-temp", to_path: "/new", status_code: 302 },
+    { from_path: "/products/old-product", to_path: "/products/pumps/esp-chem-screen", status_code: 301 },
+    { from_path: "/admin/legacy", to_path: "/nope", status_code: 301 },
+    { from_path: "/api/legacy", to_path: "/nope", status_code: 301 },
+    { from_path: "/preview/legacy", to_path: "/nope", status_code: 301 },
+  ]);
+
+  beforeEach(() => {
+    mockGetRedirectIndex.mockResolvedValue(index);
+    mockPublicSlugIsResolvable.mockResolvedValue(false); // no CMS page at the legacy path
+  });
+
+  it("answers with the stored status and a Location header, keeping the query string", async () => {
+    const res = await proxy(makeRequest("/services-4?utm_source=wix"));
+    expect(res.status).toBe(301);
+    const location = new URL(res.headers.get("location")!);
+    expect(location.pathname + location.search).toBe("/services?utm_source=wix");
+  });
+
+  it("uses a non-301 stored status as-is", async () => {
+    expect((await proxy(makeRequest("/old-temp"))).status).toBe(302);
+  });
+
+  it("handles HEAD the same way", async () => {
+    expect((await proxy(makeRequest("/services-4", { method: "HEAD" }))).status).toBe(301);
+  });
+
+  it("also covers paths under the segments the soft-404 check skips (/products/...)", async () => {
+    const res = await proxy(makeRequest("/products/old-product"));
+    expect(res.status).toBe(301);
+    expect(new URL(res.headers.get("location")!).pathname).toBe("/products/pumps/esp-chem-screen");
+  });
+
+  it("lets a published CMS page at the same path win over a stale redirect row", async () => {
+    mockPublicSlugIsResolvable.mockResolvedValue(true);
+    const res = await proxy(makeRequest("/services-4"));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("location")).toBeNull();
+  });
+
+  it("never redirects non-GET/HEAD, asset-shaped or RSC requests", async () => {
+    expect((await proxy(makeRequest("/services-4", { method: "POST" }))).status).toBe(200);
+    expect((await proxy(makeRequest("/services-4.png"))).status).toBe(200);
+    expect((await proxy(makeRequest("/services-4", { headers: { RSC: "1" } }))).status).toBe(200);
+  });
+
+  it("never looks up /api or /preview paths (and /admin goes to its own guard)", async () => {
+    mockGuardAdminRequest.mockResolvedValue(new Response(null, { status: 200 }));
+    expect((await proxy(makeRequest("/api/legacy"))).headers.get("location")).toBeNull();
+    expect((await proxy(makeRequest("/preview/legacy"))).headers.get("location")).toBeNull();
+    expect((await proxy(makeRequest("/admin/legacy"))).headers.get("location")).toBeNull();
+  });
+
+  it("doesn't ask whether a redirect exists a second time when the index loaded", async () => {
+    mockPublicSlugIsResolvable.mockResolvedValue(true);
+    await proxy(makeRequest("/about-us"));
+    expect(mockPublicSlugIsResolvable).toHaveBeenCalledWith("about-us", { checkRedirects: false });
   });
 });
 

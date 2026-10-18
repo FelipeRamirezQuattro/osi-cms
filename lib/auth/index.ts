@@ -116,7 +116,13 @@ export async function guardAdminRequest(request: NextRequest): Promise<NextRespo
  * }` on failure rather than throwing, so both the error-result and
  * thrown-exception paths need their own handling.
  */
-export async function publicSlugIsResolvable(slug: string): Promise<boolean> {
+export async function publicSlugIsResolvable(
+  slug: string,
+  options: { checkRedirects?: boolean } = {},
+): Promise<boolean> {
+  // proxy.ts already answered any redirect from its cached index and passes
+  // `checkRedirects: false`, so a normal page request costs one query, not two.
+  const { checkRedirects = true } = options;
   try {
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -126,7 +132,9 @@ export async function publicSlugIsResolvable(slug: string): Promise<boolean> {
 
     const [page, redirect] = await Promise.all([
       supabase.from("page_publications").select("slug", { head: true, count: "exact" }).eq("slug", slug).eq("locale", "en"),
-      supabase.from("redirects").select("id", { head: true, count: "exact" }).eq("from_path", `/${slug}`),
+      checkRedirects
+        ? supabase.from("redirects").select("id", { head: true, count: "exact" }).eq("from_path", `/${slug}`)
+        : Promise.resolve({ error: null, count: 0 }),
     ]);
 
     if (page.error || redirect.error) return true;

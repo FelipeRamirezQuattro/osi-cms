@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { guardAdminRequest, publicSlugIsResolvable } from "@/lib/auth";
 import { logBotVisitIfMatched } from "@/lib/analytics/log-bot-visit";
+import { getRedirectIndex } from "@/lib/data/redirects";
+import { matchRedirect } from "@/lib/redirects/matcher";
 
 // Next.js 16 renamed middleware.ts -> proxy.ts (see CLAUDE.md). Gates
 // every /admin/* route except /admin/login behind an active
@@ -162,6 +164,10 @@ export const SKIPPED_TOP_SEGMENTS = new Set([
   "system-not-found",
 ]);
 
+// Never looked up in `redirects`: the admin and preview have their own routing, /api and /_next are
+// not pages, and static files are already skipped by isAssetPath (checked before this runs).
+const NEVER_REDIRECTED_PREFIXES = ["/admin", "/api", "/preview", "/_next"];
+
 function isAssetPath(pathname: string): boolean {
   return (
     pathname === "/favicon.ico" ||
@@ -195,12 +201,31 @@ async function maybeRewriteToGenuine404(request: NextRequest, requestHeaders: He
   // it can't add latency or affect the response a crawler receives.
   logBotVisitIfMatched(pathname, request.headers.get("user-agent"));
 
+  // Legacy-URL redirects are answered here, before anything renders, so crawlers
+  // get a real 301 + Location (the catch-all page's redirect() can only stream a
+  // 200 with a client-side 308 — see the note at the top of this file). Runs for
+  // every public path, including the SKIPPED_TOP_SEGMENTS below. `index` is null
+  // when the table couldn't be read; then the catch-all page still redirects
+  // (client-side) as a fallback.
+  const index = NEVER_REDIRECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+    ? null
+    : await getRedirectIndex();
+  if (index) {
+    const hit = matchRedirect(index, pathname, request.nextUrl.search);
+    // A published CMS page at the same path still wins over a stale redirect row —
+    // the same rule the catch-all page has always applied. Only checked on a hit.
+    if (hit && !(await publicSlugIsResolvable(pathname.replace(/^\/+/, ""), { checkRedirects: false }))) {
+      return NextResponse.redirect(new URL(hit.location, request.url), hit.status);
+    }
+  }
+
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return next(); // home
   if (SKIPPED_TOP_SEGMENTS.has(segments[0])) return next();
 
   const slug = segments.join("/");
-  const exists = await publicSlugIsResolvable(slug);
+  // When the redirect index loaded there's no redirect for this path (checked above).
+  const exists = await publicSlugIsResolvable(slug, { checkRedirects: index === null });
   if (exists) return next();
 
   return NextResponse.rewrite(new URL("/system-not-found", request.url), { request: { headers: requestHeaders } });
