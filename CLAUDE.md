@@ -415,6 +415,12 @@ many-to-many) while still sharing the same `FieldRenderer` machinery
 (top-level items + their direct children) — matches every menu
 `scripts/seed-navigation.ts` actually seeds; the schema's arbitrary
 `parent_id` nesting isn't exposed further than that in the UI.
+An item can reference a product (`nav_items.product_id`, 0048): `getNavMenu`
+builds its href from the product's current category/slug and hides it until
+the product is published — never type a `/products/…` URL for a product
+item. A utility item whose href is `/products` opens the products dialog
+(`MegaMenuClient`), not the page. `seed-navigation.ts` clears items and so
+drops those references; don't re-run it against the live menu.
 
 **Media library** (`/admin/media`) is the same `lib/data/media.ts` /
 Supabase Storage bucket the in-form `MediaPicker` uses, as a standalone

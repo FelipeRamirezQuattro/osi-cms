@@ -306,6 +306,16 @@ Check **External link** for anything that points off the OSI site (a
 distributor's own website, for example) — it opens in a new tab and
 shows a small ↗ mark so visitors know it's leaving the site.
 
+**Linking a menu item to a product:** when you add or edit an item, pick the
+product from the **Link to a page or product** list instead of typing a
+URL. The link then always follows that product — if its category or web
+address changes, the menu stays correct. Drafts are in the list too (marked
+"(draft)"): an item for an unpublished product is **hidden on the live site
+until the product is published**, then appears by itself; unpublishing
+hides it again. The editor shows "hidden until the product is published"
+next to such items. The **Products** entry in the header's top bar opens
+this same product menu.
+
 ## Media library
 
 **Media** is the full library of every image (and PDF document) on the
