@@ -10,7 +10,7 @@ import {
   saveBrandingDraftAction,
 } from "@/lib/actions/branding";
 import type { BrandingDraft, BrandingPublication, BrandingRevision } from "@/lib/data/branding";
-import type { BlockTypeKey, BrandingConfig, SemanticRoles, TypographyRoleAssignments } from "@/lib/branding/schema";
+import { LAYOUT_THEMES, type BlockTypeKey, type BrandingConfig, type LayoutTheme, type SemanticRoles, type TypographyRoleAssignments } from "@/lib/branding/schema";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import { FONT_CATALOG, type FontCatalogKey, type TypographySlot } from "@/lib/fonts/catalog";
 import type { MediaAsset } from "@/lib/actions/media";
@@ -26,6 +26,11 @@ import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 import { useToast } from "@/components/admin/ui/toast";
 import { BrandingPreviewFrame } from "@/components/admin/branding-preview-frame";
+
+const LAYOUT_LABELS: Record<LayoutTheme, string> = {
+  classic: "Classic — the original OSI presentation",
+  forge: "Forge — cinematic industrial: full-bleed heroes, large uppercase headings, numbered sections, ruled cards",
+};
 
 const ROLE_LABELS: Record<keyof SemanticRoles, string> = {
   primary: "Primary", secondary: "Secondary", accentOnDark: "Accent on dark", accentOnLight: "Accent on light",
@@ -264,6 +269,19 @@ export function BrandingEditor({
                 </p>
               )}
             </div>
+          </Panel>
+
+          <Panel title="Site layout" description="Chooses how the whole public site is composed. Colors, logo and content stay yours; switching back to Classic is one change. Check the preview before publishing.">
+            <FormField label="Layout" htmlFor="site-layout">
+              <Select id="site-layout" value={config.layout ?? "classic"} onChange={(event) => update((next) => { next.layout = event.target.value as LayoutTheme; })}>
+                {LAYOUT_THEMES.map((layout) => <option key={layout} value={layout}>{LAYOUT_LABELS[layout]}</option>)}
+              </Select>
+            </FormField>
+            {(config.layout ?? "classic") === "forge" && (
+              <p className="mt-3 text-xs text-[var(--admin-ink-secondary)]">
+                Under Forge, headings use the Rajdhani display face and per-block display/heading font overrides are ignored. A “Stat grid” on a navy or transparent background renders as a gold band.
+              </p>
+            )}
           </Panel>
 
           <Panel title="Brand colors" description="Edit approved swatches here. Components reference stable IDs, so renaming or recoloring stays consistent.">
