@@ -47,6 +47,42 @@ until those call sites can be removed without a visual migration.
 The public `/styleguide` route renders the actual published swatches,
 semantic role mappings, and font-role keys rather than a duplicated palette.
 
+## Layout themes (classic | forge)
+
+`layout` on the branding config selects how the public site is composed:
+`classic` (the default, and what every config saved before the field
+existed means) or `forge` — cinematic industrial: full-bleed heroes under a
+translucent header, oversized uppercase Rajdhani display type, numbered
+section indexes, ruled card grids, a gold metrics band and square corners.
+It is an optional field on `configVersion: 1`; the branding RPCs never read
+keys beyond `configVersion`, so no migration is needed (`docs/DECISIONS.md`).
+
+- `PublicThemeBoundary` renders `data-theme="classic|forge"` and wraps its
+  children in `LayoutThemeProvider` (client motion primitives read it).
+- All Forge CSS lives in `app/forge.css`, every selector under
+  `.public-site[data-theme="forge"]`, keyed off `BlockRenderer`'s
+  `data-block-type` wrapper plus a few `data-*` hooks (`data-site-header`,
+  `data-hero-backdrop`, `data-hero-scrim`, `data-card`, ...). Colors come only
+  from the `--brand-color-*` roles. Fixed-section blocks that aren't rendered
+  by `BlockRenderer` (the product page) use `BlockScope` for the same hook and
+  the same resolved `--block-*` variables.
+- Forge fixes its display face in code (`--forge-font-display`, Rajdhani).
+  Per-block display/heading font overrides are ignored while Forge is on.
+- Under Forge a `stat_grid` on a navy or transparent background is the gold
+  metrics band; a cream one stays a ruled cream band. A `section_heading`
+  is always left-aligned. Section numbers (01, 02, ...) are a CSS counter on
+  titled blocks and never stored.
+- Forge motion (`lib/motion/forge-motion.ts`): reveal y 24 / scale .992 /
+  spring .48s, hero copy rises and the hero photo settles from 1.035, neither
+  touching opacity. `useReducedMotion()` collapses every variant to no motion.
+- Layout stability: the header always overlaps `<main>` by its own height and
+  `<main>` always pads it back, so the loading skeleton, a full-bleed hero and
+  an ordinary page share one geometry. Don't make that conditional on page
+  content again — it caused CLS up to 1.0.
+- **QA hook:** `OSI_LAYOUT_OVERRIDE=classic|forge` forces a layout in a local
+  process (ignored when `VERCEL_ENV=production`). Never set it in a deployed
+  environment. `tests/e2e/forge-theme.spec.ts` uses it to sweep either theme.
+
 ## Typography
 
 `lib/fonts/catalog.ts` is the only source of permitted font keys, role

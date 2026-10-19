@@ -49,6 +49,8 @@
   --site-radius-lg: 0;
   --site-container: 88rem;
   --forge-gutter: clamp(1.25rem, 5vw, 4.75rem);
+  /* 72px bar (min-h-18) + its 1px bottom border */
+  --forge-header-h: 4.5625rem;
   --forge-rule-light: var(--brand-color-border-on-light);
   --forge-rule-dark: var(--brand-color-border-on-dark);
   --forge-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -138,6 +140,13 @@
   color: var(--block-accent, var(--brand-color-accent-on-light));
 }
 
+/* The generic loading skeleton is at least one viewport tall in Forge, so
+   the footer starts below the fold and never shifts into view when the real
+   page streams in (classic's skeleton is left as it was). */
+.public-site[data-theme="forge"] main [role="status"][aria-label="Loading page"] {
+  min-height: 100svh;
+}
+
 /* ---------------------------------------------------------------------
    Header — translucent over a full-bleed hero, solid after scroll.
    --------------------------------------------------------------------- */
@@ -150,10 +159,21 @@
   transition: background-color 220ms var(--forge-ease), backdrop-filter 220ms var(--forge-ease);
 }
 
-/* When the page opens on a full-bleed hero the header floats over it,
-   translucent until the visitor scrolls (data-scrolled), then solid. */
+/* The header ALWAYS overlaps the top of <main> by its own height and main
+   always pads that height back, so the loading skeleton, a full-bleed hero
+   and an ordinary page all share one geometry — streaming the page in never
+   moves main (that flip was a 0.08-1.0 CLS). A full-bleed first hero pulls
+   itself back under the header; it is translucent only in that case. */
+.public-site[data-theme="forge"] [data-site-header] {
+  margin-bottom: calc(-1 * var(--forge-header-h));
+}
+.public-site[data-theme="forge"] main {
+  padding-top: var(--forge-header-h);
+}
+.public-site[data-theme="forge"] main > [data-block-type="hero_full"]:first-child > section {
+  margin-top: calc(-1 * var(--forge-header-h));
+}
 .public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header] {
-  margin-bottom: -4.5rem;
   background-color: color-mix(in srgb, var(--brand-color-dark-surface) 72%, transparent);
 }
 .public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header][data-scrolled] {
@@ -221,7 +241,11 @@
 
 .public-site[data-theme="forge"] [data-block-type="hero_full"] > section {
   min-height: max(46rem, 94vh);
+  /* Classic's diagonal-seam clip-path doubled as the stacking context that
+     keeps the -z-10 photo above this section's own background. Forge drops
+     the seam, so it must create one explicitly or the photo disappears. */
   clip-path: none;
+  isolation: isolate;
 }
 
 .public-site[data-theme="forge"] [data-block-type="hero_full"] > section > div {
@@ -578,10 +602,6 @@
    --------------------------------------------------------------------- */
 
 @media (max-width: 767px) {
-  .public-site[data-theme="forge"]:has(main > [data-block-type="hero_full"]:first-child) [data-site-header] {
-    margin-bottom: -4rem;
-  }
-
   .public-site[data-theme="forge"] [data-block-type="hero_full"] > section,
   .public-site[data-theme="forge"] [data-block-type="hero_full"] > section > div {
     min-height: max(40rem, 88svh);

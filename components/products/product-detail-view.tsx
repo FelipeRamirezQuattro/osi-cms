@@ -81,7 +81,7 @@ export function ProductDetailView({
       />
       )}
       {!isPreview && <RecordProductView slug={product.slug} />}
-      <BlockScope type="product_hero">
+      <BlockScope type="product_hero" background="navy">
         <ProductHeroRender
           data={{
             background: "navy",
@@ -97,7 +97,7 @@ export function ProductDetailView({
         />
       </BlockScope>
       {product.product_benefits.length > 0 && (
-        <BlockScope type="benefits_cards">
+        <BlockScope type="benefits_cards" background="navy">
           <BenefitsCardsRender
             data={{
               background: "navy",
@@ -110,7 +110,7 @@ export function ProductDetailView({
         </BlockScope>
       )}
       {product.product_stages.length > 0 && (
-        <BlockScope type="stages_carousel">
+        <BlockScope type="stages_carousel" background="cream">
           <StagesCarouselRender
             data={{
               background: "cream",
@@ -126,7 +126,7 @@ export function ProductDetailView({
           />
         </BlockScope>
       )}
-      <BlockScope type="video_embed">
+      <BlockScope type="video_embed" background="cream">
         <VideoEmbedRender
           data={{
             background: "cream",
@@ -138,7 +138,7 @@ export function ProductDetailView({
           }}
         />
       </BlockScope>
-      <BlockScope type="how_it_works">
+      <BlockScope type="how_it_works" background="navy">
         <HowItWorksRender
           data={{
             background: "navy",
@@ -152,7 +152,7 @@ export function ProductDetailView({
         />
       </BlockScope>
       {hasRichTextContent(product.body) && (
-        <BlockScope type="rich_text">
+        <BlockScope type="rich_text" background="cream">
           <RichTextRender
             data={{
               background: "cream",
@@ -164,7 +164,7 @@ export function ProductDetailView({
         </BlockScope>
       )}
       {product.product_specs.length > 0 && (
-        <BlockScope type="spec_table">
+        <BlockScope type="spec_table" background="cream">
           <SpecTableRender
             data={{
               background: "cream",

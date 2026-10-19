@@ -397,6 +397,16 @@ opts them into the new inheritance model — and the Surface field's
 **Legacy** option stays available afterward too, so choosing it again
 reverts the block to its original background at any time.
 
+### Site layout (Classic or Forge)
+
+Under **Branding → Site layout** you choose how the whole public site is composed. **Classic** is the original look. **Forge** uses big full-width photos with a dark overlay, large uppercase headings, numbered sections, ruled cards and a gold statistics band. Your colors, logo and content stay the same.
+
+1. Choose **Forge** and **Save draft**. The public site does not change.
+2. Use the preview in the Branding page (or open the page preview) and look through Home, a product, Products, Services, Contact, News and Careers.
+3. When you are happy, **Publish**. To go back at any time, choose **Classic** and publish again.
+
+What to know under Forge: a **Stat grid** on a dark (navy) background shows as a gold band; **Section headings** are always left-aligned; section numbers (01, 02, …) appear automatically; and per-block heading font choices are ignored. Pages look best with a real photo in the hero — without one you get a dark grid background.
+
 ## Submissions
 
 **Submissions** is the inbox for every form on the site — the main

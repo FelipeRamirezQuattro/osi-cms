@@ -169,3 +169,23 @@ items get struck through with the resolution, not deleted.
 - **5 products need an OSI category decision** (`esp-sand-d`, `esp-top-bypass-valve`, `osi-pmm-guardian`, `esp-vortex-desander-capillar`, `osi-top-intake-bypass`) — see `_category-proposal.json`; plus 5 flagged "CHECK" where the Wix group disagrees with the product's own copy.
 - **Duplicate/wrong-slug pages:** `osi-esp-guardian-shield` is actually the G-Force packer-type separator page (same title as `osi-esp-packer-type-gas-separat`); `copy-of-g-force` duplicates `g-force`. Changing a published slug needs a redirect, so they were not touched.
 - **Two test products are still published** (`test`, `test-product-1`, Sep 16).
+
+## Photography the Forge theme needs (Oct 2026)
+
+Forge leans on photographs. Where a slot has no image the site shows a navy gradient with a hairline grid (never an empty box), so nothing breaks — but these slots should get real OSI photography before Forge is published. Sizes are the largest rendered width x 1.5 for density; keep the subject off the left 45% of hero images (the headline sits there under the navy shade).
+
+| Slot | Where it renders | Size | Aspect |
+| --- | --- | --- | --- |
+| Home hero (`hero_full`) | full-bleed, whole viewport | 2400 x 1350 | 16:9 (subject right of centre) |
+| Other full-bleed heroes (`hero_full` on landing pages) | same | 2400 x 1350 | 16:9 |
+| Page hero image (`hero_page`) | right column of the compact hero | 1600 x 900 | 16:9 |
+| Product hero diagram / photo (`product_hero`) | right column | 1600 x 1200 | 4:3 |
+| Story / split feature (`split_feature`) | half-width, tall in Forge | 1200 x 1500 | 4:5 (classic shows it 4:3, centre-cropped — keep the subject central) |
+| Card images (`feature_tiles`, recommendations, related products) | top of each tall card | 1200 x 750 | 16:10 |
+| News / blog cover | card and listing | 1600 x 900 | 16:9 |
+| Featured news cover | wide banner on `/news` | 2100 x 900 | 21:9 |
+
+Today the home hero, the four home cards and the story image have photos; every other slot above is either filled per page or uses the fallback.
+
+The Forge prototype's own copy, proof points ("145+ customers", "40,000+ wells"), "field story" and "Illustrative" resources, and its three AI-generated images were NOT ported and must not be used.
+
