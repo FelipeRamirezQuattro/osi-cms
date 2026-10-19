@@ -101,6 +101,85 @@ test.describe(`${THEME} theme sweep`, () => {
     expect(alpha(top)).toBeLessThan(alpha(scrolled));
   });
 
+  test("the Rajdhani display face is preloaded for forge and never for classic", async ({ page }) => {
+    await page.goto("/");
+    const fontPreloads = await page.locator('link[rel="preload"][as="font"]').evaluateAll((links) =>
+      links.map((l) => l.getAttribute("href")),
+    );
+    if (THEME === "forge") expect(fontPreloads).toContain("/fonts/rajdhani-700-latin.woff2");
+    else expect(fontPreloads).toEqual([]);
+    // The flight payload must not hint the font to classic either.
+    const html = await (await page.request.get("/")).text();
+    expect(html.includes("rajdhani-700-latin.woff2")).toBe(THEME === "forge");
+  });
+
+  test("numbering: only section_heading titles carry a section number (forge only)", async ({ page }) => {
+    test.skip(THEME !== "forge", "forge-only behavior");
+    for (const path of ["/", await firstProductPath(page)]) {
+      await page.goto(path);
+      const rows = await page.evaluate(() =>
+        [...document.querySelectorAll<HTMLElement>("main h2")].map((h) => ({
+          text: h.textContent?.trim().slice(0, 40),
+          block: h.closest("[data-block-type]")?.getAttribute("data-block-type") ?? "(none)",
+          // counter() serialises without digits, so test for "has generated content at all".
+          numbered: !["none", "normal"].includes(getComputedStyle(h, "::before").content),
+        })),
+      );
+      for (const row of rows) {
+        expect(row.numbered, `${path}: "${row.text}" in ${row.block}`).toBe(row.block === "section_heading");
+      }
+    }
+  });
+
+  test("sentences are never set in the uppercase display face (forge only)", async ({ page }) => {
+    test.skip(THEME !== "forge", "forge-only behavior");
+    for (const path of ["/", await firstProductPath(page)]) {
+      await page.goto(path);
+      const offenders = await page.evaluate(() => {
+        const words = (t: string) => t.trim().split(/\s+/).filter(Boolean).length;
+        return [...document.querySelectorAll<HTMLElement>("main h1, main h2, main h3")]
+          .filter((h) => words(h.textContent ?? "") > 6)
+          .filter((h) => getComputedStyle(h).textTransform === "uppercase" || /rajdhani/i.test(getComputedStyle(h).fontFamily.split(",")[0] ?? ""))
+          .map((h) => `${h.tagName} "${h.textContent?.trim().slice(0, 50)}"`);
+      });
+      expect(offenders, `${path}: long headings still in the display face`).toEqual([]);
+      // ...and a title-length heading still is uppercase Rajdhani.
+      const short = await page.evaluate(() => {
+        const h = [...document.querySelectorAll<HTMLElement>("main h1")][0];
+        return h ? getComputedStyle(h).textTransform : null;
+      });
+      expect(short).toBe("uppercase");
+    }
+  });
+
+  test("product hero: the CTA bar, the viewer's fullscreen label and the media frame stay clear", async ({ page }) => {
+    const path = await firstProductPath(page);
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(path);
+      await page.waitForTimeout(600);
+      const r = await page.evaluate(() => {
+        const rect = (el: Element | null) => {
+          if (!el) return null;
+          const b = el.getBoundingClientRect();
+          return { x: b.x, y: b.y + window.scrollY, w: b.width, h: b.height };
+        };
+        const hero = document.querySelector('[data-block-type="product_hero"]');
+        return {
+          cta: rect([...(hero?.querySelectorAll("a") ?? [])].find((a) => /distributor/i.test(a.textContent ?? "")) ?? null),
+          label: rect(hero?.querySelector("[data-viewer-label]") ?? null),
+          frame: rect(hero?.querySelector('button[aria-label^="Open"]') ?? null),
+        };
+      });
+      test.skip(!r.frame, "first product has no diagram image");
+      const gap = (a: { x: number; y: number; w: number; h: number }, b: typeof a) =>
+        Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w), b.y - (a.y + a.h), a.y - (b.y + b.h));
+      expect(r.cta, `CTA bar at ${width}px`).not.toBeNull();
+      expect(gap(r.cta!, r.label!), `CTA bar vs fullscreen label at ${width}px`).toBeGreaterThanOrEqual(16);
+      expect(gap(r.cta!, r.frame!), `CTA bar vs media frame at ${width}px`).toBeGreaterThanOrEqual(8);
+    }
+  });
+
   test("hero photograph is actually painted above the section background", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");

@@ -67,11 +67,25 @@ keys beyond `configVersion`, so no migration is needed (`docs/DECISIONS.md`).
   by `BlockRenderer` (the product page) use `BlockScope` for the same hook and
   the same resolved `--block-*` variables.
 - Forge fixes its display face in code (`--forge-font-display`, Rajdhani).
-  Per-block display/heading font overrides are ignored while Forge is on.
+  Per-block display/heading font overrides are ignored while Forge is on
+  (sentence-length headings use the branding heading font, see below).
+- The Rajdhani 700 latin face is also self-hosted at
+  `public/fonts/rajdhani-700-latin.woff2` (`@font-face "OSI Forge Display"`
+  in `app/forge.css`) and preloaded with `react-dom`'s `preload()` by
+  `ForgeFontPreload`, rendered only when layout = forge. `next/font`'s own
+  preload can't do this: Next hints a font on every route that imports its
+  module (a dynamic import still leaks into classic's flight payload). If the
+  face is ever re-exported, replace that file and keep the name in sync.
 - Under Forge a `stat_grid` on a navy or transparent background is the gold
   metrics band; a cream one stays a ruled cream band. A `section_heading`
   is always left-aligned. Section numbers (01, 02, ...) are a CSS counter on
-  titled blocks and never stored.
+  `section_heading` titles ONLY — nothing else on a page is numbered, so the
+  numbers always match what the editor added. Never stored.
+- Long text never takes the uppercase display face: a heading, stat label or
+  footer tagline of more than 6 words (`lib/text/long-title.ts`) renders
+  `data-long`, and Forge sets it in the branding heading font in sentence
+  case; title-length text stays Rajdhani uppercase. Any new component that
+  renders an author-supplied heading should spread `{...longTitle(text)}`.
 - Forge motion (`lib/motion/forge-motion.ts`): reveal y 24 / scale .992 /
   spring .48s, hero copy rises and the hero photo settles from 1.035, neither
   touching opacity. `useReducedMotion()` collapses every variant to no motion.

@@ -405,7 +405,7 @@ Under **Branding → Site layout** you choose how the whole public site is compo
 2. Use the preview in the Branding page (or open the page preview) and look through Home, a product, Products, Services, Contact, News and Careers.
 3. When you are happy, **Publish**. To go back at any time, choose **Classic** and publish again.
 
-What to know under Forge: a **Stat grid** on a dark (navy) background shows as a gold band; **Section headings** are always left-aligned; section numbers (01, 02, …) appear automatically; and per-block heading font choices are ignored. Pages look best with a real photo in the hero — without one you get a dark grid background.
+What to know under Forge: a **Stat grid** on a dark (navy) background shows as a gold band; **Section headings** are always left-aligned; section numbers (01, 02, …) appear only on **Section heading** blocks, counted automatically; long headings (more than six words) are shown in sentence case instead of all-caps; and per-block heading font choices are ignored. Pages look best with a real photo in the hero — without one you get a dark grid background.
 
 ## Submissions
 
