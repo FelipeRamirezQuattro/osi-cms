@@ -5,10 +5,16 @@ import { ADMIN_EMAIL, ADMIN_PASSWORD, SKIP_REASON, signIn } from "./helpers/admi
 // These products are drafts until QA signs off, so they're read through the
 // staff-only preview route. Checks the template/importer fixes on 3 real
 // products at desktop and phone widths.
+//
+// `minPlayers` is the least number of video players the page must show. The
+// imported drafts carry their Wix videos; the published product (SRP Sand
+// Lift — the preview route renders published products too) has none, so it
+// checks the template only. esp-guardian-shield was dropped from this list
+// when it went back to draft and left its category (Oct 2026).
 const PRODUCTS = [
-  { category: "gas-separation", slug: "gas-shield", name: /^Gas Shield$/i, extraVideos: 2 },
-  { category: "chemical-treatment", slug: "esp-guardian-shield", name: /ESP Guardian Shield/i, extraVideos: 1 },
-  { category: "chemical-treatment", slug: "esp-sand-d", name: /ESP Sand Diverter/i, extraVideos: 0 },
+  { category: "gas-separation", slug: "gas-shield", name: /^Gas Shield$/i, minPlayers: 3, draft: true },
+  { category: "chemical-treatment", slug: "esp-sand-d", name: /ESP Sand Diverter/i, minPlayers: 1, draft: true },
+  { category: "sand-control", slug: "srp-sand-lift", name: /^SRP Sand Lift$/i, minPlayers: 0, draft: false },
 ];
 
 async function noSidewaysScroll(page: Page) {
@@ -42,7 +48,7 @@ for (const viewport of [
 
         // Extra videos arrive as real players (play buttons), in addition to the hero video.
         const players = await page.getByRole("button", { name: "Play video" }).count();
-        expect(players).toBeGreaterThanOrEqual(1 + p.extraVideos);
+        expect(players).toBeGreaterThanOrEqual(p.minPlayers);
 
         // The product image is the original asset, not a cropped Wix rendition.
         const srcs = await page.locator("img").evaluateAll((imgs) => (imgs as HTMLImageElement[]).map((i) => i.currentSrc || i.src));
@@ -52,8 +58,8 @@ for (const viewport of [
         );
         expect(broken).toEqual([]);
 
-        // Staff preview labels what's missing; nothing reads as a dead link.
-        await expect(page.getByText(/Preview — draft/)).toBeVisible();
+        // Staff preview labels what's missing (drafts only); nothing reads as a dead link.
+        if (p.draft) await expect(page.getByText(/Preview — draft/)).toBeVisible();
         expect(await page.locator('a[href="#"]').count()).toBe(0);
 
         // Sections reveal on scroll; walk the page so what we assert and capture is what a visitor sees.
@@ -65,12 +71,6 @@ for (const viewport of [
           window.scrollTo(0, 0);
         });
         await page.waitForTimeout(600);
-        if (p.slug === "esp-guardian-shield") {
-          await expect(page.getByRole("heading", { name: "Advantages" })).toBeVisible();
-          await expect(page.getByText("Provides multiple stages of gas separation")).toBeVisible();
-          await expect(page.getByRole("heading", { name: "Test Horizontal Well" })).toBeVisible();
-        }
-
         await noSidewaysScroll(page);
         await page.screenshot({ path: testInfo.outputPath(`${p.slug}-${viewport.label}.png`), fullPage: true });
       });

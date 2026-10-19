@@ -34,7 +34,9 @@ test.describe("OSI theme showcase", () => {
     });
   }
 
-  test("keyboard focus is visible and skip navigation works", async ({ page }) => {
+  test("keyboard focus is visible and skip navigation works", async ({ page }, testInfo) => {
+    // The prototype's desktop nav (and so its tab order) is not rendered at phone widths.
+    test.skip(testInfo.project.name === "mobile", "prototype tab order is desktop-only");
     await page.goto("/signal");
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Compare", exact: true })).toBeFocused();

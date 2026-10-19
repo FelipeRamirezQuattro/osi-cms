@@ -93,9 +93,10 @@ test.describe("public route smoke matrix", () => {
     await expectRenderedSitePage(page, "/careers");
   });
 
-  test("directory renders through the catch-all route", async ({ page }) => {
-    await expectRenderedSitePage(page, "/directory");
-  });
+  // /directory is intentionally archived (see docs/CONTENT-GAPS.md: none of its
+  // contacts is published until OSI approves putting staff phone numbers on the
+  // site), so there is nothing to render here. Re-add this check when it is
+  // published again.
 
   test("services listing renders through the catch-all route", async ({ page }) => {
     await expectRenderedSitePage(page, "/services");
