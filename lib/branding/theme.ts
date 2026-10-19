@@ -210,7 +210,7 @@ export function compileBrandingTheme(input: unknown): CompiledBrandingTheme {
   if (layout === "forge") {
     // Forge swaps the display and heading faces for Rajdhani through scoped
     // CSS (app/forge.css) that reads this variable; classic never emits it.
-    add(entries, "--forge-font-display", getFontCssStack(FORGE_DISPLAY_FONT));
+    add(entries, "--forge-font-display", `"OSI Forge Display", ${getFontCssStack(FORGE_DISPLAY_FONT)}`);
   }
 
   const style = Object.fromEntries(

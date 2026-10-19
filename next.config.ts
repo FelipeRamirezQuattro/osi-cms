@@ -24,6 +24,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "50mb",
     },
   },
+  async headers() {
+    return [
+      {
+        // Self-hosted Forge display face (components/branding/forge-font-preload.tsx).
+        source: "/fonts/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }],
+      },
+    ];
+  },
   images: {
     // Legacy Wix media host — see lib/media.ts and CLAUDE.md constraint 3.
     // Add hosts here (never `domains`, deprecated in Next 16) as content

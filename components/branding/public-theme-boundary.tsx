@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { compileBrandingTheme } from "@/lib/branding/theme";
 import type { ResolvedPublicBranding } from "@/lib/branding/resolve";
+import { ForgeFontPreload } from "@/components/branding/forge-font-preload";
 import { LayoutThemeProvider } from "@/components/branding/layout-theme-context";
 import { getPublicFontVariableClassNames } from "@/lib/fonts/public-fonts";
 
@@ -26,6 +27,7 @@ export function PublicThemeBoundary({
         theme.usedFallback ? undefined : (branding.publishedVersion ?? undefined)
       }
     >
+      {theme.layout === "forge" && <ForgeFontPreload />}
       <LayoutThemeProvider layout={theme.layout}>{children}</LayoutThemeProvider>
     </div>
   );

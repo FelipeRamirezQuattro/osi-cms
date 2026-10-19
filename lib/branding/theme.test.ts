@@ -75,7 +75,7 @@ describe("compileBrandingTheme", () => {
       const result = compileBrandingTheme({ ...cloneSeed(), layout: "forge" });
       expect(result.usedFallback).toBe(false);
       expect(result.layout).toBe("forge");
-      expect(result.style["--forge-font-display"]).toBe("var(--font-catalog-rajdhani), sans-serif");
+      expect(result.style["--forge-font-display"]).toBe('"OSI Forge Display", var(--font-catalog-rajdhani), sans-serif');
       expect(result.usedFontKeys).toContain("rajdhani");
     });
 

@@ -232,5 +232,5 @@ async function maybeRewriteToGenuine404(request: NextRequest, requestHeaders: He
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api).*)"],
+  matcher: ["/admin/:path*", "/((?!_next/static|_next/image|fonts/|favicon.ico|robots.txt|sitemap.xml|api).*)"],
 };
