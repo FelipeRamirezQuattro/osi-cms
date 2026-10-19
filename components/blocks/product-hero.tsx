@@ -8,6 +8,7 @@ import { GradientText } from "@/components/ui/gradient-text";
 import { TechnicalImageViewer } from "@/components/blocks/image-gallery-client";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 export const productHeroSchema = blockCommonSchema.extend({
   eyebrow: z.string().optional(),
@@ -30,7 +31,8 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
       reveal={false}
       contentClassName="relative mx-auto max-w-[var(--site-container)] px-5 md:px-10"
     >
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)] lg:items-center lg:gap-14">
+      {/* pb-12: the CTA bar below straddles this box's bottom edge (its anchor is the content wrapper), so its upper half needs clear space — without it the bar sat on the media frame. */}
+      <div className="grid grid-cols-1 gap-10 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)] lg:items-center lg:gap-14">
         <div className="max-w-[var(--site-reading-width)]">
           {data.eyebrow && (
             <p className="mb-2 text-xs uppercase">
@@ -47,7 +49,7 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
               )}
             </p>
           )}
-          <h1 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1.06] tracking-tightest-display text-balance uppercase [overflow-wrap:anywhere]">
+          <h1 {...longTitle(data.title)} className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1.06] tracking-tightest-display text-balance uppercase [overflow-wrap:anywhere]">
             {data.title}
           </h1>
           <div className="mt-2 mb-4 h-px w-24 bg-osi-steel-500/50" />

@@ -163,7 +163,8 @@ export function TechnicalImageViewer({ image, title }: { image: GalleryImage; ti
           loading="eager"
           className="object-contain p-6"
         />
-        <span className="absolute right-4 bottom-4 rounded-full border border-osi-navy-900/18 bg-white/90 px-3 py-2 text-xs font-semibold text-osi-navy-900 shadow-sm">
+        {/* Top-right: the product hero's gold CTA bar overhangs the bottom-right of this frame's section, and a bottom label collided with it on phones. */}
+        <span data-viewer-label className="absolute top-4 right-4 rounded-full border border-osi-navy-900/18 bg-white/90 px-3 py-2 text-xs font-semibold text-osi-navy-900 shadow-sm">
           View fullscreen
         </span>
       </button>
