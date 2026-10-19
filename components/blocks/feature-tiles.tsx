@@ -6,6 +6,7 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const tileSchema = z.object({
   title: requiredString("Tile title"),
@@ -32,7 +33,7 @@ function Render({ data }: { data: Data }) {
       reveal={false}
     >
       {data.title && (
-        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}

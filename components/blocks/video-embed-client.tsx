@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { Clipped } from "@/components/ui/clipped";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import type { VideoEmbedData } from "@/components/blocks/video-embed";
+import { longTitle } from "@/lib/text/long-title";
 
 export function toEmbedUrl(url: string): string {
   // Imported Wix embeds are already /embed/ URLs carrying `autoplay=0`; the visitor just clicked our
@@ -36,7 +37,7 @@ export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
       anchorId={data.anchorId}
     >
       {data.title && (
-        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="mb-6 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}

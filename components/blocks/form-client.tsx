@@ -14,6 +14,7 @@ import { submitFormAction, type FormBlockState } from "@/lib/actions/submit-form
 import { formFieldDefinitionSchema, type FormFieldDefinition } from "@/lib/validation/forms";
 import type { FormBlockData } from "@/components/blocks/form";
 import type { Tables } from "@/lib/db/database.types";
+import { longTitle } from "@/lib/text/long-title";
 
 /** The public-safe subset of a form_definitions row — no notification_email, form_key, id, or status. */
 export type PublicFormDefinition = Pick<Tables<"form_definitions">, "fields" | "submit_label" | "success_message">;
@@ -54,7 +55,7 @@ export function FormBlockClient({
       anchorId={data.anchorId}
       reveal={false}
     >
-      {data.title && <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>}
+      {data.title && <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>}
       {state.status === "success" ? (
         <StatusMessage title="Submission received" tone="success">
           {definition.success_message}

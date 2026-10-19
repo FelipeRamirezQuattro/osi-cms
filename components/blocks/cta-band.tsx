@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   headline: requiredString("Headline"),
@@ -23,7 +24,7 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       contentClassName="mx-auto flex max-w-[var(--site-container)] flex-col items-center gap-6 px-5 text-center md:flex-row md:justify-between md:px-10 md:text-left"
     >
-      <h2 className="max-w-3xl font-editorial text-section font-semibold text-balance">
+      <h2 {...longTitle(data.headline)} className="max-w-3xl font-editorial text-section font-semibold text-balance">
         {data.headline}
       </h2>
       <ArrowButton href={data.ctaHref} variant="solid-gold">

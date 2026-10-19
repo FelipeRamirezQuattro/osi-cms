@@ -9,6 +9,7 @@ import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text
 import { JsonLd, articleJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, resolveOgImage } from "@/lib/seo";
 import { blogHref } from "@/lib/routes";
+import { longTitle } from "@/lib/text/long-title";
 
 // Same empty-doc handling as the news detail page: a Tiptap doc that was
 // never written is treated like null.
@@ -70,7 +71,7 @@ export default async function BlogDetailPage({ params }: PageProps<"/blog/[slug]
         {byline.length > 0 && (
           <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">{byline.join(" · ")}</p>
         )}
-        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{post.title}</h1>
+        <h1 {...longTitle(post.title)} className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{post.title}</h1>
         {post.excerpt && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{post.excerpt}</p>}
         {post.tags.length > 0 && (
           <ul className="mt-6 flex flex-wrap gap-2" aria-label="Tags">

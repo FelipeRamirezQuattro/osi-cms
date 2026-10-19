@@ -8,6 +8,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { industryHref, productHref } from "@/lib/routes";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState } from "@/components/ui/public-primitives";
+import { longTitle } from "@/lib/text/long-title";
 
 // Taxonomy detail page (Task 8 item #5) — describes the industry and
 // lists published products linked to it via product_industries. The
@@ -49,7 +50,7 @@ export default async function IndustryDetailPage({ params }: PageProps<"/industr
         <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
           Industry
         </p>
-        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{industry.name}</h1>
+        <h1 {...longTitle(industry.name)} className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{industry.name}</h1>
         {industry.description && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{industry.description}</p>}
       </Section>
       <Section background="cream" spacingTop="md" spacingBottom="lg">

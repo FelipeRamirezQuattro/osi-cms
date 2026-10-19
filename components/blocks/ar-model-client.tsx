@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { resolveMediaUrl } from "@/lib/media";
 import { generateQrCodeSvg } from "@/lib/ar/qr";
 import type { ArModelData } from "@/components/blocks/ar-model";
+import { longTitle } from "@/lib/text/long-title";
 
 export function ArModelRender({ data }: { data: ArModelData }) {
   const [qrSvg, setQrSvg] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export function ArModelRender({ data }: { data: ArModelData }) {
       anchorId={data.anchorId}
     >
       {data.title && (
-        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">{data.title}</h2>
+        <h2 {...longTitle(data.title)} className="mb-6 font-editorial text-section font-semibold text-balance">{data.title}</h2>
       )}
       <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
         <model-viewer

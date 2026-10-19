@@ -7,6 +7,7 @@ import { StatusMessage } from "@/components/ui/public-primitives";
 import { PUBLIC_FIELD_CLASS, PUBLIC_LABEL_CLASS, PUBLIC_SUBMIT_CLASS } from "@/components/ui/public-form-styles";
 import { subscribeToNewsletter, type NewsletterSignupState } from "@/lib/actions/subscribe-newsletter";
 import type { NewsletterSignupData } from "@/components/blocks/newsletter-signup";
+import { longTitle } from "@/lib/text/long-title";
 
 const initialState: NewsletterSignupState = { status: "idle" };
 
@@ -23,7 +24,7 @@ export function NewsletterSignupRender({ data }: { data: NewsletterSignupData })
       reveal={false}
     >
       <div className="max-w-xl">
-        <h2 className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
+        <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
         {data.description && <p className="mt-3 text-base leading-relaxed">{data.description}</p>}
         <div className="mt-6">
           {state.status === "success" ? (

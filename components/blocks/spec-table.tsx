@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const specSchema = z.object({ label: z.string(), value: z.string(), unit: z.string().optional() });
 
@@ -23,7 +24,7 @@ export function SpecTableRender({ data }: { data: SpecTableData }) {
       contentClassName="mx-auto max-w-4xl px-5 md:px-10"
     >
       {data.title && (
-        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="mb-6 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}

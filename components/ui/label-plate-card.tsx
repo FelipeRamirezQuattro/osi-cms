@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { resolveMediaUrl } from "@/lib/media";
+import { longTitle } from "@/lib/text/long-title";
 
 /**
  * Shared public discovery card. Content is visible without hover/tap and
@@ -50,7 +51,7 @@ export function LabelPlateCard({
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
-        <h3 className="font-editorial text-xl font-semibold leading-tight text-balance text-osi-navy-900">
+        <h3 {...longTitle(title)} className="font-editorial text-xl font-semibold leading-tight text-balance text-osi-navy-900">
           {title}
         </h3>
         {body && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-osi-slate-300">{body}</p>}

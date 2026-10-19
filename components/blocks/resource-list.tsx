@@ -6,6 +6,7 @@ import { ResourceListClient } from "@/components/blocks/resource-list-client";
 import { listResources } from "@/lib/data/resources";
 import { listProducts } from "@/lib/data/products";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 // Schema/registration must NOT carry "use client" — same reason as
 // contact-form.tsx/video-embed.tsx/stages-carousel.tsx: the registry
@@ -47,7 +48,7 @@ async function Render({ data }: { data: ResourceListData }) {
       reveal={false}
     >
       {data.title && (
-        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
+        <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
       )}
       <ResourceListClient resources={items} emptyStateMessage={data.emptyStateMessage} />
     </Section>

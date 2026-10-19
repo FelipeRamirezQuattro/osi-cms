@@ -9,6 +9,7 @@ import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text
 import { JsonLd, articleJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, resolveOgImage } from "@/lib/seo";
 import { newsHref } from "@/lib/routes";
+import { longTitle } from "@/lib/text/long-title";
 
 const KIND_LABELS: Record<string, string> = { news: "News", conference: "Conference", event: "Event" };
 
@@ -71,7 +72,7 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
             ? new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(post.published_at))
             : KIND_LABELS[post.kind]}
         </p>
-        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{post.title}</h1>
+        <h1 {...longTitle(post.title)} className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{post.title}</h1>
         {post.excerpt && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{post.excerpt}</p>}
         {post.kind !== "news" && (post.event_date || post.event_location) && (
           <p className="mt-6 text-sm text-osi-slate-200">

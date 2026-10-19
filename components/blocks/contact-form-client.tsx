@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/public-form-styles";
 import { submitContactForm, type ContactFormState } from "@/lib/actions/submit-contact-form";
 import type { ContactFormData } from "@/components/blocks/contact-form";
+import { longTitle } from "@/lib/text/long-title";
 
 const initialState: ContactFormState = { status: "idle" };
 
@@ -25,7 +26,7 @@ export function ContactFormRender({ data }: { data: ContactFormData }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
+      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       {state.status === "success" ? (

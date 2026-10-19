@@ -9,6 +9,7 @@ import { BrandLogo } from "@/components/branding/brand-logo";
 import type { BrandingConfig } from "@/lib/branding/schema";
 import type { MediaAsset } from "@/lib/data/media";
 import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
+import { longTitle } from "@/lib/text/long-title";
 
 const SOCIAL_LINKS = [
   { key: "social_facebook", label: "Facebook" },
@@ -42,7 +43,7 @@ export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
               <BrandLogo config={branding} asset={logoAsset} />
             </Link>
             {settings.footer_tagline && (
-              <p className="mt-3 max-w-lg font-editorial text-xl font-medium leading-snug text-white/78 md:text-2xl">
+              <p {...longTitle(settings.footer_tagline)} className="mt-3 max-w-lg font-editorial text-xl font-medium leading-snug text-white/78 md:text-2xl">
                 {settings.footer_tagline}
               </p>
             )}

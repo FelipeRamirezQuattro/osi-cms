@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 import { searchSite } from "@/lib/data/search";
+import { longTitle } from "@/lib/text/long-title";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -81,7 +82,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
                 <span className="text-xs font-semibold tracking-[0.1em] text-osi-gold-700 uppercase">
                   {TYPE_LABELS[result.type]}
                 </span>
-                <h2 className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance group-hover:underline group-hover:decoration-osi-gold-700 group-hover:underline-offset-4">
+                <h2 {...longTitle(result.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance group-hover:underline group-hover:decoration-osi-gold-700 group-hover:underline-offset-4">
                   {result.title}
                 </h2>
                 {result.excerpt && (

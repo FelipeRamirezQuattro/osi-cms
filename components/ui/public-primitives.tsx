@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { longTitle } from "@/lib/text/long-title";
 
 type Surface = "cream" | "navy";
 
@@ -15,7 +16,7 @@ export function SectionHeader({ eyebrow, title, lede, align = "left", surface = 
   return (
     <header className={`${centered ? "mx-auto text-center" : ""} ${className}`}>
       {eyebrow && <Eyebrow surface={surface} className="mb-3">{eyebrow}</Eyebrow>}
-      <h2 className="font-editorial text-section font-semibold text-balance">{title}</h2>
+      <h2 {...longTitle(title)} className="font-editorial text-section font-semibold text-balance">{title}</h2>
       {lede && (
         <p className={`mt-4 max-w-[var(--site-reading-width)] text-base leading-relaxed ${surface === "navy" ? "text-[var(--brand-color-muted-text-on-dark)]" : "text-[var(--brand-color-muted-text-on-light)]"} ${centered ? "mx-auto" : ""}`}>
           {lede}
@@ -69,7 +70,7 @@ export function EmptyState({ title, description, action }: { title: string; desc
   return (
     <div className="rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] px-6 py-10 text-center md:px-10">
       <span aria-hidden="true" className="mx-auto mb-5 block h-10 w-px bg-brand-accent-light" />
-      <h2 className="font-editorial text-2xl font-semibold text-balance">{title}</h2>
+      <h2 {...longTitle(title)} className="font-editorial text-2xl font-semibold text-balance">{title}</h2>
       <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[var(--brand-color-muted-text-on-light)]">{description}</p>
       {action && <div className="mt-6 flex justify-center">{action}</div>}
     </div>

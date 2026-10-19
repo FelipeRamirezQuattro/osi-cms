@@ -6,6 +6,7 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const cardSchema = z.object({
   title: requiredString("Card title"),
@@ -33,7 +34,7 @@ function Render({ data }: { data: Data }) {
         {data.cards.map((card) => (
           <AnimatedItem key={card.title} className="h-full">
             <div className="flex h-full flex-col gap-5 transition-shadow duration-300 hover:shadow-[0_0_0_1px_var(--color-osi-steel-500),0_8px_32px_color-mix(in_srgb,var(--color-osi-steel-500)_25%,transparent),0_0_60px_color-mix(in_srgb,var(--color-osi-steel-500)_10%,transparent)]">
-              <h3 className="font-editorial text-section font-semibold text-balance">
+              <h3 {...longTitle(card.title)} className="font-editorial text-section font-semibold text-balance">
                 {card.title}
               </h3>
               {card.body && <p className="text-sm opacity-80">{card.body}</p>}

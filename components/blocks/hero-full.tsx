@@ -8,6 +8,7 @@ import { HeroMotion } from "@/components/ui/hero-motion";
 import { GradientText } from "@/components/ui/gradient-text";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const ctaSchema = z.object({
   label: requiredString("CTA label"),
@@ -81,6 +82,7 @@ function Render({ data }: { data: Data }) {
         </p>
       )}
       <h1
+        {...longTitle(data.headline)}
         className={`max-w-3xl text-hero text-balance text-osi-white [overflow-wrap:anywhere] ${
           useEditorialTitle
             ? "font-editorial font-semibold leading-[1.03]"

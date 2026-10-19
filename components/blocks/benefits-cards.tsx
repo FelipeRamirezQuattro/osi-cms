@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { Clipped } from "@/components/ui/clipped";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const itemSchema = z.object({ title: z.string(), body: z.string().optional() });
 
@@ -24,7 +25,7 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
+      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <AnimatedGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -35,7 +36,7 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
               size="1.25rem"
               className="h-full border border-osi-steel-500/30 bg-osi-navy-600/40 p-6 transition-colors duration-300 hover:border-osi-steel-500/60 hover:bg-osi-navy-600/60"
             >
-              <h3 className="font-editorial text-lg font-semibold leading-tight text-balance">{item.title}</h3>
+              <h3 {...longTitle(item.title)} className="font-editorial text-lg font-semibold leading-tight text-balance">{item.title}</h3>
               {item.body && <p className="mt-3 text-sm leading-relaxed text-osi-slate-200">{item.body}</p>}
             </Clipped>
           </AnimatedItem>

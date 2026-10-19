@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   title: z.string(),
@@ -21,7 +22,7 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
     >
       <div className={data.align === "center" ? "text-center" : ""}>
-        <h2 className="font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
         {data.lede && (

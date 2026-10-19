@@ -7,6 +7,7 @@ import { HairlineGrid } from "@/components/ui/hairline-grid";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { optionalSafeHrefSchema, requiredString } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const statSchema = z.object({
   value: requiredString("Stat value"),
@@ -26,7 +27,7 @@ function StatItem({ value, label, background }: z.infer<typeof statSchema> & { b
       <p className="font-display text-3xl tracking-tightest-display text-[var(--block-accent,var(--brand-color-accent-on-light))]">
         {value}
       </p>
-      <p className={`mt-2 text-sm ${background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
+      <p {...longTitle(label)} className={`mt-2 text-sm ${background === "cream" ? "text-osi-slate-300" : "text-osi-slate-200"}`}>
         {label}
       </p>
     </div>

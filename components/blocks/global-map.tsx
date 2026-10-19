@@ -8,6 +8,7 @@ import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { listLocations } from "@/lib/data/locations";
 import { safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("See our global locations"),
@@ -40,7 +41,7 @@ async function Render({ data }: { data: Data }) {
       contentClassName="relative mx-auto max-w-[var(--site-container)] px-5 md:px-10"
     >
       <div className="mb-8 flex flex-col justify-between gap-4 border-b border-osi-steel-500/30 pb-6 sm:flex-row sm:items-center">
-        <h2 className="font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
         {data.subtitle && (

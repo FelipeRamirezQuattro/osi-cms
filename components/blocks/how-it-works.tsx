@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import type { BlockRenderExtras } from "@/lib/blocks/types";
+import { longTitle } from "@/lib/text/long-title";
 
 export const howItWorksSchema = blockCommonSchema.extend({
   title: z.string().default("How does it work?"),
@@ -50,7 +51,7 @@ export function HowItWorksRender({ data, isPreview = false }: { data: HowItWorks
     >
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
         <div>
-          <h2 className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
+          <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
           {data.body && <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-osi-slate-200">{data.body}</p>}
         </div>
         {showActions && (

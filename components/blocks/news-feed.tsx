@@ -11,6 +11,7 @@ import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { postHref } from "@/lib/routes";
 import { PreviewPlaceholder } from "@/components/blocks/preview-placeholder";
 import type { BlockRenderExtras } from "@/lib/blocks/types";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("OSI News"),
@@ -36,7 +37,7 @@ function PostCard({ post }: { post: Tables<"news_posts"> }) {
       <p className="mt-3 text-xs text-osi-slate-400 uppercase">
         {post.published_at ? new Date(post.published_at).toLocaleDateString() : post.kind}
       </p>
-      <h3 className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">
+      <h3 {...longTitle(post.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">
         {post.title}
       </h3>
     </Link>
@@ -66,7 +67,7 @@ async function Render({ data, isPreview }: { data: Data } & BlockRenderExtras) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
+      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <Link href={postHref(featured)} className="mb-8 block">
@@ -77,7 +78,7 @@ async function Render({ data, isPreview }: { data: Data } & BlockRenderExtras) {
           intensity={0.3}
           sizes="(min-width: 1280px) 72rem, 100vw"
         />
-        <h3 className="mt-4 font-editorial text-2xl font-semibold leading-tight text-balance">
+        <h3 {...longTitle(featured.title)} className="mt-4 font-editorial text-2xl font-semibold leading-tight text-balance">
           {featured.title}
         </h3>
       </Link>

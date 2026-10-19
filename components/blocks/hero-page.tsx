@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { GradientText } from "@/components/ui/gradient-text";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   eyebrow: z.string().optional(),
@@ -43,7 +44,7 @@ function Render({ data }: { data: Data }) {
               )}
             </p>
           )}
-          <h1 className="font-editorial text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.06] text-balance [overflow-wrap:anywhere]">
+          <h1 {...longTitle(data.title)} className="font-editorial text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.06] text-balance [overflow-wrap:anywhere]">
             {data.title}
           </h1>
         </div>

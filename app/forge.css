@@ -20,6 +20,19 @@
  *    at the bottom (globals.css also truncates durations under reduce).
  */
 
+/* Self-hosted Rajdhani 700 (latin), preloaded only for Forge by
+   components/branding/forge-font-preload.tsx. The same family is also loaded
+   through next/font (lib/fonts/public-fonts.ts) for the other weights and
+   scripts; this face just makes the display weight available on first paint. */
+@font-face {
+  font-family: "OSI Forge Display";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/rajdhani-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ---------------------------------------------------------------------
    Tokens and type
    --------------------------------------------------------------------- */
@@ -65,8 +78,8 @@
   text-wrap: balance;
 }
 
-.public-site[data-theme="forge"] :is(h1, h2),
-.public-site[data-theme="forge"] [data-block-type]:not([data-block-type="rich_text"]) h3 {
+.public-site[data-theme="forge"] :is(h1, h2):not([data-long]),
+.public-site[data-theme="forge"] [data-block-type]:not([data-block-type="rich_text"]) h3:not([data-long]) {
   text-transform: uppercase;
 }
 
@@ -82,44 +95,19 @@
 }
 
 /* ---------------------------------------------------------------------
-   Section index — "02  Outcome pathways". A CSS counter on the section
-   title, so no block type or data field is needed. The number is
-   decorative (alt text "" keeps it out of the accessible name).
+   Section index — "02  Outcome pathways". A CSS counter on the title of a
+   `section_heading` block, and ONLY that block: the editor decides which
+   sections are numbered by choosing to add a section heading, and the
+   numbers can never disagree with what is on the page (a split feature, a
+   map or a CTA band never takes a number). The number is decorative (alt
+   text "" keeps it out of the accessible name).
    --------------------------------------------------------------------- */
 
-.public-site[data-theme="forge"] :is(
-  [data-block-type="section_heading"],
-  [data-block-type="feature_tiles"],
-  [data-block-type="benefits_cards"],
-  [data-block-type="how_it_works"],
-  [data-block-type="stages_carousel"],
-  [data-block-type="spec_table"],
-  [data-block-type="news_feed"],
-  [data-block-type="split_feature"],
-  [data-block-type="recommendations"],
-  [data-block-type="resource_list"],
-  [data-block-type="team_directory"],
-  [data-block-type="image_gallery"],
-  [data-block-type="product_grid"]
-) h2 {
+.public-site[data-theme="forge"] [data-block-type="section_heading"] h2 {
   counter-increment: forge-index;
 }
 
-.public-site[data-theme="forge"] :is(
-  [data-block-type="section_heading"],
-  [data-block-type="feature_tiles"],
-  [data-block-type="benefits_cards"],
-  [data-block-type="how_it_works"],
-  [data-block-type="stages_carousel"],
-  [data-block-type="spec_table"],
-  [data-block-type="news_feed"],
-  [data-block-type="split_feature"],
-  [data-block-type="recommendations"],
-  [data-block-type="resource_list"],
-  [data-block-type="team_directory"],
-  [data-block-type="image_gallery"],
-  [data-block-type="product_grid"]
-) h2::before {
+.public-site[data-theme="forge"] [data-block-type="section_heading"] h2::before {
   content: counter(forge-index, decimal-leading-zero) / "";
   display: flex;
   align-items: center;
@@ -140,13 +128,6 @@
   color: var(--block-accent, var(--brand-color-accent-on-light));
 }
 
-/* The generic loading skeleton is at least one viewport tall in Forge, so
-   the footer starts below the fold and never shifts into view when the real
-   page streams in (classic's skeleton is left as it was). */
-.public-site[data-theme="forge"] main [role="status"][aria-label="Loading page"] {
-  min-height: 100svh;
-}
-
 /* ---------------------------------------------------------------------
    Header — translucent over a full-bleed hero, solid after scroll.
    --------------------------------------------------------------------- */
@@ -157,6 +138,13 @@
   box-shadow: none;
   padding-inline: var(--forge-gutter);
   transition: background-color 220ms var(--forge-ease), backdrop-filter 220ms var(--forge-ease);
+}
+
+/* The generic loading skeleton is at least one viewport tall in Forge, so the
+   footer starts below the fold and never shifts into view when the real page
+   streams in (classic's skeleton is left as it was). */
+.public-site[data-theme="forge"] main [role="status"][aria-label="Loading page"] {
+  min-height: 100svh;
 }
 
 /* The header ALWAYS overlaps the top of <main> by its own height and main
@@ -413,20 +401,17 @@
 }
 
 /* Benefits (navy section): the bordered boxes become ruled cells. */
+/* One size for every benefit title, so a title-length one (Rajdhani caps) and
+   a sentence (heading face, sentence case) sit comfortably in the same row. */
+.public-site[data-theme="forge"] [data-block-type="benefits_cards"] h3 {
+  font-size: clamp(1.25rem, 1.7vw, 1.5rem);
+  line-height: 1.12;
+}
 .public-site[data-theme="forge"] [data-block-type="benefits_cards"] [class*="border-osi-steel-500"] {
   min-height: 15rem;
   border-color: var(--forge-rule-dark);
   background: transparent;
 }
-.public-site[data-theme="forge"] [data-block-type="benefits_cards"] h3 {
-  /* Benefit titles are full sentences — sentence case, not all-caps. */
-  font-size: clamp(1.375rem, 1.8vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  text-transform: none;
-}
-
 /* ---------------------------------------------------------------------
    Metrics band — stat_grid. Navy/transparent => a gold band with navy
    text (Forge's one big gold moment). Cream stays a ruled cream band.
@@ -481,6 +466,13 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: inherit;
+}
+
+.public-site[data-theme="forge"] [data-block-type="stat_grid"] p[data-long] {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
 }
 
 /* On the gold band the muted/slate labels are replaced by navy text, which
@@ -573,7 +565,7 @@
 .public-site[data-theme="forge"] [data-site-footer] > div {
   max-width: none;
 }
-.public-site[data-theme="forge"] [data-site-footer] p[class*="font-editorial"] {
+.public-site[data-theme="forge"] [data-site-footer] p[class*="font-editorial"]:not([data-long]) {
   font-size: clamp(1.75rem, 3vw, 2.75rem);
   line-height: 1;
   text-transform: uppercase;
@@ -584,6 +576,34 @@
   letter-spacing: 0.14em;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--forge-rule-dark);
+}
+
+/* ---------------------------------------------------------------------
+   Long titles — kept last so they win over every per-block heading size.
+   --------------------------------------------------------------------- */
+
+/* Sentences (more than 6 words — lib/text/long-title.ts marks them with
+   data-long) are never set in the uppercase display face: they use the
+   heading font from branding, in sentence case, at a reading size. Titles
+   keep Rajdhani uppercase. One rule for every heading Forge would otherwise
+   uppercase. */
+.public-site[data-theme="forge"] :is(h1, h2, h3)[data-long] {
+  font-family: var(--block-font-heading, var(--brand-font-heading));
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  text-transform: none;
+  max-width: 28ch;
+}
+.public-site[data-theme="forge"] h1[data-long] {
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  max-width: 24ch;
+}
+.public-site[data-theme="forge"] h2[data-long] {
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+}
+.public-site[data-theme="forge"] h3[data-long] {
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
 }
 
 /* ---------------------------------------------------------------------

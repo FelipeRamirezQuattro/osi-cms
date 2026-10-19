@@ -6,6 +6,7 @@ import { DuotoneImage } from "@/components/ui/duotone-image";
 import { CtaBreakoutBar } from "@/components/ui/cta-breakout-bar";
 import { requiredString, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const linkSchema = z.object({ label: requiredString("Link label"), href: safeHrefSchema({ allowAnchor: true, label: "Link" }) });
 
@@ -35,7 +36,7 @@ function Render({ data }: { data: Data }) {
     >
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div>
-          <h2 className="font-editorial text-section font-semibold text-balance">
+          <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">
             {data.title}
           </h2>
           {data.body && (

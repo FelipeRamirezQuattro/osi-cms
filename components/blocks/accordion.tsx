@@ -3,6 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const itemSchema = z.object({ title: z.string(), body: z.string() });
 
@@ -23,7 +24,7 @@ function Render({ data }: { data: Data }) {
       contentClassName="mx-auto max-w-3xl px-5 md:px-10"
     >
       {data.title && (
-        <h2 className="mb-6 font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="mb-6 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}

@@ -7,6 +7,7 @@ import { DuotoneImage } from "@/components/ui/duotone-image";
 import { useHydratedReducedMotion } from "@/lib/motion/use-hydrated-reduced-motion";
 import { EASE_OSI } from "@/lib/motion/variants";
 import type { StagesCarouselData } from "@/components/blocks/stages-carousel";
+import { longTitle } from "@/lib/text/long-title";
 
 export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
   const [index, setIndex] = useState(0);
@@ -25,7 +26,7 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
     >
-      <h2 className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
+      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
       <motion.div
         key={index}
         role="group"
@@ -67,7 +68,7 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
           <p className="font-display text-small-label tracking-wide-label text-[var(--block-accent,var(--brand-color-accent-on-light))] uppercase">
             Stage {index + 1} of {data.stages.length}
           </p>
-          <h3 className="mt-1 font-editorial text-2xl font-semibold leading-tight text-balance">
+          <h3 {...longTitle(stage.title)} className="mt-1 font-editorial text-2xl font-semibold leading-tight text-balance">
             {stage.title}
           </h3>
           {stage.body && <p className="mt-3 max-w-xl text-sm leading-relaxed text-osi-slate-300">{stage.body}</p>}

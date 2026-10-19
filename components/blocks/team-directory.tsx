@@ -6,6 +6,7 @@ import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { listDirectoryContacts } from "@/lib/data/locations";
 import type { Tables } from "@/lib/db/database.types";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   title: z.string().optional(),
@@ -36,7 +37,7 @@ async function Render({ data }: { data: Data }) {
       reveal={false}
     >
       {data.title && (
-        <h2 className="mb-8 font-editorial text-section font-semibold text-balance">
+        <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
           {data.title}
         </h2>
       )}

@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { RecommendationsClient } from "@/components/blocks/recommendations-client";
 import { listProductsWithCategorySlug } from "@/lib/data/products";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 const schema = blockCommonSchema.extend({
   title: z.string().default("Recommendations"),
@@ -26,7 +27,7 @@ async function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 className="font-editorial text-section font-semibold text-balance">
+      <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">
         {data.title}
       </h2>
       <p className="mt-1 mb-8 text-xs text-osi-slate-400 uppercase">{data.subtitle}</p>

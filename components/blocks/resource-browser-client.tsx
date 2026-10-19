@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { EmptyState } from "@/components/ui/public-primitives";
 import { useQueryState } from "@/components/ui/use-query-state";
+import { longTitle } from "@/lib/text/long-title";
 
 export type ResourceBrowserItem = {
   id: string;
@@ -94,7 +95,7 @@ export function ResourceBrowserClient({ resources, emptyStateMessage }: { resour
           {filtered.map((resource) => (
             <li key={resource.id} className="flex min-h-48 flex-col rounded-[var(--site-radius-md)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] p-5 text-osi-navy-900">
               <p className="text-xs font-semibold tracking-[0.1em] text-osi-gold-700 uppercase">{KIND_LABELS[resource.kind] ?? resource.kind}</p>
-              <h3 className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">{resource.title}</h3>
+              <h3 {...longTitle(resource.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">{resource.title}</h3>
               {resource.productName && <p className="mt-2 text-sm text-osi-slate-300">For {resource.productName}</p>}
               <a
                 href={resource.fileUrl}

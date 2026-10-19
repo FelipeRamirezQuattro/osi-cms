@@ -7,6 +7,7 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 import { newsHref } from "@/lib/routes";
 import type { Tables } from "@/lib/db/database.types";
+import { longTitle } from "@/lib/text/long-title";
 
 export const metadata: Metadata = {
   title: "News",
@@ -40,7 +41,7 @@ function PostCard({ post }: { post: Tables<"news_posts"> }) {
             ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(post.published_at))
             : KIND_LABELS[post.kind]}
         </p>
-        <h2 className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">{post.title}</h2>
+        <h2 {...longTitle(post.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">{post.title}</h2>
         {post.excerpt && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-osi-slate-300">{post.excerpt}</p>}
         <span className="mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-sm font-semibold">
           Read more <span aria-hidden className="text-osi-gold-700 transition-transform duration-200 group-hover:translate-x-1">→</span>

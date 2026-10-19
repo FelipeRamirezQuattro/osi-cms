@@ -8,6 +8,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { applicationHref, productHref } from "@/lib/routes";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState } from "@/components/ui/public-primitives";
+import { longTitle } from "@/lib/text/long-title";
 
 // Same shape as app/(site)/industries/[slug]/page.tsx, joined through
 // product_applications instead of product_industries — see Task 8 item #5.
@@ -44,7 +45,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
         <p className="mb-4 text-xs font-semibold tracking-[0.1em] text-osi-gold-400 uppercase">
           Application
         </p>
-        <h1 className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{application.name}</h1>
+        <h1 {...longTitle(application.name)} className="max-w-4xl font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.05] text-balance [overflow-wrap:anywhere]">{application.name}</h1>
         {application.description && <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-osi-slate-200">{application.description}</p>}
       </Section>
       <Section background="cream" spacingTop="md" spacingBottom="lg">

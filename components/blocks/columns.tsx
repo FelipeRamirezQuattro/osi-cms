@@ -8,6 +8,7 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { AnimatedGroup, AnimatedItem } from "@/components/ui/animated-group";
 import { requiredString, optionalSafeHrefSchema, safeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { longTitle } from "@/lib/text/long-title";
 
 // A deliberately non-recursive first version (CLAUDE.md's Task 9
 // ruling): each column holds exactly ONE of text/image/cta, never an
@@ -46,7 +47,7 @@ function ColumnContent({ item, background }: { item: ColumnItem; background: Dat
   if (item.type === "text") {
     return (
       <div>
-        <h3 className="font-editorial text-xl font-semibold leading-tight text-balance">{item.heading}</h3>
+        <h3 {...longTitle(item.heading)} className="font-editorial text-xl font-semibold leading-tight text-balance">{item.heading}</h3>
         {item.body && <p className="mt-3 text-sm leading-relaxed opacity-80">{item.body}</p>}
       </div>
     );
