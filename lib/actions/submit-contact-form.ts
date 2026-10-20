@@ -1,7 +1,7 @@
 "use server";
 
 import { processFormSubmission } from "@/lib/actions/form-submission-pipeline";
-import { sendContactNotification } from "@/lib/email";
+import { sendContactConfirmation, sendContactNotification } from "@/lib/email";
 import { contactFormSchema } from "@/lib/validation/forms";
 
 export type ContactFormState = { status: "idle" | "success" | "error"; message?: string };
@@ -34,6 +34,13 @@ export async function submitContactForm(
     payload,
     // Honeypot tripped — real users never fill this field.
     honeypotTripped: Boolean(website),
-    notify: () => sendContactNotification({ ...payload, pageSlug }),
+    notify: async () => {
+      // Independent best-effort sends: a failed staff notification must not
+      // suppress the visitor's receipt, or the other way round.
+      await Promise.all([
+        sendContactNotification({ ...payload, pageSlug }),
+        sendContactConfirmation({ ...payload, pageSlug }),
+      ]);
+    },
   });
 }

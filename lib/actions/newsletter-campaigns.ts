@@ -106,6 +106,7 @@ export async function sendTestEmailAction(input: unknown, to?: string): Promise<
     subject: `[Test] ${parsed.value.subject || "(no subject)"}`,
     html: html.replaceAll(UNSUBSCRIBE_PLACEHOLDER, unsubscribe),
     text: text.replaceAll(UNSUBSCRIBE_PLACEHOLDER, unsubscribe),
+    unsubscribePageUrl: unsubscribe,
   });
   return result.ok ? { status: "success" } : { status: "error", message: result.message };
 }

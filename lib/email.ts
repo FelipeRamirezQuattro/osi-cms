@@ -1,143 +1,180 @@
 import { Resend } from "resend";
+import {
+  contactConfirmationEmail,
+  contactNotificationEmail,
+  formNotificationEmail,
+  newsletterConfirmEmail,
+  newsletterWelcomeEmail,
+  type ContactDetails,
+} from "@/lib/email-templates";
+import { recordOutboxMessage } from "@/lib/data/email-outbox";
 
 /**
- * Single seam for outbound email (master prompt §9 Phase 6: "notification
- * email (Resend)"). `RESEND_API_KEY`/`CONTACT_NOTIFICATION_EMAIL` are
- * unset until the client provides a Resend account and confirms who
- * should receive contact-form notifications (master prompt open question
- * #4, never answered — see docs/CONTENT-GAPS.md). Sending is best-effort:
- * a missing key or a Resend failure is logged, never thrown — a lead
- * should never be lost because the notification email couldn't go out,
- * since the submission is already durably stored in `form_submissions`.
+ * Single seam for outbound email. Every message goes through `deliver()`,
+ * which behaves in exactly one of three ways:
+ *
+ *   - dry-run      EMAIL_DRY_RUN=true. Nothing is sent; the rendered message
+ *                  is logged and stored in `email_outbox`, which admins read at
+ *                  /admin/email-outbox. Wins over a configured key, so a
+ *                  preview deployment can be exercised safely.
+ *   - live         RESEND_API_KEY + RESEND_FROM_EMAIL are set. Sent via Resend.
+ *   - unconfigured otherwise. Logged and skipped.
+ *
+ * Sending is best-effort and never throws: a lead or signup is already stored
+ * before any email is attempted, so a mail failure must not lose it.
  */
 
-export type ContactNotificationPayload = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  company?: string;
-  phone: string;
-  message: string;
-  pageSlug?: string;
+// Loaded on first use: lib/email-brand pulls in the server-only branding
+// resolver, which would otherwise make every importer of this seam
+// (including its unit tests) a server-only module.
+async function brand() {
+  return (await import("@/lib/email-brand")).getEmailBrand();
+}
+
+export type EmailMode = "dry-run" | "live" | "unconfigured";
+
+type Env = Record<string, string | undefined>;
+
+export function getEmailMode(env: Env = process.env): EmailMode {
+  if (env.EMAIL_DRY_RUN === "true") return "dry-run";
+  return env.RESEND_API_KEY && env.RESEND_FROM_EMAIL ? "live" : "unconfigured";
+}
+
+const DRY_RUN_FROM = "Odessa Separator <dry-run@example.invalid>";
+
+export type OutgoingEmail = {
+  /** Short label stored with dry-run messages, e.g. "contact-notification". */
+  kind: string;
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+  replyTo?: string;
+  headers?: Record<string, string>;
 };
 
-export async function sendContactNotification(payload: ContactNotificationPayload): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_NOTIFICATION_EMAIL;
-  const from = process.env.RESEND_FROM_EMAIL;
+export type DeliveryResult =
+  | { status: "sent"; id: string | null }
+  | { status: "dry-run" }
+  | { status: "skipped"; reason: string }
+  | { status: "failed"; message: string; retryable: boolean };
 
-  if (!apiKey || !to || !from) {
-    console.warn("[email] Skipped contact notification — RESEND_API_KEY/CONTACT_NOTIFICATION_EMAIL/RESEND_FROM_EMAIL not set.");
-    return;
+export function delivered(result: DeliveryResult): boolean {
+  return result.status === "sent" || result.status === "dry-run";
+}
+
+export async function deliver(message: OutgoingEmail): Promise<DeliveryResult> {
+  const mode = getEmailMode();
+
+  if (mode === "dry-run") {
+    const from = process.env.RESEND_FROM_EMAIL || DRY_RUN_FROM;
+    console.info(`[email] DRY RUN (${message.kind}) to=${message.to} subject="${message.subject}"`);
+    await recordOutboxMessage({ ...message, from, replyTo: message.replyTo ?? null });
+    return { status: "dry-run" };
+  }
+
+  if (mode === "unconfigured") {
+    console.warn(`[email] Skipped ${message.kind} — RESEND_API_KEY/RESEND_FROM_EMAIL not set.`);
+    return { status: "skipped", reason: "Email is not configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." };
   }
 
   try {
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from,
-      to,
-      subject: `New contact form submission — ${payload.firstName} ${payload.lastName}`,
-      replyTo: payload.email,
-      text: [
-        `Name: ${payload.firstName} ${payload.lastName}`,
-        `Email: ${payload.email}`,
-        payload.company ? `Company: ${payload.company}` : null,
-        `Phone: ${payload.phone}`,
-        payload.pageSlug ? `From page: /${payload.pageSlug}` : null,
-        "",
-        payload.message,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { data, error } = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL!,
+      to: message.to,
+      subject: message.subject,
+      text: message.text,
+      html: message.html,
+      replyTo: message.replyTo,
+      headers: message.headers,
     });
+    if (error) {
+      console.error(`[email] Resend rejected ${message.kind}:`, error);
+      return { status: "failed", message: error.message, retryable: isRetryable(error.statusCode) };
+    }
+    return { status: "sent", id: data?.id ?? null };
   } catch (err) {
-    console.error("[email] Failed to send contact notification:", err);
+    console.error(`[email] Failed to send ${message.kind}:`, err);
+    return { status: "failed", message: "Could not reach the email provider.", retryable: true };
   }
 }
 
+// --- Contact + generic forms ---------------------------------------------------
+
+export type ContactNotificationPayload = ContactDetails;
+
+const DRY_RUN_STAFF_RECIPIENT = "contact-notification@dry-run.invalid";
+
+/** To OSI staff (CONTACT_NOTIFICATION_EMAIL), Reply-To the visitor. */
+export async function sendContactNotification(payload: ContactNotificationPayload): Promise<void> {
+  const to = process.env.CONTACT_NOTIFICATION_EMAIL || (getEmailMode() === "dry-run" ? DRY_RUN_STAFF_RECIPIENT : undefined);
+  if (!to) {
+    console.warn("[email] Skipped contact notification — CONTACT_NOTIFICATION_EMAIL not set.");
+    return;
+  }
+  const { subject, html, text } = await contactNotificationEmail(await brand(), payload);
+  await deliver({ kind: "contact-notification", to, subject, html, text, replyTo: payload.email });
+}
+
+/** One-time receipt to the visitor. Not sent when email is unconfigured. */
+export async function sendContactConfirmation(payload: ContactNotificationPayload): Promise<void> {
+  const { subject, html, text } = await contactConfirmationEmail(await brand(), payload);
+  await deliver({ kind: "contact-confirmation", to: payload.email, subject, html, text });
+}
+
 /**
- * Generic counterpart of sendContactNotification for the Task 10 form
- * engine — any `form_definitions` row with a `notification_email` set
- * gets a best-effort email through the same Resend integration
- * (same env-var gating, same silent no-op when unset). Deliberately a
- * separate function rather than a generalization of
- * sendContactNotification: the contact form's email has a fixed,
- * reviewed field layout (name/email/company/phone/message) that must not
- * change from the outside (Task 10 controller ruling #6), whereas this
- * one renders whatever fields a given form definition happens to have.
+ * Generic counterpart for the form engine — any `form_definitions` row with a
+ * `notification_email` set gets a best-effort email. Separate from
+ * sendContactNotification on purpose: the contact form has a fixed, reviewed
+ * field layout (Task 10 controller ruling #6), this one renders whatever
+ * fields a form definition happens to have.
  */
 export async function sendFormNotification(params: {
   formName: string;
   to: string | null;
   payload: Record<string, unknown>;
 }): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-
-  if (!apiKey || !params.to || !from) {
-    console.warn(`[email] Skipped "${params.formName}" notification — recipient/RESEND_API_KEY/RESEND_FROM_EMAIL not set.`);
+  if (!params.to) {
+    console.warn(`[email] Skipped "${params.formName}" notification — no recipient set on the form.`);
     return;
   }
-
+  const { subject, html, text } = await formNotificationEmail(await brand(), params);
   const replyTo = typeof params.payload.email === "string" ? params.payload.email : undefined;
-
-  try {
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from,
-      to: params.to,
-      subject: `New submission — ${params.formName}`,
-      replyTo,
-      text: Object.entries(params.payload)
-        .filter(([, value]) => value !== null && value !== undefined && value !== "")
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n"),
-    });
-  } catch (err) {
-    console.error(`[email] Failed to send "${params.formName}" notification:`, err);
-  }
+  await deliver({ kind: "form-notification", to: params.to, subject, html, text, replyTo });
 }
 
+// --- Newsletter (transactional) ------------------------------------------------
+
 /**
- * Double opt-in confirmation for a newsletter signup. Same env gating and
- * never-throws behavior as the notifications above, but returns whether
- * the message was actually handed to Resend — the signup action uses that
- * to decide whether to start the resend cooldown (an email that never went
- * out shouldn't lock the address out of trying again).
+ * Double opt-in confirmation. Returns whether the message was actually handed
+ * off (sent or dry-run) — the signup action uses that to decide whether to
+ * start the resend cooldown (an email that never went out shouldn't lock the
+ * address out of trying again).
  */
 export async function sendNewsletterConfirmation(params: { to: string; confirmUrl: string }): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  const { subject, html, text } = await newsletterConfirmEmail(await brand(), params);
+  return delivered(await deliver({ kind: "newsletter-confirm", to: params.to, subject, html, text }));
+}
 
-  if (!apiKey || !from) {
-    console.warn("[email] Skipped newsletter confirmation — RESEND_API_KEY/RESEND_FROM_EMAIL not set.");
-    return false;
-  }
-
-  try {
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
-      from,
-      to: params.to,
-      subject: "Confirm your subscription to Odessa Separator news",
-      text: [
-        "Thanks for signing up for Odessa Separator news.",
-        "",
-        "Please confirm your subscription by opening this link:",
-        params.confirmUrl,
-        "",
-        "If you didn't sign up, you can ignore this email — you won't be subscribed.",
-      ].join("\n"),
-    });
-    if (error) {
-      console.error("[email] Resend rejected newsletter confirmation:", error);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error("[email] Failed to send newsletter confirmation:", err);
-    return false;
-  }
+/** Sent once, right after a subscriber confirms. Carries the unsubscribe link and the RFC 8058 headers. */
+export async function sendNewsletterWelcome(params: {
+  to: string;
+  unsubscribeUrl: string;
+  oneClickUnsubscribeUrl: string;
+}): Promise<void> {
+  const { subject, html, text } = await newsletterWelcomeEmail(await brand(), { unsubscribeUrl: params.unsubscribeUrl });
+  await deliver({
+    kind: "newsletter-welcome",
+    to: params.to,
+    subject,
+    html,
+    text,
+    headers: {
+      "List-Unsubscribe": `<${params.oneClickUnsubscribeUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
+  });
 }
 
 // --- Newsletter campaigns ------------------------------------------------------
@@ -174,6 +211,9 @@ function isRetryable(statusCode: number | null): boolean {
  * it" and "we recorded it" can't send the batch twice.
  */
 export async function sendCampaignBatch(messages: CampaignEmail[], idempotencyKey: string): Promise<CampaignBatchResult> {
+  const mode = getEmailMode();
+  // A dry run must never mark real subscribers as "sent" (preview deployments share the live database).
+  if (mode === "dry-run") return { ok: false, retryable: false, message: "EMAIL_DRY_RUN is on, so campaigns are not sent. Test sends still land in the email outbox." };
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) return { ok: false, retryable: false, message: "Email is not configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." };
@@ -208,20 +248,27 @@ export async function sendCampaignBatch(messages: CampaignEmail[], idempotencyKe
   }
 }
 
-/** One preview message to the editor. No unsubscribe headers — it is not a real send. */
-export async function sendCampaignTest(params: { to: string; subject: string; html: string; text: string }): Promise<
-  { ok: true } | { ok: false; message: string }
-> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) return { ok: false, message: "Email is not configured (RESEND_API_KEY / RESEND_FROM_EMAIL)." };
-
-  try {
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({ from, to: params.to, subject: params.subject, html: params.html, text: params.text });
-    return error ? { ok: false, message: error.message } : { ok: true };
-  } catch (err) {
-    console.error("[email] Campaign test failed:", err);
-    return { ok: false, message: "Could not reach the email provider." };
-  }
+/**
+ * One preview message to the editor. Not a real send: there is no subscriber
+ * row, so there is no signed token and no RFC 8058 one-click POST. The
+ * `List-Unsubscribe` header (page URL only) is still set so the mail client
+ * shows the unsubscribe affordance a subscriber would see.
+ */
+export async function sendCampaignTest(params: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  unsubscribePageUrl?: string;
+}): Promise<{ ok: true } | { ok: false; message: string }> {
+  const result = await deliver({
+    kind: "campaign-test",
+    to: params.to,
+    subject: params.subject,
+    html: params.html,
+    text: params.text,
+    headers: params.unsubscribePageUrl ? { "List-Unsubscribe": `<${params.unsubscribePageUrl}>` } : undefined,
+  });
+  if (delivered(result)) return { ok: true };
+  return { ok: false, message: result.status === "failed" ? result.message : result.status === "skipped" ? result.reason : "Not sent." };
 }

@@ -108,6 +108,14 @@ export async function confirmSubscriber(id: string): Promise<ConfirmResult> {
   return "confirmed";
 }
 
+/** The address behind a subscriber id, or null. For mail sent in direct response to that subscriber's own action. */
+export async function getSubscriberEmail(id: string): Promise<string | null> {
+  const db = createServiceRoleDbClient();
+  const { data, error } = await db.from("newsletter_subscribers").select("email").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data?.email ?? null;
+}
+
 /** Any status -> unsubscribed. Returns false only when the subscriber no longer exists. */
 export async function unsubscribeSubscriber(id: string): Promise<boolean> {
   const db = createServiceRoleDbClient();

@@ -1,7 +1,9 @@
 "use server";
 
-import { confirmSubscriber, unsubscribeSubscriber } from "@/lib/data/newsletter-subscribers";
-import { verifySubscriberToken } from "@/lib/newsletter/tokens";
+import { confirmSubscriber, getSubscriberEmail, unsubscribeSubscriber } from "@/lib/data/newsletter-subscribers";
+import { sendNewsletterWelcome } from "@/lib/email";
+import { createSubscriberToken, verifySubscriberToken } from "@/lib/newsletter/tokens";
+import { absoluteUrl } from "@/lib/seo";
 
 export type NewsletterTokenActionState = { status: "idle" | "success" | "error"; message?: string };
 
@@ -31,6 +33,7 @@ export async function confirmNewsletterSubscription(
         message: "This subscription can no longer be confirmed. Please sign up again from the website.",
       };
     }
+    if (result === "confirmed") await sendWelcomeBestEffort(id);
     return { status: "success", message: "You're subscribed. Thanks for confirming your email address." };
   } catch (err) {
     console.error("[newsletter] Confirm failed:", err);
@@ -53,5 +56,21 @@ export async function unsubscribeFromNewsletter(
   } catch (err) {
     console.error("[newsletter] Unsubscribe failed:", err);
     return { status: "error", message: "Something went wrong. Please try again." };
+  }
+}
+
+/** The welcome mail is a courtesy: the subscription is already confirmed, so a mail problem never fails the action. */
+async function sendWelcomeBestEffort(subscriberId: string): Promise<void> {
+  try {
+    const [email, token] = [await getSubscriberEmail(subscriberId), createSubscriberToken("unsubscribe", subscriberId)];
+    if (!email || !token) return;
+    const query = `?token=${encodeURIComponent(token)}`;
+    await sendNewsletterWelcome({
+      to: email,
+      unsubscribeUrl: absoluteUrl(`/newsletter/unsubscribe${query}`),
+      oneClickUnsubscribeUrl: absoluteUrl(`/api/newsletter/unsubscribe${query}`),
+    });
+  } catch (err) {
+    console.error("[newsletter] Welcome email failed:", err);
   }
 }
