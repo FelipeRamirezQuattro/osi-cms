@@ -571,6 +571,10 @@ async function authenticatedShots(page: Page) {
 }
 
 async function mainRun() {
+  if (!PUBLIC_ONLY) {
+    requiredEnv("OSI_QA_EMAIL");
+    requiredEnv("OSI_QA_PASSWORD");
+  }
   await mkdir(OUTPUT_DIR, { recursive: true });
   const context = await newContext();
   const page = await context.newPage();
