@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
+import { resolveShareImage } from "@/lib/seo-server";
 import { listBlogPosts } from "@/lib/data/news";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
@@ -9,10 +11,14 @@ import { blogHref } from "@/lib/routes";
 import type { Tables } from "@/lib/db/database.types";
 import { longTitle } from "@/lib/text/long-title";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Articles and field insights from Odessa Separator Inc.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    title: "Blog",
+    description: "Articles and field insights from Odessa Separator Inc.",
+    path: "/blog",
+    image: await resolveShareImage(null),
+  });
+}
 
 function PostCard({ post }: { post: Tables<"news_posts"> }) {
   const meta = [

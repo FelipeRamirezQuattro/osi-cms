@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getNewsPostBySlug } from "@/lib/data/news";
-import { getSiteSettings } from "@/lib/data/settings";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { RichTextRender, type RichTextData } from "@/components/blocks/rich-text";
 import { JsonLd, articleJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl, resolveOgImage } from "@/lib/seo";
+import { absoluteUrl, buildPageMetadata, resolveOgImage } from "@/lib/seo";
+import { resolveDescription, richTextParagraphs } from "@/lib/seo-content";
+import { resolveShareImage } from "@/lib/seo-server";
 import { newsHref } from "@/lib/routes";
 import { longTitle } from "@/lib/text/long-title";
 
@@ -30,14 +31,17 @@ export async function generateMetadata({
   params,
 }: PageProps<"/news/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const [post, settings] = await Promise.all([getNewsPostBySlug(slug), getSiteSettings()]);
+  const post = await getNewsPostBySlug(slug);
   if (!post) return {};
-  const ogImage = resolveOgImage(post.cover_image_url, settings.default_og_image);
-  return {
+  const { description } = resolveDescription(post.excerpt, () => richTextParagraphs(post.body).join(" "));
+  return buildPageMetadata({
     title: post.title,
-    description: post.excerpt ?? undefined,
-    openGraph: ogImage ? { images: [ogImage] } : undefined,
-  };
+    description,
+    path: newsHref(post.slug),
+    image: await resolveShareImage(post.cover_image_url),
+    type: "article",
+    publishedTime: post.published_at,
+  });
 }
 
 export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]">) {

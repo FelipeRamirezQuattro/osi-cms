@@ -4,7 +4,9 @@ import { getApplicationBySlug, listProductsByApplication } from "@/lib/data/taxo
 import { Section } from "@/components/ui/section";
 import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, buildPageMetadata } from "@/lib/seo";
+import { resolveDescription } from "@/lib/seo-content";
+import { resolveShareImage } from "@/lib/seo-server";
 import { applicationHref, productHref } from "@/lib/routes";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState } from "@/components/ui/public-primitives";
@@ -19,10 +21,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const application = await getApplicationBySlug(slug);
   if (!application) return {};
-  return {
+  const { description } = resolveDescription(application.description, () => null);
+  return buildPageMetadata({
     title: application.name,
-    description: application.description ?? undefined,
-  };
+    description,
+    path: applicationHref(application.slug),
+    image: await resolveShareImage(null),
+  });
 }
 
 export default async function ApplicationDetailPage({ params }: PageProps<"/applications/[slug]">) {

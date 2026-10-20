@@ -8,8 +8,6 @@ import { resolveDraftBranding } from "@/lib/branding/resolve";
 import { getSiteSettings } from "@/lib/data/settings";
 import { getMediaAssetById } from "@/lib/data/media";
 import { headers } from "next/headers";
-import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
-import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import { resolveMediaUrl } from "@/lib/media";
 import { AnalyticsBeacon } from "@/components/analytics/analytics-beacon";
@@ -49,16 +47,9 @@ export async function SiteLayout({ children }: { children: React.ReactNode }) {
   const isDraftPreview = requestHeaders.get("x-osi-branding-preview") === "draft";
   const [settings, branding] = await Promise.all([getSiteSettings(), isDraftPreview ? resolveDraftBranding() : resolvePublishedBranding()]);
   const logoAsset = branding.config.logo.mediaAssetId ? await getMediaAssetById(branding.config.logo.mediaAssetId) : null;
-  const socialLinks = [
-    settings.social_facebook,
-    settings.social_linkedin,
-    settings.social_youtube,
-    settings.social_instagram,
-  ].filter((url): url is string => Boolean(url));
 
   return (
     <PublicThemeBoundary branding={branding} className="flex min-h-dvh flex-1 flex-col">
-      <JsonLd data={organizationJsonLd({ url: siteUrl(), phone: settings.phone, socialLinks })} />
       <AnalyticsBeacon />
       <RecoveryLinkRedirect />
       {/*

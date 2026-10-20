@@ -1,11 +1,11 @@
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getPageBySlug } from "@/lib/data/pages";
-import { getSiteSettings } from "@/lib/data/settings";
 import { getRedirectByPath } from "@/lib/data/redirects";
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl, resolveOgImage } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/seo";
+import { cmsPageMetadata } from "@/lib/seo-server";
 
 // Generalizes the master prompt §7 sitemap's "/[slug] catch-all for
 // admin-created pages" to a multi-segment catch-all, so nested slugs
@@ -20,15 +20,10 @@ async function resolveSlug(params: Promise<{ slug: string[] }>) {
 export async function generateMetadata({
   params,
 }: PageProps<"/[...slug]">): Promise<Metadata> {
-  const [page, settings] = await Promise.all([getPageBySlug(await resolveSlug(params)), getSiteSettings()]);
+  const slug = await resolveSlug(params);
+  const page = await getPageBySlug(slug);
   if (!page) return {};
-  const ogImage = resolveOgImage(page.og_image_url, settings.default_og_image);
-  return {
-    title: page.seo_title ?? page.title,
-    description: page.seo_description ?? undefined,
-    robots: page.noindex ? { index: false } : undefined,
-    openGraph: ogImage ? { images: [ogImage] } : undefined,
-  };
+  return cmsPageMetadata(page, `/${slug}`);
 }
 
 function segmentToLabel(segment: string): string {

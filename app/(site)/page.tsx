@@ -1,24 +1,25 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPageBySlug } from "@/lib/data/pages";
-import { getSiteSettings } from "@/lib/data/settings";
 import { BlockRenderer } from "@/components/blocks/block-renderer";
-import { resolveOgImage } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { cmsPageMetadata, getOrganizationJsonLd } from "@/lib/seo-server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [page, settings] = await Promise.all([getPageBySlug("home"), getSiteSettings()]);
+  const page = await getPageBySlug("home");
   if (!page) return {};
-  const ogImage = resolveOgImage(page.og_image_url, settings.default_og_image);
-  return {
-    title: page.seo_title ?? page.title,
-    description: page.seo_description ?? undefined,
-    openGraph: ogImage ? { images: [ogImage] } : undefined,
-  };
+  return cmsPageMetadata(page, "/");
 }
 
 export default async function HomePage() {
   const page = await getPageBySlug("home");
   if (!page) notFound();
 
-  return <BlockRenderer blocks={page.blocks} />;
+  return (
+    <>
+      <BlockRenderer blocks={page.blocks} />
+      {/* After the blocks, not before: Forge's header styling keys off the hero being main's :first-child. */}
+      <JsonLd data={await getOrganizationJsonLd()} />
+    </>
+  );
 }

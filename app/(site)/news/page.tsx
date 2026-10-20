@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
+import { resolveShareImage } from "@/lib/seo-server";
 import { listNewsPosts } from "@/lib/data/news";
 import { Section } from "@/components/ui/section";
 import { DuotoneImage } from "@/components/ui/duotone-image";
@@ -9,10 +11,14 @@ import { newsHref } from "@/lib/routes";
 import type { Tables } from "@/lib/db/database.types";
 import { longTitle } from "@/lib/text/long-title";
 
-export const metadata: Metadata = {
-  title: "News",
-  description: "Company news, conferences, and events from Odessa Separator Inc.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    title: "News",
+    description: "Company news, conferences, and events from Odessa Separator Inc.",
+    path: "/news",
+    image: await resolveShareImage(null),
+  });
+}
 
 const KIND_LABELS: Record<string, string> = { news: "News", conference: "Conference", event: "Event" };
 

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
+import { resolveShareImage } from "@/lib/seo-server";
 import { listResources } from "@/lib/data/resources";
 import { listProducts } from "@/lib/data/products";
 import { Section } from "@/components/ui/section";
@@ -6,10 +8,14 @@ import { ResourcesFilterClient, type ResourceItem } from "@/app/(site)/resources
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 
-export const metadata: Metadata = {
-  title: "Resources",
-  description: "Brochures, datasheets, certificates, and manuals from Odessa Separator Inc.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    title: "Resources",
+    description: "Brochures, datasheets, certificates, and manuals from Odessa Separator Inc.",
+    path: "/resources",
+    image: await resolveShareImage(null),
+  });
+}
 
 export default async function ResourcesPage() {
   const [resources, products] = await Promise.all([listResources(), listProducts()]);

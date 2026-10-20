@@ -10,6 +10,7 @@ export function JsonLd({ data }: { data: object }) {
 export function organizationJsonLd(input: {
   url: string;
   phone?: string | null;
+  logo?: string;
   socialLinks: string[];
 }) {
   return {
@@ -17,6 +18,7 @@ export function organizationJsonLd(input: {
     "@type": "Organization",
     name: "Odessa Separator Inc.",
     url: input.url,
+    ...(input.logo ? { logo: input.logo } : {}),
     ...(input.phone ? { telephone: input.phone } : {}),
     ...(input.socialLinks.length > 0 ? { sameAs: input.socialLinks } : {}),
   };
