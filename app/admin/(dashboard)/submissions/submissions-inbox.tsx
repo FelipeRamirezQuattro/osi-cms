@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { exportSubmissionsCsvAction, updateSubmissionStatusAction } from "@/lib/actions/submissions";
 import type { Tables } from "@/lib/db/database.types";
+import { formatDateTime } from "@/lib/format/date";
 
 type Submission = Tables<"form_submissions">;
 
@@ -97,7 +98,7 @@ export function SubmissionsInbox({ submissions }: { submissions: Submission[] })
                 <span>
                   <span className="font-medium">{sub.form_key}</span>{" "}
                   <span className="opacity-60">
-                    {String(payload.email ?? payload.name ?? "")} — {new Date(sub.created_at).toLocaleString()}
+                    {String(payload.email ?? payload.name ?? "")} — {formatDateTime(sub.created_at)}
                   </span>
                 </span>
                 <span

@@ -13,6 +13,7 @@ import { StatCard } from "@/components/admin/ui/stat-card";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { adminButtonClassName } from "@/components/admin/ui/button";
 import type { Tables } from "@/lib/db/database.types";
+import { formatDateTime } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ const pageColumns: AdminDataTableColumn<PageRow>[] = [
     key: "updated_at",
     header: "Updated",
     render: (page) => (
-      <span className="opacity-70">{new Date(page.updated_at).toLocaleString()}</span>
+      <span className="opacity-70">{formatDateTime(page.updated_at)}</span>
     ),
   },
 ];
@@ -48,7 +49,7 @@ const auditColumns: AdminDataTableColumn<AuditLogEntry>[] = [
     key: "created_at",
     header: "Date",
     cellClassName: "whitespace-nowrap text-xs opacity-70",
-    render: (entry) => new Date(entry.created_at).toLocaleString(),
+    render: (entry) => formatDateTime(entry.created_at),
   },
   {
     key: "actor",

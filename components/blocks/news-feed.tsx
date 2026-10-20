@@ -35,7 +35,7 @@ function PostCard({ post }: { post: Tables<"news_posts"> }) {
         sizes="(min-width: 1024px) 24rem, (min-width: 640px) 33vw, 100vw"
       />
       <p className="mt-3 text-xs text-osi-slate-400 uppercase">
-        {post.published_at ? new Date(post.published_at).toLocaleDateString() : post.kind}
+        {post.published_at ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(post.published_at)) : post.kind}
       </p>
       <h3 {...longTitle(post.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance">
         {post.title}

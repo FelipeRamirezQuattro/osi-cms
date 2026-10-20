@@ -6,6 +6,7 @@ import { AnalyticsPageHeader } from "@/components/admin/analytics/analytics-page
 import { ReportSection } from "@/components/admin/analytics/report-section";
 import { BarChartCard, LineChartCard } from "@/components/admin/analytics/chart-card";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { formatDateTime } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ export default async function PeopleReportsPage({ searchParams }: Props) {
   ];
 
   const leadColumns: AdminDataTableColumn<(typeof formLeads)[number]>[] = [
-    { key: "createdAt", header: "Date", render: (r) => new Date(r.createdAt).toLocaleString() },
+    { key: "createdAt", header: "Date", render: (r) => formatDateTime(r.createdAt) },
     { key: "formKey", header: "Form", render: (r) => r.formKey },
     { key: "pageSlug", header: "Page", render: (r) => r.pageSlug ?? "—" },
   ];

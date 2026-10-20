@@ -4,6 +4,7 @@ import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import Link from "next/link";
 import type { Tables } from "@/lib/db/database.types";
+import { formatDate } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ const columns: AdminDataTableColumn<SharedSectionRow>[] = [
   {
     key: "updated_at",
     header: "Updated",
-    render: (section) => <span className="opacity-50">{new Date(section.updated_at).toLocaleDateString()}</span>,
+    render: (section) => <span className="opacity-50">{formatDate(section.updated_at)}</span>,
   },
 ];
 

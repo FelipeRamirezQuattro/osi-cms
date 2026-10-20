@@ -7,6 +7,7 @@ import { ANALYTICS_REPORT_CATALOG } from "@/lib/admin/analytics-report-catalog";
 import { AnalyticsPageHeader } from "@/components/admin/analytics/analytics-page-header";
 import { StatCard } from "@/components/admin/ui/stat-card";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
+import { formatInteger } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 
@@ -47,10 +48,10 @@ export default async function AnalyticsOverviewPage({ searchParams }: Props) {
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard value={summary.totalSessions.toLocaleString()} label="Site sessions" href="/admin/analytics/traffic" />
-        <StatCard value={summary.totalPageViews.toLocaleString()} label="Page views" href="/admin/analytics/traffic" />
-        <StatCard value={summary.totalUniqueVisitors.toLocaleString()} label="Unique visitors" href="/admin/analytics/people" />
-        <StatCard value={totalLeads.toLocaleString()} label="Form leads" href="/admin/analytics/people" />
+        <StatCard value={formatInteger(summary.totalSessions)} label="Site sessions" href="/admin/analytics/traffic" />
+        <StatCard value={formatInteger(summary.totalPageViews)} label="Page views" href="/admin/analytics/traffic" />
+        <StatCard value={formatInteger(summary.totalUniqueVisitors)} label="Unique visitors" href="/admin/analytics/people" />
+        <StatCard value={formatInteger(totalLeads)} label="Form leads" href="/admin/analytics/people" />
       </div>
 
       <section className="space-y-4">

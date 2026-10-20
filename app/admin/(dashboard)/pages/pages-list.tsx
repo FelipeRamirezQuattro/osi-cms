@@ -9,6 +9,7 @@ import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui
 import { AdminListControls, type SortOption } from "@/components/admin/ui/admin-list-controls";
 import { useListQueryState } from "@/components/admin/ui/use-list-query-state";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
+import { formatDate } from "@/lib/format/date";
 
 type PageRow = Tables<"pages">;
 
@@ -40,7 +41,7 @@ const columns: AdminDataTableColumn<PageRow>[] = [
   {
     key: "updated_at",
     header: "Updated",
-    render: (page) => <span className="opacity-50">{new Date(page.updated_at).toLocaleDateString()}</span>,
+    render: (page) => <span className="opacity-50">{formatDate(page.updated_at)}</span>,
   },
 ];
 

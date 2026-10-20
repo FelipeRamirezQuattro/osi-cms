@@ -4,6 +4,7 @@ import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import Link from "next/link";
 import type { Tables } from "@/lib/db/database.types";
+import { formatDate } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ const columns: AdminDataTableColumn<FormDefinitionRow>[] = [
   {
     key: "updated_at",
     header: "Updated",
-    render: (definition) => <span className="opacity-50">{new Date(definition.updated_at).toLocaleDateString()}</span>,
+    render: (definition) => <span className="opacity-50">{formatDate(definition.updated_at)}</span>,
   },
 ];
 

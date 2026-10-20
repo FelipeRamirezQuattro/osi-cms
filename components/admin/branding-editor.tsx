@@ -26,6 +26,7 @@ import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { useConfirmDialog } from "@/components/admin/ui/confirm-dialog";
 import { useToast } from "@/components/admin/ui/toast";
 import { BrandingPreviewFrame } from "@/components/admin/branding-preview-frame";
+import { formatDateTime } from "@/lib/format/date";
 
 const LAYOUT_LABELS: Record<LayoutTheme, string> = {
   classic: "Classic — the original OSI presentation",
@@ -374,7 +375,7 @@ export function BrandingEditor({
           </Card>
           <Card className="p-4">
             <h2 className="text-sm font-semibold">Revision history</h2>
-            {revisions.length === 0 ? <p className="mt-2 text-xs text-[var(--admin-ink-secondary)]">No published revisions yet.</p> : <ul className="mt-3 space-y-2">{revisions.map((revision) => <li key={revision.id} className="flex items-center justify-between gap-3 text-xs"><span><strong>v{revision.version}</strong><br /><span className="text-[var(--admin-ink-secondary)]">{new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(revision.created_at))}</span></span><Button variant="ghost" className="min-h-8 px-2 text-xs" onClick={() => restore(revision)} disabled={pending}>Restore</Button></li>)}</ul>}
+            {revisions.length === 0 ? <p className="mt-2 text-xs text-[var(--admin-ink-secondary)]">No published revisions yet.</p> : <ul className="mt-3 space-y-2">{revisions.map((revision) => <li key={revision.id} className="flex items-center justify-between gap-3 text-xs"><span><strong>v{revision.version}</strong><br /><span className="text-[var(--admin-ink-secondary)]">{formatDateTime(revision.created_at)}</span></span><Button variant="ghost" className="min-h-8 px-2 text-xs" onClick={() => restore(revision)} disabled={pending}>Restore</Button></li>)}</ul>}
           </Card>
         </aside>
       </div>

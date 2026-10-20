@@ -1,5 +1,7 @@
 "use client";
 
+import { formatDateTime } from "@/lib/format/date";
+
 export type RevisionSummary = { id: string; created_at: string };
 
 /**
@@ -28,7 +30,7 @@ export function RevisionsPanel({
         <ul className="max-h-48 space-y-1 overflow-y-auto text-xs">
           {revisions.map((rev) => (
             <li key={rev.id} className="flex items-center justify-between gap-2">
-              <span className="opacity-70">{new Date(rev.created_at).toLocaleString()}</span>
+              <span className="opacity-70">{formatDateTime(rev.created_at)}</span>
               {canRestore && (
                 <button type="button" onClick={() => onRestore(rev.id)} className="hover:underline">
                   Restore

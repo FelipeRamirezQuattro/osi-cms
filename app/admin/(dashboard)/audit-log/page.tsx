@@ -5,6 +5,7 @@ import { listAuditFiltersAction, listAuditLogAction } from "@/lib/actions/audit"
 import type { AuditLogEntry, AuditLogFilters } from "@/lib/data/audit";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
 import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
+import { formatDateTime } from "@/lib/format/date";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -30,7 +31,7 @@ const columns: AdminDataTableColumn<AuditLogEntry>[] = [
     key: "created_at",
     header: "Date",
     cellClassName: "whitespace-nowrap text-xs opacity-70",
-    render: (entry) => new Date(entry.created_at).toLocaleString(),
+    render: (entry) => formatDateTime(entry.created_at),
   },
   {
     key: "actor",
