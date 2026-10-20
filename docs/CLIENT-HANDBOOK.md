@@ -10,6 +10,8 @@ Go to `/admin` (e.g. `odessaseparator.com/admin`) and sign in with your
 email and password. New staff accounts are set up by an existing admin
 (see **Users**, below) — there's no public sign-up.
 
+![The admin sign-in form with the email field, password field, and Sign in button marked in order](handbook/screenshots/signing-in-01-login.png)
+
 If you forget your password, use the "forgot password" link on the sign-in
 page. The email contains a link to a page with a **Continue** button — click
 the button to choose a new password. (The extra click is deliberate: some
@@ -331,6 +333,8 @@ arrows to reorder.
 Check **External link** for anything that points off the OSI site (a
 distributor's own website, for example) — it opens in a new tab and
 shows a small ↗ mark so visitors know it's leaving the site.
+
+![The Forge public menu open on a phone with site pages and product groups arranged in a single scrolling panel](handbook/screenshots/branding-03-forge-mobile-menu.png)
 
 **Linking a menu item to a product:** when you add or edit an item, pick the
 product from the **Link to a page or product** list instead of typing a
