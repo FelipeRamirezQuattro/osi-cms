@@ -27,7 +27,7 @@ export default async function ResourcesPage() {
   return (
     <Section background="cream" spacingTop="lg" spacingBottom="lg">
       <Eyebrow className="mb-3">Knowledge center</Eyebrow>
-      <h1 className="mb-10 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance">Resources</h1>
+      <h1 className="mb-10 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance [overflow-wrap:anywhere]">Resources</h1>
 
       {items.length > 0 ? (
         <ResourcesFilterClient resources={items} />

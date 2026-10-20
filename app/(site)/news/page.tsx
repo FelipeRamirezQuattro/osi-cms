@@ -57,7 +57,7 @@ export default async function NewsListingPage() {
   return (
     <Section background="cream" spacingTop="lg" spacingBottom="lg">
       <Eyebrow className="mb-3">From OSI</Eyebrow>
-      <h1 className="mb-10 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance">News and field updates</h1>
+      <h1 className="mb-10 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance [overflow-wrap:anywhere]">News and field updates</h1>
 
       {posts.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

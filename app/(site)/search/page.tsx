@@ -33,7 +33,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       contentClassName="mx-auto max-w-4xl px-5 md:px-10"
     >
       <Eyebrow className="mb-3">Site search</Eyebrow>
-      <h1 className="font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance">
+      <h1 className="font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance [overflow-wrap:anywhere]">
         Find products, resources, and expertise
       </h1>
 

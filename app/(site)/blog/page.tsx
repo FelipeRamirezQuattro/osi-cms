@@ -64,7 +64,7 @@ export default async function BlogListingPage({ searchParams }: PageProps<"/blog
   return (
     <Section background="cream" spacingTop="lg" spacingBottom="lg">
       <Eyebrow className="mb-3">From OSI</Eyebrow>
-      <h1 className="mb-6 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance">Blog</h1>
+      <h1 className="mb-6 font-editorial text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-none text-balance [overflow-wrap:anywhere]">Blog</h1>
 
       {tags.length > 0 && (
         <nav aria-label="Filter by tag" className="mb-10 flex flex-wrap gap-2">
