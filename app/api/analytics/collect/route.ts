@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
+import { detectBot } from "@/lib/analytics/bot-detection";
 import { classifyTraffic } from "@/lib/analytics/classify-traffic";
+import { isTrackablePath } from "@/lib/analytics/trackable";
 import { ATTRIBUTION_COOKIE, SESSION_COOKIE, VISITOR_COOKIE } from "@/lib/analytics/cookies";
 import { hashClientIp } from "@/lib/actions/form-submission-pipeline";
 import {
@@ -76,6 +78,14 @@ export async function POST(request: Request) {
     return new NextResponse(null, { status: 204 });
   }
   const body = parsed.data;
+
+  // Crawlers that execute JavaScript (Googlebot renders pages) reach this
+  // endpoint too: they are counted separately by proxy.ts, never as visitors.
+  // And the path comes from the client, so staff areas can't be "visited" by
+  // posting them here. Nothing is stored and no cookie is set in either case.
+  if (detectBot((await headers()).get("user-agent")) || !isTrackablePath(body.path)) {
+    return new NextResponse(null, { status: 204 });
+  }
 
   const ipHash = await hashClientIp();
   const recentCount = await countRecentAnalyticsWritesByIp(ipHash, RATE_LIMIT_WINDOW_MINUTES);
