@@ -16,6 +16,7 @@ import { columnsBlock } from "@/components/blocks/columns";
 import { quoteTestimonialBlock } from "@/components/blocks/quote-testimonial";
 import { buttonGroupBlock } from "@/components/blocks/button-group";
 import { resourceListBlock } from "@/components/blocks/resource-list";
+import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { imageGalleryBlock } from "@/components/blocks/image-gallery";
 import { stagesCarouselBlock } from "@/components/blocks/stages-carousel";
 import {
@@ -44,6 +45,17 @@ export const metadata: Metadata = {
 // needs the same force-dynamic escape hatch or Next's static prerender
 // fails the build the moment that call runs.
 export const dynamic = "force-dynamic";
+
+// A short link can't be embedded, so contact_details shows its fallback card. The
+// surface can come from the legacy `background` or from a surface preset, so the
+// card is checked on each.
+const SHORT_MAP_LINK = "https://maps.app.goo.gl/abc123";
+const CONTACT_FALLBACK_FIXTURES = [
+  { key: "navy", data: { background: "navy", mapEmbedUrl: SHORT_MAP_LINK } },
+  { key: "cream", data: { background: "cream", mapEmbedUrl: SHORT_MAP_LINK } },
+  { key: "light-preset", data: { background: "navy", mapEmbedUrl: SHORT_MAP_LINK, appearance: { surfacePresetId: "reading-light" } } },
+  { key: "dark-preset", data: { background: "cream", mapEmbedUrl: SHORT_MAP_LINK, appearance: { surfacePresetId: "primary-dark" } } },
+] as const;
 
 const ROLE_LABELS = {
   primary: "Primary",
@@ -406,6 +418,18 @@ export default async function StyleguidePage() {
       <resourceListBlock.Render
         data={resourceListBlock.schema.parse({ title: "Resources" })}
       />
+
+      <Section bg="cream">
+        <Heading>Contact details — map fallback</Heading>
+        <p className="max-w-xl text-xs text-osi-slate-400">
+          A short maps.app.goo.gl link can&rsquo;t be embedded, so the block shows its fallback card. Checked on both section surfaces.
+        </p>
+      </Section>
+      {CONTACT_FALLBACK_FIXTURES.map(({ key, data }) => (
+        <div key={key} data-testid={`contact-fallback-${key}`}>
+          <BlockRenderer blocks={[{ id: `contact-fallback-${key}`, type: "contact_details", data }]} />
+        </div>
+      ))}
 
       <Section bg="cream">
         <Heading>Interactive media — gallery</Heading>

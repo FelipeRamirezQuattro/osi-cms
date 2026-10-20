@@ -79,13 +79,10 @@ async function Render({ data, isPreview = false }: { data: Data } & BlockRenderE
             sandbox="allow-scripts allow-same-origin allow-popups"
           />
         ) : (
-          <div
-            className={`flex min-h-56 w-full flex-col items-start justify-end rounded-[var(--site-radius-lg)] border p-6 text-sm ${
-              data.background === "cream"
-                ? "border-osi-navy-900/12 bg-white/45 text-osi-slate-300"
-                : "border-white/15 bg-osi-white/8 text-white/82"
-            }`}
-          >
+          // Colours come from the section's own text role (currentColor), not from
+          // `data.background`: a surface preset can make a "navy" block light, and
+          // the legacy field would then pick white text for a cream card.
+          <div className="flex min-h-56 w-full flex-col items-start justify-end rounded-[var(--site-radius-lg)] border border-current/20 bg-current/8 p-6 text-sm text-current">
             <p className="font-editorial text-xl font-semibold text-current">Visit OSI</p>
             <p className="mt-2">Map preview unavailable. Use the address or open directions.</p>
             {mapUrl && (
