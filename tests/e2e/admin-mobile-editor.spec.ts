@@ -16,9 +16,17 @@ test.describe("admin editors at 390px", () => {
     await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
     await page.goto("/admin/pages");
     await page.waitForLoadState("networkidle");
-    await page.locator('a[href^="/admin/pages/"]:not([href$="/new"])').first().click();
-    await page.waitForURL(/\/admin\/pages\/[0-9a-f-]{36}/);
-    await page.locator("[data-block-toggle]").first().click();
+    // The first listed page can be an empty draft; open the first one that has blocks.
+    const hrefs = await page
+      .locator("a[href^='/admin/pages/']")
+      .evaluateAll((links) => [...new Set(links.map((a) => a.getAttribute("href")!))].filter((h) => /\/admin\/pages\/[0-9a-f-]{36}$/.test(h)));
+    const toggle = page.locator("[data-block-toggle]").first();
+    for (const href of hrefs.slice(0, 15)) {
+      await page.goto(href);
+      await page.waitForLoadState("networkidle");
+      if (await toggle.count()) break;
+    }
+    await toggle.click();
     await expectNoHorizontalScroll(page);
     await page.screenshot({ path: testInfo.outputPath("page-editor-390.png"), fullPage: true });
   });

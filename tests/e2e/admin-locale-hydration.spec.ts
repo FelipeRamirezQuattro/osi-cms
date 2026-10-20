@@ -4,6 +4,10 @@ import { ADMIN_EMAIL, ADMIN_PASSWORD, SKIP_REASON, signIn, trackPageErrors } fro
 // F3: React hydration error #418 in the page editor. Dates were rendered with the
 // runtime's default locale/time zone, so the server (UTC, en-US) and QA's browser
 // (es-CO, UTC-5) produced different text. Read-only: opens existing admin screens.
+// WebKit (the "mobile" project) words an aborted background fetch, e.g. a prefetch
+// cancelled by the next navigation, as "TypeError: Load failed". That is not a render error.
+const real = (errors: string[]) => errors.filter((e) => e !== "console: TypeError: Load failed");
+
 test.use({ locale: "es-CO", timezoneId: "America/Bogota" });
 
 test.describe("admin dates under a non-US browser locale and time zone", () => {
@@ -32,7 +36,7 @@ test.describe("admin dates under a non-US browser locale and time zone", () => {
     test.skip(withRevisions === 0, "No page with revisions exists to check.");
     // The revision timestamps are shown in a fixed zone, not the browser's.
     await expect(page.locator("#revisions-heading + ul li span").first()).toContainText(/\d{4}.*(AM|PM)/);
-    expect(errors).toEqual([]);
+    expect(real(errors)).toEqual([]);
   });
 
   for (const path of ["/admin", "/admin/pages", "/admin/forms", "/admin/shared-sections", "/admin/audit-log", "/admin/submissions", "/admin/branding"]) {
@@ -41,7 +45,7 @@ test.describe("admin dates under a non-US browser locale and time zone", () => {
       await signIn(page, ADMIN_EMAIL!, ADMIN_PASSWORD!);
       await page.goto(path);
       await page.waitForLoadState("networkidle");
-      expect(errors).toEqual([]);
+      expect(real(errors)).toEqual([]);
     });
   }
 });
