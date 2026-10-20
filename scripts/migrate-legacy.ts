@@ -15,6 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createServiceRoleDbClient } from "../lib/db/client";
 import type { Json } from "../lib/db/database.types";
+import { repairJoinedText } from "../lib/text/repair-joined-text";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const LEGACY_DIR = path.join(import.meta.dirname, "..", "content", "legacy", "pages");
@@ -245,7 +246,7 @@ function reconstructDocOrder(page: LegacyPage): DocItem[] {
     if (item.type === "heading" && last?.type === "heading") {
       last.text = `${last.text} ${item.text}`;
     } else {
-      merged.push({ type: item.type, text: item.text });
+      merged.push({ type: item.type, text: repairJoinedText(item.text) });
     }
   }
   return merged;
