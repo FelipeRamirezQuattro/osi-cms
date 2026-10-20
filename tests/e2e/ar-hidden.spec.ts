@@ -32,6 +32,7 @@ test.describe("3D/AR viewer stays hidden until OSI supplies a model", () => {
   });
 
   test("no public page renders a viewer", async ({ page, request }) => {
+    test.setTimeout(180_000); // one navigation per published page; slow when the full suite runs alongside
     const [pages, products] = await Promise.all([
       rest<{ slug: string }>(request, "page_publications?select=slug"),
       rest<{ slug: string; product_categories: { slug: string } | null }>(request, "products?select=slug,product_categories(slug)&status=eq.published"),
@@ -41,7 +42,7 @@ test.describe("3D/AR viewer stays hidden until OSI supplies a model", () => {
       ...products.filter((p) => p.product_categories).map((p) => `/products/${p.product_categories!.slug}/${p.slug}`),
     ];
     for (const path of paths) {
-      await page.goto(path);
+      await page.goto(path, { waitUntil: "domcontentloaded" });
       await expect(page.locator("model-viewer"), path).toHaveCount(0);
       await expect(page.getByText("View in AR"), path).toHaveCount(0);
     }

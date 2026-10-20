@@ -9,7 +9,6 @@ export const SEARCH_QUERY_MAX = 100;
 export function normalizeSearchQuery(raw: string): string {
   return (
     raw
-      // eslint-disable-next-line no-control-regex -- stripping control characters is the point
       .replace(/[\u0000-\u001f\u007f]/g, " ")
       .replace(/\s+/g, " ")
       .trim()
