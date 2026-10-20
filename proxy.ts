@@ -3,6 +3,7 @@ import { guardAdminRequest, publicSlugIsResolvable } from "@/lib/auth";
 import { logBotVisitIfMatched } from "@/lib/analytics/log-bot-visit";
 import { getRedirectIndex } from "@/lib/data/redirects";
 import { matchRedirect } from "@/lib/redirects/matcher";
+import { isSiteIndexable, NOINDEX_DIRECTIVE, reviewHostRedirectTarget } from "@/lib/indexing";
 
 // Next.js 16 renamed middleware.ts -> proxy.ts (see CLAUDE.md). Gates
 // every /admin/* route except /admin/login behind an active
@@ -70,6 +71,22 @@ import { matchRedirect } from "@/lib/redirects/matcher";
 // existing chrome'd not-found.tsx at (an irrelevant, not user-visible)
 // 200, unchanged from before this fix.
 export async function proxy(request: NextRequest) {
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+
+  // After go-live the review address 301s to the same path on the real
+  // domain, so only one indexable copy exists. Off until REVIEW_HOST_REDIRECT=true;
+  // preview deployments are never matched (lib/indexing.ts).
+  const reviewTarget = reviewHostRedirectTarget(host, `${request.nextUrl.pathname}${request.nextUrl.search}`);
+  if (reviewTarget) return NextResponse.redirect(reviewTarget, 301);
+
+  const response = await handleRequest(request);
+  // Everything that isn't the live production domain is kept out of search
+  // engines at the header level too (robots.txt and metadata say the same).
+  if (!isSiteIndexable(host)) response.headers.set("X-Robots-Tag", NOINDEX_DIRECTIVE);
+  return response;
+}
+
+async function handleRequest(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
   // A dead one-time auth link (already used, or burned by a mail scanner)

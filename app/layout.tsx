@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isIndexingEnabled } from "@/lib/indexing";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -6,6 +7,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: "Odessa Separator Inc.", template: "%s | Odessa Separator Inc." },
   description: "World-class downhole fluid-conditioning systems.",
+  // Static, env-only half of the indexing policy (lib/indexing.ts). The
+  // host-aware half is the X-Robots-Tag header set in proxy.ts, which is
+  // authoritative; this keeps the meta tag consistent with it.
+  ...(isIndexingEnabled() ? {} : { robots: { index: false, follow: false } }),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
