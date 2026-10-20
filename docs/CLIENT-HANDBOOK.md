@@ -19,14 +19,19 @@ has expired or was already used", just request a new one.
 
 ## The dashboard
 
-After signing in you'll land on the dashboard: how many new contact-form
+After signing in you'll land on the dashboard: how many new form
 submissions are waiting, how many pages exist, how many drafts are still
 waiting to be published, how many images are missing required alt text,
 any broken internal links found on the site, and a list of recently
-edited pages plus recent staff activity. The left sidebar (grouped into
-Content/Catalog/Directory/Site setup/Admin sections, with the section
-you're currently in highlighted) is how you get everywhere else — on a
-phone or narrow window it collapses to a menu button in the top bar.
+edited pages plus recent staff activity. Shortcut buttons along the top
+(**New page**, **New product**, **New article**, **Upload media**) start the
+most common jobs. The left sidebar — grouped into **Overview**, **Content**,
+**Email marketing**, **Catalog**, **Directory**, **Site setup**,
+**Analytics** and **Admin**, with the screen you're on highlighted — is how
+you get everywhere else; on a phone or narrow window it collapses to a menu
+button in the top bar. If email isn't set up yet, a notice at the top of the
+dashboard (and of **Submissions**) says so: forms still save every
+submission, but nobody is emailed.
 
 ## Creating a page
 
@@ -44,8 +49,8 @@ later doesn't do anything.
 **blocks** — a hero banner, a row of stat numbers, a contact form, and so
 on, stacked top to bottom.
 
-- **To add a block**, use the search box at the bottom of the block list
-  to find one by name or by what it's for (e.g. typing "gallery" or
+- **To add a block**, use the **Add a block** search box below the last
+  block to find one by name or by what it's for (e.g. typing "gallery" or
   "video" both find relevant blocks), then click its card to add it.
 - **To reorder blocks**, drag the ⠿ handle on the left of each block, or
   use the ↑/↓ buttons next to it — the same buttons also work from the
@@ -53,7 +58,8 @@ on, stacked top to bottom.
   keys to move it, and Space again to drop it).
 - **To edit a block**, click its title to expand it, fill in the fields,
   and they save when you save the page.
-- **To temporarily hide a block** without deleting it, click **Hide**.
+- **To temporarily hide a block** without deleting it, click **Hide** (the
+  button then reads **Show**).
 - **Duplicate** inserts the copy directly below the original block, not
   at the end of the list, so it's easy to find and adjust right away.
 - **Remove** does exactly what it says.
@@ -67,8 +73,10 @@ typing — a small "Saving…" / "Saved" / "Unsaved changes" note next to
 that button shows the current state, so **Save draft** is there for you
 to save immediately (before previewing, say) rather than something you
 must remember to click. **Publish** makes the current version live — it
-also saves a snapshot you can restore later from the **Revisions** panel
-on the right, if you ever need to undo a change. **Preview** opens the
+also saves a snapshot you can restore later from the **Version history**
+panel on the right (at the top of the right-hand column on a wide screen,
+just above the blocks on a phone), if you ever need to undo a change.
+Each version has a **Restore** button. **Preview** opens the
 page as it will look once published, without actually publishing it —
 if you have edits that haven't saved yet, it warns you first, since the
 preview can only show what was last saved.
@@ -81,7 +89,7 @@ own back link; it can't catch every possible way of navigating elsewhere
 in the admin, so it's still worth glancing at that "Saving…"/"Saved"
 indicator before you go.
 
-Changing the **Slug** field changes the page's web address — do this
+Changing the **Slug** field (under **Page settings**, on the right) changes the page's web address — do this
 carefully, since anything linking to the old address will break unless
 you also add a redirect (see **Redirects**, below). You don't have to
 remember to do that yourself: if you change the slug and click
@@ -97,6 +105,14 @@ block Publish by themselves (only genuinely broken block content does,
 the same "fix this before saving" check you may already have seen) — the
 panel is there to tell you what to double-check, not to stop you.
 
+The **SEO** box under **Page settings** holds the **SEO title** and **SEO
+description** — what Google shows for the page. Leave them blank and the
+page title and the opening lines of the page are used instead, which is fine
+for a start but worth writing by hand for important pages. Tick **Hide from
+search engines (noindex)** for a page that should be reachable but not
+listed in Google. **Choose social image** sets the picture shown when the
+page is shared; without one the site-wide default from **Settings** is used.
+
 **Archive** (next to Publish/Unpublish) takes a page off the public site
 without deleting it — use it for something seasonal or no-longer-relevant
 that you might bring back later. An archived page shows up in the
@@ -110,7 +126,7 @@ admins.
 **Shared sections** are block sequences you build once and reuse across
 several pages — a footer call-to-action, say, that should look and read
 the same everywhere it appears. Build one here, then add a **Shared
-section** block to any page and give it that section's **key**.
+section** block to any page and choose the section from its list.
 
 Editing works exactly like editing a page: **Save draft**, then
 **Publish** when you're happy with it — and here it matters even more,
@@ -127,8 +143,9 @@ published) shows a dashed note explaining why.
 
 ## Forms
 
-**Forms** lets you build a new form — a quote request, a newsletter
-signup, whatever you need — without asking a developer. Give it a name
+**Forms** lets you build a new form — a quote request, an event
+registration, whatever you need — without asking a developer. (Newsletter
+signup is its own block, described under **Newsletter subscribers**.) Give it a name
 and a **form key**, add fields (name, email, phone, a dropdown, a
 consent checkbox — pick from the list), write the submit button label
 and the message shown after someone submits, and optionally a
@@ -143,7 +160,8 @@ The site's main contact form is managed separately, as its own
 
 ## Choosing images
 
-Wherever you see a **Choose image** button, it opens the media library.
+Wherever you see a **Choose …** button (**Choose Cover image**, **Choose
+Diagram image**, **Choose favicon**, and so on), it opens the media library.
 You can pick an existing image or upload a new one (JPG, PNG, WEBP, AVIF,
 or GIF, up to 8 MB). **Alt text is
 required on upload** — a short, plain description of what the image
@@ -170,9 +188,11 @@ In the page editor, add an **AR model** block and upload the `.glb` to
 the first file field and the `.usdz` to the second. Add alt text
 describing the model (read aloud by screen readers, same rule as any
 image). A poster image and caption are optional. On the live page,
-every visitor sees the 3D viewer with a **View in AR** button on their
-phone; the page also shows a QR code (useful for print, or for a desktop
-visitor to open the page on their own phone).
+every visitor sees the 3D viewer, and on a phone that supports it an AR
+button launches the model in their room; next to the viewer there is also a
+QR code labelled "Scan to view in AR" (useful for print, or for a desktop
+visitor to open the page on their own phone). Files are uploaded to the
+**3D Models** tab of the media library (up to 45 MB each).
 
 Colors and materials can't be changed from the admin — if a model's
 colors need adjusting, that happens in Blender and the `.glb`/`.usdz`
@@ -189,14 +209,16 @@ keeps every page visually consistent with the rest of the site.
 
 Each of these has its own section in the sidebar with a list view and an
 edit screen, the same pattern as pages: fill in the fields, set
-**Status** to `published` when it's ready to go live, save. Every list
-screen (including Pages and Products) has a search box, a status filter,
-and a sort dropdown across the top — useful once a list grows past a
-screenful — and the current search/filter/sort choice is saved in the
-page's web address, so you can bookmark or share a filtered view.
+**Status** to `published` when it's ready to go live, save. Most list
+screens (including Pages and Products) have a search box, a status filter
+and a sort dropdown across the top (Product categories and Redirects have
+search and sort only) — useful once a list grows past a screenful — and
+the current search/filter/sort choice is saved in the page's web address,
+so you can bookmark or share a filtered view.
 
-**Products** is the most detailed one — besides the basics (name,
-images, description), it has Benefits, Stages, and Specs, each an
+**Products** is the most detailed one — besides the basics (name, category,
+tagline, summary, the diagram image, video/PDF/3D-model links and the SEO
+fields), it has Benefits, Stages, and Specs, each an
 add/remove list, plus checkboxes for which Industries and Applications
 the product applies to, and which other products to show as **Related
 products** on that product's page.
@@ -205,8 +227,8 @@ Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
 publish it later.
 
-**Blog posts** live in the same **News & blog** section as news: create a
-post and set its **Kind** to `blog`. Blog posts also have an **Author**,
+**Blog posts** live in the same **News** section as news (the screen itself is
+titled **News & blog**): create a post and set its **Kind** to `blog`. Blog posts also have an **Author**,
 up to 10 **Tags**, and a **Reading time** in minutes (all optional). They
 appear on the public **/blog** page, where visitors can filter by tag,
 and not on **/news** — news, conference and event posts stay on **/news**.
@@ -243,8 +265,8 @@ its own sidebar section — those are regular pages, edited under
 **Newsletter signup** block (add it to any page from the block palette,
 under Forms). Signing up is a two-step process: the visitor enters their
 email, we email them a confirmation link, and they only become
-**subscribed** once they press the button on that page. Until then they
-show as **pending confirmation**; people who opt out show as
+**subscribed** once they press the button on that page (a short welcome
+email follows). Until then they show as **pending**; people who opt out show as
 **unsubscribed** and are never emailed again unless they sign up and
 confirm again.
 
@@ -255,8 +277,9 @@ confirm again.
   their consent. Adding an address that's already on the list (in any
   status) just updates its tags and marks it subscribed again.
 - **Tags** group subscribers so a newsletter can go to just one group.
-  Add a tag in the Tags panel, then open **Add tags** on a subscriber's
-  row to choose theirs. Click a tag to filter the list.
+  Add a tag in the Tags panel, then tick that subscriber's tags in the
+  **Tags** column of their row and press **Save tags**. Click a tag at the
+  top to filter the list.
 - **Export CSV** downloads the whole list, including each person's status
   and when they agreed.
 - **Delete** is for erasure requests (admins only) — it also removes the
@@ -297,11 +320,14 @@ address and the mailing address shown in the footer). Until then the page
 lists what's still missing, and you can still write, preview and send
 yourself tests once the sender is set up.
 
+## Navigation
 
 **Navigation** controls the menus — the header's utility links, the mega
 menu (the big dropdown with product columns), the footer columns, and so
-on. Switch between menus using the tabs at the top. Add a top-level item,
-optionally add children under it, and use the ↑/↓ arrows to reorder.
+on. Switch between menus with the links at the top (**mega**, **utility**,
+**footer-1** to **footer-4**). Click **+ Add top-level item**, optionally add
+children under it with **+ Child**, change one with **Edit**, and use the ↑/↓
+arrows to reorder.
 Check **External link** for anything that points off the OSI site (a
 distributor's own website, for example) — it opens in a new tab and
 shows a small ↗ mark so visitors know it's leaving the site.
@@ -318,9 +344,9 @@ this same product menu.
 
 ## Media library
 
-**Media** is the full library of every image (and PDF document) on the
-site. Search it, filter by folder or tag, upload new files, or delete
-ones no longer needed. Uploading a purely decorative image (a background
+**Media** is the full library of every file on the site, in three tabs:
+**Images**, **Documents** (PDFs, up to 20 MB) and **3D Models**. Search it,
+filter by folder or tag, upload new files, or delete ones no longer needed. Uploading a purely decorative image (a background
 texture, say) can be marked **Decorative** instead of typing a fake alt
 description — everything else still needs real alt text.
 
@@ -410,9 +436,10 @@ What to know under Forge: a **Stat grid** on a dark (navy) background shows as a
 ## Submissions
 
 **Submissions** is the inbox for every form on the site — the main
-Contact form and any form you've built under **Forms**. New ones are
-marked **New**; open one to see the full message and mark it **Read** or
-**Archive** it. If email notifications have been set up (for the contact
+Contact form and any form you've built under **Forms**. Use **New**,
+**Read**, **Archived** and **All** at the top to switch the list. New ones
+are marked **New**; open one to see the full message and mark it **Read**
+or **Archive** it. If email notifications have been set up (for the contact
 form, or for a specific form under **Forms**), you'll also get an email
 for each new submission — but the inbox here is the reliable record
 either way. **Export CSV**, at the top, downloads every submission (every
@@ -475,8 +502,9 @@ destination follows that content: while a product is still a draft its old
 address sends visitors to that category's product list, and once you
 publish it the same address goes straight to the product (the same for a
 page, using the optional "fallback path" you set for the time it is a
-draft). Search engines get a real permanent redirect (301),
-and any `?query` on the old address is carried over. Changes take up to a
+draft). By default search engines get a real permanent redirect (301) —
+the **Status code** field lets you choose another — and any `?query` on the
+old address is carried over. Changes take up to a
 minute to go live. The list is kept **flat**: a redirect can't point to
 itself, can't point at an address that is itself redirected, and can't be
 the destination of another redirect. If you try, the error names the
@@ -492,6 +520,14 @@ account here if someone leaves. An invited person gets an email with a link
 to a page with an **Accept invitation** button; clicking it lets them set their
 password. If the link has expired, they can use "forgot password" on the
 sign-in page instead.
+
+## Email outbox
+
+**Email outbox** (visible to admins only, under **Admin**) is for testing.
+While the site's email is in test ("dry-run") mode, nothing is actually
+sent; each message the site would have sent — a contact-form notification, a
+newsletter confirmation — is kept here so you can read it. On the live site,
+with real email set up, this page stays empty.
 
 ## Audit log
 
