@@ -5,6 +5,50 @@ import { applicationHref, blogHref, industryHref, newsHref, postHref, productHre
 export type SitemapEntry = { url: string; lastModified: string };
 
 /**
+ * First path segments that are never public content: design prototypes,
+ * staff and API routes, and internal rewrite targets. A published page whose
+ * slug happens to collide with one of these is shadowed by the literal route
+ * anyway, so advertising it would only list a URL that isn't that page.
+ */
+export const SITEMAP_EXCLUDED_SEGMENTS: ReadonlySet<string> = new Set([
+  "admin",
+  "api",
+  "preview",
+  "styleguide",
+  "branding-preview",
+  "theme-showcase",
+  "forge",
+  "vector",
+  "horizon",
+  "fieldwork",
+  "signal",
+  "system-not-found",
+  "ui-regression-review",
+  "search",
+  "newsletter",
+]);
+
+function normalizePath(path: string): string {
+  const trimmed = path.length > 1 ? path.replace(/\/+$/, "") : path;
+  return trimmed.toLowerCase();
+}
+
+/**
+ * Drops entries that must not be advertised: prototype/staff/internal routes
+ * and any URL that is the source of a redirect (a crawler would be sent
+ * elsewhere, so the sitemap would list a URL that is not itself indexable).
+ */
+export function filterSitemapEntries(entries: SitemapEntry[], redirectSources: Iterable<string>): SitemapEntry[] {
+  const sources = new Set([...redirectSources].map(normalizePath));
+  return entries.filter((entry) => {
+    const path = normalizePath(entry.url);
+    if (sources.has(path)) return false;
+    const first = path.split("/").filter(Boolean)[0];
+    return !(first && SITEMAP_EXCLUDED_SEGMENTS.has(first));
+  });
+}
+
+/**
  * Backs app/sitemap.ts — kept in lib/data (not queried directly from the
  * route file) per CLAUDE.md constraint 2, same as every other DB access
  * point in the app.
@@ -27,7 +71,7 @@ export type SitemapEntry = { url: string; lastModified: string };
 export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   const db = createServerDbClient();
 
-  const [pages, products, news, industries, applications, resources] = await Promise.all([
+  const [pages, products, news, industries, applications, resources, redirects] = await Promise.all([
     db.from("page_publications").select("slug, published_at, snapshot"),
     db
       .from("products")
@@ -37,6 +81,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     db.from("industries").select("slug, updated_at").eq("status", "published"),
     db.from("applications").select("slug, updated_at").eq("status", "published"),
     db.from("resources").select("updated_at").eq("status", "published").order("updated_at", { ascending: false }).limit(1),
+    db.from("redirects").select("from_path"),
   ]);
 
   const now = new Date().toISOString();
@@ -75,5 +120,8 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   }
   entries.push({ url: resourceHref(), lastModified: resources.data?.[0]?.updated_at ?? now });
 
-  return entries;
+  return filterSitemapEntries(
+    entries,
+    (redirects.data ?? []).map((row) => row.from_path),
+  );
 }
