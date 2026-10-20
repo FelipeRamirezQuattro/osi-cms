@@ -127,3 +127,52 @@ This was **not** tested end-to-end in this task (no backup exists to
 restore from on the Free plan, so there was nothing to test against) —
 the write-up above documents the mechanism Supabase provides once
 backups exist, not a verified runbook.
+
+## Manual export and restore (rehearsed 2026-10-20)
+
+Until the Supabase organization is on a paid plan, `pnpm backup:export` is the
+only database backup. It reads every `public` table through the service-role API
+(SELECT only, nothing is written) and writes `backups/<timestamp>/` — one JSON
+file per table, a `manifest.json` of row counts, and a self-contained
+`restore.sql`. `backups/` is git-ignored because it holds personal data (form
+submissions, subscribers); store the folder somewhere private and durable.
+
+**Rehearsal on a throwaway target** (a local `postgres:17` container with stand-ins
+for Supabase's `auth`/`storage` schemas and the `anon`/`authenticated`/`service_role`
+roles), against the live database, 2026-10-20:
+
+| Step | Result |
+|---|---|
+| `pnpm backup:export` | 45 tables, 8,217 rows, 8.7 MB, **11 s** |
+| Replay migrations 0001–0053, 0055, 0056 on an empty database | 54 files, **5 s**, no failures |
+| `psql -f restore.sql` | **1 s**; every table's row count equals `manifest.json` |
+| Spot checks on the restored copy | 15 published pages, 3 published products, `redirect_index()` returns 91 rows, full-text search finds the same 18 products |
+| One-time setup (pulling the Postgres image) | about 2 minutes |
+
+To restore: create an empty database, apply `supabase/migrations/*.sql` in order
+**except 0054**, then `psql -v ON_ERROR_STOP=1 -f backups/<timestamp>/restore.sql`.
+
+**Gaps the rehearsal found** (none is fixed by the export alone):
+
+1. **Admin accounts are not in the export.** `admin_profiles` (5 rows) points at
+   `auth.users`, which the API does not expose, and password hashes cannot be
+   exported this way. After a full loss every admin has to be re-invited
+   (`pnpm create-admin <email>`) or reset their password.
+2. **Uploaded files are not in the export.** `media_assets` (190 rows) stores URLs
+   into the Supabase Storage bucket `media`; the files themselves need their own
+   copy (download the bucket from the dashboard or with the CLI).
+3. **Migration 0054 cannot be replayed on an empty database.** It validates that
+   the products and pages its 77 redirects point to already exist and aborts if
+   they don't. The redirect rows it created are part of the exported data, so the
+   restore procedure skips it. (Anyone replaying migrations to build a *new*
+   environment from scratch will hit the same abort and should load data first.)
+4. **Loading needs triggers and foreign keys switched off** (`restore.sql` sets
+   `session_replication_role = replica`), and a single `TRUNCATE` for all tables:
+   truncating table by table with `CASCADE` silently empties child tables that were
+   already loaded. Generated columns (`search_vector`) are skipped and recompute.
+5. **Not rehearsed:** restoring into an actual Supabase project (RLS policies run
+   against real Supabase roles there), restoring Storage files, and a Supabase-managed
+   backup — none exists on the Free plan, as above.
+6. **The export is on-demand.** Nothing runs it on a schedule. Run it by hand
+   before every risky operation, in particular before the DNS change on go-live day
+   (see `docs/LAUNCH-RUNBOOK.md`), and keep the last few.

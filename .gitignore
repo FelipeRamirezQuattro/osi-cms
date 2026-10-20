@@ -54,3 +54,6 @@ skills-lock.json
 # Client QA documents (public repo) — never commit
 docs/*.docx
 /screenshots/
+
+# Manual database exports (contain personal data)
+/backups
