@@ -1,0 +1,56 @@
+Rank,Product,Slug,Category,Status,Readiness,Score /100,Summary,Benefits,Stages / how it works,Specs,Hero / product image,Extra blocks,Datasheet / PDF,3D (external link),Applications,Missing (required),Missing (recommended)
+1,Chem Screen,chem-screen,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,video 1,yes,no,no,,how it works / stages; specs; applications
+2,Chem Screen GasLift,osi-chem-screen-gas-lift,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+3,Combination Tool,combination-tool,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 1",yes,yes,no,,how it works / stages; specs; applications
+4,ESP G-Force,esp-g-force,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 2",yes,yes,no,,how it works / stages; specs; applications
+5,ESP Guardian Shield,esp-guardian-shield,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 2",yes,yes,no,,how it works / stages; specs; applications
+6,ESP Packer Type Gas Separator,osi-esp-packer-type-gas-separat,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 3",yes,yes,no,,how it works / stages; specs; applications
+7,ESP Sand Lift,esp-sand-lift,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"gallery 1, other 2",yes,yes,no,,how it works / stages; specs; applications
+8,ESP Top Bypass Valve,esp-top-bypass-valve,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+9,ESP Vortex Desander,esp-vortex-desander,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+10,ESP Vortex Desander (Capillar),esp-vortex-desander-capillar,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+11,ESP Vortex Desander Bypass Valve,esp-vortex-desander-bypass-valve,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+12,ESP Vortex Desander High Resistance,esp-high-erosion-resistan,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+13,ESP Vortex Regulator,esp-vortex-regulator,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, gallery 1, other 2",yes,yes,no,,how it works / stages; specs; applications
+14,G-Force,g-force,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 2",yes,yes,no,,how it works / stages; specs; applications
+15,G-Force Packerless,g-forcepackerless,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 1, other 4",yes,yes,no,,how it works / stages; specs; applications
+16,Gas Shield,gas-shield,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 3, other 2",yes,yes,no,,how it works / stages; specs; applications
+17,Gas Vent,slotted-gas-shield-gas-vent,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 2",yes,yes,no,,how it works / stages; specs; applications
+18,Hot Oil Tool,hot-oil-tool,Sand Control,draft,Ready,70,yes,yes,no,no,yes,video 1,yes,yes,no,,how it works / stages; specs; applications
+19,Packer Type Gas Separator,packer-type-gas-separator,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 1",yes,yes,no,,how it works / stages; specs; applications
+20,Pump Guard Screen,pump-guard-screen,Sand Control,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+21,Quick Release,quick-release,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 2, other 3",yes,yes,no,,how it works / stages; specs; applications
+22,Sand Release Valve,sandreleasevalve,Sand Control,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 2, other 1",yes,no,no,,how it works / stages; specs; applications
+23,Screen Vortex Desander,screen-vortex-desander,Sand Control,draft,Ready,70,yes,yes,no,no,yes,video 1,yes,yes,no,,how it works / stages; specs; applications
+24,Slotted Gas Shield,slotted-gas-shield,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 3, other 2",yes,yes,no,,how it works / stages; specs; applications
+25,SRP Retrievable Chem Tool,srp-retrievable-chem-tool,,draft,Needs content,70,yes,yes,no,no,yes,"video 1, other 2",yes,yes,no,category,how it works / stages; specs; applications
+26,Super Lube,super-lube,Chemical Treatment,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+27,Super Perf,super-perf,Sand Control,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+28,Surge Valve (Packer Type Gas Separator),surge-valve-packer-type-gas-separat,Gas Separation,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 2, other 2",yes,yes,no,,how it works / stages; specs; applications
+29,Top Bypass Valve,osi-top-bypass-valve,Sand Control,draft,Ready,70,yes,yes,no,no,yes,"video 1, gallery 1, other 2",yes,yes,no,,how it works / stages; specs; applications
+30,Tubing Screen,tubing-screen,Sand Control,draft,Ready,70,yes,yes,no,no,yes,"video 1, other 1",yes,yes,no,,how it works / stages; specs; applications
+31,Vortex Desander,vortex-desander,Sand Control,draft,Ready,70,yes,yes,no,no,yes,video 1,yes,yes,no,,how it works / stages; specs; applications
+32,Bumper Spring,bumper-spring,Gas Separation,draft,Almost,60,yes,no,no,no,yes,"video 1, gallery 2, other 2",yes,yes,no,,benefits; how it works / stages; specs; applications
+33,Chamber Type Gas Separator,chamber-type-gas-separator,Gas Separation,draft,Almost,60,yes,no,no,no,yes,"video 2, gallery 1, other 1",yes,yes,no,,benefits; how it works / stages; specs; applications
+34,Chem Filter Tool,chem-filter-tool,Chemical Treatment,draft,Almost,60,yes,no,no,no,yes,video 1,yes,yes,no,,benefits; how it works / stages; specs; applications
+35,Chemical Injection Mandrel,chemicalinjectionmandrel,Pumps,draft,Almost,60,yes,yes,no,no,yes,no,yes,no,no,,"how it works / stages; specs; applications; extra content (video, gallery or tables)"
+36,Dip Tube Bypass,osi-top-intake-bypass,Sand Control,draft,Almost,60,yes,no,no,no,yes,"video 1, gallery 1",yes,yes,no,,benefits; how it works / stages; specs; applications
+37,ESP No- Go Catcher,esp-no-go-catcher,Chemical Treatment,draft,Almost,60,yes,no,no,no,yes,video 1,yes,yes,no,,benefits; how it works / stages; specs; applications
+38,ESP PMM Guardian,osi-pmm-guardian,Chemical Treatment,draft,Almost,60,yes,no,no,no,yes,video 1,yes,yes,no,,benefits; how it works / stages; specs; applications
+39,ESP Vortex Desander With Flex Tool,esp-vortex-desander-with-swivel,Chemical Treatment,draft,Almost,60,yes,no,no,no,yes,"video 2, gallery 1, other 2",yes,yes,no,,benefits; how it works / stages; specs; applications
+40,Gas Vent TAC,gas-vent-tac,Gas Separation,draft,Almost,60,yes,no,no,no,yes,video 1,yes,yes,no,,benefits; how it works / stages; specs; applications
+41,SRP Sand Lift,srp-sand-lift,Sand Control,published,Published,60,yes,yes,no,yes,yes,no,no,no,no,,"how it works / stages; applications; datasheet / PDF; extra content (video, gallery or tables)"
+42,The G-Force ESP Packer Type Gas Separator,g-force-esp-packer-type-gas-separator,Chemical Treatment,draft,Almost,60,yes,yes,no,no,yes,"video 1, other 1",no,no,no,,how it works / stages; specs; applications; datasheet / PDF
+43,The Nozzle,the-nozzle,Sand Control,draft,Almost,60,yes,no,no,no,yes,gallery 1,yes,yes,no,,benefits; how it works / stages; specs; applications
+44,Well Shock Kits OSI,well-shock-kits,Pumps,draft,Almost,60,yes,no,no,no,yes,other 1,yes,no,no,,benefits; how it works / stages; specs; applications
+45,Chem Sticks,chem-sticks,Chemical Treatment,draft,Needs content,50,no,yes,no,no,yes,"gallery 3, other 4",yes,no,no,summary,how it works / stages; specs; applications
+46,ESP Chem Screen,esp-chem-screen,Pumps,published,Published,50,yes,yes,no,no,yes,no,no,no,no,,"how it works / stages; specs; applications; datasheet / PDF; extra content (video, gallery or tables)"
+47,ESP Surge Valve,esp-surge-valve,Gas Separation,draft,Needs content,50,no,yes,no,no,yes,"video 1, gallery 1, other 2",yes,yes,no,summary,how it works / stages; specs; applications
+48,Gas Release System,gas-release-system,Gas Separation,published,Published,50,yes,yes,no,no,yes,no,no,no,no,,"how it works / stages; specs; applications; datasheet / PDF; extra content (video, gallery or tables)"
+49,OSI UltraMesh,osi-mesh,Sand Control,draft,Needs content,50,no,yes,no,no,yes,"gallery 2, other 3",yes,no,no,summary,how it works / stages; specs; applications
+50,Retrievable Chem Tool,retrievable-chem-tool,Chemical Treatment,draft,Needs content,50,no,yes,no,no,yes,"video 1, other 1",yes,yes,no,summary,how it works / stages; specs; applications
+51,ESP Sand Diverter,esp-sand-d,Chemical Treatment,draft,Needs content,40,no,no,no,no,yes,"video 1, gallery 4, other 4",yes,yes,no,summary,benefits; how it works / stages; specs; applications
+52,ESP Screen Vortex Desander,esp-screen-vortex-desander,Chemical Treatment,draft,Needs content,40,no,no,no,no,yes,"video 2, other 3",yes,yes,no,summary,benefits; how it works / stages; specs; applications
+53,Test,test,Gas Separation,draft,Test record,40,yes,no,no,no,yes,no,no,no,no,"at least one content section (benefits, how it works, specs or extra blocks)","benefits; how it works / stages; specs; applications; datasheet / PDF; extra content (video, gallery or tables)"
+54,PRUEBA JM,jm-prueba-01,Chemical Treatment,draft,Test record,20,yes,no,no,no,no,no,no,no,no,"product image; at least one content section (benefits, how it works, specs or extra blocks)","benefits; how it works / stages; specs; applications; datasheet / PDF; extra content (video, gallery or tables)"
+55,Test Product,test-product-1,Gas Separation,draft,Test record,20,yes,no,no,no,no,no,no,no,no,"product image; at least one content section (benefits, how it works, specs or extra blocks)","benefits; how it works / stages; specs; applications; datasheet / PDF; extra content (video, gallery or tables)"

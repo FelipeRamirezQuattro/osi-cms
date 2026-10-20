@@ -26,7 +26,8 @@
     "create-admin": "tsx --env-file=.env.local scripts/create-admin-user.ts",
     "report:content-integrity": "tsx --env-file=.env.local scripts/report-content-integrity.ts",
     "verify:gsc": "tsx --env-file=.env.local scripts/verify-gsc-connection.ts",
-    "report:seo-fallbacks": "tsx --env-file=.env.local scripts/report-seo-fallbacks.ts"
+    "report:seo-fallbacks": "tsx --env-file=.env.local scripts/report-seo-fallbacks.ts",
+    "report:product-readiness": "tsx --env-file=.env.local scripts/report-product-readiness.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
