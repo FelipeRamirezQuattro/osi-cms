@@ -29,12 +29,14 @@ async function main() {
   const role = (process.argv.find((a) => a.startsWith("--role="))?.split("=")[1] ??
     "admin") as "admin" | "editor";
   const fullName = process.argv.find((a) => a.startsWith("--name="))?.split("=")[1];
+  // Defaults to the configured site (NEXT_PUBLIC_SITE_URL), so the script follows the domain move at go-live.
+  const defaultSite = process.env.NEXT_PUBLIC_SITE_URL ?? "https://osi-cms.vercel.app";
   const redirectTo =
     process.argv.find((a) => a.startsWith("--redirect="))?.slice("--redirect=".length) ??
-    "https://osi-cms.vercel.app/admin/reset-password";
+    `${defaultSite}/admin/reset-password`;
 
   const wantLink = process.argv.includes("--link");
-  const site = process.argv.find((a) => a.startsWith("--site="))?.slice("--site=".length) ?? "https://osi-cms.vercel.app";
+  const site = process.argv.find((a) => a.startsWith("--site="))?.slice("--site=".length) ?? defaultSite;
 
   const db = createServiceRoleDbClient();
 

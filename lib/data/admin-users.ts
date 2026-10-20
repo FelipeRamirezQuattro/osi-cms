@@ -1,3 +1,4 @@
+import { absoluteUrl } from "@/lib/seo";
 import { createServerDbClient, createServiceRoleDbClient } from "@/lib/db/client";
 import { recordAudit } from "@/lib/data/audit";
 import type { Tables } from "@/lib/db/database.types";
@@ -81,7 +82,10 @@ async function assertDoesNotOrphanAdmins(
  */
 export async function inviteAdminUser(email: string, role: "admin" | "editor", fullName?: string): Promise<void> {
   const service = createServiceRoleDbClient();
-  const { data, error } = await service.auth.admin.inviteUserByEmail(email);
+  const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
+    // Follows the configured site, so invites keep working after the domain move at go-live.
+    redirectTo: absoluteUrl("/admin/reset-password"),
+  });
 
   let userId: string;
   if (error) {

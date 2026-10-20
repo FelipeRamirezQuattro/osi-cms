@@ -233,12 +233,17 @@ export function CampaignEditor({
           </p>
         )}
 
-        {!locked && !readiness.canSendTest && (
+        {!locked && readiness.dryRun && (
+          <p role="status" className="rounded border border-osi-gold-500/50 bg-osi-gold-500/10 px-4 py-3 text-sm">
+            Email is in dry-run mode: test emails are kept in the email outbox instead of being sent, and campaigns can&rsquo;t be sent.
+          </p>
+        )}
+        {!locked && !readiness.dryRun && !readiness.canSendTest && (
           <p role="status" className="rounded border border-osi-gold-500/50 bg-osi-gold-500/10 px-4 py-3 text-sm">
             Email isn&rsquo;t set up yet, so test emails can&rsquo;t be sent. Still to configure: {readiness.missing.join(", ")}.
           </p>
         )}
-        {!locked && readiness.canSendTest && !readiness.canSendCampaign && (
+        {!locked && !readiness.dryRun && readiness.canSendTest && !readiness.canSendCampaign && (
           <p role="status" className="rounded border border-osi-gold-500/50 bg-osi-gold-500/10 px-4 py-3 text-sm">
             Test emails work, but sending to subscribers also needs: {readiness.missing.join(", ")}.
           </p>

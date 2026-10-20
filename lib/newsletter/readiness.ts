@@ -12,15 +12,21 @@ export type NewsletterReadiness = {
   canSendCampaign: boolean;
   /** Human-readable names of the missing environment variables. */
   missing: string[];
+  /** EMAIL_DRY_RUN=true: messages go to the admin email outbox instead of being sent. */
+  dryRun: boolean;
 };
 
 export function getNewsletterReadiness(env: Record<string, string | undefined> = process.env): NewsletterReadiness {
   const sender = ["RESEND_API_KEY", "RESEND_FROM_EMAIL"].filter((name) => !env[name]);
   const campaign = ["NEWSLETTER_TOKEN_SECRET", "NEWSLETTER_MAILING_ADDRESS"].filter((name) => !env[name]);
+  const dryRun = env.EMAIL_DRY_RUN === "true";
   return {
-    canSendTest: sender.length === 0,
-    canSendCampaign: sender.length === 0 && campaign.length === 0,
+    // A dry run renders test sends into the outbox without a provider key; it
+    // never sends a real campaign (see sendCampaignBatch in lib/email.ts).
+    canSendTest: dryRun || sender.length === 0,
+    canSendCampaign: !dryRun && sender.length === 0 && campaign.length === 0,
     missing: [...sender, ...campaign],
+    dryRun,
   };
 }
 

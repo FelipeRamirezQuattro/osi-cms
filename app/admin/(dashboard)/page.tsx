@@ -9,6 +9,7 @@ import { listBrokenLinks } from "@/lib/data/link-audit";
 import { listAuditLog, type AuditLogEntry } from "@/lib/data/audit";
 import { AdminDataTable, type AdminDataTableColumn } from "@/components/admin/ui/admin-data-table";
 import { AdminPageHeader } from "@/components/admin/ui/admin-page-header";
+import { EmailStatusBanner } from "@/components/admin/email-status-banner";
 import { StatCard } from "@/components/admin/ui/stat-card";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import { adminButtonClassName } from "@/components/admin/ui/button";
@@ -208,6 +209,8 @@ export default async function AdminDashboardPage() {
         description="A clear view of publishing work, content health, and recent activity."
         actions={canEditDrafts ? <QuickActions canUploadMedia={canUploadMedia} /> : undefined}
       />
+
+      <EmailStatusBanner />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {canViewSubmissions && (

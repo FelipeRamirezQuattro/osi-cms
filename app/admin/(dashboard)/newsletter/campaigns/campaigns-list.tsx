@@ -98,7 +98,12 @@ export function CampaignsList({
           </Button>
         }
       />
-      {!readiness.canSendCampaign && (
+      {readiness.dryRun && (
+        <p role="status" className="rounded border border-osi-gold-500/50 bg-osi-gold-500/10 px-4 py-3 text-sm">
+          Email is in dry-run mode, so campaigns can be written but not sent. Test emails are kept in the email outbox.
+        </p>
+      )}
+      {!readiness.dryRun && !readiness.canSendCampaign && (
         <p role="status" className="rounded border border-osi-gold-500/50 bg-osi-gold-500/10 px-4 py-3 text-sm">
           Email isn&rsquo;t fully set up yet, so campaigns can be written but not sent. Still to configure: {readiness.missing.join(", ")}.
         </p>

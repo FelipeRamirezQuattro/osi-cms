@@ -83,6 +83,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: "/admin/submissions", label: "Submissions", capability: "view_submissions" },
       { href: "/admin/users", label: "Users", capability: "manage_users" },
       { href: "/admin/audit-log", label: "Audit log", capability: "view_audit" },
+      { href: "/admin/email-outbox", label: "Email outbox", capability: "manage_users" },
     ],
   },
 ];

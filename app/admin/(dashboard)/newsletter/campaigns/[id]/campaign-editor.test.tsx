@@ -38,7 +38,7 @@ const tags = [
   { id: "t1", name: "Distributors", created_at: "" },
   { id: "t2", name: "Operators", created_at: "" },
 ];
-const ready = { canSendTest: true, canSendCampaign: true, missing: [] };
+const ready = { canSendTest: true, canSendCampaign: true, missing: [], dryRun: false };
 
 function editor(overrides: Partial<Parameters<typeof CampaignEditor>[0]> = {}) {
   return (
@@ -148,7 +148,7 @@ describe("CampaignEditor", () => {
   });
 
   it("disables test sending and says what is missing when email isn't configured", () => {
-    render(editor({ readiness: { canSendTest: false, canSendCampaign: false, missing: ["RESEND_API_KEY"] } }));
+    render(editor({ readiness: { canSendTest: false, canSendCampaign: false, missing: ["RESEND_API_KEY"], dryRun: false } }));
     expect(screen.getByRole("button", { name: "Send test" })).toBeDisabled();
     expect(screen.getByText(/RESEND_API_KEY/)).toBeInTheDocument();
   });
