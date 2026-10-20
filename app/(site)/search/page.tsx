@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/section";
 import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 import { searchSite } from "@/lib/data/search";
+import { normalizeSearchQuery } from "@/lib/search-query";
 import { longTitle } from "@/lib/text/long-title";
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 export default async function SearchPage({ searchParams }: PageProps<"/search">) {
   const params = await searchParams;
-  const q = typeof params.q === "string" ? params.q.trim() : "";
+  const q = typeof params.q === "string" ? normalizeSearchQuery(params.q) : "";
   const results = q ? await searchSite(q) : [];
 
   return (
@@ -99,11 +100,16 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       {q && results.length === 0 && (
         <EmptyState
           title="No results found"
-          description={`We couldn’t find anything for “${q}”. Check the spelling, try a broader phrase, or explore the product catalog.`}
+          description={`We couldn’t find anything for “${q}”. Check the spelling, try a single keyword such as a product name, or browse the catalog. If you are looking for something specific, our team can help.`}
           action={
-            <ArrowButton href="/products" variant="outline-dark">
-              Explore products
-            </ArrowButton>
+            <div className="flex flex-wrap gap-3">
+              <ArrowButton href="/products" variant="outline-dark">
+                Explore products
+              </ArrowButton>
+              <ArrowButton href="/contact" variant="outline-dark">
+                Contact us
+              </ArrowButton>
+            </div>
           }
         />
       )}

@@ -1,10 +1,12 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { detectBot } from "@/lib/analytics/bot-detection";
 import { createServerDbClient } from "@/lib/db/client";
 import type { PageMeta } from "@/lib/data/pages";
 import { applicationHref, industryHref, postHref, productHref, resourceHref } from "@/lib/routes";
 import { hashClientIp } from "@/lib/actions/form-submission-pipeline";
 import { recordSearchQuery } from "@/lib/data/analytics-events";
 import { SESSION_COOKIE, VISITOR_COOKIE } from "@/lib/analytics/cookies";
+import { escapeLikePattern, normalizeSearchQuery } from "@/lib/search-query";
 
 /**
  * Site-wide search (master prompt §9 Phase 6) — Postgres full-text via
@@ -43,12 +45,15 @@ export type SearchResult = {
 const RESULTS_PER_TABLE = 8;
 
 export async function searchSite(query: string): Promise<SearchResult[]> {
-  const trimmed = query.trim();
+  const trimmed = normalizeSearchQuery(query);
   if (!trimmed) return [];
 
   const db = createServerDbClient();
+  // `type: "plain"` parses with plainto_tsquery, which ignores punctuation, so
+  // quotes and operators in the text can't produce a syntax error.
   const tsQuery = trimmed.split(/\s+/).join(" & ");
-  const ilikeQuery = `%${trimmed}%`;
+  // The ilike tables match literally: a typed `%` or `_` is not a wildcard.
+  const ilikeQuery = `%${escapeLikePattern(trimmed)}%`;
 
   const [pages, products, news, industries, applications, resources] = await Promise.all([
     db
@@ -120,6 +125,8 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
 // a logging failure must not break search for a real visitor.
 async function recordSearchQueryBestEffort(query: string, resultsCount: number): Promise<void> {
   try {
+    // Crawlers are not visitors: their queries would pollute "Top Searches".
+    if (detectBot((await headers()).get("user-agent"))) return;
     const cookieStore = await cookies();
     const ipHash = await hashClientIp();
     await recordSearchQuery({

@@ -1251,3 +1251,19 @@ The map fallback chose its text colour from the legacy `background` field. A sur
 ## Published pages are served from `page_publications`, not `page_blocks`
 
 A content fix to a published page has to update the snapshot too (migration 0055 does both for `/hse`). `page_blocks` holds the editable draft; `lib/data/pages.ts → getPageBySlug` reads `page_publications.snapshot`. `/careers` and `/hse` have live blocks (an image, a gallery) that were never published, so the public page and `/preview/…` differ.
+
+## Analytics: what is collected and stored (W4 audit)
+
+First-party only: no Vercel Analytics, no third-party script, no fingerprinting. `app/api/analytics/collect` is the single endpoint; the beacon (`components/analytics/analytics-beacon.tsx`) is mounted only under `app/(site)/`, so `/admin` never sends, and it skips `/preview/`. The endpoint no longer trusts that: it ignores any request whose `path` is a staff, API or internal path (`lib/analytics/trackable.ts`) and any request from a recognised crawler (`lib/analytics/bot-detection.ts`; Googlebot executes JavaScript and would otherwise be counted as a visitor). Crawler hits are counted separately, from `proxy.ts`, in `analytics_bot_visits`. An ignored request answers 204 and sets no cookie. Search queries from crawlers are not logged either.
+
+**In the visitor's browser** (all `HttpOnly`, `SameSite=Lax`, `Secure` in production; nothing in localStorage/sessionStorage):
+
+| Cookie | Holds | Lifetime |
+|---|---|---|
+| `osi_vid` | random UUID identifying the browser | ~400 days |
+| `osi_sid` | random UUID for the visit | 30 minutes, sliding |
+| `osi_attr` | how the visit started (referrer host, UTM tags, traffic category) | 30 minutes |
+
+**In the database:** `analytics_page_views` (session, visitor, new-visitor flag, path, referrer host, traffic category, UTM source/medium/campaign, country from Vercel's `x-vercel-ip-country`, `ip_hash`, user agent), `analytics_events` (button and contact clicks), `analytics_search_queries` (query text, result count), `analytics_bot_visits`. `ip_hash` is a SHA-256 of IP plus the secret `IP_HASH_SALT`; no raw IP is stored anywhere. A contact submission is linked to the visitor and session so leads can be attributed to a traffic source.
+
+**Open question for the client (not decided here):** the persistent `osi_vid` identifier is the one item that may need prior consent under the EU ePrivacy rules / GDPR if the site has EU visitors; the 30-minute session cookies are lower risk. The site currently shows no cookie banner. If OSI's counsel wants none, the smallest change is to make `osi_vid` a session cookie (drop `maxAge` in the collect route); returning-visitor counts then become per-visit. Left as is until OSI decides.
