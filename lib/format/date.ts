@@ -6,7 +6,8 @@
 const LOCALE = "en-US";
 const TIME_ZONE = "America/Chicago"; // Odessa, TX — where OSI staff work
 
-const dateTime = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TIME_ZONE });
+// timeZoneName makes the zone explicit ("CDT"/"CST") so staff elsewhere aren't misled.
+const dateTime = new Intl.DateTimeFormat(LOCALE, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short", timeZone: TIME_ZONE });
 const date = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeZone: TIME_ZONE });
 const integer = new Intl.NumberFormat(LOCALE);
 
