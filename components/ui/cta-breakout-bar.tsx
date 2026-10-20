@@ -16,7 +16,7 @@ export function CtaBreakoutBar({
   href,
   children,
   corner = "tl",
-  className = "absolute right-8 bottom-0 z-10 translate-y-1/2",
+  className = "absolute right-8 bottom-0 z-10 max-w-[calc(100%-4rem)] translate-y-1/2",
 }: {
   href: string;
   children: ReactNode;
@@ -29,7 +29,7 @@ export function CtaBreakoutBar({
         as="span"
         corner={corner}
         size="1.25rem"
-        className="flex min-h-12 items-center gap-6 bg-osi-gold-500 py-3 pr-5 pl-8 font-body text-sm font-semibold tracking-[0.02em] text-osi-navy-900 transition-[background-color,transform] duration-200 hover:bg-osi-gold-400 active:scale-[0.98]"
+        className="flex min-h-12 items-center justify-between gap-6 bg-osi-gold-500 [overflow-wrap:anywhere] py-3 pr-5 pl-8 font-body text-sm font-semibold tracking-[0.02em] text-osi-navy-900 transition-[background-color,transform] duration-200 hover:bg-osi-gold-400 active:scale-[0.98]"
       >
         {children}
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-osi-navy-900/60">

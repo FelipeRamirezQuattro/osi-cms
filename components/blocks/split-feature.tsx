@@ -68,7 +68,7 @@ function Render({ data }: { data: Data }) {
         />
       </div>
       {data.cta && (
-        <CtaBreakoutBar href={data.cta.href} className="absolute right-8 bottom-0 z-10 translate-y-1/2">
+        <CtaBreakoutBar href={data.cta.href} className="absolute right-8 bottom-0 z-10 max-w-[calc(100%-4rem)] translate-y-1/2">
           {data.cta.label}
         </CtaBreakoutBar>
       )}

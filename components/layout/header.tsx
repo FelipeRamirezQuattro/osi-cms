@@ -15,7 +15,7 @@ export async function Header({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
 
   return (
     <header data-site-header className="sticky top-0 z-40 border-b border-white/10 bg-brand-surface-dark/94 px-5 text-brand-text-dark shadow-[0_12px_35px_rgba(0,11,22,0.14)] backdrop-blur-xl md:px-10">
-      <div className="mx-auto flex min-h-18 max-w-[var(--site-container)] items-center justify-between gap-8">
+      <div className="mx-auto flex min-h-18 max-w-[var(--site-container)] flex-wrap items-center justify-between gap-x-8 gap-y-2 py-2">
         <Link
           href="/"
           aria-label="OSI home"
