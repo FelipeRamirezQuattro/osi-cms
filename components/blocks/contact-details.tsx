@@ -3,7 +3,7 @@ import { blockCommonSchema } from "@/lib/blocks/common";
 import { defineBlock } from "@/lib/blocks/types";
 import { Section } from "@/components/ui/section";
 import { getSiteSettings } from "@/lib/data/settings";
-import { optionalSafeHrefSchema } from "@/lib/validation/common";
+import { optionalMapLinkSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { SocialIcon } from "@/components/ui/social-icon";
 import { TrackedLink } from "@/components/analytics/tracked-link";
@@ -15,7 +15,7 @@ const schema = blockCommonSchema.extend({
   // Rendered directly as an <iframe src> below — not a click-navigable
   // link, but the same isSafeHref net is trivial to apply and rules out
   // a stray `javascript:`/`data:` value ending up in an iframe's src.
-  mapEmbedUrl: optionalSafeHrefSchema({ label: "Map embed URL" }),
+  mapEmbedUrl: optionalMapLinkSchema({ label: "Map embed URL" }),
   showSocial: z.boolean().default(true),
 });
 
@@ -59,8 +59,8 @@ async function Render({ data, isPreview = false }: { data: Data } & BlockRenderE
       )}
       {isPreview && mapUrl && !mapEmbedSrc && (
         <PreviewPlaceholder title="This map link can't be embedded">
-          Only full Google Maps links (place, search, coordinates or an &quot;Embed a map&quot; src) can be shown as a map.
-          Short maps.app.goo.gl links and other sites show an &quot;Open map&quot; button instead.
+          To show the map itself, paste Google&apos;s &quot;Embed a map&quot; code (Share → Embed a map → Copy HTML) or a full Google Maps
+          link. Short maps.app.goo.gl links and other sites show an &quot;Open map&quot; button instead.
         </PreviewPlaceholder>
       )}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:gap-10">
@@ -152,7 +152,7 @@ async function Render({ data, isPreview = false }: { data: Data } & BlockRenderE
 }
 
 const adminFields: FieldSpec[] = [
-  { key: "mapEmbedUrl", label: "Google Maps link (overrides the Settings map) — paste a maps.google link or an Embed-a-map src", type: "text", optional: true },
+  { key: "mapEmbedUrl", label: "Google Maps (overrides the Settings map) — in Google Maps choose Share → Embed a map → Copy HTML and paste it here. A full maps.google link also works; short maps.app.goo.gl links can only show an Open map button", type: "text", optional: true },
   { key: "showSocial", label: "Show social links (the links themselves are set in Settings)", type: "boolean" },
 ];
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { optionalNullableString, optionalSafeHrefSchema } from "@/lib/validation/common";
+import { optionalMapLinkSchema, optionalNullableString, optionalSafeHrefSchema } from "@/lib/validation/common";
 
 /**
  * site_settings.announcement_bar (jsonb, 0007_nav_settings_media.sql) —
@@ -36,7 +36,7 @@ export const siteSettingsSchema = z.object({
   // optionalNullableString per line, since an empty line here means
   // "remove it", not "store null in the array".
   address_lines: z.array(z.string().trim().min(1)).default([]),
-  map_embed_url: optionalSafeHrefSchema({ label: "Map embed URL" }),
+  map_embed_url: optionalMapLinkSchema({ label: "Map embed URL" }),
   social_facebook: optionalSafeHrefSchema({ label: "Facebook URL" }),
   social_linkedin: optionalSafeHrefSchema({ label: "LinkedIn URL" }),
   social_youtube: optionalSafeHrefSchema({ label: "YouTube URL" }),

@@ -32,6 +32,19 @@ describe("contact_details block (BLQ-06)", () => {
     expect(frame.getAttribute("src")).toContain("output=embed");
   });
 
+  it("accepts Google's pasted Embed-a-map <iframe> snippet and frames its src", async () => {
+    const snippet =
+      '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!2d-102.36!3d31.85!5e0!3m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
+    const data = contactDetailsBlock.schema.parse({ mapEmbedUrl: snippet });
+    expect(data.mapEmbedUrl).toMatch(/^https:\/\/www\.google\.com\/maps\/embed\?pb=/);
+    await renderBlock(data as unknown as Record<string, unknown>);
+    expect(screen.getByTitle("Map").getAttribute("src")).toBe(data.mapEmbedUrl);
+  });
+
+  it("still rejects an unsafe snippet", () => {
+    expect(contactDetailsBlock.schema.safeParse({ mapEmbedUrl: '<iframe src="javascript:alert(1)"></iframe>' }).success).toBe(false);
+  });
+
   it("never frames an unrecognized link — it shows it as an 'Open map' link instead", async () => {
     await renderBlock({ mapEmbedUrl: "https://maps.app.goo.gl/abc123" });
     expect(screen.queryByTitle("Map")).toBeNull();

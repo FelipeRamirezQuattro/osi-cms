@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isSafeHref } from "@/lib/routes";
+import { extractIframeSrc } from "@/lib/maps/embed";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import { describeIssue, issueField } from "@/lib/validation/issue-messages";
 
@@ -134,6 +135,11 @@ export function optionalSafeHrefSchema(options: Omit<SafeHrefOptions, "defaultVa
       .nullable()
       .default(null),
   );
+}
+
+/** optionalSafeHrefSchema that also accepts a pasted Google "Embed a map" <iframe> snippet (its src is used). */
+export function optionalMapLinkSchema(options: Omit<SafeHrefOptions, "defaultValue"> = {}) {
+  return z.preprocess(extractIframeSrc, optionalSafeHrefSchema(options));
 }
 
 /**

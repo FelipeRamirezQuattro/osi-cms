@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { googleMapsEmbedSrc } from "@/lib/maps/embed";
+import { extractIframeSrc, googleMapsEmbedSrc } from "@/lib/maps/embed";
 import { toEmbedSrc } from "@/components/blocks/embed";
 
 const src = (url: string) => googleMapsEmbedSrc(new URL(url));
@@ -74,5 +74,31 @@ describe("toEmbedSrc (google_maps)", () => {
     expect(toEmbedSrc("google_maps", "https://www.google.com/maps/place/Odessa+Separator+Inc/@31.8,-102.3,17z/data=!3m1")).toContain(
       "output=embed",
     );
+  });
+});
+
+const SNIPPET =
+  '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3389.1!2d-102.36!3d31.85!5e0!3m2!1ses-419!2sco!4v1792543214643!5m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+
+describe("extractIframeSrc", () => {
+  it("takes the src out of a pasted Embed-a-map snippet", () => {
+    const src = extractIframeSrc(SNIPPET);
+    expect(src).toBe("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3389.1!2d-102.36!3d31.85!5e0!3m2!1ses-419!2sco!4v1792543214643!5m2!1ses-419!2sco");
+    expect(toEmbedSrc("google_maps", src as string)).toBe(src);
+  });
+
+  it("decodes &amp; and accepts single quotes", () => {
+    expect(extractIframeSrc("<iframe src='https://www.google.com/maps?q=a&amp;ll=1,2'></iframe>")).toBe("https://www.google.com/maps?q=a&ll=1,2");
+  });
+
+  it("leaves plain URLs, blanks and non-strings alone", () => {
+    expect(extractIframeSrc("https://maps.app.goo.gl/x")).toBe("https://maps.app.goo.gl/x");
+    expect(extractIframeSrc("")).toBe("");
+    expect(extractIframeSrc(null)).toBeNull();
+  });
+
+  it("does not make an unsafe snippet safe — the src is still validated downstream", () => {
+    expect(extractIframeSrc('<iframe src="javascript:alert(1)"></iframe>')).toBe("javascript:alert(1)");
+    expect(toEmbedSrc("google_maps", "https://evil.example/maps/embed?pb=1")).toBeNull();
   });
 });

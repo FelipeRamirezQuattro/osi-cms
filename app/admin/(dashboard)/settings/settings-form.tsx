@@ -16,7 +16,7 @@ const SETTINGS_FIELDS: FieldSpec[] = [
   { key: "phone", label: "Phone", type: "text", optional: true },
   { key: "email", label: "Email", type: "text", optional: true },
   { key: "address_lines", label: "Address lines", type: "array" },
-  { key: "map_embed_url", label: "Map embed URL", type: "text", optional: true },
+  { key: "map_embed_url", label: "Map embed URL (paste Google's Embed-a-map code or a full Google Maps link)", type: "text", optional: true },
   { key: "social_facebook", label: "Facebook URL", type: "text", optional: true },
   { key: "social_linkedin", label: "LinkedIn URL", type: "text", optional: true },
   { key: "social_youtube", label: "YouTube URL", type: "text", optional: true },

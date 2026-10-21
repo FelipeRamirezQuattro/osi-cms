@@ -66,3 +66,17 @@ export function googleMapsEmbedSrc(parsed: URL): string | null {
   }
   return null;
 }
+
+/**
+ * Google's "Embed a map" dialog hands out a whole `<iframe src="…">` snippet,
+ * and that is what editors paste. Returns the snippet's `src` (HTML-decoded);
+ * anything that isn't an iframe snippet is returned untouched. Only the src
+ * string is taken — it still has to pass the same safe-href and host checks as
+ * a pasted URL, so no markup or attribute from the snippet is ever kept.
+ */
+export function extractIframeSrc(input: unknown): unknown {
+  if (typeof input !== "string" || !/<iframe\b/i.test(input)) return input;
+  const match = input.match(/\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+  const src = match?.[1] ?? match?.[2];
+  return src === undefined ? input : src.replace(/&amp;/g, "&").trim();
+}
