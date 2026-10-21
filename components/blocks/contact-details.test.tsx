@@ -35,9 +35,9 @@ describe("contact_details block (BLQ-06)", () => {
   it("accepts Google's pasted Embed-a-map <iframe> snippet and frames its src", async () => {
     const snippet =
       '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!2d-102.36!3d31.85!5e0!3m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
-    const data = contactDetailsBlock.schema.parse({ mapEmbedUrl: snippet });
+    const data = contactDetailsBlock.schema.parse({ mapEmbedUrl: snippet }) as { mapEmbedUrl: string };
     expect(data.mapEmbedUrl).toMatch(/^https:\/\/www\.google\.com\/maps\/embed\?pb=/);
-    await renderBlock(data as unknown as Record<string, unknown>);
+    await renderBlock(data);
     expect(screen.getByTitle("Map").getAttribute("src")).toBe(data.mapEmbedUrl);
   });
 
