@@ -35,6 +35,10 @@ button in the top bar. If email isn't set up yet, a notice at the top of the
 dashboard (and of **Submissions**) says so: forms still save every
 submission, but nobody is emailed.
 
+![The admin dashboard with publishing totals, attention items, shortcuts, and grouped navigation visible](handbook/screenshots/dashboard-01-overview.png)
+
+![The admin navigation drawer open on a phone, with the menu control and navigation panel marked](handbook/screenshots/dashboard-02-mobile-menu.png)
+
 ## Creating a page
 
 **Pages → New page** asks for a title, a web address (slug), and a
@@ -45,6 +49,10 @@ contact form; "standard" starts blank). It's only a starting point — you
 can add, remove, or rearrange blocks freely afterward, and changing it
 later doesn't do anything.
 
+![The Pages list with the New page button and page search marked](handbook/screenshots/creating-a-page-01-pages-list.png)
+
+![The New page screen with Title, Slug, and Starting point marked in order](handbook/screenshots/creating-a-page-02-new-page.png)
+
 ## Editing a page
 
 **Pages → click a page** opens the editor. A page is built from
@@ -54,6 +62,8 @@ on, stacked top to bottom.
 - **To add a block**, use the **Add a block** search box below the last
   block to find one by name or by what it's for (e.g. typing "gallery" or
   "video" both find relevant blocks), then click its card to add it.
+
+  ![The Add a block search narrowed to Rich text, with the search and matching block card marked](handbook/screenshots/editing-a-page-03-add-block.png)
 - **To reorder blocks**, drag the ⠿ handle on the left of each block, or
   use the ↑/↓ buttons next to it — the same buttons also work from the
   keyboard (Tab to the ⠿ handle, then Space to pick a block up, arrow
@@ -65,6 +75,8 @@ on, stacked top to bottom.
 - **Duplicate** inserts the copy directly below the original block, not
   at the end of the list, so it's easy to find and adjust right away.
 - **Remove** does exactly what it says.
+
+  ![An expanded block header with its drag, Hide, Duplicate, and Remove controls marked](handbook/screenshots/editing-a-page-02-block-controls.png)
 - If **Save draft** or **Publish** rejects something (a required field
   left blank, for instance), the editor scrolls to and opens the block
   that needs attention automatically — you don't have to hunt for it.
@@ -82,6 +94,12 @@ Each version has a **Restore** button. **Preview** opens the
 page as it will look once published, without actually publishing it —
 if you have edits that haven't saved yet, it warns you first, since the
 preview can only show what was last saved.
+
+![The page editor header with Save draft, Preview, and Publish marked](handbook/screenshots/editing-a-page-01-editor-actions.png)
+
+![A published page editor with Version history and Unpublish marked without activating either control](handbook/screenshots/editing-a-page-04-version-history.png)
+
+![The page editor at phone width with the save control and block header marked](handbook/screenshots/editing-a-page-05-mobile-editor.png)
 
 If you try to leave the page (closing the tab, or clicking **← Pages**)
 while you have unsaved edits, you'll be asked to confirm first — same as
@@ -143,6 +161,10 @@ published). In **Preview**, a block that would be empty on the live site
 (a news feed with no published posts, or a shared section that isn't
 published) shows a dashed note explaining why.
 
+![The Shared sections list with the New shared section control marked](handbook/screenshots/shared-sections-01-list.png)
+
+![A shared-section editor with its key, save and publish controls, and block control marked](handbook/screenshots/shared-sections-02-editor.png)
+
 ## Forms
 
 **Forms** lets you build a new form — a quote request, an event
@@ -154,6 +176,10 @@ and the message shown after someone submits, and optionally a
 **Notification email** to be emailed for each new submission. Set
 **Status** to `published`, then add a **Form** block to any page using
 that same form key.
+
+![The Forms list with its New form control and personal data masked](handbook/screenshots/forms-01-list.png)
+
+![A form editor with personal data masked and the form key, field control, and status marked](handbook/screenshots/forms-02-editor.png)
 
 Every submission — from any form, including the site's dedicated
 Contact form — lands in the same **Submissions** inbox (see below).
@@ -170,6 +196,10 @@ required on upload** — a short, plain description of what the image
 shows (e.g. "ESP Gas Release System diagram"). This isn't red tape: it's
 what a screen reader reads aloud to a visitor who can't see the image,
 and it's required by law in some jurisdictions for a commercial site.
+
+![The media picker with search and an existing image choice marked](handbook/screenshots/choosing-images-01-picker.png)
+
+![The media upload panel with file, required alt text, and Upload controls marked](handbook/screenshots/choosing-images-02-upload.png)
 
 ## Adding a 3D/AR model
 
@@ -196,6 +226,8 @@ QR code labelled "Scan to view in AR" (useful for print, or for a desktop
 visitor to open the page on their own phone). Files are uploaded to the
 **3D Models** tab of the media library (up to 45 MB each).
 
+![An AR model block with the GLB, USDZ, and optional poster-image controls marked](handbook/screenshots/ar-model-01-fields.png)
+
 Colors and materials can't be changed from the admin — if a model's
 colors need adjusting, that happens in Blender and the `.glb`/`.usdz`
 need re-exporting and re-uploading.
@@ -205,6 +237,8 @@ need re-exporting and re-uploading.
 Fields labeled for rich text give you a small toolbar: bold, italic,
 headings, bullet/numbered lists, and links. That's it on purpose — it
 keeps every page visually consistent with the rest of the site.
+
+![The rich-text toolbar with bold, heading, list, and link controls marked](handbook/screenshots/writing-formatted-text-01-toolbar.png)
 
 ## Products, news, industries, applications, resources, locations,
 ## directory
@@ -218,12 +252,22 @@ search and sort only) — useful once a list grows past a screenful — and
 the current search/filter/sort choice is saved in the page's web address,
 so you can bookmark or share a filtered view.
 
+![The Products list with search and filtering controls above the product rows](handbook/screenshots/products-01-list.png)
+
+![The Industries list with the Industries and Applications navigation entries marked](handbook/screenshots/taxonomy-01-industries-applications.png)
+
+![The Locations list with New location and search controls marked](handbook/screenshots/locations-01-list.png)
+
+![The Directory list controls with all contact details masked](handbook/screenshots/directory-01-list.png)
+
 **Products** is the most detailed one — besides the basics (name, category,
 tagline, summary, the diagram image, video/PDF/3D-model links and the SEO
 fields), it has Benefits, Stages, and Specs, each an
 add/remove list, plus checkboxes for which Industries and Applications
 the product applies to, and which other products to show as **Related
 products** on that product's page.
+
+![A product editor showing its main fields and category control](handbook/screenshots/products-02-editor.png)
 
 Everything defaults to **Status: draft** — draft content never appears
 on the public site, so it's safe to prepare something ahead of time and
@@ -236,6 +280,10 @@ appear on the public **/blog** page, where visitors can filter by tag,
 and not on **/news** — news, conference and event posts stay on **/news**.
 Unlike event and conference posts, a blog post does not need an event date.
 
+![The News and blog list with the new-post control and an existing item marked](handbook/screenshots/news-01-list.png)
+
+![A blog editor with Kind marked and a real person's name masked in the body](handbook/screenshots/news-02-editor.png)
+
 **Products, News, and Resources** can also be **archived** — a reversible
 way to take something off the public site without deleting it (a
 discontinued product, an old news post). Each of those list screens has
@@ -243,6 +291,10 @@ an **Archive** link per row, an `archived` option in the status filter,
 and a **Restore** link once something's archived. Deleting is still
 there, still permanent, and still admin-only — archiving is the
 in-between option for "not live, but don't throw it away."
+
+![The Resources list with New resource and an existing resource marked](handbook/screenshots/resources-01-list.png)
+
+![A resource editor with File URL, thumbnail, and status controls marked](handbook/screenshots/resources-02-editor.png)
 
 **Product categories** (its own sidebar section, separate from
 Products) is the short list of category names products are grouped
@@ -291,9 +343,13 @@ confirm again.
 Signups only complete once the email settings are in place (see the
 technical notes from your developer); until then people appear as pending.
 
+![The Subscribers screen with all subscriber details masked and the add, tags, and export controls marked](handbook/screenshots/newsletter-subscribers-01-list.png)
+
 ## Newsletter campaigns
 
 **Email marketing → Campaigns** is where newsletters are written and sent.
+
+![The Campaigns list with campaign names masked and the New campaign control marked](handbook/screenshots/newsletter-campaigns-01-list.png)
 
 1. **New campaign**, give it a name (only you see it).
 2. Fill in the **Subject line** and optional **Preview text** (the grey
@@ -312,6 +368,8 @@ technical notes from your developer); until then people appear as pending.
    receive it, then sends. **Keep the page open until it finishes.** If you
    lose the connection, come back to the campaign and press **Resume
    sending** — nobody gets it twice.
+
+![A draft campaign editor with Preview, Send test, and Save draft marked without sending anything](handbook/screenshots/newsletter-campaigns-02-editor.png)
 
 Once a campaign has been sent it can't be edited, so it stays as a record
 of what went out. Anyone who unsubscribes while a send is in progress is
@@ -334,6 +392,8 @@ Check **External link** for anything that points off the OSI site (a
 distributor's own website, for example) — it opens in a new tab and
 shows a small ↗ mark so visitors know it's leaving the site.
 
+![The Navigation editor with menu tabs, hierarchy controls, and a child-item control marked](handbook/screenshots/navigation-01-editor.png)
+
 ![The Forge public menu open on a phone with site pages and product groups arranged in a single scrolling panel](handbook/screenshots/branding-03-forge-mobile-menu.png)
 
 **Linking a menu item to a product:** when you add or edit an item, pick the
@@ -353,6 +413,8 @@ this same product menu.
 filter by folder or tag, upload new files, or delete ones no longer needed. Uploading a purely decorative image (a background
 texture, say) can be marked **Decorative** instead of typing a fake alt
 description — everything else still needs real alt text.
+
+![The Media library with its Images tab and search control marked](handbook/screenshots/media-library-01-library.png)
 
 You can edit an asset's title, alt text, caption/credit, folder, and tags
 at any time from its **Edit** link — no need to re-upload just to fix a
@@ -379,6 +441,8 @@ creates a restorable revision, and makes it visible across the public
 site. **Reset** replaces the draft with the current live branding. The
 revision list can restore an older version into the draft; review and
 publish it separately when you are ready.
+
+![The Branding workspace with Reset, Save draft, and Publish marked](handbook/screenshots/branding-01-workflow.png)
 
 Use the isolated preview to compare **Draft** and **Live** at mobile,
 tablet, and desktop widths. The preview is representative, while the
@@ -431,6 +495,8 @@ reverts the block to its original background at any time.
 
 Under **Branding → Site layout** you choose how the whole public site is composed. **Classic** is the original look. **Forge** uses big full-width photos with a dark overlay, large uppercase headings, numbered sections, ruled cards and a gold statistics band. Your colors, logo and content stay the same.
 
+![The Branding Site layout panel with the current Forge selection marked](handbook/screenshots/branding-02-site-layout.png)
+
 1. Choose **Forge** and **Save draft**. The public site does not change.
 2. Use the preview in the Branding page (or open the page preview) and look through Home, a product, Products, Services, Contact, News and Careers.
 3. When you are happy, **Publish**. To go back at any time, choose **Classic** and publish again.
@@ -451,12 +517,16 @@ status, every form) as a spreadsheet file — useful for handing a batch of
 leads to someone outside the admin, or for your own records outside the
 site.
 
+![The Submissions inbox with private contents masked and the status and Export CSV controls visible](handbook/screenshots/submissions-01-inbox.png)
+
 ## Analytics
 
 **Analytics** is the visitor dashboard — the replacement for the one you
 used to see in Wix. **Overview** shows top-line numbers (sessions, page
 views, unique visitors, form leads) for the selected date range, plus any
 reports you've starred. Six category pages break things down further:
+
+![The Analytics overview with its date range and top-line metrics marked](handbook/screenshots/analytics-01-overview.png)
 
 - **Traffic** — where visitors come from (which country) and when they
   visit
@@ -479,6 +549,8 @@ access from the Overview page — the same idea as Wix's saved reports. The
 date-range dropdown at the top of each page applies to every report on
 that page at once.
 
+![The Behavior analytics category with chart panels and category navigation visible](handbook/screenshots/analytics-02-categories.png)
+
 The Google-search numbers under **SEO** need a one-time technical setup
 (a Google Search Console connection) before they show real data — until
 that's connected, that section shows a short notice instead of a blank
@@ -495,6 +567,8 @@ when a page doesn't have its own). It also has the **Announcement bar**
 optionally add a link. Once a visitor closes it, it stays closed for
 them until you change the message — editing the text brings it back for
 everyone, even people who dismissed the old wording.
+
+![The Settings Announcement bar with its enable, message, and optional link controls marked](handbook/screenshots/settings-01-form.png)
 
 ## Redirects
 
@@ -515,6 +589,8 @@ the destination of another redirect. If you try, the error names the
 redirect in the way ("/a already redirects to /b — point this one
 straight to /b") so you can point it directly at the final page.
 
+![The Redirects list with New redirect and the Goes to column marked](handbook/screenshots/redirects-01-list.png)
+
 ## Users
 
 **Users** (visible to admins only) is where you invite new staff. Choose
@@ -524,6 +600,8 @@ account here if someone leaves. An invited person gets an email with a link
 to a page with an **Accept invitation** button; clicking it lets them set their
 password. If the link has expired, they can use "forgot password" on the
 sign-in page instead.
+
+![The Users screen with names and emails masked and Invite and Role controls marked](handbook/screenshots/users-01-list.png)
 
 ## Email outbox
 
@@ -542,6 +620,8 @@ member, the kind of thing that changed (a product, a page, navigation,
 and so on), the action taken, or a date range, to answer "who changed
 this and when" without having to ask around.
 
+![The Audit log with actors and details masked and its filter row marked](handbook/screenshots/audit-log-01-list.png)
+
 ## If something looks wrong
 
 - A page showing old content after you published? Give it a few seconds
@@ -558,6 +638,10 @@ Besides the fixed sections (benefits, video, "How does it work?", specifications
 
 Products that aren't published yet can be reviewed with the **Preview** button at the top of the product's edit screen (it opens `/preview/products/<category>/<product-slug>` in a new tab; you must be signed in, the product needs a saved category, and it shows the last saved version). In that preview a dashed note or a greyed button marks anything still missing, such as a PDF or 3D link; visitors never see those.
 
+![A categorized product editor with its Preview control marked](handbook/screenshots/products-03-preview.png)
+
 ## When something can't be saved
 
 If a block has a problem (for example a Columns block with only one column), a window opens saying which block and what to fix, with a **Go to block** button that opens and highlights it. While you're typing, problems found by autosave appear as a yellow alert above the blocks instead. If two people edited the same page you still get the red banner with **Reload page**.
+
+![A save alert explaining that a Columns block needs at least two columns, with Go to block marked](handbook/screenshots/save-error-01-alert-dialog.png)

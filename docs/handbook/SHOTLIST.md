@@ -70,6 +70,9 @@ dashboard, subscriber, submission, user, and audit-log screens.
   change navigation are highlighted but never activated.
 - The campaign editor shot is omitted with an explicit summary warning when
   no existing draft campaign is available; the script must not create one.
+- `products-04-preview-needs-category.png` is omitted when no existing
+  uncategorized product exposes that state. The current New product screen
+  does not render a Preview control until a product has been saved.
 - Names, email addresses, phone numbers, message contents, subscriber rows,
   user rows, and audit actors are blurred before capture. OSI's own public
   contact number may remain visible, but the script masks phone-like text by

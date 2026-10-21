@@ -100,6 +100,14 @@ async function maskSensitiveRows(page: Page, kind: "dashboard" | "subscribers" |
   }
 }
 
+async function maskSelectors(page: Page, selectors: string[]) {
+  for (const selector of selectors) {
+    await page.locator(selector).evaluateAll((nodes) => {
+      for (const node of nodes) (node as HTMLElement).dataset.handbookPrivate = "true";
+    });
+  }
+}
+
 async function annotate(page: Page, highlights: Highlight[]) {
   await clearOverlays(page);
   let nextNumber = 1;
@@ -157,9 +165,10 @@ async function annotate(page: Page, highlights: Highlight[]) {
 
 async function optimizePng(raw: string, output: string) {
   await sharp(raw).png({ compressionLevel: 9, palette: true, quality: 82, colours: 128, effort: 10 }).toFile(output);
-  if ((await stat(output)).size > 400_000) {
+  for (const [quality, colours] of [[72, 64], [60, 32], [45, 16]] as const) {
+    if ((await stat(output)).size <= 400_000) break;
     const retry = `${output}.retry.png`;
-    await sharp(raw).png({ compressionLevel: 9, palette: true, quality: 72, colours: 64, effort: 10 }).toFile(retry);
+    await sharp(raw).png({ compressionLevel: 9, palette: true, quality, colours, effort: 10 }).toFile(retry);
     await rename(retry, output);
   }
   if ((await stat(output)).size > 400_000) {
@@ -238,12 +247,20 @@ async function ensureHandbookDraft(page: Page): Promise<string> {
   await page.getByLabel("Title").fill(DRAFT_TITLE);
   await page.getByLabel("Slug").fill(DRAFT_SLUG);
   await page.getByLabel("Starting point").selectOption("standard");
-  await Promise.all([
-    page.waitForURL(/\/admin\/pages\/[^/]+$/, { timeout: 20_000 }),
-    page.getByRole("button", { name: "Create page" }).click(),
-  ]);
+  await page.getByRole("button", { name: "Create page" }).click();
+  await page.getByRole("heading", { name: DRAFT_TITLE, exact: true }).waitFor({ state: "visible", timeout: 20_000 });
   created.push(`draft page: ${DRAFT_TITLE} (/${DRAFT_SLUG})`);
-  return new URL(page.url()).pathname;
+  const currentPath = new URL(page.url()).pathname;
+  if (/\/admin\/pages\/[^/]+$/.test(currentPath) && !currentPath.endsWith("/new")) return currentPath;
+
+  // The editor can replace the New screen in place without changing the URL.
+  // Resolve the saved record from the list so later captures use its stable id.
+  await go(page, "/admin/pages");
+  await page.getByPlaceholder("Search pages…").fill(DRAFT_TITLE);
+  await page.waitForTimeout(450);
+  const href = await page.getByRole("link", { name: DRAFT_TITLE, exact: true }).getAttribute("href");
+  if (!href) throw new Error(`Created ${DRAFT_TITLE}, but could not resolve its saved page URL`);
+  return href;
 }
 
 async function addBlock(page: Page, name: string) {
@@ -252,6 +269,11 @@ async function addBlock(page: Page, name: string) {
   const card = page.getByRole("button", { name: new RegExp(`^${name}\\b`, "i") }).last();
   await card.click();
   await page.waitForTimeout(100);
+}
+
+async function ensureBlock(page: Page, name: string) {
+  const existing = page.getByRole("button", { name: new RegExp(`Block \\d+ · ${name}`, "i") });
+  if ((await existing.count()) === 0) await addBlock(page, name);
 }
 
 async function openLatestBlock(page: Page, name: string) {
@@ -284,6 +306,15 @@ async function captureFirstEditor(
     return;
   }
   await go(page, href);
+  if (filename === "forms-02-editor.png") {
+    await maskSelectors(page, ["main h1", 'main input[name="name"]', 'main input[name="notification_email"]']);
+  }
+  if (filename === "news-02-editor.png") {
+    const attributions = page.locator('main [contenteditable="true"] p').filter({ hasText: /CEO of OSI/i });
+    await attributions.evaluateAll((nodes) => {
+      for (const node of nodes) (node as HTMLElement).dataset.handbookPrivate = "true";
+    });
+  }
   const marks = highlights.map((name) => ({ locator: page.getByText(name).first() }));
   await capture(page, filename, main(page), marks);
 }
@@ -321,8 +352,8 @@ async function mobileAdminShots(draftHref: string) {
     await login(page);
     await page.getByRole("button", { name: "Open menu" }).click();
     await capture(page, "dashboard-02-mobile-menu.png", page.getByRole("dialog", { name: "OSI Content" }), [
-      { locator: page.getByRole("button", { name: "Open menu" }), number: 1 },
-      { locator: page.getByRole("dialog", { name: "OSI Content" }), number: 2 },
+      { locator: page.getByRole("button", { name: "Close menu" }), number: 1 },
+      { locator: page.getByRole("navigation", { name: "Admin navigation" }), number: 2 },
     ]);
     await go(page, draftHref);
     await capture(page, "editing-a-page-05-mobile-editor.png", main(page), [
@@ -360,7 +391,7 @@ async function authenticatedShots(page: Page) {
   ]);
 
   await go(page, draftHref);
-  await addBlock(page, "Rich text");
+  await ensureBlock(page, "Rich text");
   const richToggle = page.getByRole("button", { name: /Block \d+ · Rich text/i }).last();
   const richRow = richToggle.locator("xpath=ancestor::div[contains(@class,'rounded')][1]");
   await capture(page, "editing-a-page-02-block-controls.png", richRow, [
@@ -389,7 +420,7 @@ async function authenticatedShots(page: Page) {
   } else skipped.push("editing-a-page-04-version-history.png: no published page was listed");
 
   await go(page, draftHref);
-  await addBlock(page, "Rich text");
+  await ensureBlock(page, "Rich text");
   await openLatestBlock(page, "Rich text");
   const toolbar = page.locator('[role="toolbar"]').last();
   await capture(page, "writing-formatted-text-01-toolbar.png", toolbar.locator("xpath=.."), [
@@ -400,7 +431,7 @@ async function authenticatedShots(page: Page) {
   ]);
 
   await go(page, draftHref);
-  await addBlock(page, "Image");
+  await ensureBlock(page, "Image");
   await openLatestBlock(page, "Image");
   const chooseImage = page.getByRole("button", { name: "Choose Image" }).last();
   await chooseImage.click();
@@ -419,7 +450,7 @@ async function authenticatedShots(page: Page) {
   ]);
 
   await go(page, draftHref);
-  await addBlock(page, "AR model");
+  await ensureBlock(page, "AR model");
   await openLatestBlock(page, "AR model");
   const arFields = page.locator("[data-block-fields]").last();
   await capture(page, "ar-model-01-fields.png", arFields, [
@@ -429,7 +460,9 @@ async function authenticatedShots(page: Page) {
 
   await genericListShot(page, "/admin/shared-sections", "shared-sections-01-list.png", /New shared section/i);
   await captureFirstEditor(page, "/admin/shared-sections", "/admin/shared-sections", "shared-sections-02-editor.png", "/admin/shared-sections/new", [/Key/i, /Save draft|Create/i, /Publish/i]);
-  await genericListShot(page, "/admin/forms", "forms-01-list.png", /New form/i);
+  await go(page, "/admin/forms");
+  await maskSelectors(page, ["main tbody td:first-child"]);
+  await capture(page, "forms-01-list.png", main(page), [{ locator: page.getByRole("link", { name: /New form/i }) }]);
   await captureFirstEditor(page, "/admin/forms", "/admin/forms", "forms-02-editor.png", "/admin/forms/new", [/Form key/i, /Add field/i, /Status/i]);
 
   await genericListShot(page, "/admin/products", "products-01-list.png", /New product/i);
@@ -494,14 +527,15 @@ async function authenticatedShots(page: Page) {
 
   await go(page, "/admin/navigation");
   await capture(page, "navigation-01-editor.png", main(page), [
-    { locator: page.locator('[role="tablist"]').first() },
-    { locator: page.getByRole("button", { name: /Add top-level item/i }) },
+    { locator: page.getByRole("link", { name: "mega", exact: true }), number: 1 },
+    { locator: page.getByRole("link", { name: "utility", exact: true }), number: 2 },
+    { locator: page.getByRole("button", { name: "+ Child", exact: true }).first(), number: 3 },
   ]);
 
   await go(page, "/admin/media");
   await capture(page, "media-library-01-library.png", main(page), [
-    { locator: page.getByRole("tablist", { name: "Asset type" }) },
-    { locator: page.getByPlaceholder(/Search by title/i) },
+    { locator: page.getByText("Images", { exact: true }).first(), number: 1 },
+    { locator: page.getByPlaceholder(/Search by title/i), number: 2 },
     { locator: page.getByRole("button", { name: "Edit" }).first() },
   ]);
 
@@ -535,9 +569,11 @@ async function authenticatedShots(page: Page) {
     { locator: page.locator("aside.admin-sidebar").getByText("Analytics", { exact: true }) },
   ]);
   await go(page, "/admin/settings");
-  await capture(page, "settings-01-form.png", main(page), [
-    { locator: page.getByText("Announcement bar", { exact: true }).first() },
-    { locator: page.getByText(/Enable announcement/i).first() },
+  const announcement = page.getByRole("group", { name: "Announcement bar" });
+  await capture(page, "settings-01-form.png", announcement, [
+    { locator: page.getByRole("checkbox", { name: "Show announcement bar" }), number: 1 },
+    { locator: page.getByRole("textbox", { name: "Message" }), number: 2 },
+    { locator: page.getByRole("textbox", { name: "Link URL (optional)" }), number: 3 },
   ]);
   await go(page, "/admin/redirects");
   await capture(page, "redirects-01-list.png", main(page), [
@@ -558,7 +594,7 @@ async function authenticatedShots(page: Page) {
   await capture(page, "audit-log-01-list.png", main(page), auditFilters);
 
   await go(page, draftHref);
-  await addBlock(page, "Columns");
+  await ensureBlock(page, "Columns");
   await page.getByRole("button", { name: "Save draft" }).click();
   const alert = page.getByRole("alertdialog");
   await alert.waitFor({ state: "visible", timeout: 10_000 });
