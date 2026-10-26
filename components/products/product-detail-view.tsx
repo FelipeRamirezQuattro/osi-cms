@@ -92,7 +92,7 @@ function LayoutRowView({ row, product, isPreview }: { row: LayoutRow; product: P
               ...common,
               title: title || undefined,
               videoUrl: product.video_url ?? null,
-              posterImageUrl: product.diagram_image_url ?? undefined,
+              posterImageUrl: (parsed.success && parsed.data.posterImageUrl) || product.diagram_image_url || undefined,
             }}
           />
         </BlockScope>

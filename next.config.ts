@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
         hostname: "static.wixstatic.com",
       },
       {
+        // YouTube video thumbnails (click-to-play posters).
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        pathname: "/vi/**",
+      },
+      {
         // Supabase Storage — admin-uploaded media only (see lib/data/media.ts).
         protocol: "https",
         hostname: "ovuhuridnalxnzwggzru.supabase.co",

@@ -54,6 +54,8 @@ export function isLinkedSectionType(type: string): type is LinkedSectionType {
 export const linkedSectionDataSchema = z.object({
   title: z.string().optional(),
   background: z.enum(["navy", "cream"]).optional(),
+  /** Video section only: the poster shown before play (default: the product diagram). */
+  posterImageUrl: z.string().optional(),
 });
 
 export type LinkedSectionData = z.infer<typeof linkedSectionDataSchema>;

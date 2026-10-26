@@ -85,8 +85,9 @@ describe("mapProductLayout on the saved visual-order scrape", () => {
     const m = map("gas-release-system");
     expect(m.summary!.split("\n\n").length).toBeGreaterThanOrEqual(3);
     expect(m.benefits.length).toBe(6); // the wrapped first bullet is one item, and the two text boxes are one list
-    const how = indexOf(m, (r) => r.type === "rich_text" && textOf(r).includes("How it works") && textOf(r).includes("Breaking the curve"));
+    const how = indexOf(m, (r) => r.type === "section_heading" && r.data.title === "How it works");
     expect(how).toBeGreaterThanOrEqual(0);
+    expect(m.layout[how + 1]).toMatchObject({ type: "section_heading", data: { title: "Breaking the curve" } });
     const table = m.layout.findIndex((r) => r.type === "image" && /table/i.test(String(r.data.imageUrl)) === false && /Breaking the curve \(table\)/.test(String(r.data.alt)));
     expect(table, "the table is kept as an image with text alt").toBeGreaterThan(how);
   });
@@ -94,7 +95,36 @@ describe("mapProductLayout on the saved visual-order scrape", () => {
   it("row 30 (Chemical Injection Mandrel): the list keeps Wix's 'Features' heading and Sizes stays with its values", () => {
     const m = map("chemicalinjectionmandrel");
     expect(m.layout.find((r) => r.type === "product_benefits")!.data.title).toBe("Features");
-    const sizes = m.layout.find((r) => r.type === "rich_text" && textOf(r).includes("Sizes") && textOf(r).includes("2-3/8"));
-    expect(sizes, "Sizes label and values in one block").toBeTruthy();
+    const at = indexOf(m, (r) => r.type === "section_heading" && r.data.title === "Sizes");
+    expect(at).toBeGreaterThanOrEqual(0);
+    expect(textOf(m.layout[at + 1])).toContain("2-3/8");
+  });
+
+  it("every video has a poster (the YouTube thumbnail, or the Wix poster for a hosted file) and small graphics keep their natural size", () => {
+    for (const p of pages) {
+      const m = map(p.slug);
+      for (const r of m.layout) {
+        const hasVideo = (r.type === "media_text" && r.data.mediaType === "video") || r.type === "video_embed" || (r.type === "product_video" && r.is_visible && m.videoUrl);
+        if (hasVideo) expect(r.data.posterImageUrl, `${p.slug} ${r.type} poster`).toMatch(/^https:\/\//);
+        if (r.type === "image" && typeof r.data.displayWidth === "number") expect(r.data.displayWidth, `${p.slug} image`).toBeLessThan(1000);
+      }
+    }
+  });
+
+  it("'Learn more about this tool' entries are real links, and entries without a target are dropped and reported", () => {
+    const m = map("osi-chem-screen-gas-lift");
+    const learn = m.layout.find((r) => r.type === "rich_text" && textOf(r).includes("Case Study"))!;
+    expect(textOf(learn)).toMatch(/"type":"link"/);
+    for (const p of pages) {
+      for (const r of map(p.slug).layout.filter((x) => x.type === "rich_text")) {
+        const doc = r.data.content as { content: { type: string; content?: { type: string; text?: string; marks?: unknown[] }[] }[] };
+        for (const node of doc.content) {
+          if (node.type !== "paragraph") continue;
+          for (const t of node.content ?? []) {
+            expect(/^(Webinar|Case Study|Chemical Composition)$/.test(t.text ?? "") && !t.marks?.length, `${p.slug}: "${t.text}" must link`).toBe(false);
+          }
+        }
+      }
+    }
   });
 });

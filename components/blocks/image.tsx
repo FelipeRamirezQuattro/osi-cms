@@ -33,6 +33,8 @@ const schema = blockCommonSchema
     // Scoped down to a small object-position preset (CLAUDE.md's Task 9
     // ruling) — no interactive x/y drag-picker exists in this project.
     focalPoint: z.enum(FOCAL_POINTS).default("center"),
+    // Natural-size cap in px: a small graphic or table is shown at (at most) this width instead of being stretched.
+    displayWidth: z.number().int().positive().max(2400).optional(),
     href: optionalSafeHrefSchema({ label: "Link" }),
   })
   .superRefine((data, ctx) => {
@@ -110,7 +112,7 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <figure className={ALIGNMENT_CLASS[data.alignment]}>
+      <figure className={ALIGNMENT_CLASS[data.alignment]} style={data.displayWidth ? { maxWidth: data.displayWidth } : undefined}>
         {data.href ? (
           <a href={data.href} className="block">
             {img}
@@ -139,6 +141,7 @@ const adminFields: FieldSpec[] = [
   { key: "aspectRatio", label: "Aspect ratio", type: "select", options: [...ASPECT_RATIOS] },
   { key: "alignment", label: "Alignment", type: "select", options: [...ALIGNMENTS] },
   { key: "focalPoint", label: "Focal point", type: "select", options: [...FOCAL_POINTS] },
+  { key: "displayWidth", label: "Maximum width in px (empty = fill the column)", type: "number", optional: true },
   { key: "href", label: "Link (optional)", type: "text", optional: true },
 ];
 

@@ -15,6 +15,7 @@ const LINKED_FIELDS: FieldSpec[] = [
   { key: "title", label: "Heading (leave empty for no heading)", type: "text", optional: true },
   { key: "background", label: "Background", type: "select", options: ["navy", "cream"] },
 ];
+const VIDEO_POSTER_FIELD: FieldSpec = { key: "posterImageUrl", label: "Poster image (empty = the product diagram)", type: "image", optional: true };
 
 // The product form is one untyped RHF instance, same as page-editor.tsx.
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -142,7 +143,7 @@ export const ProductBlocksField = forwardRef<ProductBlocksHandle, { palette: Blo
                   <p className="text-xs text-[var(--admin-ink-secondary)]">
                     The content of this section is edited in {linked.editedIn}. Hide it to keep it off the page; it cannot be removed.
                   </p>
-                  {LINKED_FIELDS.map((spec) => (
+                  {(type === "product_video" ? [...LINKED_FIELDS, VIDEO_POSTER_FIELD] : LINKED_FIELDS).map((spec) => (
                     <FieldRenderer key={spec.key} spec={spec} name={`blocks.${index}.data.${spec.key}`} />
                   ))}
                 </div>

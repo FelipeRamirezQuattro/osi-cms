@@ -26,7 +26,7 @@ import {
   type MapContext,
 } from "./map";
 import { imageIdentity } from "./clean";
-import { LINKED_SECTION_TYPES, LINKED_SECTIONS, type LinkedSectionType } from "../products/layout";
+import { LINKED_SECTION_TYPES, LINKED_SECTIONS, isLinkedSectionType, type LinkedSectionType } from "../products/layout";
 
 export interface LayoutSeed extends BlockSeed {
   is_visible: boolean;
@@ -173,7 +173,10 @@ function foldLinkedLabels(items: Item[], brochureUrl: string | undefined): Item[
   const same = (a: string, b: string) => clean(a).toLowerCase() === clean(b).toLowerCase();
   const out = items.map((it) => ({ ...it })) as Item[];
   out.forEach((it, i) => {
-    const near = (pred: (x: Item) => boolean) => [i - 2, i - 1, i + 1, i + 2].find((j) => j >= 0 && j < out.length && !drop.has(j) && pred(out[j]));
+    // The label sits within a few items, or on the same spot of the page.
+    const close = (a: Item, b: Item) => !!a.box && !!b.box && Math.abs(a.box.y - b.box.y) <= 40 && Math.abs(a.box.x - b.box.x) <= 260;
+    const near = (pred: (x: Item) => boolean) =>
+      [i - 1, i + 1, i - 2, i + 2, i - 3, i + 3].find((j) => j >= 0 && j < out.length && !drop.has(j) && pred(out[j]) && (Math.abs(i - j) <= 2 || close(it, out[j])));
     if (it.type === "link" && it.text.trim() && !drop.has(i)) {
       const j = near((x) => x.type === "paragraph" && !x.href && same(x.text, it.text));
       if (j !== undefined && !(/worldcast/i.test(it.url) || /\b3d\b/i.test(it.text))) {
@@ -273,14 +276,20 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   items = gridsToTables(items, flags);
 
   // Wix lays a video's poster image exactly over the video: it is the player's cover, not page content.
-  const videoBoxes = items.flatMap((i) => (i.type === "video" && i.box ? [i.box] : []));
+  const posterOf = new Map<Item, string>();
   items = items.filter((i) => {
     if (i.type !== "image" || !i.box) return true;
     const b = i.box;
-    const isPoster = videoBoxes.some((v) => Math.abs(v.x - b.x) <= 6 && Math.abs(v.y - b.y) <= 6 && Math.abs(v.w - b.w) <= 12 && Math.abs(v.h - b.h) <= 12);
-    if (isPoster) flags.push("video_poster_dropped");
-    return !isPoster;
+    const video = items.find((v) => v.type === "video" && v.box && Math.abs(v.box.x - b.x) <= 6 && Math.abs(v.box.y - b.y) <= 6 && Math.abs(v.box.w - b.w) <= 12 && Math.abs(v.box.h - b.h) <= 12);
+    if (video) posterOf.set(video, wixOriginalUrl(i.src));
+    return !video;
   });
+  const youtubeId = (url: string) => url.match(/youtube\.com\/embed\/([\w-]+)/)?.[1] ?? url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/)?.[1];
+  /** Every video gets a poster: the Wix poster image when it has one, else YouTube's thumbnail. */
+  const posterFor = (v: Extract<Item, { type: "video" }>): string | undefined => {
+    const id = youtubeId(v.url);
+    return posterOf.get(v) ?? (id ? `https://i.ytimg.com/vi/${id}/hq720.jpg` : undefined);
+  };
 
   // The page title heading is the product name (hero); drop every H1.
   items = items.filter((i) => !(i.type === "heading" && i.level === 1));
@@ -346,7 +355,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
     const picked: Item[] = [];
     let layout: Media["layout"] | null = null;
     // Beside the video (either side), then stacked under it.
-    const candidates = seq.filter((p) => p.type === "paragraph" && !!p.box && !claimed.has(p) && p !== downloadsMarker);
+    const candidates = seq.filter((p) => p.type === "paragraph" && !!p.box && !claimed.has(p) && p !== downloadsMarker && !p.href && !LEARN_MORE.test(clean(p.text)));
     const side = candidates.filter((p) => {
       const B = p.box!;
       return verticalOverlap(V, B) >= 0.3 && (B.x >= V.x + V.w - 24 || B.x + B.w <= V.x + 24);
@@ -414,22 +423,28 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   let videoUrl: string | null = null;
   let seenStructure = false; // intro text ends at the first heading / list / media
   let pendingHeading: string | null = null;
+  let learnMore = false; // inside a "Learn more about this tool" link list
   let lastLabel: string | null = null; // the nearest heading/label above, for image alt text
   let buffer: Item[] = [];
   let pendingImages: { url: string; alt: string; caption?: string; width?: number }[] = [];
 
   const display = (t: string) => headingText(t);
-  const linked = (type: LinkedSectionType, title: string, visible = true) => {
+  const linked = (type: LinkedSectionType, title: string, visible = true, posterImageUrl?: string) => {
     emitted.add(type);
     layout.push({
       type,
       is_visible: visible,
-      data: { title, background: LINKED_SECTIONS[type].defaultBackground },
+      data: { title, background: LINKED_SECTIONS[type].defaultBackground, ...(posterImageUrl ? { posterImageUrl } : {}) },
     });
   };
   const extra = (type: string, data: Record<string, Json>) => layout.push({ type, is_visible: true, data: { background: "cream", ...data } });
 
   const flushText = () => {
+    // A run's leading headings are section headings (the site's heading style), not small in-text headings.
+    while (buffer[0]?.type === "heading") {
+      const h = buffer.shift() as Extract<Item, { type: "heading" }>;
+      extra("section_heading", { title: h.text, align: "left" });
+    }
     const rt = toRichTextDoc(buffer);
     if (rt) {
       extra("rich_text", { content: rt.doc });
@@ -442,7 +457,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
       extra("image_gallery", { images: pendingImages.map((i) => ({ url: i.url, alt: i.alt })) });
     } else {
       for (const img of pendingImages) {
-        extra("image", { imageUrl: img.url, alt: img.alt, decorative: false, aspectRatio: "auto", alignment: img.width && img.width >= 1000 ? "full" : img.width && img.width >= 400 ? "center" : "left", ...(img.caption ? { caption: img.caption } : {}) });
+        extra("image", { imageUrl: img.url, alt: img.alt, decorative: false, aspectRatio: "auto", alignment: img.width && img.width >= 1000 ? "full" : img.width && img.width >= 400 ? "center" : "left", ...(img.width && img.width < 1000 ? { displayWidth: img.width } : {}), ...(img.caption ? { caption: img.caption } : {}) });
       }
     }
     pendingImages = [];
@@ -466,6 +481,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
     const next = seq[idx + 1];
 
     if (it === downloadsMarker) {
+      learnMore = false;
       flushAll();
       const h = pendingHeading && /how (it|does it) works?/i.test(pendingHeading) ? takeHeading() : null;
       if (pendingHeading) headingToBuffer(); // some other heading stays as text, ahead of the buttons
@@ -481,6 +497,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         if (pendingHeading) headingToBuffer();
         flushText();
         pendingHeading = it.text;
+        learnMore = LEARN_MORE.test(clean(it.text));
         lastLabel = it.text;
         seenStructure = true;
         break;
@@ -488,10 +505,16 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
       case "paragraph": {
         if (claimed.has(it)) break; // lives in a media_text block
         const text = clean(it.text);
+        if (learnMore && !it.href && text.split(" ").length <= 3 && !/[.!?]$/.test(text)) {
+          // A "Learn more" entry (Webinar, Case Study…) whose link target Wix did not give us: nothing to link to.
+          flags.push(`unlinked_label_dropped:${text}`);
+          break;
+        }
         if (!seenStructure && intro.length > 0 && isLabel(it, next) && (next?.type === "list" || LEARN_MORE.test(text))) {
           // "Features" / "Benefits" drawn as a paragraph: it ends the intro and labels the list.
           seenStructure = true;
           pendingHeading = text;
+          learnMore = LEARN_MORE.test(text);
           break;
         }
         if (!seenStructure) {
@@ -514,6 +537,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         break;
       }
       case "list": {
+        learnMore = false;
         seenStructure = true;
         if (idx === benefitsIdx) {
           flushAll();
@@ -569,13 +593,14 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
           imageAlts.push({ url: wixOriginalUrl(it.src), alt });
           break;
         }
+        learnMore = false;
         if (intro.length) seenStructure = true; // images before the first paragraph are part of the hero area
         flushText();
         if (pendingHeading) {
           // The heading labels the image run; keep it as its own text block ahead of it.
           flushImages();
           const h = takeHeading()!;
-          extra("rich_text", { content: toRichTextDoc([{ type: "heading", level: 2, text: display(h) }])!.doc });
+          extra("section_heading", { title: display(h), align: "left" });
         }
         const ov = overlay.get(it);
         let alt = it.alt;
@@ -592,6 +617,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         break;
       }
       case "video": {
+        learnMore = false;
         if (it.provider === "other") {
           flags.push("video_widget_skipped");
           break;
@@ -617,15 +643,15 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
             title,
             mediaType: "video",
             videoUrl: it.url,
-            ...(diagramItem ? { posterImageUrl: wixOriginalUrl(diagramItem.src) } : {}),
+            ...(posterFor(it) ? { posterImageUrl: posterFor(it)! } : {}),
             layout: media.layout,
             body: bodyTexts.map((t) => (t.type === "paragraph" ? clean(t.text) : "")).filter(Boolean).join("\n\n"),
           });
-          if (first) linked("product_video", "", false);
+          if (first) linked("product_video", "", false, posterFor(it));
         } else if (first) {
-          linked("product_video", heading ? display(heading) : "");
+          linked("product_video", heading ? display(heading) : "", true, posterFor(it));
         } else {
-          extra("video_embed", { title: heading ? display(heading) : "", videoUrl: it.url, ...(diagramItem ? { posterImageUrl: wixOriginalUrl(diagramItem.src) } : {}) });
+          extra("video_embed", { title: heading ? display(heading) : "", videoUrl: it.url, ...(posterFor(it) ? { posterImageUrl: posterFor(it)! } : {}) });
         }
         break;
       }
@@ -648,8 +674,17 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   flushAll();
   if (pendingHeading) {
     // A trailing heading with nothing under it: keep it so Wix's text is not lost.
-    extra("rich_text", { content: toRichTextDoc([{ type: "heading", level: 2, text: display(pendingHeading) }])!.doc });
+    extra("section_heading", { title: display(pendingHeading), align: "left" });
   }
+
+  // Tighten consecutive extra blocks on the same background: a heading sits close to what it labels.
+  const isExtra = (r: LayoutSeed | undefined) => !!r && !isLinkedSectionType(r.type) && r.data.background === "cream";
+  layout.forEach((r, i) => {
+    if (i > 0 && isExtra(r) && isExtra(layout[i - 1])) {
+      layout[i - 1].data.spacingBottom = "sm";
+      r.data.spacingTop = "sm";
+    }
+  });
 
   // Linked sections the page had no spot for: appended, in template order (they render nothing when empty).
   for (const type of LINKED_SECTION_TYPES) {

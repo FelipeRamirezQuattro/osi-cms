@@ -19,6 +19,15 @@ export function toEmbedUrl(url: string): string {
   return url;
 }
 
+/** A directly hosted video file (Wix-hosted uploads are mp4), played with the browser's own player. */
+export const isDirectVideo = (url: string) => /\.(mp4|webm|mov)(\?|$)/i.test(url) || /video\.wixstatic\.com\/video\//i.test(url);
+
+/** The thumbnail YouTube serves for a video, used when nobody picked a poster. */
+export function youtubePoster(url: string): string | undefined {
+  const id = url.match(/youtube\.com\/embed\/([\w-]+)/)?.[1] ?? url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/)?.[1];
+  return id ? `https://i.ytimg.com/vi/${id}/hq720.jpg` : undefined;
+}
+
 /** The click-to-play poster + iframe, without a Section — shared by the video block and `media_text`. */
 export function VideoPlayer({
   videoUrl,
@@ -30,10 +39,13 @@ export function VideoPlayer({
   posterImageUrl?: string;
 }) {
   const [loaded, setLoaded] = useState(false);
+  const poster = posterImageUrl ?? youtubePoster(videoUrl);
 
   return (
     <Clipped corner="br" size="1.5rem" className="relative aspect-video w-full overflow-hidden">
-      {loaded ? (
+      {loaded && isDirectVideo(videoUrl) ? (
+        <video src={videoUrl} poster={poster} controls autoPlay playsInline className="absolute inset-0 h-full w-full bg-osi-navy-900 object-contain" />
+      ) : loaded ? (
         <iframe
           src={toEmbedUrl(videoUrl)}
           title={title ?? "Video"}
@@ -55,7 +67,7 @@ export function VideoPlayer({
           aria-label="Play video"
         >
           <DuotoneImage
-            src={posterImageUrl}
+            src={poster}
             className="absolute inset-0"
             intensity={0.4}
             sizes="(min-width: 1280px) 72rem, 100vw"
