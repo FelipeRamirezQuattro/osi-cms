@@ -207,13 +207,13 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   }
 
   // ---- 3. benefits list ----------------------------------------------------------------------
+  /** A short, unpunctuated paragraph that labels what follows it (a list, or longer text): Wix draws these as paragraphs. */
+  const isLabel = (it: Item | undefined, next: Item | undefined): boolean =>
+    !!it && it.type === "paragraph" && it !== downloadsMarker && !claimed.has(it) && clean(it.text).split(" ").length <= 4 && !/[.:;!?]$/.test(clean(it.text)) && (next?.type === "list" || isPseudoHeading(it, next));
   const headingBefore = (idx: number): string | null => {
-    for (let i = idx - 1; i >= 0; i--) {
-      const it = seq[i];
-      if (it.type === "heading") return it.text;
-      if (it.type === "paragraph" && it !== downloadsMarker && isPseudoHeading(it, seq[i + 1]) && i + 1 === idx - 0) return it.text;
-      if (it.type === "list" || it.type === "video" || it.type === "image") return null;
-    }
+    const prev = seq[idx - 1];
+    if (prev?.type === "heading") return prev.text;
+    if (isLabel(prev, seq[idx])) return (prev as Extract<Item, { type: "paragraph" }>).text;
     return null;
   };
   let benefitsIdx = -1;
@@ -318,12 +318,21 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
       case "paragraph": {
         if (claimed.has(it)) break; // lives in a media_text block
         const text = clean(it.text);
+        if (!seenStructure && intro.length > 0 && isLabel(it, next) && next?.type === "list") {
+          // "Features" / "Benefits" drawn as a paragraph: it ends the intro and labels the list.
+          seenStructure = true;
+          pendingHeading = text;
+          break;
+        }
         if (!seenStructure) {
           intro.push(text);
           break;
         }
         flushImages();
-        if (isPseudoHeading(it, next) && !(next && claimed.has(next))) {
+        if (isLabel(it, next) && next?.type === "list" && !pendingHeading && benefitsIdx === idx + 1) {
+          flushAll();
+          pendingHeading = text; // labels the benefits list
+        } else if (isLabel(it, next) && !(next && claimed.has(next))) {
           if (pendingHeading) headingToBuffer();
           buffer.push({ type: "heading", level: 3, text });
           flags.push("pseudo_heading_promoted");
