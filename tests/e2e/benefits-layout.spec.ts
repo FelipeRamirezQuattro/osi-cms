@@ -46,6 +46,13 @@ for (const product of PRODUCTS) {
             rows: new Set(tops).size,
             clip: [...new Set(cells.map((c) => getComputedStyle(c).clipPath))],
             borders: [...new Set(cells.map((c) => getComputedStyle(c).borderTopWidth + getComputedStyle(c).borderRightWidth + getComputedStyle(c).borderBottomWidth + getComputedStyle(c).borderLeftWidth))],
+            lastRowCentered: (() => {
+              const lastCells = cells.filter((c) => Math.round(c.getBoundingClientRect().top) === lastTop);
+              const left = Math.min(...lastCells.map((c) => c.getBoundingClientRect().left));
+              const right = Math.max(...lastCells.map((c) => c.getBoundingClientRect().right));
+              const ul = section.querySelector("ul")!.getBoundingClientRect();
+              return Math.abs(left - ul.left - (ul.right - right));
+            })(),
             multiColumn: new Set(tops).size < cells.length,
             overflow: sectionOverflow(section),
             cellOverflow: cells.filter((c) => c.scrollWidth > c.clientWidth + 1).length,
@@ -58,6 +65,7 @@ for (const product of PRODUCTS) {
         expect(report.styles[0]).toContain("none"); // never uppercased
         expect(report.headings, "items are sentences, not titles").toBe(0);
         if (report.multiColumn) expect(report.lastRow, "no card alone on the last row").toBeGreaterThan(1);
+        expect(report.lastRowCentered, "an incomplete last row is centered").toBeLessThanOrEqual(2);
         expect(report.clip, "cells are not clipped (no broken border)").toEqual(["none"]);
         expect(report.borders).toEqual(["1px1px1px1px"]);
         expect(report.overflow).toBeLessThanOrEqual(0);

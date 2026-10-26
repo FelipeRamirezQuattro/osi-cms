@@ -17,6 +17,13 @@ export const benefitsCardsSchema = blockCommonSchema.extend({
 
 export type BenefitsCardsData = z.infer<typeof benefitsCardsSchema>;
 
+// Flex-wrap rather than grid so an incomplete last row (5 items as 3+2) is
+// centered instead of leaving a gap. Each item's width is one column of the
+// balanced count for that breakpoint; the 0.01px absorbs sub-pixel rounding
+// that would otherwise wrap the last card of a full row.
+const ITEM_BASIS =
+  "min-w-0 basis-full sm:basis-[calc((100%-(var(--bc-sm)-1)*1rem)/var(--bc-sm)-0.01px)] lg:basis-[calc((100%-(var(--bc-lg)-1)*1rem)/var(--bc-lg)-0.01px)] xl:basis-[calc((100%-(var(--bc-xl)-1)*1rem)/var(--bc-xl)-0.01px)]";
+
 export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
   const light = data.background === "cream";
   const cols = cardGridColumns(data.items.length);
@@ -41,12 +48,9 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
         </h2>
       )}
       <AnimatedGroup>
-        <ul
-          style={gridStyle}
-          className="grid grid-cols-1 gap-4 sm:[grid-template-columns:repeat(var(--bc-sm),minmax(0,1fr))] lg:[grid-template-columns:repeat(var(--bc-lg),minmax(0,1fr))] xl:[grid-template-columns:repeat(var(--bc-xl),minmax(0,1fr))]"
-        >
+        <ul style={gridStyle} className="flex flex-wrap justify-center gap-4">
           {data.items.map((item, index) => (
-            <li key={`${index}-${item.title}`} className="min-w-0">
+            <li key={`${index}-${item.title}`} className={ITEM_BASIS}>
               <AnimatedItem className="h-full">
                 <div
                   className={`flex h-full flex-col items-center gap-4 border p-6 text-center before:h-[3px] before:w-8 before:flex-none before:content-[''] ${cell}`}

@@ -6,6 +6,7 @@ import { optionalSafeHrefSchema } from "@/lib/validation/common";
 import type { FieldSpec } from "@/lib/blocks/admin-fields";
 import type { BlockRenderExtras } from "@/lib/blocks/types";
 import { longTitle } from "@/lib/text/long-title";
+import { externalLinkAttrs, isExternalHref } from "@/lib/routes";
 
 export const howItWorksSchema = blockCommonSchema.extend({
   title: z.string().default("How does it work?"),
@@ -72,7 +73,7 @@ export function HowItWorksRender({ data, isPreview = false }: { data: HowItWorks
               )
             )}
             {data.model3dUrl ? (
-              <a href={data.model3dUrl} className={BUTTON}>
+              <a href={data.model3dUrl} className={BUTTON} {...externalLinkAttrs(isExternalHref(data.model3dUrl))}>
                 See this tool in 3D
               </a>
             ) : (
