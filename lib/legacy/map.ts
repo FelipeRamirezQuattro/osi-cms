@@ -111,7 +111,7 @@ export function toRichTextDoc(items: ScrapedItem[]): { doc: Json; flags: string[
 const NAV_WORDS = /^(home|products?)$/i;
 
 /** Nearest preceding heading, used as alt text when the source has none. */
-function altFor(items: ScrapedItem[], index: number, fallback: string): string {
+export function altFor(items: ScrapedItem[], index: number, fallback: string): string {
   for (let i = index; i >= 0; i--) {
     const it = items[i];
     if (it.type === "heading" && !NAV_WORDS.test(it.text)) return it.text;
@@ -119,7 +119,7 @@ function altFor(items: ScrapedItem[], index: number, fallback: string): string {
   return fallback;
 }
 
-const looksLikeFilename = (alt: string) => !alt || /\.(jpe?g|png|webp|gif|avif)$/i.test(alt);
+export const looksLikeFilename = (alt: string) => !alt || /\.(jpe?g|png|webp|gif|avif)$/i.test(alt);
 
 export interface MappedPage {
   slug: string;
@@ -251,13 +251,13 @@ const SECTION = {
 export const cleanProductName = (pageTitle: string) => cleanTitle(pageTitle.replace(/ /g, " ")).replace(/\s+/g, " ").trim();
 
 /** Wix headings are ALL CAPS; show them in sentence case, leave mixed-case headings alone. */
-const sentenceCase = (t: string) => (t === t.toUpperCase() ? t.charAt(0) + t.slice(1).toLowerCase() : t);
+export const sentenceCase = (t: string) => (t === t.toUpperCase() ? t.charAt(0) + t.slice(1).toLowerCase() : t);
 
 const THREE_D_PROMPT = /^click here to see this tool in 3d$/i;
 const MAX_CARD_ITEMS = 6; // benefits_cards schema limit
 
 /** A short, unpunctuated paragraph followed by body text is a heading Wix styled as a paragraph ("Test Horizontal Well"). */
-function isPseudoHeading(item: ScrapedItem, next: ScrapedItem | undefined): boolean {
+export function isPseudoHeading(item: ScrapedItem, next: ScrapedItem | undefined): boolean {
   if (item.type !== "paragraph" || next?.type !== "paragraph") return false;
   const words = item.text.trim().split(/\s+/).length;
   return words <= 6 && !/[.:;!?]$/.test(item.text.trim()) && next.text.length > item.text.length;

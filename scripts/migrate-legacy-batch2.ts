@@ -160,6 +160,12 @@ async function main() {
   }
   const ctx: MapContext = { chromeImages: findChromeImages([...scraped.values()]) };
 
+  // Products whose page layout was migrated to the ordered model (scripts/plan-product-layouts.ts) must
+  // not be rewritten by this older mapper: it would put the fixed template order back.
+  const { data: layoutRows, error: layoutError } = await db.from("product_blocks").select("product_id,type").like("type", "product\\_%");
+  if (layoutError) throw layoutError;
+  const hasOrderedLayout = new Set((layoutRows ?? []).map((r) => r.product_id));
+
   const reads = await Promise.all([
     db.from("products").select("id,slug,name,status,updated_at"),
     db.from("pages").select("id,slug,status,updated_at"),
@@ -215,6 +221,7 @@ async function main() {
     if (!row) return { action: "create" };
     const st = state[table]?.[slug];
     if (!st || st.id !== row.id) return { action: "skip_exists", note: `slug already used by an existing ${row.status} row` };
+    if (table === "products" && hasOrderedLayout.has(row.id)) return { action: "skip_edited", note: "page layout migrated to the ordered model" };
     if (row.status !== "draft") return { action: "skip_not_draft", note: `now ${row.status}` };
     if (row.updated_at !== st.updated_at) return { action: "skip_edited", note: "edited in admin since import" };
     return st.hash === payloadHash ? { action: "unchanged" } : { action: "update" };

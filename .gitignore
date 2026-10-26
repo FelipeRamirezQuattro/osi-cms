@@ -57,3 +57,6 @@ docs/*.docx
 
 # Manual database exports (contain personal data)
 /backups
+
+# QA working files (public repo) — never commit
+/docs/qa/
