@@ -120,6 +120,7 @@ async function main() {
       model_3d_url: p.model_3d_url,
       benefits: myBenefits,
       blocks: myBlocks as unknown as DbProduct["blocks"],
+      specsCount: specs.filter((x) => x.product_id === p.id).length,
       benefitsStamp: stamp(myBenefits),
       blocksStamp: stamp(myBlocks),
     };
@@ -141,7 +142,7 @@ async function main() {
     const fields = Object.fromEntries(r.plan.fieldChanges.map((c) => [c.field, c.to]));
     fs.writeFileSync(
       path.join(OUT, "preview", `${r.plan.slug}.json`),
-      JSON.stringify({ slug: r.plan.slug, fields, benefits: r.plan.benefitsChange?.to ?? null, layout: r.plan.layoutApplied ? r.plan.layout : null }, null, 1),
+      JSON.stringify({ slug: r.plan.slug, name: r.mapped.name, fields, benefits: r.plan.benefitsChange?.rows ?? null, layout: r.plan.layoutApplied ? r.plan.layout : null }, null, 1),
     );
   }
   fs.mkdirSync(OUT, { recursive: true });

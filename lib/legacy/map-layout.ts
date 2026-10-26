@@ -64,6 +64,7 @@ const THREE_D_PROMPT = /^(click here( to see)?|this tool in 3d|click here to see
 const PDF_LABEL = /^(download( the)? (pdf|brochure|datasheet)|click here to download)$/i;
 const STRAY_FRAGMENT = /^(tm|™|®|sm)$/i;
 const BENEFIT_HEADING = /benefit/i;
+const SPEC_HEADING = /^(consideration|specification|spec\b|technical data)/i;
 const LEARN_MORE = /^learn more\b/i;
 const LIST_HEADING = /advantage|feature|key |highlight/i;
 const MAX_CARD_ITEMS = 6;
@@ -271,6 +272,16 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   // Well Shock Kits catalogue) becomes one table item, so its cells do not read as unrelated paragraphs.
   items = gridsToTables(items, flags);
 
+  // Wix lays a video's poster image exactly over the video: it is the player's cover, not page content.
+  const videoBoxes = items.flatMap((i) => (i.type === "video" && i.box ? [i.box] : []));
+  items = items.filter((i) => {
+    if (i.type !== "image" || !i.box) return true;
+    const b = i.box;
+    const isPoster = videoBoxes.some((v) => Math.abs(v.x - b.x) <= 6 && Math.abs(v.y - b.y) <= 6 && Math.abs(v.w - b.w) <= 12 && Math.abs(v.h - b.h) <= 12);
+    if (isPoster) flags.push("video_poster_dropped");
+    return !isPoster;
+  });
+
   // The page title heading is the product name (hero); drop every H1.
   items = items.filter((i) => !(i.type === "heading" && i.level === 1));
 
@@ -403,7 +414,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   let pendingHeading: string | null = null;
   let lastLabel: string | null = null; // the nearest heading/label above, for image alt text
   let buffer: Item[] = [];
-  let pendingImages: { url: string; alt: string; caption?: string }[] = [];
+  let pendingImages: { url: string; alt: string; caption?: string; width?: number }[] = [];
 
   const display = (t: string) => headingText(t);
   const linked = (type: LinkedSectionType, title: string, visible = true) => {
@@ -429,7 +440,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
       extra("image_gallery", { images: pendingImages.map((i) => ({ url: i.url, alt: i.alt })) });
     } else {
       for (const img of pendingImages) {
-        extra("image", { imageUrl: img.url, alt: img.alt, decorative: false, aspectRatio: "auto", alignment: "full", ...(img.caption ? { caption: img.caption } : {}) });
+        extra("image", { imageUrl: img.url, alt: img.alt, decorative: false, aspectRatio: "auto", alignment: img.width && img.width >= 1000 ? "full" : img.width && img.width >= 400 ? "center" : "left", ...(img.caption ? { caption: img.caption } : {}) });
       }
     }
     pendingImages = [];
@@ -513,6 +524,17 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
             return { title: text.slice(0, cut).trim(), body: text.slice(cut + 1).trim() };
           });
           linked("product_benefits", h ? display(h) : "");
+        } else if (!it.ordered && pendingHeading && SPEC_HEADING.test(pendingHeading) && it.items.every((t) => TITLE_BODY.test(clean(t))) && !emitted.has("product_specs")) {
+          // "Considerations: Length of the tool: 30 ft…" — the product's specification rows, where Wix shows them.
+          flushAll();
+          const h = takeHeading()!;
+          for (const t of it.items) {
+            const text = clean(t);
+            const cut = text.indexOf(":");
+            specs.push({ label: text.slice(0, cut).trim(), value: text.slice(cut + 1).trim() });
+          }
+          linked("product_specs", display(h));
+          seenStructure = true;
         } else if (!it.ordered && it.items.length <= MAX_CARD_ITEMS && pendingHeading) {
           flushAll();
           const h = takeHeading()!;
@@ -563,7 +585,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         }
         const url = wixOriginalUrl(it.src);
         const caption = [...(ov?.caption ?? []), ...(it.caption ? [it.caption] : [])].join(" · ") || undefined;
-        pendingImages.push({ url, alt, caption });
+        pendingImages.push({ url, alt, caption, width: it.natural?.w });
         imageAlts.push({ url, alt });
         break;
       }
@@ -593,6 +615,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
             title,
             mediaType: "video",
             videoUrl: it.url,
+            ...(diagramItem ? { posterImageUrl: wixOriginalUrl(diagramItem.src) } : {}),
             layout: media.layout,
             body: bodyTexts.map((t) => (t.type === "paragraph" ? clean(t.text) : "")).filter(Boolean).join("\n\n"),
           });
@@ -600,7 +623,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         } else if (first) {
           linked("product_video", heading ? display(heading) : "");
         } else {
-          extra("video_embed", { title: heading ? display(heading) : "", videoUrl: it.url });
+          extra("video_embed", { title: heading ? display(heading) : "", videoUrl: it.url, ...(diagramItem ? { posterImageUrl: wixOriginalUrl(diagramItem.src) } : {}) });
         }
         break;
       }

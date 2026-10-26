@@ -21,6 +21,7 @@ export interface DbProduct {
   model_3d_url: string | null;
   benefits: { title: string; updated_at?: string }[];
   blocks: { type: string; is_visible: boolean; data: Json; updated_at: string }[];
+  specsCount: number;
   benefitsStamp: { count: number; max: string | null };
   blocksStamp: { count: number; max: string | null };
 }
@@ -45,6 +46,7 @@ const FIELD_MAP: [ScalarField, keyof PreviousImport, keyof MappedProductLayout][
   ["model_3d_url", "model3dUrl", "model3dUrl"],
 ];
 
+const squash = (v: string) => v.replace(/\s+/g, "");
 const blank = (v: string | null | undefined) => (v ?? "").trim() === "";
 const same = (a: string | null | undefined, b: string | null | undefined) => (a ?? "").trim() === (b ?? "").trim();
 const stable = (v: unknown): string => JSON.stringify(v, (_k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => a.localeCompare(b))) : x));
@@ -65,6 +67,8 @@ export interface ProductPlan {
   /** Fields where the DB value differs from what the importer wrote, so it is left alone. */
   keptHumanEdits: { field: string; db: string | null; scrape: string | null }[];
   benefitsChange: { from: string[]; to: string[]; rows: { title: string; body?: string }[] } | null;
+  /** Specification rows to add (only when the product has none). */
+  specsAdd: { label: string; value: string; unit?: string }[];
   layoutApplied: boolean;
   layoutNote?: string;
   /** Layout to write (importer-owned products only). */
@@ -75,14 +79,16 @@ export interface ProductPlan {
 export const QA_COMPLETE = new Set(["gas-vent-tac", "vortex-desander"]);
 
 export function planProduct(m: MappedProductLayout, db: DbProduct, prev: PreviousImport | null): ProductPlan {
-  const plan: ProductPlan = { slug: m.slug, status: db.status, action: "unchanged", fieldChanges: [], keptHumanEdits: [], benefitsChange: null, layoutApplied: false, layout: [] };
+  const plan: ProductPlan = { slug: m.slug, status: db.status, action: "unchanged", fieldChanges: [], keptHumanEdits: [], benefitsChange: null, specsAdd: [], layoutApplied: false, layout: [] };
   if (QA_COMPLETE.has(m.slug)) return { ...plan, action: "skip", reason: "QA marked this product complete — left as is" };
 
   // Scalars: the importer owns a field when the DB still holds what it wrote (or nothing at all).
   for (const [dbField, prevField, newField] of FIELD_MAP) {
     const dbValue = db[dbField];
     const target = (m[newField] as string | null) ?? null;
-    const owned = blank(dbValue) || (prev ? same(dbValue, prev[prevField] as string | null) : false);
+    // Same words with different paragraph breaks (QA: "intro not split into paragraphs") is a formatting fix, not a human edit.
+    const sameWords = dbField === "summary" && !blank(dbValue) && squash(dbValue!) === squash(target ?? "");
+    const owned = blank(dbValue) || sameWords || (prev ? same(dbValue, prev[prevField] as string | null) : false);
     if (same(dbValue, target)) continue;
     if (blank(target)) continue; // never blank out a value
     if (owned) plan.fieldChanges.push({ field: dbField, from: dbValue, to: target });
@@ -98,6 +104,8 @@ export function planProduct(m: MappedProductLayout, db: DbProduct, prev: Previou
     else plan.keptHumanEdits.push({ field: "benefits", db: dbTitles.join(" | "), scrape: newTitles.join(" | ") });
   }
 
+  if (m.specs.length > 0 && db.specsCount === 0) plan.specsAdd = m.specs;
+
   // Layout.
   const hasLinked = db.blocks.some((b) => isLinkedSectionType(b.type));
   const dbBlocks = db.blocks.map((b) => ({ type: b.type, data: b.data }));
@@ -110,7 +118,7 @@ export function planProduct(m: MappedProductLayout, db: DbProduct, prev: Previou
     plan.layoutNote = "extra blocks were edited by a person after the import — layout not applied";
   }
 
-  const writes = plan.fieldChanges.length > 0 || plan.benefitsChange !== null || plan.layoutApplied;
+  const writes = plan.fieldChanges.length > 0 || plan.benefitsChange !== null || plan.layoutApplied || plan.specsAdd.length > 0;
   plan.action = writes ? "apply" : "unchanged";
   return plan;
 }
@@ -132,6 +140,13 @@ export function productSql(plan: ProductPlan, db: DbProduct, m: MappedProductLay
   if (plan.benefitsChange) lines.push(`  if not ${stamp("product_benefits", db.benefitsStamp)} then raise notice 'skipped ${plan.slug}: benefits changed since the dry-run'; return; end if;`);
   if (plan.layoutApplied) lines.push(`  if not ${stamp("product_blocks", db.blocksStamp)} then raise notice 'skipped ${plan.slug}: blocks changed since the dry-run'; return; end if;`);
 
+  if (plan.specsAdd.length) {
+    lines.push("  if (exists (select 1 from product_specs where product_id = pid)) then raise notice 'specs of " + plan.slug + " already exist — not added'; else");
+    lines.push(
+      `    insert into product_specs (product_id, label, value, unit, position) values ${plan.specsAdd.map((r, i) => `(pid, ${q(r.label)}, ${q(r.value)}, ${qn(r.unit ?? null)}, ${(i + 1) * 10})`).join(", ")};`,
+    );
+    lines.push("  end if;");
+  }
   if (plan.fieldChanges.length) {
     lines.push(`  update products set ${plan.fieldChanges.map((c) => `${c.field} = ${qn(c.to)}`).join(", ")} where id = pid;`);
   }
