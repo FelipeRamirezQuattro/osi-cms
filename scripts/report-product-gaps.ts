@@ -25,7 +25,7 @@ const CHECKS: Check[] = [
   { row: 23, slug: "gas-release-system", what: "“Breaking the curve” block and its OD/ID/Dip tube/Length table", phrase: /breaking the curve/i },
   { row: 27, slug: "quick-release", what: "second video with “Before/After installation”", phrase: /before\s*\/?\s*after/i },
   { row: 29, slug: "surge-valve-packer-type-gas-separat", what: "“Hot Oil Injection”", phrase: /hot oil injection/i },
-  { row: 34, slug: "hot-oil-tool", what: "text next to the video (“Tear more effectively…”)", phrase: /tear more effectively/i },
+  { row: 34, slug: "hot-oil-tool", what: "text next to the video (QA wrote “Tear…”; Wix says “Treat more effectively, with greater efficiency…”)", phrase: /treat more effectively/i },
   { row: 40, slug: "the-nozzle", what: "“Mitigates the impact of bottom hole pressure in the upper chamber of the valve”", phrase: /mitigates the impact of bottom hole pressure/i },
   { row: 22, slug: "g-forcepackerless", what: "Benefits has 4 items (CMS had 9)", test: (m) => m.benefits.length === 4 },
   { row: 31, slug: "esp-chem-screen", what: "videos, How It Works content, PDF and 3D link", test: (m) => Boolean(m.videoUrl && m.brochurePdfUrl && m.model3dUrl) },

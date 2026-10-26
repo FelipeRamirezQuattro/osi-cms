@@ -377,7 +377,9 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   const isLabel = (it: Item | undefined, next: Item | undefined): boolean =>
     !!it && it.type === "paragraph" && !it.href && it !== downloadsMarker && !claimed.has(it) && clean(it.text).split(" ").length <= 5 && !/[.:;!?]$/.test(clean(it.text)) && (next?.type === "list" || next?.type === "image" || isPseudoHeading(it, next) || LEARN_MORE.test(clean(it.text)));
   const headingBefore = (idx: number): string | null => {
-    const prev = seq[idx - 1];
+    let k = idx - 1;
+    while (k >= 0 && (seq[k].type === "pdf" || seq[k].type === "link")) k--; // file icons sit on the same line as the heading
+    const prev = seq[k];
     if (prev?.type === "heading") return prev.text;
     if (isLabel(prev, seq[idx])) return (prev as Extract<Item, { type: "paragraph" }>).text;
     return null;
