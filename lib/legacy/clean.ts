@@ -5,15 +5,24 @@
  * banners. Kept free of Playwright so it is unit-testable.
  */
 
-export type ScrapedItem =
+/** Where an item sat on the rendered 1440px page (only the visual-order product re-scrape records it). */
+export interface ItemBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export type ScrapedItem = (
   | { type: "heading"; level: number; text: string }
   | { type: "paragraph"; text: string; href?: string }
   | { type: "list"; ordered: boolean; items: string[] }
   | { type: "table"; rows: string[][] }
-  | { type: "image"; src: string; alt: string; caption?: string }
+  | { type: "image"; src: string; alt: string; caption?: string; natural?: { w: number; h: number } }
   | { type: "video"; url: string; provider: "youtube" | "wix" | "other" }
   | { type: "pdf"; url: string; text: string }
-  | { type: "link"; url: string; text: string; external: boolean };
+  | { type: "link"; url: string; text: string; external: boolean }
+) & { box?: ItemBox };
 
 const ZERO_WIDTH = /[​-‏⁠﻿]/g;
 
@@ -198,13 +207,16 @@ export function isTinyImage(src: string, maxWidth = 120): boolean {
 export function groupBullets(items: ScrapedItem[]): ScrapedItem[] {
   const out: ScrapedItem[] = [];
   let current: string[] | null = null;
+  let listBox: ScrapedItem["box"];
   const flush = () => {
-    if (current) out.push({ type: "list", ordered: false, items: current });
+    if (current) out.push({ type: "list", ordered: false, items: current, ...(listBox ? { box: listBox } : {}) });
     current = null;
+    listBox = undefined;
   };
   for (const item of items) {
     if (item.type === "paragraph" && /^[-•–]\s*/.test(item.text)) {
       current ??= [];
+      listBox ??= item.box;
       current.push(item.text.replace(/^[-•–]\s*/, ""));
     } else if (item.type === "paragraph" && current && !/[.!?:]$/.test(current[current.length - 1])) {
       current[current.length - 1] = `${current[current.length - 1]} ${item.text}`;
