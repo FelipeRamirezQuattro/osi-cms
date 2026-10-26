@@ -288,7 +288,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   /** Every video gets a poster: the Wix poster image when it has one, else YouTube's thumbnail. */
   const posterFor = (v: Extract<Item, { type: "video" }>): string | undefined => {
     const id = youtubeId(v.url);
-    return posterOf.get(v) ?? (id ? `https://i.ytimg.com/vi/${id}/hq720.jpg` : undefined);
+    return posterOf.get(v) ?? (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : undefined);
   };
 
   // The page title heading is the product name (hero); drop every H1.

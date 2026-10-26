@@ -25,7 +25,7 @@ export const isDirectVideo = (url: string) => /\.(mp4|webm|mov)(\?|$)/i.test(url
 /** The thumbnail YouTube serves for a video, used when nobody picked a poster. */
 export function youtubePoster(url: string): string | undefined {
   const id = url.match(/youtube\.com\/embed\/([\w-]+)/)?.[1] ?? url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/)?.[1];
-  return id ? `https://i.ytimg.com/vi/${id}/hq720.jpg` : undefined;
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : undefined;
 }
 
 /** The click-to-play poster + iframe, without a Section — shared by the video block and `media_text`. */

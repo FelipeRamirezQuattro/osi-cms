@@ -56,10 +56,10 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits case study","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"CASE STUDY","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_0fbdb64fb3f84d21a1ae3ed634701dff.pdf"}}]}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/HgCM4Qu9Rpc/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/HgCM4Qu9Rpc/hqdefault.jpg"}$json$::jsonb),
     (pid, 'benefits_cards', 40, true, $json${"background":"navy","title":"Advantages","items":[{"title":"Provides multiple stages of gas separation"},{"title":"Utilizes both the casing and the tubing for gas separation Webinar"}]}$json$::jsonb),
     (pid, 'rich_text', 50, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Provides sand and gas separation"}]}]}]}]},"spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'media_text', 60, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'media_text', 60, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 70, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 80, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 90, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -80,9 +80,9 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"CASE STUDY","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_8fe3bbbeaebf47ce9ac7f2f2e512cb7d.pdf"}}]}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/LLw3BE1o3Vk/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/LLw3BE1o3Vk/hqdefault.jpg"}$json$::jsonb),
     (pid, 'benefits_cards', 40, true, $json${"background":"navy","title":"Features","items":[{"title":"Highly efficient sand separator and gas handler"},{"title":"Separates gas and solids before reaching the pump Increase pumping"},{"title":"Eliminates “Slug Flow” gas interference, gas locking efficiency and decrease"},{"title":"100% elastomer packer cups for easy installation operating costs"}]}$json$::jsonb),
-    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/2jxq3ekACgs?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/2jxq3ekACgs/hq720.jpg","spacingBottom":"sm"}$json$::jsonb),
+    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/2jxq3ekACgs?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/2jxq3ekACgs/hqdefault.jpg","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 60, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_b62e727b987b437983384277da62ea59~mv2.jpg","alt":"Features","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":148,"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 70, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'image', 80, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_45b3fe5c71a64550bd7314e154bf2fed~mv2.png","alt":"Features","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":978}$json$::jsonb),
@@ -138,7 +138,7 @@ ESP Surge Valve improves well profitability in both horizontal and vertical orie
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Poster","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_9d2773caf18a4cb0808bb0023ff7eac0.pdf"}}]}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/nW-MIeh-OJA/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/nW-MIeh-OJA/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 40, true, $json${"background":"cream","title":"Advantages","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 50, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_1dfbd6a8163a473dbb3288a181c151a2~mv2.jpg","alt":"OSI Table","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":314,"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 60, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Allows chemical injection below the pump."}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Allows for hot oil treating above the packer."}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Allows testing the packer to assure that it is properly set."}]}]}]}]},"spacingTop":"sm"}$json$::jsonb),
@@ -173,7 +173,7 @@ begin
     (pid, 'image', 60, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_20773efa62844e93a8ba5b726bcb527c~mv2.png","alt":"ESP Sand Diverter vs Previous Chronological","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":600,"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'section_heading', 70, true, $json${"background":"cream","title":"Avoid broken shafts","align":"left","spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 80, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Elimination of solids settling above and inside the pump Reduces deferred production"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Reduces back-spin of ESP"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Allows for faster restarts Improved Run Life 4,500 applications worldwide including:"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Heavy Oil"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Coal Seam Gas/Coal Bed Methane"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Conventional O&G"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Unconventional O&G"}]}]}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 90, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/K9jlnX1QhS4/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 90, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/K9jlnX1QhS4/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 100, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 110, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 120, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -199,8 +199,8 @@ The Top Bypass Valve can be used in combination with any OSI system.' where id =
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/3H25QmPIvTQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/3H25QmPIvTQ/hq720.jpg","layout":"media-left","body":"Odessa Separator’s Top Bypass Valve™ was made for extending pump’s run life."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/3H25QmPIvTQ/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/3H25QmPIvTQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/3H25QmPIvTQ/hqdefault.jpg","layout":"media-left","body":"Odessa Separator’s Top Bypass Valve™ was made for extending pump’s run life."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/3H25QmPIvTQ/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'image', 50, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_d6f16e46d59948ffbd3e7e726e8dd95a~mv2.jpg","alt":"Top Bypass Valve - OSI - Table","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":762}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -223,9 +223,9 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/-vaekULOFsg/hq720.jpg"}$json$::jsonb),
-    (pid, 'media_text', 30, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/8obuemU-bM4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/8obuemU-bM4/hq720.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/-vaekULOFsg/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'media_text', 30, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/8obuemU-bM4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/8obuemU-bM4/hqdefault.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingBottom":"sm"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -246,7 +246,7 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"DESCRIPTIVE IMAGE","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_72e7a5bc52554610b0cc65da6bc4fe76.pdf"}}]}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/-YsM8OFd354/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/-YsM8OFd354/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'image', 50, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_d6f16e46d59948ffbd3e7e726e8dd95a~mv2.jpg","alt":"ESP Top Bypass Valve - table - OSI","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":820}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -279,8 +279,8 @@ Another benefit provided by the FLEX TOOL is that it has been proven to reduce v
     (pid, 'product_benefits', 10, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'image', 20, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_126420e1f53741c1ac4232304830ca23~mv2.png","alt":"ESP Vortex Desander With Flex Tool","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":219,"caption":"Roll-on BENEFITS","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 30, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"THE FLEX TOOL comes in a standard connection"}]},{"type":"paragraph","content":[{"type":"text","text":"2-3/8” , 2-7/8” and 3-1/2”"}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/VCxiajh2GLI/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/XXyBx6lrOf0?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/XXyBx6lrOf0/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/VCxiajh2GLI/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/XXyBx6lrOf0?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/XXyBx6lrOf0/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 70, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 80, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -299,7 +299,7 @@ begin
   insert into product_layout_backup_20261025 (product_id, table_name, row_data) select pid, 'product_blocks', to_jsonb(t) from (select * from product_blocks where product_id = pid) t;
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
-    (pid, 'product_video', 10, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/kr08_aURBKc/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 10, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/kr08_aURBKc/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 20, true, $json${"background":"cream","title":"Safety Install & Pulling Click here to see this tool in 3D","align":"left"}$json$::jsonb),
     (pid, 'product_downloads', 30, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'section_heading', 40, true, $json${"background":"cream","title":"For a better experience open it in the Chrome browser","align":"left"}$json$::jsonb),
@@ -331,7 +331,7 @@ The Bumper Spring bull plug design uses fluid flow to center and maintain the st
     (pid, 'rich_text', 40, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"1. The weight of the BHA attached above the Bumper Spring creates a downward force on the shear pin section of the tool. The shear pin section has three pins that shear at 9700 pounds of force."}]},{"type":"paragraph","content":[{"type":"text","text":"2. When the pins shear, the perforated upper section falls into the lower section of the tool, where numerous stacked compression disks absorb the impact."}]},{"type":"paragraph","content":[{"type":"text","text":"3. The perforations in the upper section allow fluid to flow out releasing the pressure, in the housing, created by fluid accumulation."}]}]},"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 50, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_9394f10118554b339cd3b3f97563a865~mv2.png","alt":"The mechanics of the OSI bumper spring","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":160,"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 60, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"4. The plunger forces fluid downward into the center tube."}]},{"type":"paragraph","content":[{"type":"text","text":"5. The fluid pushes back up creating a hydraulic force which decreases the velocity and lessens the impact."}]},{"type":"paragraph","content":[{"type":"text","text":"The Bumper Spring is designed for wells with 7”"}]},{"type":"paragraph","content":[{"type":"text","text":"casing (26 lbs./ft. or lighter) and a 5-1/2” or 4-1/2” liner."}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 70, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ZbZAI-ZJrSI/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 70, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ZbZAI-ZJrSI/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 80, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 90, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 100, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -352,8 +352,8 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/wpTz2VdPt6E?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wpTz2VdPt6E/hq720.jpg","layout":"media-left","body":"Odessa Separator’s Tubing Screen™ are used for maximizing artificial lift run life by separating the harmful abrasives."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/wpTz2VdPt6E/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/wpTz2VdPt6E?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wpTz2VdPt6E/hqdefault.jpg","layout":"media-left","body":"Odessa Separator’s Tubing Screen™ are used for maximizing artificial lift run life by separating the harmful abrasives."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/wpTz2VdPt6E/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -402,10 +402,10 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/hUNBKMqciO4/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/hUNBKMqciO4/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 30, true, $json${"background":"cream","title":"Learn more about this tool","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 40, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]}]},"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'media_text', 50, true, $json${"background":"cream","title":"Before / After Installation","mediaType":"video","videoUrl":"https://www.youtube.com/embed/W8gigP7T6q8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/W8gigP7T6q8/hq720.jpg","layout":"media-left","body":"Paraffin, scale, corrosion are a headache for oil wells, OSI has the solution","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'media_text', 50, true, $json${"background":"cream","title":"Before / After Installation","mediaType":"video","videoUrl":"https://www.youtube.com/embed/W8gigP7T6q8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/W8gigP7T6q8/hqdefault.jpg","layout":"media-left","body":"Paraffin, scale, corrosion are a headache for oil wells, OSI has the solution","spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 70, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 80, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -428,7 +428,7 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"HOT OIL INJECTION","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_b773e53cd61b47fb903bf58c1b6c929f.pdf"}}]}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/qyrd_2MNXMs/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/qyrd_2MNXMs/hqdefault.jpg"}$json$::jsonb),
     (pid, 'image', 40, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_1bdebcb1e4e948438ff579966b09d6ce~mv2.jpg","alt":"How it works","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":368}$json$::jsonb),
     (pid, 'benefits_cards', 50, true, $json${"background":"navy","title":"Advantages","items":[{"title":"Allows chemical injection below the pump."},{"title":"Allows for hot oil treating above the packer."},{"title":"Allows testing the packer to assure that it is properly set."}]}$json$::jsonb),
     (pid, 'image', 60, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_e08025e178d749e3941836fcc9ae50b3~mv2.jpg","alt":"Table - OSI","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":449}$json$::jsonb),
@@ -451,8 +451,8 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/In1eILk78_4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/In1eILk78_4/hq720.jpg","layout":"media-above","body":"Our GV Cup Packer is a double cup design that guarantees the best seal. Our packer cups are molded from a durable Oil, gas, and abrasion-resistant elastomer compound that withstands wear and tear, even under pressure."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/In1eILk78_4/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/In1eILk78_4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/In1eILk78_4/hqdefault.jpg","layout":"media-above","body":"Our GV Cup Packer is a double cup design that guarantees the best seal. Our packer cups are molded from a durable Oil, gas, and abrasion-resistant elastomer compound that withstands wear and tear, even under pressure."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/In1eILk78_4/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -476,9 +476,9 @@ The fluid enters through the slotted intake, where the first stage of separation
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/RFxB7nnVlyM/hq720.jpg"}$json$::jsonb),
-    (pid, 'media_text', 30, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/DobhIXQX4LY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/DobhIXQX4LY/hq720.jpg","layout":"media-above","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/RFxB7nnVlyM/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'media_text', 30, true, $json${"background":"cream","title":"Test Horizontal Well","mediaType":"video","videoUrl":"https://www.youtube.com/embed/DobhIXQX4LY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/DobhIXQX4LY/hqdefault.jpg","layout":"media-above","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingBottom":"sm"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -532,8 +532,8 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/wBwz2l3MdSI?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wBwz2l3MdSI/hq720.jpg","layout":"media-above","body":"Provides controlled dispersion of chemicals from the bottom of the well up."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/wBwz2l3MdSI/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/wBwz2l3MdSI?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wBwz2l3MdSI/hqdefault.jpg","layout":"media-above","body":"Provides controlled dispersion of chemicals from the bottom of the well up."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/wBwz2l3MdSI/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 40, true, $json${"background":"cream","title":"Learn more about this tool","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 50, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]}]},"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
@@ -555,8 +555,8 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/dO7tQ9ZAAr4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/dO7tQ9ZAAr4/hq720.jpg","layout":"media-left","body":"Odessa Separator’s Pump Guard Screen conditions the fluid prior to pump intake"}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/dO7tQ9ZAAr4/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/dO7tQ9ZAAr4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/dO7tQ9ZAAr4/hqdefault.jpg","layout":"media-left","body":"Odessa Separator’s Pump Guard Screen conditions the fluid prior to pump intake"}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/dO7tQ9ZAAr4/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -588,7 +588,7 @@ The simplistic and effective design is installed easily below the seating nipple
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'benefits_cards', 10, true, $json${"background":"navy","title":"Advantages","items":[{"title":"Highly efficient Gas Separator design."},{"title":"Separate the free gas to the backside."},{"title":"Yield strength of 72,210 lb"},{"title":"In combined system, The Dual Flow system is used to improve the installation time and functionality of the tool"},{"title":"Allows sand & gas separation when is combined with the Vortex Sand Shield."}]}$json$::jsonb),
     (pid, 'product_benefits', 20, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/QGoQ99LwzrM/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/QGoQ99LwzrM/hqdefault.jpg"}$json$::jsonb),
     (pid, 'image', 40, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_c99f3df343034ca49f3748f77b3d0618~mv2.jpg","alt":"How it works","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":636,"spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 50, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_86ca6cf5be534cd49738b4311f40f354~mv2.png","alt":"Internal view - OSI","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":206,"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_specs', 60, true, $json${"title":"Specifications","background":"cream"}$json$::jsonb),
@@ -612,7 +612,7 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"OSI’s SUPER PERF is a high efficiency filtration system that homogenizes sand slugs from the formation. The sand screen is corrosion resistant while reducing flow restrictions."}]}]}}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/_KksJrWXmDA/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/_KksJrWXmDA/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -641,7 +641,7 @@ Three, it is TOP BYPASS VALVE that extends pump runtimes by allowing fluid flow 
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'section_heading', 10, true, $json${"background":"cream","title":"How it works","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Chemical treatment and sand control in a single tool!"}]},{"type":"heading","attrs":{"level":3},"content":[{"type":"text","text":"Learn more about this tool"}]},{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/Ws5jgDnWwCE/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/Ws5jgDnWwCE/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 50, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -664,9 +664,9 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/JrY_CM6DJsk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/JrY_CM6DJsk/hq720.jpg","layout":"media-above","body":"Odessa Separator’s Combination Tool Combines\n\nGas Separation and Sand Control."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/JrY_CM6DJsk/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/H3zWFuBXrG0?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/H3zWFuBXrG0/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/JrY_CM6DJsk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/JrY_CM6DJsk/hqdefault.jpg","layout":"media-above","body":"Odessa Separator’s Combination Tool Combines\n\nGas Separation and Sand Control."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/JrY_CM6DJsk/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/H3zWFuBXrG0?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/H3zWFuBXrG0/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -689,7 +689,7 @@ begin
 This tool is installed under the pump in the production casing section above the liner and will prevent the assembly from falling into the liner in the event of a component rupture. This system will facilitate fishing operations while allowing communication between the casing and the liner thanks to its flow channels.' where id = pid;
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
-    (pid, 'product_video', 10, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/W-Gl-dnMvbQ/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 10, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/W-Gl-dnMvbQ/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 20, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 30, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 40, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -714,7 +714,7 @@ begin
     (pid, 'image', 30, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_2b6d0835da96430b885283e089d707c4~mv2.jpg","alt":"Benefits","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":510,"spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 40, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_6155367f1bb249d4b4d2d86f8b305fad~mv2.png","alt":"Benefits","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":157,"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 50, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Seal view"}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 60, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/zFYGLY7WC0I/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 60, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/zFYGLY7WC0I/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 70, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 80, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 90, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -740,8 +740,8 @@ The Screen Vortex Desander is installed is a versatile system that can be combin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/5aNHWn3ZZdA?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/5aNHWn3ZZdA/hq720.jpg","layout":"media-above","body":"Odessa Separator’s Screen Vortex Desander maximizes artificial lift run life by separating harmful abrasives."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/5aNHWn3ZZdA/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/5aNHWn3ZZdA?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/5aNHWn3ZZdA/hqdefault.jpg","layout":"media-above","body":"Odessa Separator’s Screen Vortex Desander maximizes artificial lift run life by separating harmful abrasives."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/5aNHWn3ZZdA/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -763,7 +763,7 @@ begin
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'section_heading', 20, true, $json${"background":"cream","title":"How it works","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 30, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Longer sleeve provide a most effective protection by keeping the centrifugal wave inside the double-wall high resistance sleeve"}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/Uqh-0zgbgyU/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/Uqh-0zgbgyU/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -793,9 +793,9 @@ The ESP Screen Vortex Desander is installed below an ESP sensor, a mechanical pa
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/fTASqrtcRog?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/fTASqrtcRog/hq720.jpg","layout":"media-above","body":"The versatility of the Screen Vortex Desander allows combination with other OSI tools for the ultimate fluid conditioning system"}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/fTASqrtcRog/hq720.jpg"}$json$::jsonb),
-    (pid, 'media_text', 40, true, $json${"background":"cream","title":"Lab Test","mediaType":"video","videoUrl":"https://www.youtube.com/embed/e0CCDlFDyHc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/e0CCDlFDyHc/hq720.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/fTASqrtcRog?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/fTASqrtcRog/hqdefault.jpg","layout":"media-above","body":"The versatility of the Screen Vortex Desander allows combination with other OSI tools for the ultimate fluid conditioning system"}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/fTASqrtcRog/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'media_text', 40, true, $json${"background":"cream","title":"Lab Test","mediaType":"video","videoUrl":"https://www.youtube.com/embed/e0CCDlFDyHc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/e0CCDlFDyHc/hqdefault.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -817,9 +817,9 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/QwQ5oZ0mOFk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/QwQ5oZ0mOFk/hq720.jpg","layout":"media-above","body":"Odessa Separator’s Packer Type Gas Separator is used for maximizing artificial lift run life."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/QwQ5oZ0mOFk/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/byHGM2Ivo9I?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/byHGM2Ivo9I/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/QwQ5oZ0mOFk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/QwQ5oZ0mOFk/hqdefault.jpg","layout":"media-above","body":"Odessa Separator’s Packer Type Gas Separator is used for maximizing artificial lift run life."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/QwQ5oZ0mOFk/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/byHGM2Ivo9I?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/byHGM2Ivo9I/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -845,9 +845,9 @@ The GAS VENT is provided in 2.375”, 2.875 and 3.50 O.D.' where id = pid;
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/mrdyNVMZwh4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/mrdyNVMZwh4/hq720.jpg","layout":"media-left","body":"Test Gas Vent\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/mrdyNVMZwh4/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"Vortex","videoUrl":"https://www.youtube.com/embed/O1DzgYKVPoY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/O1DzgYKVPoY/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/mrdyNVMZwh4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/mrdyNVMZwh4/hqdefault.jpg","layout":"media-left","body":"Test Gas Vent\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/mrdyNVMZwh4/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"Vortex","videoUrl":"https://www.youtube.com/embed/O1DzgYKVPoY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/O1DzgYKVPoY/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -869,7 +869,7 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 20, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 30, true, $json${"background":"cream","title":"Learn more about this tool","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 40, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chem Screen are a solid based blend with 97% active chemical ingredients"}]},{"type":"paragraph","content":[{"type":"text","text":"Odessa Separator’s Chem Screen are downhole chemical conditioning systems"}]}]},"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
@@ -892,7 +892,7 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'rich_text', 10, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"orderedList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Hot oil is pumped down to the depth of the packer and circulated back to the surface. The treating fluid does not go into the formation."}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"A typical hot oil job with the OSI Hot Oil Tool should require only about two hours and will treat much more thoroughly."}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"The well will take far less time to recover."}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"The main purpose of the Hot Oil Tool is to keep the treating oil hot while it does its’ job and to keep the treating oil from damaging the formation."}]}]}]}]},"spacingBottom":"sm"}$json$::jsonb),
     (pid, 'section_heading', 20, true, $json${"background":"cream","title":"How it works","align":"left","spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"Treat more effectively, with greater efficiency...","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/JTwHz4qHun0/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"Treat more effectively, with greater efficiency...","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/JTwHz4qHun0/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 50, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -1015,7 +1015,7 @@ In Gas Lift or Plunger Lift applications, the tool is installed via slickline, s
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'rich_text', 10, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Slow, self release of chemical(s)"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Up to 6 months of chemical treatment"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Reduces paraffin, scale, and corrosion failures"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Variety of well specific recipes (paraffin, asphaltenes, corrosion, scale)"}]}]}]}]}}$json$::jsonb),
     (pid, 'product_benefits', 20, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/1I_FPqyGheE/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 30, true, $json${"title":"How it works","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/1I_FPqyGheE/hqdefault.jpg"}$json$::jsonb),
     (pid, 'section_heading', 40, true, $json${"background":"cream","title":"Learn more about this tool","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 50, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]}]},"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
@@ -1039,7 +1039,7 @@ begin
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'section_heading', 20, true, $json${"background":"cream","title":"How it works","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 30, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Fluid flowing thru the top bypass valve, Spring displaced by the fluid due to the differential pressure."}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/MpiL_7I76bY/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/MpiL_7I76bY/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -1060,11 +1060,11 @@ begin
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"WELL PERFORMANCE","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_9e0535edd9ae43aeb33aa167baa67e29.pdf"}}]}]}]},"spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'media_text', 30, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 30, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","layout":"media-left","body":"OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'product_video', 40, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg"}$json$::jsonb),
     (pid, 'rich_text', 50, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Test Horizontal Well"}]}]}}$json$::jsonb),
     (pid, 'benefits_cards', 60, true, $json${"background":"navy","title":"Advantages","items":[{"title":"Employs multiple stages of gas separation Odessa Separator’s"},{"title":"Utilizes both casing and tubing for gas separation ESP Packer Type Gas Separator™ is used for maximizing artificial lift run life."}]}$json$::jsonb),
-    (pid, 'video_embed', 70, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/wG2KyNN4kfc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wG2KyNN4kfc/hq720.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 70, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/wG2KyNN4kfc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/wG2KyNN4kfc/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 80, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 90, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 100, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -1084,8 +1084,8 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/7-eXQKovzdQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/7-eXQKovzdQ/hq720.jpg","layout":"media-above","body":"The chemical is injected from the bottom of the exhaust pipe upwards, thus mixing with the crude."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/7-eXQKovzdQ/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/7-eXQKovzdQ?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/7-eXQKovzdQ/hqdefault.jpg","layout":"media-above","body":"The chemical is injected from the bottom of the exhaust pipe upwards, thus mixing with the crude."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/7-eXQKovzdQ/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 40, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 50, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 60, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -1105,9 +1105,9 @@ begin
   delete from product_blocks where product_id = pid;
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","layout":"media-left","body":"Test Horizontal Well\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
-    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/0FDcBCkoNbo?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/0FDcBCkoNbo/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 20, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","layout":"media-left","body":"Test Horizontal Well\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools."}$json$::jsonb),
+    (pid, 'product_video', 30, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 40, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/0FDcBCkoNbo?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/0FDcBCkoNbo/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -1133,7 +1133,7 @@ Preventing premature pulling of the well. This allows the equipment to reach max
     (pid, 'image', 10, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_0dd72825d2f24688af75c797c77cd7c3~mv2.jpg","alt":"Dip Tube Bypass","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":379,"spacingBottom":"sm"}$json$::jsonb),
     (pid, 'image', 20, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_67bf3854db9f47748953a9b8d0f8e0b3~mv2.png","alt":"Top intake Bypass - OSI","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":294,"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 30, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Provides significant savings over pulling the well!"}]}]},"spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/N1WeKQ2VSp8/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 40, true, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/N1WeKQ2VSp8/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 60, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 70, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -1159,9 +1159,9 @@ This separator was engineered to provide high separation capacity without the ne
   insert into product_blocks (product_id, type, position, is_visible, data) values
     (pid, 'image', 10, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_f8eccd83529b4f9ebfc81fa7ea8fcdbf~mv2.jpg","alt":"Table - OSI","decorative":false,"aspectRatio":"auto","alignment":"left","displayWidth":222,"spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"The optional OSI GAS VENT, working in synchronous with the pump, purges the dip tube of free gas, delivering gas free liquid to the pump. During the downtime, between pump cycles, the GAS VENT purges the dip tube of gas accumulation."}]}]},"spacingTop":"sm","spacingBottom":"sm"}$json$::jsonb),
-    (pid, 'media_text', 30, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg","layout":"media-left","body":"Test Horizontal Well\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
-    (pid, 'product_video', 40, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hq720.jpg"}$json$::jsonb),
-    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/IkepeFdejuk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/IkepeFdejuk/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 30, true, $json${"background":"cream","title":"How it works","mediaType":"video","videoUrl":"https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg","layout":"media-left","body":"Test Horizontal Well\n\nOSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.","spacingTop":"sm"}$json$::jsonb),
+    (pid, 'product_video', 40, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/bcIj74XSWgk/hqdefault.jpg"}$json$::jsonb),
+    (pid, 'video_embed', 50, true, $json${"background":"cream","title":"","videoUrl":"https://www.youtube.com/embed/IkepeFdejuk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/IkepeFdejuk/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_benefits', 70, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 80, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
@@ -1188,7 +1188,7 @@ begin
     (pid, 'product_benefits', 10, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
     (pid, 'benefits_cards', 20, true, $json${"background":"navy","title":"Super Lube Tubing Tool Super Lube Gas Anchor Significantly reduce downhole friction and sticking problems! Increase run life of downhole equipment","items":[{"title":"Reduces maintenance costs"}]}$json$::jsonb),
     (pid, 'image', 30, true, $json${"background":"cream","imageUrl":"https://static.wixstatic.com/media/1ac9e9_24d710edde5f4e49833a6a7b9cdd41af~mv2.png","alt":"Super Lube Tubing Tool Super Lube Gas Anchor Significantly reduce downhole friction and sticking problems! Increase run life of downhole equipment","decorative":false,"aspectRatio":"auto","alignment":"center","displayWidth":600}$json$::jsonb),
-    (pid, 'product_video', 40, true, $json${"title":"High water cut wells – high GOR – sand sticking problems","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/tymgpBOodZI/hq720.jpg"}$json$::jsonb),
+    (pid, 'product_video', 40, true, $json${"title":"High water cut wells – high GOR – sand sticking problems","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/tymgpBOodZI/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 50, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 60, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 70, true, $json${"title":"","background":"cream"}$json$::jsonb),
@@ -1216,8 +1216,8 @@ The solid based chemical sticks are 97% active ingredients and are well-specific
     (pid, 'section_heading', 10, true, $json${"background":"cream","title":"Learn more about this tool","align":"left","spacingBottom":"sm"}$json$::jsonb),
     (pid, 'rich_text', 20, true, $json${"background":"cream","content":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Webinar","marks":[{"type":"link","attrs":{"href":"https://youtu.be/ZGH4sdUJm_c"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Case Study","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf"}}]}]},{"type":"paragraph","content":[{"type":"text","text":"Chemical Composition","marks":[{"type":"link","attrs":{"href":"https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf"}}]}]}]},"spacingTop":"sm"}$json$::jsonb),
     (pid, 'product_benefits', 30, true, $json${"title":"Benefits","background":"navy"}$json$::jsonb),
-    (pid, 'media_text', 40, true, $json${"background":"cream","title":"","mediaType":"video","videoUrl":"https://www.youtube.com/embed/ASUu5dZza8s?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hq720.jpg","layout":"media-right","body":"Odessa Separator’s Chem Screen are downhole chemical conditioning systems.\n\nChem Screen are a solid based blend with 97% active chemical ingredients."}$json$::jsonb),
-    (pid, 'product_video', 50, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hq720.jpg"}$json$::jsonb),
+    (pid, 'media_text', 40, true, $json${"background":"cream","title":"","mediaType":"video","videoUrl":"https://www.youtube.com/embed/ASUu5dZza8s?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hqdefault.jpg","layout":"media-right","body":"Odessa Separator’s Chem Screen are downhole chemical conditioning systems.\n\nChem Screen are a solid based blend with 97% active chemical ingredients."}$json$::jsonb),
+    (pid, 'product_video', 50, false, $json${"title":"","background":"cream","posterImageUrl":"https://i.ytimg.com/vi/ASUu5dZza8s/hqdefault.jpg"}$json$::jsonb),
     (pid, 'product_downloads', 60, true, $json${"title":"","background":"navy"}$json$::jsonb),
     (pid, 'product_stages', 70, true, $json${"title":"Stages","background":"cream"}$json$::jsonb),
     (pid, 'product_body', 80, true, $json${"title":"","background":"cream"}$json$::jsonb),
