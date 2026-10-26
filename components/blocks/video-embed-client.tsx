@@ -66,12 +66,10 @@ export function VideoPlayer({
           className="group absolute inset-0 flex h-full w-full items-center justify-center"
           aria-label="Play video"
         >
-          <DuotoneImage
-            src={poster}
-            className="absolute inset-0"
-            intensity={0.4}
-            sizes="(min-width: 1280px) 72rem, 100vw"
-          />
+          {/* DuotoneImage is itself `relative`; giving it `absolute inset-0` too collapsed it to zero height, so the poster never showed. */}
+          <div className="absolute inset-0">
+            <DuotoneImage src={poster} className="h-full w-full" intensity={0.4} sizes="(min-width: 1280px) 72rem, 100vw" />
+          </div>
           <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-osi-white/90 text-osi-navy-900 shadow-xl transition-transform duration-200 group-hover:scale-105 group-active:scale-[0.98]">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-current">
               <path d="M8 5.5v13l10-6.5L8 5.5Z" />
