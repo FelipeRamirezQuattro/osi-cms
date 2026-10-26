@@ -21,9 +21,9 @@ export async function Header({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
           aria-label="OSI home"
           className="inline-flex min-h-11 items-center font-display text-xl font-bold tracking-wide-display uppercase"
         >
-          <BrandLogo config={branding} asset={logoAsset} />
+          <BrandLogo config={branding} asset={logoAsset} priority />
         </Link>
-        <MegaMenuClient utilityItems={utilityItems} megaColumns={megaColumns} brandLogo={<BrandLogo config={branding} asset={logoAsset} />} />
+        <MegaMenuClient utilityItems={utilityItems} megaColumns={megaColumns} brandLogo={<BrandLogo config={branding} asset={logoAsset} priority />} />
       </div>
       <HeaderScrollState />
     </header>
