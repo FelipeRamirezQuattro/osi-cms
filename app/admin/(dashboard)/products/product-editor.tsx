@@ -9,6 +9,7 @@ import { useSaveProblemAlert } from "@/components/admin/use-block-problem-alert"
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
 import { RelationOptionsProvider, type RelationOptionsMap } from "@/components/admin/relation-options";
 import { deleteProductAction, saveProductAction } from "@/lib/actions/products";
+import { defaultLinkedRows, ensureLinkedRows } from "@/lib/products/layout";
 import { PRODUCT_DEFAULTS, PRODUCT_FIELDS } from "@/lib/admin/product-fields";
 import { hasCapability } from "@/lib/auth/capabilities";
 import type { AdminRole } from "@/lib/auth";
@@ -45,9 +46,9 @@ export function ProductEditor({
           ...product,
           category_id: product.category_id ?? "",
           badge: product.badge ?? "none",
-          blocks: product.blocks,
+          blocks: ensureLinkedRows(product.blocks),
         }
-      : PRODUCT_DEFAULTS,
+      : { ...PRODUCT_DEFAULTS, blocks: defaultLinkedRows() },
   });
 
   function onSubmit(values: any) {

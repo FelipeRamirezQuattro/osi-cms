@@ -16,6 +16,7 @@ import type { RelationOptionsMap } from "@/components/admin/relation-options";
 import type { Tables } from "@/lib/db/database.types";
 import { formatZodError, isUniqueViolationError } from "@/lib/validation/common";
 import { productSaveInputSchema } from "@/lib/validation/products";
+import { LINKED_SECTIONS, missingLinkedSections } from "@/lib/products/layout";
 import { validateBlockList } from "@/lib/validation/blocks";
 import { validateBlockAppearanceReferences } from "@/lib/validation/block-appearance";
 import { getPublishedBranding } from "@/lib/data/branding";
@@ -72,6 +73,16 @@ export async function saveProductAction(id: string | null, values: any): Promise
     return { status: "error", message, field };
   }
   const { benefits, stages, specs, industries, applications, related_product_ids, blocks, ...rest } = parsed.data;
+
+  const missing = missingLinkedSections(blocks as { type: string }[]);
+  if (missing.length > 0) {
+    return {
+      status: "error",
+      message: `The page layout must keep every product section exactly once (hide one instead of removing it) — check: ${missing
+        .map((t) => LINKED_SECTIONS[t].label)
+        .join(", ")}.`,
+    };
+  }
 
   const blockError = validateBlockList(blocks as { type: string; data: Record<string, unknown> }[]);
   if (blockError) return blockError;

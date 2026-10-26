@@ -1,5 +1,6 @@
 import { getBlockDefinition } from "@/lib/blocks/registry";
 import { COMMON_ADMIN_FIELDS } from "@/lib/blocks/admin-fields";
+import { LINKED_SECTIONS, isLinkedSectionType, linkedSectionDataSchema } from "@/lib/products/layout";
 import { describeIssue, issueField } from "@/lib/validation/issue-messages";
 
 /**
@@ -32,6 +33,18 @@ function plainSentence(text: string): string {
 
 export function validateBlockList(blocks: BlockValidationInput[]): BlockValidationError | null {
   for (let i = 0; i < blocks.length; i++) {
+    if (isLinkedSectionType(blocks[i].type)) {
+      // A product's linked section carries only a heading and a background.
+      const linked = linkedSectionDataSchema.safeParse(blocks[i].data);
+      if (!linked.success) {
+        return {
+          status: "error",
+          message: `${blockLabel(i, LINKED_SECTIONS[blocks[i].type as keyof typeof LINKED_SECTIONS].label)}: the heading or background is not valid.`,
+          blockIndex: i,
+        };
+      }
+      continue;
+    }
     const definition = getBlockDefinition(blocks[i].type);
     if (!definition) {
       return { status: "error", message: `Unknown block type "${blocks[i].type}"`, blockIndex: i };

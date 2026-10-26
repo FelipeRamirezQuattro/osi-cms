@@ -25,9 +25,11 @@ export function BenefitsCardsRender({ data }: { data: BenefitsCardsData }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
-        {data.title}
-      </h2>
+      {data.title && (
+        <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">
+          {data.title}
+        </h2>
+      )}
       <AnimatedGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((item) => (
           <AnimatedItem key={item.title} className="h-full">

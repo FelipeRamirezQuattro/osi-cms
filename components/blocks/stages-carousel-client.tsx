@@ -26,12 +26,14 @@ export function StagesCarouselRender({ data }: { data: StagesCarouselData }) {
       spacingBottom={data.spacingBottom}
       anchorId={data.anchorId}
     >
-      <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
+      {data.title && (
+        <h2 {...longTitle(data.title)} className="mb-8 font-editorial text-section font-semibold text-balance">{data.title}</h2>
+      )}
       <motion.div
         key={index}
         role="group"
         aria-roledescription="carousel"
-        aria-label={`${data.title}: ${stage.title}, stage ${index + 1} of ${data.stages.length}`}
+        aria-label={`${data.title ? `${data.title}: ` : ""}${stage.title}, stage ${index + 1} of ${data.stages.length}`}
         tabIndex={0}
         className="grid cursor-grab gap-8 rounded-[var(--site-radius-lg)] border border-[var(--site-border)] bg-[var(--site-surface-raised)] p-6 text-osi-navy-900 active:cursor-grabbing sm:grid-cols-[10rem_minmax(0,1fr)] sm:items-center md:p-8"
         initial={reduceMotion ? false : { opacity: 0 }}

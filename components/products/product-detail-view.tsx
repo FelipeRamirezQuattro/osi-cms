@@ -13,6 +13,14 @@ import { LabelPlateGrid } from "@/components/blocks/label-plate-grid";
 import { RecordProductView } from "@/components/blocks/record-product-view";
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { productHref } from "@/lib/routes";
+import {
+  LINKED_SECTIONS,
+  isLinkedSectionType,
+  linkedSectionDataSchema,
+  resolveLayout,
+  type LayoutRow,
+  type LinkedSectionType,
+} from "@/lib/products/layout";
 import type { ProductDetail } from "@/lib/data/products";
 import type { Tables } from "@/lib/db/database.types";
 
@@ -36,6 +44,94 @@ export function splitParagraphs(summary: string | null | undefined): string[] {
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean);
+}
+
+function sectionBackground(row: LayoutRow, type: LinkedSectionType): "navy" | "cream" {
+  const parsed = linkedSectionDataSchema.safeParse(row.data);
+  return parsed.success && parsed.data.background ? parsed.data.background : LINKED_SECTIONS[type].defaultBackground;
+}
+
+/** One entry of the ordered layout: a linked product section, or an ordinary block through the registry. */
+function LayoutRowView({ row, product, isPreview }: { row: LayoutRow; product: ProductDetail; isPreview: boolean }) {
+  if (!isLinkedSectionType(row.type)) {
+    return <BlockRenderer blocks={[{ id: row.id ?? row.type, type: row.type, data: row.data as never }]} isPreview={isPreview} />;
+  }
+  const parsed = linkedSectionDataSchema.safeParse(row.data);
+  const title = (parsed.success ? parsed.data.title : undefined) ?? "";
+  const background = sectionBackground(row, row.type);
+  const common = { background, spacingTop: "md", spacingBottom: "md" } as const;
+
+  switch (row.type) {
+    case "product_benefits":
+      if (product.product_benefits.length === 0) return null;
+      return (
+        <BlockScope type="benefits_cards" background={background}>
+          <BenefitsCardsRender
+            data={{ ...common, title, items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })) }}
+          />
+        </BlockScope>
+      );
+    case "product_stages":
+      if (product.product_stages.length === 0) return null;
+      return (
+        <BlockScope type="stages_carousel" background={background}>
+          <StagesCarouselRender
+            data={{
+              ...common,
+              title,
+              stages: product.product_stages.map((s) => ({ title: s.title, body: s.body ?? undefined, imageUrl: s.image_url ?? undefined })),
+            }}
+          />
+        </BlockScope>
+      );
+    case "product_video":
+      return (
+        <BlockScope type="video_embed" background={background}>
+          <VideoEmbedRender
+            data={{
+              ...common,
+              title: title || undefined,
+              videoUrl: product.video_url ?? null,
+              posterImageUrl: product.diagram_image_url ?? undefined,
+            }}
+          />
+        </BlockScope>
+      );
+    case "product_downloads":
+      return (
+        <BlockScope type="how_it_works" background={background}>
+          <HowItWorksRender
+            data={{ ...common, title, pdfUrl: product.brochure_pdf_url ?? null, model3dUrl: product.model_3d_url ?? null }}
+            isPreview={isPreview}
+          />
+        </BlockScope>
+      );
+    case "product_body": {
+      if (!hasRichTextContent(product.body)) return null;
+      const heading = title
+        ? [{ type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: title }] }]
+        : [];
+      const doc = product.body as { type: "doc"; content: unknown[] };
+      return (
+        <BlockScope type="rich_text" background={background}>
+          <RichTextRender data={{ ...common, content: { ...doc, content: [...heading, ...doc.content] } as RichTextData["content"] }} />
+        </BlockScope>
+      );
+    }
+    case "product_specs":
+      if (product.product_specs.length === 0) return null;
+      return (
+        <BlockScope type="spec_table" background={background}>
+          <SpecTableRender
+            data={{
+              ...common,
+              title: title || undefined,
+              specs: product.product_specs.map((s) => ({ label: s.label, value: s.value, unit: s.unit ?? undefined })),
+            }}
+          />
+        </BlockScope>
+      );
+  }
 }
 
 /**
@@ -96,91 +192,9 @@ export function ProductDetailView({
           }}
         />
       </BlockScope>
-      {product.product_benefits.length > 0 && (
-        <BlockScope type="benefits_cards" background="navy">
-          <BenefitsCardsRender
-            data={{
-              background: "navy",
-              spacingTop: "md",
-              spacingBottom: "md",
-              title: "Benefits",
-              items: product.product_benefits.map((b) => ({ title: b.title, body: b.body ?? undefined })),
-            }}
-          />
-        </BlockScope>
-      )}
-      {product.product_stages.length > 0 && (
-        <BlockScope type="stages_carousel" background="cream">
-          <StagesCarouselRender
-            data={{
-              background: "cream",
-              spacingTop: "md",
-              spacingBottom: "md",
-              title: "Stages",
-              stages: product.product_stages.map((s) => ({
-                title: s.title,
-                body: s.body ?? undefined,
-                imageUrl: s.image_url ?? undefined,
-              })),
-            }}
-          />
-        </BlockScope>
-      )}
-      <BlockScope type="video_embed" background="cream">
-        <VideoEmbedRender
-          data={{
-            background: "cream",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: undefined,
-            videoUrl: product.video_url ?? null,
-            posterImageUrl: product.diagram_image_url ?? undefined,
-          }}
-        />
-      </BlockScope>
-      <BlockScope type="how_it_works" background="navy">
-        <HowItWorksRender
-          data={{
-            background: "navy",
-            spacingTop: "md",
-            spacingBottom: "md",
-            title: "How does it work?",
-            pdfUrl: product.brochure_pdf_url ?? null,
-            model3dUrl: product.model_3d_url ?? null,
-          }}
-          isPreview={isPreview}
-        />
-      </BlockScope>
-      {hasRichTextContent(product.body) && (
-        <BlockScope type="rich_text" background="cream">
-          <RichTextRender
-            data={{
-              background: "cream",
-              spacingTop: "md",
-              spacingBottom: "md",
-              content: product.body as RichTextData["content"],
-            }}
-          />
-        </BlockScope>
-      )}
-      {product.product_specs.length > 0 && (
-        <BlockScope type="spec_table" background="cream">
-          <SpecTableRender
-            data={{
-              background: "cream",
-              spacingTop: "md",
-              spacingBottom: "md",
-              title: "Specifications",
-              specs: product.product_specs.map((s) => ({
-                label: s.label,
-                value: s.value,
-                unit: s.unit ?? undefined,
-              })),
-            }}
-          />
-        </BlockScope>
-      )}
-      {product.product_blocks.length > 0 && <BlockRenderer blocks={product.product_blocks} isPreview={isPreview} />}
+      {resolveLayout(product.product_blocks as LayoutRow[]).map((row, index) => (
+        <LayoutRowView key={row.id ?? `${row.type}-${index}`} row={row} product={product} isPreview={isPreview} />
+      ))}
       {relatedProducts.length > 0 && (
         <Section background="navy" spacingTop="md" spacingBottom="md">
           <h2 className="font-editorial text-section font-semibold text-balance">Related products</h2>

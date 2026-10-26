@@ -1,7 +1,7 @@
 import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { ProductBlocksField, type ProductBlocksHandle } from "@/components/admin/product-blocks-field";
 import { PublishedBrandingOptionsProvider } from "@/components/admin/block-appearance-fields";
 import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
@@ -58,5 +58,44 @@ describe("ProductBlocksField", () => {
     const rows = document.querySelectorAll("[data-block-row]");
     expect(rows[1].querySelector("[data-block-fields]")).not.toBeNull();
     expect(rows[1]).toHaveAttribute("data-block-invalid", "true");
+  });
+});
+
+describe("ProductBlocksField — linked sections", () => {
+  function Types() {
+    const blocks = useWatch({ name: "blocks" }) as { type: string }[];
+    return <output data-testid="types">{JSON.stringify(blocks.map((b) => b.type))}</output>;
+  }
+  function LinkedHarness() {
+    const form = useForm({
+      defaultValues: {
+        blocks: [
+          { type: "product_specs", is_visible: true, data: { title: "Specifications", background: "cream" } },
+          { type: "section_heading", is_visible: true, data: { ...(heading.defaults as object), title: "Extra" } },
+        ],
+      },
+    });
+    return (
+      <PublishedBrandingOptionsProvider branding={OSI_SEED_BRANDING_CONFIG}>
+        <FormProvider {...form}>
+          <ProductBlocksField palette={palette} />
+          <Types />
+        </FormProvider>
+      </PublishedBrandingOptionsProvider>
+    );
+  }
+
+  it("a linked section can be hidden and moved but not removed, and says where its data is edited", () => {
+    render(<LinkedHarness />);
+    // Only the ordinary block offers Remove.
+    expect(screen.getAllByRole("button", { name: "Remove" })).toHaveLength(1);
+    expect(screen.getByText("Linked")).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole("button", { name: /move .* down/i })[0]);
+    expect(screen.getByTestId("types")).toHaveTextContent('["section_heading","product_specs"]');
+
+    fireEvent.click(document.querySelectorAll("[data-block-toggle]")[1]);
+    expect(screen.getByText(/edited in the Specifications form below/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Heading \(leave empty for no heading\)/)).toBeInTheDocument();
   });
 });

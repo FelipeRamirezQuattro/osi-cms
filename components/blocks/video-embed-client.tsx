@@ -19,15 +19,64 @@ export function toEmbedUrl(url: string): string {
   return url;
 }
 
-export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
+/** The click-to-play poster + iframe, without a Section — shared by the video block and `media_text`. */
+export function VideoPlayer({
+  videoUrl,
+  title,
+  posterImageUrl,
+}: {
+  videoUrl: string;
+  title?: string;
+  posterImageUrl?: string;
+}) {
   const [loaded, setLoaded] = useState(false);
 
+  return (
+    <Clipped corner="br" size="1.5rem" className="relative aspect-video w-full overflow-hidden">
+      {loaded ? (
+        <iframe
+          src={toEmbedUrl(videoUrl)}
+          title={title ?? "Video"}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          // Same sandbox value as the new `embed` block's youtube/vimeo
+          // providers (components/blocks/embed.tsx) — allow-scripts +
+          // allow-same-origin for the player itself, allow-popups for
+          // its share/"watch on YouTube" links, allow-presentation for
+          // Chromecast/AirPlay casting from the player UI.
+          sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+          className="absolute inset-0 h-full w-full"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setLoaded(true)}
+          className="group absolute inset-0 flex h-full w-full items-center justify-center"
+          aria-label="Play video"
+        >
+          <DuotoneImage
+            src={posterImageUrl}
+            className="absolute inset-0"
+            intensity={0.4}
+            sizes="(min-width: 1280px) 72rem, 100vw"
+          />
+          <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-osi-white/90 text-osi-navy-900 shadow-xl transition-transform duration-200 group-hover:scale-105 group-active:scale-[0.98]">
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-current">
+              <path d="M8 5.5v13l10-6.5L8 5.5Z" />
+            </svg>
+          </span>
+        </button>
+      )}
+    </Clipped>
+  );
+}
+
+export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
   // videoUrl is optional at the schema level (see video-embed.tsx) since
   // there's no safe, non-invented URL to default it to — a freshly added
   // block with no URL yet renders nothing rather than a play button that
   // opens a blank iframe.
   if (!data.videoUrl) return null;
-  const videoUrl = data.videoUrl;
 
   return (
     <Section
@@ -41,42 +90,7 @@ export function VideoEmbedRender({ data }: { data: VideoEmbedData }) {
           {data.title}
         </h2>
       )}
-      <Clipped corner="br" size="1.5rem" className="relative aspect-video w-full overflow-hidden">
-        {loaded ? (
-          <iframe
-            src={toEmbedUrl(videoUrl)}
-            title={data.title ?? "Video"}
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            // Same sandbox value as the new `embed` block's youtube/vimeo
-            // providers (components/blocks/embed.tsx) — allow-scripts +
-            // allow-same-origin for the player itself, allow-popups for
-            // its share/"watch on YouTube" links, allow-presentation for
-            // Chromecast/AirPlay casting from the player UI.
-            sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-            className="absolute inset-0 h-full w-full"
-          />
-        ) : (
-          <button
-            type="button"
-            onClick={() => setLoaded(true)}
-            className="group absolute inset-0 flex h-full w-full items-center justify-center"
-            aria-label="Play video"
-          >
-            <DuotoneImage
-              src={data.posterImageUrl}
-              className="absolute inset-0"
-              intensity={0.4}
-              sizes="(min-width: 1280px) 72rem, 100vw"
-            />
-            <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-osi-white/90 text-osi-navy-900 shadow-xl transition-transform duration-200 group-hover:scale-105 group-active:scale-[0.98]">
-              <svg aria-hidden="true" viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-current">
-                <path d="M8 5.5v13l10-6.5L8 5.5Z" />
-              </svg>
-            </span>
-          </button>
-        )}
-      </Clipped>
+      <VideoPlayer videoUrl={data.videoUrl} title={data.title} posterImageUrl={data.posterImageUrl} />
     </Section>
   );
 }

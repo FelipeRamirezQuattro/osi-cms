@@ -16,6 +16,7 @@ import { stagesCarouselBlock } from "@/components/blocks/stages-carousel";
 import { howItWorksBlock } from "@/components/blocks/how-it-works";
 import { benefitsCardsBlock } from "@/components/blocks/benefits-cards";
 import { videoEmbedBlock } from "@/components/blocks/video-embed";
+import { mediaTextBlock } from "@/components/blocks/media-text";
 import { arModelBlock } from "@/components/blocks/ar-model";
 import { contactFormBlock } from "@/components/blocks/contact-form";
 import { newsletterSignupBlock } from "@/components/blocks/newsletter-signup";
@@ -59,6 +60,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   how_it_works: howItWorksBlock,
   benefits_cards: benefitsCardsBlock,
   video_embed: videoEmbedBlock,
+  media_text: mediaTextBlock,
   ar_model: arModelBlock,
   contact_form: contactFormBlock,
   newsletter_signup: newsletterSignupBlock,

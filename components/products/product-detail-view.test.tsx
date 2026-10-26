@@ -58,8 +58,12 @@ function product(overrides: Partial<ProductDetail> = {}): ProductDetail {
   } as unknown as ProductDetail;
 }
 
+// React's useId values depend on tree position, which is not part of the contract.
 const view = (p: ProductDetail, isPreview = false) =>
-  renderToStaticMarkup(<ProductDetailView product={p} relatedProducts={[]} resources={[]} isPreview={isPreview} />);
+  renderToStaticMarkup(<ProductDetailView product={p} relatedProducts={[]} resources={[]} isPreview={isPreview} />).replace(
+    /_R_[a-z0-9]+_/g,
+    "_R_ID_",
+  );
 
 describe("ProductDetailView — template with no linked rows", () => {
   it("full product renders the unchanged template", () => {
@@ -72,5 +76,71 @@ describe("ProductDetailView — template with no linked rows", () => {
   });
   it("preview of a product with no downloads keeps the placeholders", () => {
     expect(view(product({ brochure_pdf_url: null, model_3d_url: null }), true)).toMatchSnapshot();
+  });
+});
+
+function linked(type: string, data: Record<string, unknown> = {}, is_visible = true) {
+  return { id: `l-${type}`, product_id: "p1", type, position: 0, is_visible, data };
+}
+function text(id: string, t: string) {
+  return {
+    id,
+    product_id: "p1",
+    type: "rich_text",
+    position: 0,
+    is_visible: true,
+    data: { background: "cream", spacingTop: "md", spacingBottom: "md", content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: t }] }] } },
+  };
+}
+const order = (html: string, needles: string[]) => needles.map((n) => html.indexOf(n));
+
+describe("ProductDetailView — ordered layout", () => {
+  it("renders linked sections and extras in the saved order", () => {
+    const html = view(
+      product({
+        product_blocks: [
+          linked("product_specs", { title: "Sizes", background: "cream" }),
+          text("t1", "Intro text"),
+          linked("product_benefits", { title: "Advantages", background: "navy" }),
+          linked("product_stages", { title: "Stages" }),
+          linked("product_video", { title: "" }),
+          linked("product_downloads", { title: "" }),
+          linked("product_body", { title: "" }),
+        ] as never,
+      }),
+    );
+    const [sizes, intro, adv] = order(html, ["Sizes", "Intro text", "Advantages"]);
+    expect(sizes).toBeGreaterThan(-1);
+    expect(sizes).toBeLessThan(intro);
+    expect(intro).toBeLessThan(adv);
+    expect(html).not.toContain("Specifications");
+    expect(html).not.toContain(">Benefits<");
+  });
+
+  it("an empty heading renders no heading, never the default", () => {
+    const html = view(
+      product({
+        product_blocks: [
+          linked("product_benefits", { title: "" }),
+          linked("product_stages", { title: "" }),
+          linked("product_video", { title: "" }),
+          linked("product_downloads", { title: "" }),
+          linked("product_body", { title: "" }),
+          linked("product_specs", { title: "" }),
+        ] as never,
+      }),
+    );
+    expect(html).not.toContain("How does it work?");
+    expect(html).not.toContain(">Benefits<");
+    expect(html).not.toContain(">Specifications<");
+    expect(html).not.toContain(">Stages<");
+    expect(html).toContain("Download PDF");
+    expect(html).toContain("Less gas lock");
+  });
+
+  it("a body heading is rendered as an h2 before the text", () => {
+    const html = view(product({ product_blocks: [linked("product_body", { title: "How It Works" })] as never }));
+    expect(html).toMatch(/<h2[^>]*>How It Works<\/h2>/);
+    expect(html).toContain("Body copy.");
   });
 });

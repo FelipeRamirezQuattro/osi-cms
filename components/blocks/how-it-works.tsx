@@ -50,10 +50,14 @@ export function HowItWorksRender({ data, isPreview = false }: { data: HowItWorks
       anchorId={data.anchorId}
     >
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
-        <div>
-          <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
-          {data.body && <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-osi-slate-200">{data.body}</p>}
-        </div>
+        {(data.title || data.body) && (
+          <div>
+            {data.title && (
+              <h2 {...longTitle(data.title)} className="font-editorial text-section font-semibold text-balance">{data.title}</h2>
+            )}
+            {data.body && <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-osi-slate-200">{data.body}</p>}
+          </div>
+        )}
         {showActions && (
           <div className="flex flex-col gap-3">
             {data.pdfUrl ? (

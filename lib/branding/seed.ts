@@ -158,6 +158,7 @@ const blockSeedSpecs: Record<BlockTypeKey, BlockSeedSpec> = {
   how_it_works: { surfacePresetId: "primary-dark", accentSwatchId: null, slots: ["heading", "body"] },
   benefits_cards: { surfacePresetId: "primary-dark", accentSwatchId: null, slots: ["heading", "body"] },
   video_embed: { surfacePresetId: "reading-light", accentSwatchId: null, slots: ["heading"] },
+  media_text: { surfacePresetId: "reading-light", accentSwatchId: null, slots: ["heading", "body"] },
   ar_model: { surfacePresetId: "reading-light", accentSwatchId: null, slots: ["heading"] },
   contact_form: { surfacePresetId: "reading-light", accentSwatchId: "osi-gold-500", slots: ["heading", "label"] },
   newsletter_signup: { surfacePresetId: "reading-light", accentSwatchId: "osi-gold-500", slots: ["heading", "label"] },

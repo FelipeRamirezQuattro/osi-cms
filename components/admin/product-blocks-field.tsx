@@ -3,20 +3,29 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { BlockFieldsForm } from "@/components/admin/block-fields-form";
+import { FieldRenderer } from "@/components/admin/field-renderer";
 import { BlockPalettePicker } from "@/components/admin/block-palette-picker";
 import { ReorderButtons } from "@/components/admin/ui/row-actions";
 import { markBlockInvalid, resolveBlockFocusTarget } from "@/lib/admin/block-editor-helpers";
 import type { BlockPaletteEntry } from "@/lib/blocks/registry";
+import type { FieldSpec } from "@/lib/blocks/admin-fields";
+import { LINKED_SECTIONS, isLinkedSectionType } from "@/lib/products/layout";
+
+const LINKED_FIELDS: FieldSpec[] = [
+  { key: "title", label: "Heading (leave empty for no heading)", type: "text", optional: true },
+  { key: "background", label: "Background", type: "select", options: ["navy", "cream"] },
+];
 
 // The product form is one untyped RHF instance, same as page-editor.tsx.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * The product editor's "Extra content blocks" section: the same blocks (and
- * the same fields form) as the page editor, for content the fixed product
- * structure can't hold — extra videos, image runs, comparison sections, a
- * second headed list. Rendered after the fixed sections on the public page.
- * Plain up/down reordering (no drag), which is all a handful of blocks needs.
+ * The product editor's "Page layout": the ordered list of everything below the
+ * hero. "Linked" rows stand in for the product's own sections (benefits,
+ * stages, video, downloads, body, specs) — they can be moved, hidden and given
+ * a heading, but not removed, and their content is edited in the form below.
+ * The rest are ordinary blocks (same fields form as the page editor) for
+ * content the product structure can't hold. Plain up/down reordering.
  */
 export type ProductBlocksHandle = {
   /** Opens the block a save problem points at, scrolls to it, focuses the field and outlines it. */
@@ -72,21 +81,20 @@ export const ProductBlocksField = forwardRef<ProductBlocksHandle, { palette: Blo
     <section className="space-y-3" aria-labelledby="product-blocks-heading">
       <div>
         <h2 id="product-blocks-heading" className="text-sm font-semibold">
-          Extra content blocks
+          Page layout
         </h2>
         <p className="text-xs text-[var(--admin-ink-secondary)]">
-          Shown below the benefits, video and specs on the product page — use them for extra videos, images,
-          comparison sections or a second list.
+          Everything below the product header, in the order shown on the page. Move the product&apos;s own sections
+          (marked Linked) and add extra blocks — videos, images, text beside a video — between them.
         </p>
       </div>
 
-      {fields.length === 0 && <p className="text-xs text-[var(--admin-ink-secondary)]">No extra blocks yet.</p>}
-
-      <ul ref={listRef} className="space-y-2">
+            <ul ref={listRef} className="space-y-2">
         {fields.map((field, index) => {
           const type = watched[index]?.type ?? (field as any).type;
           const definition = paletteByType[type];
-          const label = definition?.label ?? type;
+          const linked = isLinkedSectionType(type) ? LINKED_SECTIONS[type] : null;
+          const label = linked?.label ?? definition?.label ?? type;
           const isVisible = watched[index]?.is_visible ?? true;
           const isOpen = openIds.has(field.id);
           return (
@@ -116,16 +124,30 @@ export const ProductBlocksField = forwardRef<ProductBlocksHandle, { palette: Blo
                   >
                     {isVisible ? "Hide" : "Show"}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="min-h-8 text-xs text-red-600 hover:underline"
-                  >
-                    Remove
-                  </button>
+                  {linked ? (
+                    <span className="text-xs opacity-60">Linked</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="min-h-8 text-xs text-red-600 hover:underline"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               </div>
-              {isOpen && definition && (
+              {isOpen && linked && (
+                <div data-block-fields className="space-y-4 border-t border-osi-sand-300 p-4">
+                  <p className="text-xs text-[var(--admin-ink-secondary)]">
+                    The content of this section is edited in {linked.editedIn}. Hide it to keep it off the page; it cannot be removed.
+                  </p>
+                  {LINKED_FIELDS.map((spec) => (
+                    <FieldRenderer key={spec.key} spec={spec} name={`blocks.${index}.data.${spec.key}`} />
+                  ))}
+                </div>
+              )}
+              {isOpen && !linked && definition && (
                 <div data-block-fields className="border-t border-osi-sand-300 p-4">
                   <BlockFieldsForm definition={definition} namePrefix={`blocks.${index}.data`} />
                 </div>
