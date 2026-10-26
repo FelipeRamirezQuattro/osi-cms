@@ -89,7 +89,7 @@ async function main() {
         await new Promise((res) => setTimeout(res, 500 * (attempt + 1)));
       }
     };
-    const pr = await retry(() => db.from("products").select("id,slug,status,updated_at,summary,diagram_image_url,video_url,brochure_pdf_url,model_3d_url,body").eq("locale", "en"));
+    const pr = await retry(() => db.from("products").select("id,slug,status,updated_at,eyebrow,summary,diagram_image_url,video_url,brochure_pdf_url,model_3d_url,body").eq("locale", "en"));
     const be = await retry(() => db.from("product_benefits").select("product_id,title,position,updated_at").order("position"));
     const sp = await retry(() => db.from("product_specs").select("product_id").order("position"));
     const bl = await retry(() => db.from("product_blocks").select("product_id,type,is_visible,data,position,updated_at").order("position"));
@@ -103,6 +103,7 @@ async function main() {
   const stamp = (rows: { updated_at: string }[]) => ({ count: rows.length, max: rows.reduce<string | null>((m, r) => (m === null || r.updated_at > m ? r.updated_at : m), null) });
   const results: { plan: ProductPlan; mapped: MappedProductLayout; before: string[]; after: string[]; sql: string }[] = [];
   const notPlanned: { slug: string; reason: string }[] = [];
+  const eyebrowNotOnWix: { slug: string; eyebrow: string; proposed: boolean }[] = [];
 
   for (const p of products) {
     const page = pages.find((x) => x.slug === p.slug);
@@ -133,6 +134,17 @@ async function main() {
     };
     const mapped = mapProductLayout(entry, page, ctx);
     const plan = planProduct(mapped, row, prev.get(p.slug) ?? null);
+    // An eyebrow that the Wix page does not have (it came from the mockup seed, e.g. "Breaking the curve"): reported for
+    // every product, proposed for clearing only on the published ones this run covers (a person approves those).
+    const h1 = (page.items.find((i) => i.type === "heading" && i.level === 1) as { text?: string } | undefined)?.text ?? "";
+    const norm = (t: string) => t.toLowerCase().replace(/\boff\b/g, "of").replace(/[^a-z0-9]+/g, " ").trim(); // Wix's H1 says "SHUT OF VALVE"
+    if (p.eyebrow && !norm(h1).includes(norm(p.eyebrow))) {
+      if (isPublished) {
+        plan.fieldChanges.push({ field: "eyebrow", from: p.eyebrow, to: null });
+        plan.action = "apply";
+      }
+      eyebrowNotOnWix.push({ slug: p.slug, eyebrow: p.eyebrow, proposed: isPublished });
+    }
     const nSpecs = specs.filter((s) => s.product_id === p.id).length;
     results.push({
       plan,
@@ -156,7 +168,7 @@ async function main() {
   const tag = PUBLISHED_ONLY ? "published" : "drafts";
   fs.writeFileSync(
     path.join(OUT, `product-layout-dryrun-${tag}.json`),
-    JSON.stringify({ generated_at: new Date().toISOString(), notPlanned, products: results.map((r) => ({ ...r.plan, before: r.before, after: r.after, flags: r.mapped.flags })) }, null, 1),
+    JSON.stringify({ generated_at: new Date().toISOString(), notPlanned, eyebrowNotOnWix, products: results.map((r) => ({ ...r.plan, before: r.before, after: r.after, flags: r.mapped.flags })) }, null, 1),
   );
   const sql = results.filter((r) => r.sql).map((r) => r.sql).join("\n\n");
   fs.writeFileSync(
