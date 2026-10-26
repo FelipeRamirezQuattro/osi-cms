@@ -27,7 +27,7 @@ export default async function ProductPreviewPage({
   ]);
 
   return (
-    <div>
+    <div data-product-page>
       <div className="bg-osi-gold-500 px-4 py-2 text-center text-xs uppercase tracking-wide-label text-osi-navy-900">
         Preview — {product.status} — staff only; visitors see this product only once it is published
       </div>

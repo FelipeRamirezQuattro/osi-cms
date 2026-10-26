@@ -41,5 +41,10 @@ export default async function ProductDetailPage({
     listResourcesForProduct(product.id),
   ]);
 
-  return <ProductDetailView product={product} relatedProducts={relatedProducts} resources={resources} />;
+  return (
+    // data-product-page switches off Forge's "01 / 02" section index here (it numbered some headings and not others).
+    <div className="contents" data-product-page>
+      <ProductDetailView product={product} relatedProducts={relatedProducts} resources={resources} />
+    </div>
+  );
 }

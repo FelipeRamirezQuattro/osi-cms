@@ -120,6 +120,15 @@
   line-height: 1;
 }
 
+/* Product pages are not numbered: their sections come from a mix of fixed and imported headings, so a count
+   would number some and skip others. */
+.public-site[data-theme="forge"] [data-product-page] [data-block-type="section_heading"] h2 {
+  counter-increment: none;
+}
+.public-site[data-theme="forge"] [data-product-page] [data-block-type="section_heading"] h2::before {
+  content: none;
+}
+
 /* Gold index on dark, gold-on-light on light — both from role variables. */
 .public-site[data-theme="forge"] .brand-section-dark h2::before {
   color: var(--block-accent, var(--brand-color-accent-on-dark));
