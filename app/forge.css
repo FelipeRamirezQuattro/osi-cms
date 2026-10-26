@@ -409,18 +409,6 @@
   border-top-color: var(--forge-rule-dark);
 }
 
-/* Benefits (navy section): the bordered boxes become ruled cells. */
-/* One size for every benefit title, so a title-length one (Rajdhani caps) and
-   a sentence (heading face, sentence case) sit comfortably in the same row. */
-.public-site[data-theme="forge"] [data-block-type="benefits_cards"] h3 {
-  font-size: clamp(1.25rem, 1.7vw, 1.5rem);
-  line-height: 1.12;
-}
-.public-site[data-theme="forge"] [data-block-type="benefits_cards"] [class*="border-osi-steel-500"] {
-  min-height: 15rem;
-  border-color: var(--forge-rule-dark);
-  background: transparent;
-}
 /* ---------------------------------------------------------------------
    Metrics band — stat_grid. Navy/transparent => a gold band with navy
    text (Forge's one big gold moment). Cream stays a ruled cream band.
