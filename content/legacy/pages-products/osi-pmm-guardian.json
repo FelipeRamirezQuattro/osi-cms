@@ -1,0 +1,132 @@
+{
+ "slug": "osi-pmm-guardian",
+ "path": "/osi-pmm-guardian",
+ "url": "https://www.odessaseparator.com/osi-pmm-guardian",
+ "title": "ESP PMM Guardian | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:31:30.859Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP PMM GUARDIAN",
+   "box": {
+    "x": 225,
+    "y": 91,
+    "w": 983,
+    "h": 65
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_494df17166f44a7babda00e7a55a5f5b~mv2.png/v1/crop/x_128,y_278,w_786,h_1562/fill/w_340,h_675,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEbsite%20IMG.png",
+   "alt": "WEbsite IMG.png",
+   "natural": {
+    "w": 340,
+    "h": 675
+   },
+   "box": {
+    "x": 212,
+    "y": 168,
+    "w": 340,
+    "h": 675
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Patent Pending",
+   "box": {
+    "x": 1030,
+    "y": 167,
+    "w": 178,
+    "h": 36
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The ESP PMM Guardian is an exceptional solution that completely transforms safety and operational efficiency during the installation or pulling of the Electrical Submersible Pump (ESP). Its robust protective barriers eliminate the need for installing blanking plugs while running the Permanent Magnet Motor (PMM), resulting in substantial reductions in rig time and significant improvements in Return on Investment (ROI).",
+   "box": {
+    "x": 482,
+    "y": 237,
+    "w": 727,
+    "h": 131
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Not to mention, it significantly reduces the risk of field operations, prioritizing the safety of personnel in the field.",
+   "box": {
+    "x": 482,
+    "y": 393,
+    "w": 727,
+    "h": 52
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "In addition, the reduction of certain operations contributes to a considerable decrease in both Capital Expenditure (Capex) and Operational Expenditure (Opex), making it an unbeatable, cost-effective, and time-saving tool for ESP installations.",
+   "box": {
+    "x": 482,
+    "y": 471,
+    "w": 727,
+    "h": 79
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/kr08_aURBKc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 726,
+    "y": 581,
+    "w": 484,
+    "h": 272
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_6f447c3394a9462bb536c72c4b760474.pdf",
+   "text": "ESP PMM Guardian",
+   "box": {
+    "x": 590,
+    "y": 702,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Safety Install & Pulling Click here to see this tool in 3D",
+   "box": {
+    "x": 552,
+    "y": 875,
+    "w": 653,
+    "h": 54
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/dQkB9o34np56OKgDKagZ8rjxYMbXEVwmLyZ2/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 748,
+    "y": 979,
+    "w": 377,
+    "h": 40
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "For a better experience open it in the Chrome browser",
+   "box": {
+    "x": 747,
+    "y": 1016,
+    "w": 378,
+    "h": 19
+   }
+  }
+ ]
+}

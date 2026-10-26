@@ -1,0 +1,253 @@
+{
+ "slug": "esp-vortex-regulator",
+ "path": "/esp-vortex-regulator",
+ "url": "https://www.odessaseparator.com/esp-vortex-regulator",
+ "title": "ESP Vortex Regulator | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:30:21.109Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP VORTEX REGULATOR",
+   "box": {
+    "x": 230,
+    "y": 80,
+    "w": 980,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_36d79b11c2be4608880515bb55224638~mv2.png/v1/crop/x_0,y_0,w_4219,h_3450/fill/w_1175,h_961,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP%20VR%20Surge%20Diagram%20Feb28%202022.png",
+   "alt": "ESP Vortex Regulator - OSI",
+   "natural": {
+    "w": 1175,
+    "h": 961
+   },
+   "box": {
+    "x": 45,
+    "y": 168,
+    "w": 1175,
+    "h": 961
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Slug Flow is widely recognized as being the main difficulty in trying to efficiently produce high GOR horizontal wells. Sand is usually present in these types of wells, adding to the problems created by the severe gas interference of slug flow.",
+   "box": {
+    "x": 595,
+    "y": 254,
+    "w": 603,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The ESP VORTEX REGULATOR represents proprietary technology designed to regulate the gas slugs and separate sand prior to reaching the ESP.",
+   "box": {
+    "x": 595,
+    "y": 350,
+    "w": 603,
+    "h": 48
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Vortex Regulator reduces repair and maintenance costs by preventing mechanical damage to the pump caused by gas locking and sand. Operating costs are reduced through greater pumping efficiency and increased production with less downtime for repairs.",
+   "box": {
+    "x": 595,
+    "y": 422,
+    "w": 603,
+    "h": 96
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 770,
+    "y": 570,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Reduced downtime for repairs",
+    "Better pump efficiency",
+    "Greater production rates",
+    "Stabilized pump operation: vibration, frequency, voltage, motor current."
+   ],
+   "box": {
+    "x": 698,
+    "y": 613,
+    "w": 365,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_9a710c57522c42d9891405145ccff003.pdf",
+   "text": "ESP VD Regulator",
+   "box": {
+    "x": 852,
+    "y": 788,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "CASE STUDY",
+   "box": {
+    "x": 779,
+    "y": 931,
+    "w": 162,
+    "h": 40
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_8fe3bbbeaebf47ce9ac7f2f2e512cb7d.pdf",
+   "text": "CASE STUDY",
+   "box": {
+    "x": 785,
+    "y": 931,
+    "w": 150,
+    "h": 40
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1113,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 895,
+    "y": 1177,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/LLw3BE1o3Vk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 314,
+    "y": 1230,
+    "w": 562,
+    "h": 286
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "FEATURES",
+   "box": {
+    "x": 230,
+    "y": 1545,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Highly efficient sand separator and gas handler",
+    "Separates gas and solids before reaching the pump Increase pumping",
+    "Eliminates “Slug Flow” gas interference, gas locking efficiency and decrease",
+    "100% elastomer packer cups for easy installation operating costs"
+   ],
+   "box": {
+    "x": 230,
+    "y": 1585,
+    "w": 468,
+    "h": 25
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/2jxq3ekACgs?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 437,
+    "y": 1754,
+    "w": 513,
+    "h": 284
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_b62e727b987b437983384277da62ea59~mv2.jpg/v1/fill/w_148,h_72,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/linea.jpg",
+   "alt": "linea.jpg",
+   "natural": {
+    "w": 148,
+    "h": 72
+   },
+   "box": {
+    "x": 1042,
+    "y": 2014,
+    "w": 72,
+    "h": 148
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 414,
+    "y": 2108,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/wjRKZmgq2b6AnezNjeV480aoVQrEXWPl7Y3d-esp-vortex-regulator/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 488,
+    "y": 2106,
+    "w": 426,
+    "h": 40
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_45b3fe5c71a64550bd7314e154bf2fed~mv2.png/v1/crop/x_0,y_492,w_6750,h_4265/fill/w_978,h_618,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/How%20it%20works.png",
+   "alt": "How it works.png",
+   "natural": {
+    "w": 978,
+    "h": 618
+   },
+   "box": {
+    "x": 230,
+    "y": 2221,
+    "w": 978,
+    "h": 618
+   }
+  }
+ ]
+}

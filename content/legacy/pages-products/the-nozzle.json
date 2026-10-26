@@ -1,0 +1,174 @@
+{
+ "slug": "the-nozzle",
+ "path": "/the-nozzle",
+ "url": "https://www.odessaseparator.com/the-nozzle",
+ "title": "The Nozzle | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:37:21.460Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "THE NOZZLE",
+   "box": {
+    "x": 229,
+    "y": 80,
+    "w": 974,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_a51c912ce4bf45cb998c581f074c4946~mv2.png/v1/crop/x_42,y_0,w_1364,h_1189/fill/w_1182,h_1030,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/diagram.png",
+   "alt": "diagram.png",
+   "natural": {
+    "w": 1182,
+    "h": 1030
+   },
+   "box": {
+    "x": 28,
+    "y": 169,
+    "w": 1182,
+    "h": 1030
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Introducing The Nozzle– a cutting-edge purging device strategically positioned at the termination of the tailpipe assembly beneath the Vortex Desander. This innovative system incorporates an internal design featuring multiple upward obstacles, inducing a significant pressure drop that mitigates the impact of bottom hole pressure in the upper chamber of the valve.",
+   "box": {
+    "x": 694,
+    "y": 187,
+    "w": 499,
+    "h": 144
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Conversely, the sand present in the tail joints undergoes precipitation and is efficiently expelled beyond the valve into the wellbore. This expulsion is facilitated by the combined forces of gravity and hydrostatic pressure within the tail joints. These fundamental principles actively operate within the tool, effectively preventing the bypassing of the Vortex Desander.",
+   "box": {
+    "x": 694,
+    "y": 355,
+    "w": 499,
+    "h": 144
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The result is an assurance of optimal sand separation, ensuring a clean pump intake and enhancing overall system performance.",
+   "box": {
+    "x": 694,
+    "y": 523,
+    "w": 499,
+    "h": 48
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "BENEFITS",
+   "box": {
+    "x": 700,
+    "y": 629,
+    "w": 499,
+    "h": 25
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Pump Efficiency: The Nozzle ensures optimal pump performance by preventing sand accumulation, maintaining a consistent and unobstructed flow.",
+   "box": {
+    "x": 700,
+    "y": 654,
+    "w": 499,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Extended Equipment Life: Minimizes abrasive wear on pump components, leading to a longer lifespan for the ESPs and associated equipment.",
+   "box": {
+    "x": 700,
+    "y": 750,
+    "w": 499,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Reduced Downtime: Proactive sand removal minimizes pump shutdowns for cleanouts, reducing downtime and improving overall operational efficiency.",
+   "box": {
+    "x": 700,
+    "y": 846,
+    "w": 499,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Cost Savings: Lower maintenance requirements, extended equipment life, and improved production contribute to significant cost savings over the ESP system’s operational lifespan.",
+   "box": {
+    "x": 700,
+    "y": 942,
+    "w": 499,
+    "h": 72
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_b4d4a0e847fe490784eaa493dfa3bff1~mv2.png/v1/crop/x_0,y_23,w_633,h_2055/fill/w_146,h_474,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/The%20Nozzle%20Aug0624.png",
+   "alt": "The Nozzle Aug0624.png",
+   "natural": {
+    "w": 146,
+    "h": 474
+   },
+   "box": {
+    "x": 1014,
+    "y": 1172,
+    "w": 146,
+    "h": 474
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Mitigates the impact of bottom hole pressure in the upper chamber of the valve.",
+   "box": {
+    "x": 436,
+    "y": 1259,
+    "w": 499,
+    "h": 62
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 398,
+    "y": 1488,
+    "w": 254,
+    "h": 72
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/oGMwpR0Lr25l7z48EBeWNn9J3WO6dykxgQba/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 412,
+    "y": 1486,
+    "w": 227,
+    "h": 76
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_144ba3dfc6eb4019b0fbfa617a206ba3.pdf",
+   "text": "The Nozzle",
+   "box": {
+    "x": 774,
+    "y": 1480,
+    "w": 90,
+    "h": 90
+   }
+  }
+ ]
+}

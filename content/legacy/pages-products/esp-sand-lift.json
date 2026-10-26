@@ -1,0 +1,221 @@
+{
+ "slug": "esp-sand-lift",
+ "path": "/esp-sand-lift",
+ "url": "https://www.odessaseparator.com/esp-sand-lift",
+ "title": "ESP Sand Lift | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:27:11.224Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP SAND LIFT",
+   "box": {
+    "x": 230,
+    "y": 76,
+    "w": 980,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_af158faba7944feba30b5ec9040d378e~mv2.png/v1/crop/x_148,y_0,w_3944,h_3450/fill/w_1118,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP-Sand-Lift-Diagram-(Brochure)-Jul23-2025.png",
+   "alt": "ESP-Sand-Lift-Diagram-(Brochure)-Jul23-2025.png",
+   "natural": {
+    "w": 1118,
+    "h": 978
+   },
+   "box": {
+    "x": 95,
+    "y": 171,
+    "w": 1118,
+    "h": 978
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Patent No.: US 9,441,435 10,132,151 10,132,152 10,584,571",
+   "box": {
+    "x": 776,
+    "y": 171,
+    "w": 410,
+    "h": 21
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s ESP SAND LIFT provides extended ESP run times through improved downhole sand management.",
+   "box": {
+    "x": 590,
+    "y": 266,
+    "w": 602,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "It is installed above the ESP discharge, where, upon start-up, sand-breaker uses differential pressure to push fluid and entrained solids through tubular ports in one flow path, to the surface.",
+   "box": {
+    "x": 590,
+    "y": 342,
+    "w": 602,
+    "h": 76
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 595,
+    "y": 466,
+    "w": 423,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Prevent workovers due to sand failures.",
+    "Extends run times by regulating the rate of falling sand.",
+    "Backflush operations are carried out easily.",
+    "Housing is highly sand-resistant."
+   ],
+   "box": {
+    "x": 603,
+    "y": 512,
+    "w": 417,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_ed980ac1046f44dbad7e9f0cf3cdaf1b.pdf",
+   "text": "ESP Sand Lift",
+   "box": {
+    "x": 710,
+    "y": 698,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "CASE STUDY",
+   "box": {
+    "x": 949,
+    "y": 723,
+    "w": 162,
+    "h": 40
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_7ea90b24e8f14c4eacf00ba7d2ebedb1.pdf",
+   "text": "CASE STUDY",
+   "box": {
+    "x": 955,
+    "y": 723,
+    "w": 150,
+    "h": 40
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_437eb93b6eed470b9d4664163aec89c7~mv2.png/v1/crop/x_6,y_0,w_1665,h_430/fill/w_499,h_127,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Tabla-for-web.png",
+   "alt": "Table ESP Sand Lift",
+   "natural": {
+    "w": 499,
+    "h": 127
+   },
+   "box": {
+    "x": 310,
+    "y": 851,
+    "w": 499,
+    "h": 127
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "The protection your ESPs needs",
+   "box": {
+    "x": 482,
+    "y": 1157,
+    "w": 668,
+    "h": 111
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 229,
+    "y": 1276,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Odessa Separator Inc - Seal",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 894,
+    "y": 1338,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Provides significantly",
+   "box": {
+    "x": 230,
+    "y": 1779,
+    "w": 871,
+    "h": 36
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "longer ESP run times",
+   "box": {
+    "x": 230,
+    "y": 1815,
+    "w": 871,
+    "h": 36
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 419,
+    "y": 1983,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/wepoAgkEGbqW2rLNoP3GDJlORVyQm3MZ5dvn-esp-sand-lift/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 493,
+    "y": 1981,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

@@ -1,0 +1,255 @@
+{
+ "slug": "chem-sticks",
+ "path": "/chem-sticks",
+ "url": "https://www.odessaseparator.com/chem-sticks",
+ "title": "Chem Sticks | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:42:00.277Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "CHEM STICKS",
+   "box": {
+    "x": 228,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_07c109ab833544c7b06c131c641563d9~mv2.png/v1/fill/w_143,h_567,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_07c109ab833544c7b06c131c641563d9~mv2.png",
+   "alt": "Chem - OSI",
+   "natural": {
+    "w": 143,
+    "h": 567
+   },
+   "box": {
+    "x": 200,
+    "y": 142,
+    "w": 143,
+    "h": 567
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_e648f25f573348da894d8f600e925030~mv2.png/v1/fill/w_197,h_192,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_e648f25f573348da894d8f600e925030~mv2.png",
+   "alt": "",
+   "natural": {
+    "w": 197,
+    "h": 192
+   },
+   "box": {
+    "x": 379,
+    "y": 178,
+    "w": 197,
+    "h": 192
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI CHEM STICKS provide a more effective alternative to traditional downhole chemical treating. Through micro-encapsulation technology all the active components of the most effective liquid chemical treatments, in the petroleum industry are processed in a solid stick form.",
+   "box": {
+    "x": 593,
+    "y": 232,
+    "w": 603,
+    "h": 96
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Scale",
+   "box": {
+    "x": 409,
+    "y": 370,
+    "w": 128,
+    "h": 20
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The solid chemical stick is placed in a tool that is installed below the pump intake. When the CHEM STICKS are deployed downhole, activation and dispersion of the chemicals occurs more quickly, more effectively and with greater consistency. Paraffin, scale, corrosion, or any combination thereof are most effectively dealt with where CHEM STICKS are used.",
+   "box": {
+    "x": 593,
+    "y": 352,
+    "w": 603,
+    "h": 120
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_d9839d274ace45ac94253a93b4d4ed39~mv2.png/v1/fill/w_199,h_192,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_d9839d274ace45ac94253a93b4d4ed39~mv2.png",
+   "alt": "",
+   "natural": {
+    "w": 199,
+    "h": 192
+   },
+   "box": {
+    "x": 380,
+    "y": 405,
+    "w": 199,
+    "h": 192
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The solid based chemical sticks are 97% active ingredients and are general or well-specific formulations. OSI chemical engineers design treatment plans based on well samples and individual well conditions. CHEM STICKS can be formulated for any flowing, or artificial lift well: SRP, PCP, ESP, gas lift, plunger lift or jet pump.",
+   "box": {
+    "x": 593,
+    "y": 496,
+    "w": 603,
+    "h": 96
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Parrafin",
+   "box": {
+    "x": 419,
+    "y": 595,
+    "w": 127,
+    "h": 20
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_20c8bc5bd3064b1d9a2f859b1d0a94cc~mv2.png/v1/fill/w_197,h_192,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1ac9e9_20c8bc5bd3064b1d9a2f859b1d0a94cc~mv2.png",
+   "alt": "",
+   "natural": {
+    "w": 197,
+    "h": 192
+   },
+   "box": {
+    "x": 381,
+    "y": 639,
+    "w": 197,
+    "h": 192
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 836,
+    "y": 659,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_2ac7df74d76c4dab9be2c1b01736ded7.pdf",
+   "text": "Chem Stick",
+   "box": {
+    "x": 607,
+    "y": 676,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Well-specific prescriptions are based upon water & oil analysis.",
+    "All corrosion sticks have quat + scavenger include for combatting H2S."
+   ],
+   "box": {
+    "x": 727,
+    "y": 709,
+    "w": 473,
+    "h": 24
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Corrosion",
+   "box": {
+    "x": 414,
+    "y": 829,
+    "w": 127,
+    "h": 20
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Learn more about this tool",
+   "box": {
+    "x": 371,
+    "y": 877,
+    "w": 236,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Case Study",
+   "box": {
+    "x": 634,
+    "y": 877,
+    "w": 94,
+    "h": 27
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+   "text": "Case Study",
+   "box": {
+    "x": 634,
+    "y": 877,
+    "w": 90,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Webinar",
+   "box": {
+    "x": 805,
+    "y": 877,
+    "w": 80,
+    "h": 27
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/ZGH4sdUJm_c",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 811,
+    "y": 877,
+    "w": 68,
+    "h": 27
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Chemical Composition",
+   "box": {
+    "x": 964,
+    "y": 875,
+    "w": 201,
+    "h": 31
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+   "text": "Chemical Composition",
+   "box": {
+    "x": 972,
+    "y": 875,
+    "w": 193,
+    "h": 31
+   }
+  }
+ ]
+}

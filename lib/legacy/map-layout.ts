@@ -20,7 +20,6 @@ import {
   isPseudoHeading,
   looksLikeFilename,
   normalizeProductName,
-  sentenceCase,
   toRichTextDoc,
   type BlockSeed,
   type Json,
@@ -49,7 +48,7 @@ export interface MappedProductLayout {
   videoUrl: string | null;
   brochurePdfUrl: string | null;
   model3dUrl: string | null;
-  benefits: { title: string }[];
+  benefits: { title: string; body?: string }[];
   specs: { label: string; value: string; unit?: string }[];
   /** Linked sections and extra blocks, in page order. Every linked section appears exactly once. */
   layout: LayoutSeed[];
@@ -65,6 +64,7 @@ const THREE_D_PROMPT = /^(click here( to see)?|this tool in 3d|click here to see
 const PDF_LABEL = /^(download( the)? (pdf|brochure|datasheet)|click here to download)$/i;
 const STRAY_FRAGMENT = /^(tm|™|®|sm)$/i;
 const BENEFIT_HEADING = /benefit/i;
+const LEARN_MORE = /^learn more\b/i;
 const LIST_HEADING = /advantage|feature|key |highlight/i;
 const MAX_CARD_ITEMS = 6;
 const MAX_BENEFITS = 13;
@@ -86,6 +86,19 @@ const horizontalOverlap = (a: ItemBox, b: ItemBox) => {
   return Math.max(0, right - left) / Math.max(1, Math.min(a.w, b.w));
 };
 
+/** Acronyms Wix headings use that must survive sentence-casing an ALL-CAPS heading. */
+const KEEP_CAPS = /^(OSI|ESP|SRP|PDF|GRS|GLR|GOR|TAC|PMM|PTGS|HSE|OD|ID|UV|API|BHA|PSI|3D|TM|II|III|IV)$/;
+
+/** Wix headings are typed in capitals; show them in sentence case (acronyms kept), mixed-case headings untouched. */
+export function headingText(raw: string): string {
+  const t = raw.replace(/\s+/g, " ").trim();
+  if (t !== t.toUpperCase()) return t;
+  return t
+    .split(" ")
+    .map((w, i) => (KEEP_CAPS.test(w.replace(/[^A-Za-z0-9]/g, "")) || /\d/.test(w) ? w : i === 0 ? w.charAt(0) + w.slice(1).toLowerCase() : w.toLowerCase()))
+    .join(" ");
+}
+
 const clean = (t: string) => t.replace(/\s+/g, " ").trim();
 
 /** Removes a stray "TM" token Wix draws as a superscript beside a name ("TM Benefits"). */
@@ -93,6 +106,130 @@ const stripStray = (t: string) => clean(t.replace(/(^|\s)(TM|™)(?=\s|$)/g, " "
 
 function isContentImage(i: Item, ctx: MapContext): i is Extract<Item, { type: "image" }> {
   return i.type === "image" && !ctx.chromeImages.has(imageIdentity(i.src));
+}
+
+
+const LABEL_WORD = /^(benefits?|advantages|features|key features|specifications?|sizes|how it works)$/i;
+const TITLE_BODY = /^[^:.]{3,45}:\s+\S/;
+
+function promoteLabels(items: Item[], flags: string[]): Item[] {
+  const out: Item[] = [];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.type === "paragraph" && LABEL_WORD.test(clean(it.text)) && !it.href) {
+      out.push({ type: "heading", level: 2, text: clean(it.text), ...(it.box ? { box: it.box } : {}) });
+      flags.push("label_promoted_to_heading");
+      // "Title: body" paragraphs straight after a benefits-style heading are the list.
+      if (BENEFIT_HEADING.test(it.text) || LIST_HEADING.test(it.text)) {
+        const run: Extract<Item, { type: "paragraph" }>[] = [];
+        for (let j = i + 1; items[j]?.type === "paragraph" && TITLE_BODY.test(clean((items[j] as Extract<Item, { type: "paragraph" }>).text)); j++) run.push(items[j] as Extract<Item, { type: "paragraph" }>);
+        if (run.length >= 3) {
+          out.push({ type: "list", ordered: false, items: run.map((r) => clean(r.text)), ...(run[0].box ? { box: run[0].box } : {}) });
+          i += run.length;
+          flags.push("paragraphs_grouped_as_list");
+        }
+      }
+    } else out.push(it);
+  }
+  return out;
+}
+
+/** Wix wraps a sentence into one paragraph per line: join a line with no end punctuation to a lowercase line right under it. */
+function joinWrappedLines(items: Item[]): Item[] {
+  const out: Item[] = [];
+  for (const it of items) {
+    // Links/PDF icons are drawn between lines of text; look past them for the line above.
+    let pi = out.length - 1;
+    while (pi >= 0 && (out[pi].type === "pdf" || out[pi].type === "link")) pi--;
+    const prev = out[pi];
+    const lastItem = prev?.type === "list" ? prev.items[prev.items.length - 1] : "";
+    if (
+      it.type === "paragraph" && prev?.type === "list" && !prev.ordered && it.box && prev.box && !it.href &&
+      lastItem && !/[.!?:]$/.test(clean(lastItem)) && clean(it.text).split(" ").length <= 4 &&
+      it.box.y - (prev.box.y + prev.box.h) <= 12 && it.box.y >= prev.box.y
+    ) {
+      // A wrapped bullet: its last words sit under the list as a paragraph.
+      out[pi] = { ...prev, items: [...prev.items.slice(0, -1), `${clean(lastItem)} ${clean(it.text)}`], box: { ...prev.box, h: it.box.y + it.box.h - prev.box.y } };
+    } else if (
+      it.type === "list" && prev?.type === "list" && !it.ordered && !prev.ordered && it.box && prev.box &&
+      it.box.y - (prev.box.y + prev.box.h) <= 12 && Math.abs(it.box.x - prev.box.x) <= 12
+    ) {
+      // One bulleted list Wix drew as two text boxes.
+      out[pi] = { ...prev, items: [...prev.items, ...it.items], box: { ...prev.box, h: it.box.y + it.box.h - prev.box.y } };
+    } else if (
+      it.type === "paragraph" && prev?.type === "paragraph" && it.box && prev.box && !it.href && !prev.href &&
+      !/[.!?:”"]$/.test(clean(prev.text)) && /^[a-z(]/.test(clean(it.text)) &&
+      it.box.y - (prev.box.y + prev.box.h) <= 12 && it.box.y >= prev.box.y && horizontalOverlap(prev.box, it.box) > 0.5
+    ) {
+      out[pi] = { ...prev, text: `${clean(prev.text)} ${clean(it.text)}`, box: { ...prev.box, h: it.box.y + it.box.h - prev.box.y } };
+    } else out.push(it);
+  }
+  return out;
+}
+
+function foldLinkedLabels(items: Item[], brochureUrl: string | undefined): Item[] {
+  const drop = new Set<number>();
+  const same = (a: string, b: string) => clean(a).toLowerCase() === clean(b).toLowerCase();
+  const out = items.map((it) => ({ ...it })) as Item[];
+  out.forEach((it, i) => {
+    const near = (pred: (x: Item) => boolean) => [i - 2, i - 1, i + 1, i + 2].find((j) => j >= 0 && j < out.length && !drop.has(j) && pred(out[j]));
+    if (it.type === "link" && it.text.trim() && !drop.has(i)) {
+      const j = near((x) => x.type === "paragraph" && !x.href && same(x.text, it.text));
+      if (j !== undefined && !(/worldcast/i.test(it.url) || /\b3d\b/i.test(it.text))) {
+        (out[j] as Extract<Item, { type: "paragraph" }>).href = it.url;
+        drop.add(i);
+      }
+    } else if (it.type === "pdf" && it.url !== brochureUrl && it.text.trim() && !drop.has(i)) {
+      const j = near((x) => x.type === "paragraph" && !x.href && same(x.text, it.text));
+      if (j !== undefined) {
+        (out[j] as Extract<Item, { type: "paragraph" }>).href = it.url;
+        drop.add(i);
+      }
+      const h = near((x) => x.type === "heading" && same(x.text, it.text));
+      if (h !== undefined) drop.add(h); // the heading only repeats the file's label
+    }
+  });
+  return out.filter((_, i) => !drop.has(i));
+}
+
+/** Consecutive rows (same top, ≥2 cells, same cell count, ≥3 rows) of short paragraphs → a table item. */
+function gridsToTables(items: Item[], flags: string[]): Item[] {
+  const out: Item[] = [];
+  let i = 0;
+  const cell = (it: Item | undefined): it is Extract<Item, { type: "paragraph" }> => !!it && it.type === "paragraph" && !!it.box && clean(it.text).split(" ").length <= 8;
+  const rowAt = (start: number): Item[] => {
+    const first = items[start];
+    if (!cell(first)) return [];
+    const row: Item[] = [first];
+    for (let j = start + 1; cell(items[j]) && Math.abs(items[j].box!.y - first.box!.y) <= 14 && items[j].box!.x > row[row.length - 1].box!.x; j++) row.push(items[j]);
+    return row.length >= 2 ? row : [];
+  };
+  while (i < items.length) {
+    const rows: Item[][] = [];
+    let j = i;
+    for (let r = rowAt(j); r.length; r = rowAt(j)) {
+      if (rows.length && r.length !== rows[0].length) break;
+      rows.push(r);
+      j += r.length;
+    }
+    if (rows.length >= 3) {
+      const cells = rows.flat();
+      const xs = cells.map((c) => c.box!);
+      const x = Math.min(...xs.map((b) => b.x));
+      const y = Math.min(...xs.map((b) => b.y));
+      out.push({
+        type: "table",
+        rows: rows.map((r) => r.map((c) => clean((c as Extract<Item, { type: "paragraph" }>).text))),
+        box: { x, y, w: Math.max(...xs.map((b) => b.x + b.w)) - x, h: Math.max(...xs.map((b) => b.y + b.h)) - y },
+      });
+      flags.push("text_grid_flattened_to_list");
+      i = j;
+    } else {
+      out.push(items[i]);
+      i += 1;
+    }
+  }
+  return out;
 }
 
 /**
@@ -120,6 +257,20 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
     return [i];
   });
 
+  // Section labels Wix draws as paragraphs ("BENEFITS", "Features"), and a run of "Title: explanation" paragraphs
+  // under a benefits-style heading, are headings and a list — same as if the page had used real markup.
+  items = promoteLabels(items, flags);
+
+  // Wix draws a link as a label next to a separate link element; fold them back into one linked paragraph.
+  const brochure = brochureOf(page, name);
+  items = foldLinkedLabels(items, brochure?.url);
+
+  items = joinWrappedLines(items);
+
+  // A grid of short paragraphs laid out in rows and columns (a Wix "table" built from text boxes, e.g. the
+  // Well Shock Kits catalogue) becomes one table item, so its cells do not read as unrelated paragraphs.
+  items = gridsToTables(items, flags);
+
   // The page title heading is the product name (hero); drop every H1.
   items = items.filter((i) => !(i.type === "heading" && i.level === 1));
 
@@ -132,10 +283,12 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   const overlay = new Map<Item, { caption: string[]; labels: string[] }>();
   const consumedOverlay = new Set<Item>();
   const imagesWithBox = items.filter((i): i is Extract<Item, { type: "image" }> => i.type === "image" && !!i.box);
-  for (const p of items) {
-    if (p.type !== "paragraph" || !p.box) continue;
+  for (const [pi, p] of items.entries()) {
+    if ((p.type !== "paragraph" && p.type !== "heading") || !p.box) continue;
     const words = clean(p.text).split(" ").length;
-    if (words > 6) continue;
+    if (words > 6 || (p.type === "heading" && p.box.w > 400)) continue; // wide headings are section headings, not labels
+    // Real content that merely sits in the diagram's (often page-sized) box: linked labels, section words, a list's label.
+    if ((p.type === "paragraph" && p.href) || LEARN_MORE.test(clean(p.text)) || LABEL_WORD.test(clean(p.text)) || items[pi + 1]?.type === "list") continue;
     const host = imagesWithBox.find((img) => img.box && area(img.box) > area(p.box!) * 4 && inside(p.box!, img.box));
     if (!host) continue;
     const entryFor = overlay.get(host) ?? { caption: [], labels: [] };
@@ -162,13 +315,15 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   // section-like one ("See this tool in 3D", after the content), so it wins, else the PDF's spot.
   const threeDAt = items.findIndex((i, idx) => i.type === "link" && dropIdx.has(idx));
   const pdfAt = items.findIndex((i) => i.type === "pdf" && i.url.startsWith(LEGACY_BASE));
-  const downloadsAt = threeDAt >= 0 ? threeDAt : pdfAt;
+  // With no 3D link, the PDF icon's spot is arbitrary (it can sit between a label and its text): put the buttons last.
+  const downloadsAt = threeDAt >= 0 ? threeDAt : pdfAt >= 0 ? items.length : -1;
   const seq: Item[] = [];
   const downloadsMarker: Item = { type: "paragraph", text: "\u0000downloads" };
   items.forEach((i, idx) => {
     if (idx === downloadsAt) seq.push(downloadsMarker);
     if (!dropIdx.has(idx)) seq.push(i);
   });
+  if (downloadsAt === items.length) seq.push(downloadsMarker);
 
   // ---- 2. text that belongs to a video ------------------------------------------------------
   type Media = { video: Extract<Item, { type: "video" }>; texts: Item[]; layout: "media-left" | "media-right" | "media-above" };
@@ -209,7 +364,7 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   // ---- 3. benefits list ----------------------------------------------------------------------
   /** A short, unpunctuated paragraph that labels what follows it (a list, or longer text): Wix draws these as paragraphs. */
   const isLabel = (it: Item | undefined, next: Item | undefined): boolean =>
-    !!it && it.type === "paragraph" && it !== downloadsMarker && !claimed.has(it) && clean(it.text).split(" ").length <= 4 && !/[.:;!?]$/.test(clean(it.text)) && (next?.type === "list" || isPseudoHeading(it, next));
+    !!it && it.type === "paragraph" && !it.href && it !== downloadsMarker && !claimed.has(it) && clean(it.text).split(" ").length <= 5 && !/[.:;!?]$/.test(clean(it.text)) && (next?.type === "list" || next?.type === "image" || isPseudoHeading(it, next) || LEARN_MORE.test(clean(it.text)));
   const headingBefore = (idx: number): string | null => {
     const prev = seq[idx - 1];
     if (prev?.type === "heading") return prev.text;
@@ -242,14 +397,15 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
   const emitted = new Set<LinkedSectionType>();
   const intro: string[] = [];
   const specs: MappedProductLayout["specs"] = [];
-  let benefits: { title: string }[] = [];
+  let benefits: { title: string; body?: string }[] = [];
   let videoUrl: string | null = null;
   let seenStructure = false; // intro text ends at the first heading / list / media
   let pendingHeading: string | null = null;
+  let lastLabel: string | null = null; // the nearest heading/label above, for image alt text
   let buffer: Item[] = [];
   let pendingImages: { url: string; alt: string; caption?: string }[] = [];
 
-  const display = (t: string) => sentenceCase(clean(t));
+  const display = (t: string) => headingText(t);
   const linked = (type: LinkedSectionType, title: string, visible = true) => {
     emitted.add(type);
     layout.push({
@@ -312,13 +468,14 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         if (pendingHeading) headingToBuffer();
         flushText();
         pendingHeading = it.text;
+        lastLabel = it.text;
         seenStructure = true;
         break;
       }
       case "paragraph": {
         if (claimed.has(it)) break; // lives in a media_text block
         const text = clean(it.text);
-        if (!seenStructure && intro.length > 0 && isLabel(it, next) && next?.type === "list") {
+        if (!seenStructure && intro.length > 0 && isLabel(it, next) && (next?.type === "list" || LEARN_MORE.test(text))) {
           // "Features" / "Benefits" drawn as a paragraph: it ends the intro and labels the list.
           seenStructure = true;
           pendingHeading = text;
@@ -334,7 +491,8 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
           pendingHeading = text; // labels the benefits list
         } else if (isLabel(it, next) && !(next && claimed.has(next))) {
           if (pendingHeading) headingToBuffer();
-          buffer.push({ type: "heading", level: 3, text });
+          buffer.push({ type: "heading", level: 3, text: display(text) });
+          lastLabel = text;
           flags.push("pseudo_heading_promoted");
         } else {
           if (pendingHeading) headingToBuffer();
@@ -347,7 +505,13 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         if (idx === benefitsIdx) {
           flushAll();
           const h = takeHeading() ?? (headingBefore(idx) ? null : null);
-          benefits = it.items.map((title) => ({ title: clean(title) }));
+          const split = it.items.every((t) => TITLE_BODY.test(clean(t)));
+          benefits = it.items.map((t) => {
+            const text = clean(t);
+            if (!split) return { title: text };
+            const cut = text.indexOf(":");
+            return { title: text.slice(0, cut).trim(), body: text.slice(cut + 1).trim() };
+          });
           linked("product_benefits", h ? display(h) : "");
         } else if (!it.ordered && it.items.length <= MAX_CARD_ITEMS && pendingHeading) {
           flushAll();
@@ -392,7 +556,9 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
         const ov = overlay.get(it);
         let alt = it.alt;
         if (looksLikeFilename(alt)) {
-          alt = ov?.labels.length ? ov.labels.join(" ") : altFor(seq.filter((s) => s !== downloadsMarker), seq.indexOf(it), name);
+          const label = lastLabel ? display(lastLabel) : altFor(seq, seq.indexOf(it), name);
+          const isTable = /table|size/i.test(decodeURIComponent(it.src.split("/").pop() ?? "")) && !/table/i.test(label);
+          alt = ov?.labels.length ? ov.labels.join(" ") : `${label}${isTable ? " (table)" : ""}`;
           flags.push(PLACEHOLDER_ALT_FLAG);
         }
         const url = wixOriginalUrl(it.src);
@@ -497,8 +663,10 @@ export function mapProductLayout(entry: Pick<LegacyEntry, "title" | "group" | "s
 function brochureOf(page: LayoutPage, name: string): { url: string; text: string } | undefined {
   const pdfs = page.items.filter((i): i is Extract<Item, { type: "pdf" }> => i.type === "pdf" && i.url.startsWith(LEGACY_BASE));
   const nameTokens = normalizeProductName(name);
+  const squash = (t: string) => normalizeProductName(t).replace(/\s+/g, "");
   return (
     pdfs.find((p) => normalizeProductName(p.text) === nameTokens && nameTokens) ??
+    pdfs.find((p) => squash(p.text) === squash(name) && squash(name)) ??
     pdfs.find((p) => /brochure|data ?sheet|spec/i.test(p.text)) ??
     pdfs.find((p) => !/case study|learn more/i.test(p.text))
   );

@@ -1,0 +1,214 @@
+{
+ "slug": "gas-shield",
+ "path": "/gas-shield-osi",
+ "url": "https://www.odessaseparator.com/gas-shield-osi",
+ "title": "Gas Shield | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:34:14.935Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "GAS SHIELD",
+   "box": {
+    "x": 230,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_f6812a922a6e46e68736b0cdc093afad~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/SG%20(Brochure)%20July16%202021.png",
+   "alt": "Gas Shield - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 40,
+    "y": 171,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Wells that have both, gas interference and solids problems, require fluid conditioning tools that address both problems to prevent damage to the artificial lift system and to keep production at peak efficiency.",
+   "box": {
+    "x": 712,
+    "y": 245,
+    "w": 484,
+    "h": 101
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI GAS SHIELD is specifically designed to reduce gas interference and prevent gas locking. It is combined with a three ft., 75 slot “V”-wire screen to shield the pump from solids intrusions.",
+   "box": {
+    "x": 712,
+    "y": 371,
+    "w": 484,
+    "h": 101
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 816,
+    "y": 520,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Mitigates gas slugs.",
+    "Reduces gas interference, prevents gas locking.",
+    "Provides large solids protection."
+   ],
+   "box": {
+    "x": 753,
+    "y": 563,
+    "w": 361,
+    "h": 25
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s Gas Shield for",
+   "box": {
+    "x": 768,
+    "y": 711,
+    "w": 351,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Maximizing Gas Separation.",
+   "box": {
+    "x": 768,
+    "y": 735,
+    "w": 351,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86316fc8106d4a76ac5c2ac09f31973f.pdf",
+   "text": "Gas Shield",
+   "box": {
+    "x": 898,
+    "y": 851,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/-vaekULOFsg?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 488,
+    "y": 1210,
+    "w": 346,
+    "h": 221
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 880,
+    "y": 1210,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/8obuemU-bM4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 158,
+    "y": 1464,
+    "w": 313,
+    "h": 200
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 488,
+    "y": 1462,
+    "w": 346,
+    "h": 204
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Test Horizontal Well",
+   "box": {
+    "x": 852,
+    "y": 1476,
+    "w": 180,
+    "h": 22
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+   "box": {
+    "x": 869,
+    "y": 1512,
+    "w": 146,
+    "h": 110
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 401,
+    "y": 1750,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/XnxOrBajYW4q92Z1qEaL1M7mb53gRQLEl0eA-gas-shield/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 475,
+    "y": 1748,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

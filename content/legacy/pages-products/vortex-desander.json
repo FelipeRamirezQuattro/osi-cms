@@ -1,0 +1,163 @@
+{
+ "slug": "vortex-desander",
+ "path": "/vortex-desander-osi",
+ "url": "https://www.odessaseparator.com/vortex-desander-osi",
+ "title": "Vortex Desander | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:40:27.355Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "VORTEX DESANDER",
+   "box": {
+    "x": 230,
+    "y": 76,
+    "w": 978,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_8d163c96c1ff4cf8865626f3935c0b67~mv2.png/v1/crop/x_46,y_0,w_3818,h_3450/fill/w_1082,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Vortex%20Desander%20Diagram%20(Brochure)%20July13%202021.png",
+   "alt": "Vortex Desander - OSI",
+   "natural": {
+    "w": 1082,
+    "h": 978
+   },
+   "box": {
+    "x": 129,
+    "y": 170,
+    "w": 1082,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Vortex Desander is a high efficiency desander designed to separate sand particles prior to entering the pump.",
+   "box": {
+    "x": 597,
+    "y": 263,
+    "w": 600,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The intake consists of a specifically engineered slotted design. These slots are cut using a plasma cutter which creates smoother cut surfaces than other cutting methods. Smooth surfaces are less likely to be affected by corrosion.",
+   "box": {
+    "x": 597,
+    "y": 339,
+    "w": 600,
+    "h": 76
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The helix creates the vortex effect using centrifugal force, which separates the smaller solids and deposits them into the tail pipe[s] (mud joint[s]). This improved version of the Vortex Sand Shield was designed to withstand the high speed of the sand in the tool and prevent the failure of the solids separation system.",
+   "box": {
+    "x": 597,
+    "y": 439,
+    "w": 600,
+    "h": 126
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 774,
+    "y": 584,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Reduces the downtime due to solids issues.",
+    "Fewer interventions and less investment in CAPEX.",
+    "Avoid the premature failures of the pump components caused by the solids.",
+    "Avoid problems such as sand cutting."
+   ],
+   "box": {
+    "x": 696,
+    "y": 624,
+    "w": 410,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_3e848c20b6424ca0942265cd055c2967.pdf",
+   "text": "Vortex Desander",
+   "box": {
+    "x": 852,
+    "y": 843,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1135,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/QyHYTT7nfyo?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 230,
+    "y": 1217,
+    "w": 613,
+    "h": 377
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 909,
+    "y": 1197,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 417,
+    "y": 1728,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/0vBL2jpxJKMzWdVNv9Jj8Y53mwPranOlEyGe-vortex-desander/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 491,
+    "y": 1726,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

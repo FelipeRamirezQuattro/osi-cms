@@ -1,0 +1,120 @@
+{
+ "slug": "esp-no-go-catcher",
+ "path": "/esp-no-go-catcher",
+ "url": "https://www.odessaseparator.com/esp-no-go-catcher",
+ "title": "ESP No- Go Catcher | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:26:24.148Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP NO-GO CATCHER",
+   "box": {
+    "x": 230,
+    "y": 105,
+    "w": 980,
+    "h": 37
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_078a0831e85e41bf90628d755291e7db~mv2.png/v1/crop/x_283,y_442,w_6177,h_4581/fill/w_981,h_727,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP%20Catcher%20(onepage)%20June22%202022.png",
+   "alt": "ESP Catcher (onepage) June22 2022.png",
+   "natural": {
+    "w": 981,
+    "h": 727
+   },
+   "box": {
+    "x": 228,
+    "y": 174,
+    "w": 981,
+    "h": 727
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The ESP No-Go Catcher is designed for wells completed with liners and whose End of String will land inside the liner.",
+   "box": {
+    "x": 414,
+    "y": 246,
+    "w": 615,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "This tool is installed under the pump in the production casing section above the liner and will prevent the assembly from falling into the liner in the event of a component rupture. This system will facilitate fishing operations while allowing communication between the casing and the liner thanks to its flow channels.",
+   "box": {
+    "x": 414,
+    "y": 322,
+    "w": 615,
+    "h": 101
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OPERATION MECHAMISM",
+   "box": {
+    "x": 1166,
+    "y": 323,
+    "w": 43,
+    "h": 538
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "INSTALLATION",
+   "box": {
+    "x": 232,
+    "y": 371,
+    "w": 43,
+    "h": 441
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/W-Gl-dnMvbQ?autoplay=0&mute=0&controls=1&loop=0&origin=https%3A%2F%2Fwww.odessaseparator.com&playsinline=1&enablejsapi=1&widgetid=1&forigin=https%3A%2F%2Fwww.odessaseparator.com%2Fesp-no-go-catcher&aoriginsup=1&vf=1",
+   "provider": "youtube",
+   "box": {
+    "x": 676,
+    "y": 932,
+    "w": 533,
+    "h": 270
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_f081b46b11c84d588e2c385561da169f.pdf",
+   "text": "ESP No Go Catcher",
+   "box": {
+    "x": 518,
+    "y": 983,
+    "w": 90,
+    "h": 140
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 491,
+    "y": 1306,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/Ab6xgOqBRprW3GvNxwbA8EJaQo59yYX4j7nz-esp-nogo-catcher/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 565,
+    "y": 1304,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

@@ -1,0 +1,246 @@
+{
+ "slug": "gas-release-system",
+ "path": "/gasreleasesystem",
+ "url": "https://www.odessaseparator.com/gasreleasesystem",
+ "title": "Gas Release System | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:44:45.271Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "GAS RELEASE SYSTEM",
+   "box": {
+    "x": 230,
+    "y": 89,
+    "w": 975,
+    "h": 65
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_669be5a52bb94913a2c1a677eba2c823~mv2.jpg/v1/crop/x_0,y_143,w_5187,h_4498/fill/w_1016,h_881,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Diagram%20GRS%20Dec1123%20v7.jpg",
+   "alt": "Diagram GRS Dec1123 v7.jpg",
+   "natural": {
+    "w": 1016,
+    "h": 881
+   },
+   "box": {
+    "x": 200,
+    "y": 162,
+    "w": 1016,
+    "h": 881
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The fluid rises internally from the gas separation system below (red flow path), and enters through the dip tube with a 45-degree cut and holes at the top.",
+   "box": {
+    "x": 441,
+    "y": 212,
+    "w": 769,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "This is a point of access to the Gas Release System (GRS) where the separation of free gas and liquid occurs. The gas will be directed upwards finding an exit port to the casing, releasing the gas (green flow path).",
+   "box": {
+    "x": 441,
+    "y": 288,
+    "w": 769,
+    "h": 76
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "On the other hand, the gas-free liquid descends to the bottom of the GRS entering the dip tube with a 45-degree cut allowing the flow towards the pump (yellow flow path).",
+   "box": {
+    "x": 441,
+    "y": 388,
+    "w": 769,
+    "h": 50
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 796,
+    "y": 473,
+    "w": 256,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Improvement of Gas Separation Efficiency for High Fluid and High GLR"
+   ],
+   "box": {
+    "x": 648,
+    "y": 514,
+    "w": 549,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_7db06dd6357c4240ae3a1ec8ac0f3da1.pdf",
+   "text": "Gas Release System",
+   "box": {
+    "x": 489,
+    "y": 553,
+    "w": 78,
+    "h": 117
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Horizontal Wells.",
+   "box": {
+    "x": 648,
+    "y": 539,
+    "w": 549,
+    "h": 25
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Earlier conversion from ESP to rod pump.",
+    "Innovative design that enhances production rates by efficiently separating gas.",
+    "Proven performance in gassy conditions.",
+    "Achieve the maximum potential of your reservoir by efficiently drawing down your wells.",
+    "Deal with free and solution gas."
+   ],
+   "box": {
+    "x": 648,
+    "y": 564,
+    "w": 549,
+    "h": 25
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Denotes gas that enters the separator downhole in the curve of the well that is then vented out in the casing by the Gas Release System under the Seating Nipple.",
+   "box": {
+    "x": 1033,
+    "y": 795,
+    "w": 177,
+    "h": 65
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Free Gas",
+   "box": {
+    "x": 708,
+    "y": 864,
+    "w": 64,
+    "h": 18
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Production Fluid",
+   "box": {
+    "x": 831,
+    "y": 864,
+    "w": 64,
+    "h": 26
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 267,
+    "y": 1131,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Breaking the curve",
+   "box": {
+    "x": 267,
+    "y": 1232,
+    "w": 523,
+    "h": 88
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_35620e980aaf4c0a8dfb59ba6b078407~mv2.png/v1/fill/w_173,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2nd%20page%20outlet%20port.png",
+   "alt": "2nd page outlet port.png",
+   "natural": {
+    "w": 173,
+    "h": 173
+   },
+   "box": {
+    "x": 859,
+    "y": 1209,
+    "w": 173,
+    "h": 173
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_173,h_158,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Odessa Separator Inc - Seal",
+   "natural": {
+    "w": 173,
+    "h": 158
+   },
+   "box": {
+    "x": 886,
+    "y": 1429,
+    "w": 173,
+    "h": 158
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_7b3db49caf234e208cf9e96374f4148f~mv2.jpg/v1/fill/w_644,h_104,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/GRS-(OnePage)-Jul0125-table.jpg",
+   "alt": "GRS-(OnePage)-Jul0125-table.jpg",
+   "natural": {
+    "w": 644,
+    "h": 104
+   },
+   "box": {
+    "x": 221,
+    "y": 1462,
+    "w": 644,
+    "h": 104
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 438,
+    "y": 1738,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/aqpBwV3o4EK6Jmg8MAbV8nxRAGOvYrd7ybe0/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 512,
+    "y": 1736,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

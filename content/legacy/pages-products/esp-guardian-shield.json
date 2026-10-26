@@ -1,0 +1,255 @@
+{
+ "slug": "esp-guardian-shield",
+ "path": "/esp-guardian-shield",
+ "url": "https://www.odessaseparator.com/esp-guardian-shield",
+ "title": "ESP Guardian Shield | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:25:37.748Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP GUARDIAN SHIELD",
+   "box": {
+    "x": 230,
+    "y": 80,
+    "w": 979,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_15461f8eacce4b5bae547234bbb942db~mv2.png/v1/crop/x_0,y_0,w_4160,h_3450/fill/w_1242,h_1030,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP%20GS%20Diagram%20(Brochure)%20July19%20%202021.png",
+   "alt": "ESP Guardian Shield - OSI",
+   "natural": {
+    "w": 1242,
+    "h": 1030
+   },
+   "box": {
+    "x": 32,
+    "y": 168,
+    "w": 1242,
+    "h": 1030
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The ESP Guardian Shield significantly improves the performance of ESP’s in high GOR / GLR horizontal wells. With OSI’s DUAL-FLOW Completion System technology, the inadequacies of traditional “dip tube” type assemblies are eliminated while optimizing operational effectiveness.",
+   "box": {
+    "x": 596,
+    "y": 232,
+    "w": 605,
+    "h": 104
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Guardian Shield includes an encapsulating shroud around the ESP pump motor that prevents overheating due to gas interference.",
+   "box": {
+    "x": 596,
+    "y": 362,
+    "w": 605,
+    "h": 52
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Guardian Shield provides multi-stage separation of gas and solids while ensuring uncompromised flow area versus standard dip tube tools.",
+   "box": {
+    "x": 596,
+    "y": 440,
+    "w": 605,
+    "h": 52
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS CASE STUDY",
+   "box": {
+    "x": 831,
+    "y": 554,
+    "w": 249,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Mitigates gas slugs",
+    "Reduces or eliminates gas locking",
+    "Lowers ESP motor operating temperature",
+    "Prevents random shutdowns"
+   ],
+   "box": {
+    "x": 769,
+    "y": 597,
+    "w": 382,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_ec93b21e0d394782810ec863ca051c1e.pdf",
+   "text": "ESP Guardian Shield",
+   "box": {
+    "x": 910,
+    "y": 766,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_0fbdb64fb3f84d21a1ae3ed634701dff.pdf",
+   "text": "CASE STUDY",
+   "box": {
+    "x": 847,
+    "y": 960,
+    "w": 150,
+    "h": 40
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1211,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/HgCM4Qu9Rpc?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 230,
+    "y": 1304,
+    "w": 640,
+    "h": 334
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 895,
+    "y": 1293,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "ADVANTAGES",
+   "box": {
+    "x": 234,
+    "y": 1670,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Provides multiple stages of gas separation",
+    "Utilizes both the casing and the tubing for gas separation Webinar"
+   ],
+   "box": {
+    "x": 230,
+    "y": 1710,
+    "w": 433,
+    "h": 24
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/M77Inq77tx0",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 698,
+    "y": 1717,
+    "w": 102,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Provides sand and gas separation"
+   ],
+   "box": {
+    "x": 230,
+    "y": 1758,
+    "w": 433,
+    "h": 24
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 230,
+    "y": 1837,
+    "w": 440,
+    "h": 259
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Test Horizontal Well",
+   "box": {
+    "x": 680,
+    "y": 1854,
+    "w": 189,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+   "box": {
+    "x": 698,
+    "y": 1891,
+    "w": 157,
+    "h": 144
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 441,
+    "y": 2226,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/97KypgVMGObmwXeDP0KRDqv0nAYB3Wa5jJoE-esp-guardian-shield/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 515,
+    "y": 2224,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

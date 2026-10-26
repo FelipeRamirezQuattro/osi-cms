@@ -65,25 +65,39 @@ const describeAfter = (m: MappedProductLayout): string[] => [
 ];
 
 async function main() {
-  const db = createServiceRoleDbClient();
   const pages = loadPages();
   const ctx = { chromeImages: findChromeImages(pages) };
   const prev = previousImports();
   const entryBySlug = new Map(LEGACY_ENTRIES.filter((e) => e.slug).map((e) => [e.slug!, e]));
 
-  const [{ data: products, error: pe }, { data: benefits, error: be }, { data: specs, error: se }, { data: blocks, error: ke }] = await Promise.all([
-    db.from("products").select("id,slug,status,updated_at,summary,diagram_image_url,video_url,brochure_pdf_url,model_3d_url,body").eq("locale", "en"),
-    db.from("product_benefits").select("product_id,title,position,updated_at").order("position"),
-    db.from("product_specs").select("product_id").order("position"),
-    db.from("product_blocks").select("product_id,type,is_visible,data,position,updated_at").order("position"),
-  ]);
-  for (const e of [pe, be, se, ke]) if (e) throw e;
+  // Either the live database (service-role key) or a read-only snapshot taken another way
+  // (--snapshot <file>: products/benefits/specs/blocks as plain JSON arrays).
+  const snapIdx = process.argv.indexOf("--snapshot");
+  type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  let products: Row[], benefits: Row[], specs: Row[], blocks: Row[];
+  if (snapIdx >= 0) {
+    const snap = JSON.parse(fs.readFileSync(process.argv[snapIdx + 1], "utf8"));
+    ({ products, benefits, specs, blocks } = { products: snap.products ?? [], benefits: snap.benefits ?? [], specs: snap.specs ?? [], blocks: snap.blocks ?? [] });
+  } else {
+    const db = createServiceRoleDbClient();
+    const [pr, be, sp, bl] = await Promise.all([
+      db.from("products").select("id,slug,status,updated_at,summary,diagram_image_url,video_url,brochure_pdf_url,model_3d_url,body").eq("locale", "en"),
+      db.from("product_benefits").select("product_id,title,position,updated_at").order("position"),
+      db.from("product_specs").select("product_id").order("position"),
+      db.from("product_blocks").select("product_id,type,is_visible,data,position,updated_at").order("position"),
+    ]);
+    for (const e of [pr.error, be.error, sp.error, bl.error]) if (e) throw e;
+    products = pr.data ?? [];
+    benefits = be.data ?? [];
+    specs = sp.data ?? [];
+    blocks = bl.data ?? [];
+  }
 
   const stamp = (rows: { updated_at: string }[]) => ({ count: rows.length, max: rows.reduce<string | null>((m, r) => (m === null || r.updated_at > m ? r.updated_at : m), null) });
   const results: { plan: ProductPlan; mapped: MappedProductLayout; before: string[]; after: string[]; sql: string }[] = [];
   const notPlanned: { slug: string; reason: string }[] = [];
 
-  for (const p of products ?? []) {
+  for (const p of products) {
     const page = pages.find((x) => x.slug === p.slug);
     const entry = entryBySlug.get(p.slug);
     if (!page || !entry) {
@@ -92,8 +106,8 @@ async function main() {
     }
     const isPublished = p.status === "published";
     if (isPublished !== PUBLISHED_ONLY) continue;
-    const myBenefits = (benefits ?? []).filter((b) => b.product_id === p.id);
-    const myBlocks = (blocks ?? []).filter((b) => b.product_id === p.id);
+    const myBenefits = benefits.filter((b) => b.product_id === p.id) as { title: string; updated_at: string }[];
+    const myBlocks = blocks.filter((b) => b.product_id === p.id) as { updated_at: string }[];
     const row: DbProduct = {
       id: p.id,
       slug: p.slug,
@@ -111,7 +125,7 @@ async function main() {
     };
     const mapped = mapProductLayout(entry, page, ctx);
     const plan = planProduct(mapped, row, prev.get(p.slug) ?? null);
-    const nSpecs = (specs ?? []).filter((s) => s.product_id === p.id).length;
+    const nSpecs = specs.filter((s) => s.product_id === p.id).length;
     results.push({
       plan,
       mapped,
@@ -121,6 +135,15 @@ async function main() {
     });
   }
 
+  fs.mkdirSync(path.join(OUT, "preview"), { recursive: true });
+  // What each product WOULD look like: the inputs a local preview route needs to render it without any database write.
+  for (const r of results) {
+    const fields = Object.fromEntries(r.plan.fieldChanges.map((c) => [c.field, c.to]));
+    fs.writeFileSync(
+      path.join(OUT, "preview", `${r.plan.slug}.json`),
+      JSON.stringify({ slug: r.plan.slug, fields, benefits: r.plan.benefitsChange?.to ?? null, layout: r.plan.layoutApplied ? r.plan.layout : null }, null, 1),
+    );
+  }
   fs.mkdirSync(OUT, { recursive: true });
   const tag = PUBLISHED_ONLY ? "published" : "drafts";
   fs.writeFileSync(

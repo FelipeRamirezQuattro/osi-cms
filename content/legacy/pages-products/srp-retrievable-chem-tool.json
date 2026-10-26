@@ -1,0 +1,260 @@
+{
+ "slug": "srp-retrievable-chem-tool",
+ "path": "/srp-retrievable-chem-tool",
+ "url": "https://www.odessaseparator.com/srp-retrievable-chem-tool",
+ "title": "SRP Retrievable Chem Tool  | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:31:54.126Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "SRP RETRIEVABLE CHEM TOOL",
+   "box": {
+    "x": 227,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_bec65b89cc7e46488826fa601413e108~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/SRP%20RCT%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "SRP RCT - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 39,
+    "y": 170,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The SRP Retrievable Chem Tool is designed specifically for wells with high lifting cost that have chemical issues downhole, such as corrosion, scale, paraffin, asphaltenes, etc. The tool provides an even distribution of well-specific chemicals while offering an easy installation.",
+   "box": {
+    "x": 598,
+    "y": 189,
+    "w": 598,
+    "h": 96
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The SRP Retrievable Chem Tool is easily installed below the coupling of the insert rod pump, which translates into lower operating costs since it is not necessary to pull out the production tubing.",
+   "box": {
+    "x": 598,
+    "y": 309,
+    "w": 598,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "This features makes it the best alternative to condition the fluid from the bottom of the well, improving the life of the sucker rod pumps and well production. After installation, the tool comes in contact with wellbore fluid, releasing the chemical product through the screen at the bottom of the well. It offers a controlled dispersion, from the bottom up, which protects the artificial lift system.",
+   "box": {
+    "x": 598,
+    "y": 405,
+    "w": 598,
+    "h": 120
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 770,
+    "y": 579,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Designed insert Sucker Rod Pump.",
+    "Slow, self release of chemical(s).",
+    "Up to 6 months of chemical treatment.",
+    "Reduces paraffin, scale, and corrosion failures.",
+    "Variety of well specific recipes (paraffin, asphaltenes, corrosion, scale).",
+    "Low installation costs."
+   ],
+   "box": {
+    "x": 691,
+    "y": 620,
+    "w": 401,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_70224bcb4d7a45cc9c5292a4e1ab5c64.pdf",
+   "text": "SRP Retrievable Chemm Tool",
+   "box": {
+    "x": 852,
+    "y": 857,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/wBwz2l3MdSI?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 375,
+    "y": 1247,
+    "w": 454,
+    "h": 249
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 876,
+    "y": 1282,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Learn more about this tool",
+   "box": {
+    "x": 251,
+    "y": 1543,
+    "w": 236,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Case Study",
+   "box": {
+    "x": 514,
+    "y": 1543,
+    "w": 94,
+    "h": 27
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+   "text": "Case Study",
+   "box": {
+    "x": 514,
+    "y": 1543,
+    "w": 90,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Webinar",
+   "box": {
+    "x": 685,
+    "y": 1543,
+    "w": 80,
+    "h": 27
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/ZGH4sdUJm_c",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 691,
+    "y": 1543,
+    "w": 68,
+    "h": 27
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Chemical Composition",
+   "box": {
+    "x": 844,
+    "y": 1541,
+    "w": 201,
+    "h": 31
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+   "text": "Chemical Composition",
+   "box": {
+    "x": 852,
+    "y": 1541,
+    "w": 193,
+    "h": 31
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Provides controlled dispersion of chemicals from",
+   "box": {
+    "x": 246,
+    "y": 1627,
+    "w": 833,
+    "h": 38
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "the bottom of the well up.",
+   "box": {
+    "x": 246,
+    "y": 1665,
+    "w": 833,
+    "h": 38
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 367,
+    "y": 1920,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/2EZkKbMPadel7VzD3Q3V8YwAOQqgX3yGvnLx-srp-retrievable-chem-tool/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 441,
+    "y": 1918,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

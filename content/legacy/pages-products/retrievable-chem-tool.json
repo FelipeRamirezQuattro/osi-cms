@@ -1,0 +1,242 @@
+{
+ "slug": "retrievable-chem-tool",
+ "path": "/retrievable-chem-tool",
+ "url": "https://www.odessaseparator.com/retrievable-chem-tool",
+ "title": "Retrievable Chem Tool  | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:43:35.615Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "RETRIEVABLE CHEM TOOL",
+   "box": {
+    "x": 230,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_0f89acf10b314d53b1a8da2fa036b03a~mv2.png/v1/crop/x_0,y_0,w_3892,h_3450/fill/w_1103,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/RCT%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "RCT Diagram (Brochure) July01 2021.png",
+   "natural": {
+    "w": 1103,
+    "h": 978
+   },
+   "box": {
+    "x": 133,
+    "y": 171,
+    "w": 1103,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Retrievable Chem Tool is designed specifically for wells with high lifting cost that have chemical issues downhole, such as corrosion, scale, paraffin, asphaltenes, etc. The tool provides an even distribution of well-specific chemicals while offering an easy installation.",
+   "box": {
+    "x": 600,
+    "y": 196,
+    "w": 596,
+    "h": 96
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "In Gas Lift or Plunger Lift applications, the tool is installed via slickline, sitting inside the X or XN Nipple, and is held in place with a standard X lock plug. After installation, the tool comes in contact with wellbore fluid, releasing the chemical through the screen at the bottom of the well. It offers a controlled dispersion from the bottom up, which protects the artificial lift system. In the case of Sucker Rod Pump with an insert pump, the tool can be installed on the bottom of the pump, replacing the nipple strainer.",
+   "box": {
+    "x": 600,
+    "y": 316,
+    "w": 596,
+    "h": 168
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Slow, self release of chemical(s)",
+    "Up to 6 months of chemical treatment",
+    "Reduces paraffin, scale, and corrosion failures",
+    "Variety of well specific recipes (paraffin, asphaltenes, corrosion, scale)"
+   ],
+   "box": {
+    "x": 670,
+    "y": 595,
+    "w": 468,
+    "h": 24
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 871,
+    "y": 656,
+    "w": 116,
+    "h": 31
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Can be easily installed, set, & retrieved with wireline or slickline",
+    "Low installation costs."
+   ],
+   "box": {
+    "x": 670,
+    "y": 715,
+    "w": 468,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_52b167b52872442fbc190302029d5856.pdf",
+   "text": "Retrievable Chem Tool",
+   "box": {
+    "x": 848,
+    "y": 855,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 229,
+    "y": 1150,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/1I_FPqyGheE?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 240,
+    "y": 1213,
+    "w": 625,
+    "h": 338
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 894,
+    "y": 1213,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Learn more about this tool",
+   "box": {
+    "x": 435,
+    "y": 1620,
+    "w": 236,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Case Study",
+   "box": {
+    "x": 270,
+    "y": 1662,
+    "w": 94,
+    "h": 27
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+   "text": "Case Study",
+   "box": {
+    "x": 270,
+    "y": 1662,
+    "w": 90,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Webinar",
+   "box": {
+    "x": 441,
+    "y": 1662,
+    "w": 80,
+    "h": 27
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/ZGH4sdUJm_c",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 447,
+    "y": 1662,
+    "w": 68,
+    "h": 27
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Chemical Composition",
+   "box": {
+    "x": 600,
+    "y": 1660,
+    "w": 201,
+    "h": 29
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+   "text": "Chemical Composition",
+   "box": {
+    "x": 608,
+    "y": 1660,
+    "w": 193,
+    "h": 29
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 406,
+    "y": 2211,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/6VaMXe42kdnAwQOD05We1LZPqpYg9RExbjGr-retrievable-chem-tool/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 480,
+    "y": 2209,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

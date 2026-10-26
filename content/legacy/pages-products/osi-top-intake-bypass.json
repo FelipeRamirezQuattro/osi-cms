@@ -1,0 +1,161 @@
+{
+ "slug": "osi-top-intake-bypass",
+ "path": "/osi-top-intake-bypass",
+ "url": "https://www.odessaseparator.com/osi-top-intake-bypass",
+ "title": "Dip Tube Bypass | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:44:22.105Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "DIP TUBE BYPASS",
+   "box": {
+    "x": 230,
+    "y": 80,
+    "w": 974,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_316fa73e384142419a0e7af84af9bc37~mv2.png/v1/crop/x_0,y_0,w_3915,h_3450/fill/w_1169,h_1030,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Top%20intake%20Bypass%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "Top intake Bypass - OSI",
+   "natural": {
+    "w": 1169,
+    "h": 1030
+   },
+   "box": {
+    "x": 29,
+    "y": 169,
+    "w": 1169,
+    "h": 1030
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI Dip Tube Bypass allows for a bypass to open, creating a secondary flow path when the dip tube intake becomes plugged.",
+   "box": {
+    "x": 599,
+    "y": 253,
+    "w": 599,
+    "h": 48
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Preventing premature pulling of the well. This allows the equipment to reach maximum run life. This tool can be run on any dip tube filtration tools.",
+   "box": {
+    "x": 599,
+    "y": 325,
+    "w": 599,
+    "h": 48
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_0dd72825d2f24688af75c797c77cd7c3~mv2.jpg/v1/fill/w_379,h_69,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/TABLA.jpg",
+   "alt": "TABLA.jpg",
+   "natural": {
+    "w": 379,
+    "h": 69
+   },
+   "box": {
+    "x": 700,
+    "y": 434,
+    "w": 379,
+    "h": 69
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Keep it in the hole longer...",
+   "box": {
+    "x": 778,
+    "y": 525,
+    "w": 240,
+    "h": 26
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_bfbc5e63b2ea4466b57f43c9fae78e97.pdf",
+   "text": "Dip Tube Bypass",
+   "box": {
+    "x": 853,
+    "y": 613,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_67bf3854db9f47748953a9b8d0f8e0b3~mv2.png/v1/fill/w_294,h_318,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Lateral%20Close%20copia%20copia.png",
+   "alt": "Top intake Bypass - OSI",
+   "natural": {
+    "w": 294,
+    "h": 318
+   },
+   "box": {
+    "x": 915,
+    "y": 768,
+    "w": 294,
+    "h": 318
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Provides significant savings",
+   "box": {
+    "x": 590,
+    "y": 830,
+    "w": 422,
+    "h": 34
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "over pulling the well!",
+   "box": {
+    "x": 590,
+    "y": 864,
+    "w": 422,
+    "h": 34
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/N1WeKQ2VSp8?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 415,
+    "y": 1199,
+    "w": 397,
+    "h": 222
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 955,
+    "y": 1274,
+    "w": 254,
+    "h": 72
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/WgKyeJVMdjR5mZX1yqvJ1aA0bkn9q2G6vlxB-dip-tube-bypass/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 969,
+    "y": 1272,
+    "w": 227,
+    "h": 76
+   }
+  }
+ ]
+}

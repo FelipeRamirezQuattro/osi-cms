@@ -1,0 +1,268 @@
+{
+ "slug": "chem-screen",
+ "path": "/chem-screen",
+ "url": "https://www.odessaseparator.com/chem-screen",
+ "title": "Chem Screen | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:41:36.986Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "CHEM SCREEN",
+   "box": {
+    "x": 228,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_6171a7da677046739f498dc8a12cc5ad~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Chem%20Screen%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "Chem Screen - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 42,
+    "y": 171,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI Chem Screen is a significant improvement over traditional chemical treating methods. OSI’s proprietary, micro-encapsulation technology allows the most effective oilfield treatment chemistry to be put into solid stick form, placed into specifically engineered tools and installed below the pump intake.",
+   "box": {
+    "x": 598,
+    "y": 225,
+    "w": 600,
+    "h": 101
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "With the treating chemicals placed downhole, the activation and dispersal of the chemicals occur much faster and more efficiently. Where multiple screens are used, a SHUT OFF VALVE between each section prevents premature dispersal. The treatment process is continual, over a longer period ensuring a more cost-effective treatment program.",
+   "box": {
+    "x": 598,
+    "y": 351,
+    "w": 600,
+    "h": 126
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Chem Screen is engineered for durability so that, in most cases, it can be refilled when needed.",
+   "box": {
+    "x": 598,
+    "y": 502,
+    "w": 600,
+    "h": 50
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 825,
+    "y": 610,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Provides chemical treatment below a packer.",
+    "Treatment from downhole up.",
+    "Slow, continual dispersal.",
+    "Serviceable rugged construction."
+   ],
+   "box": {
+    "x": 775,
+    "y": 650,
+    "w": 354,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_9a3cc372afe24ce0957513ca9c022fa7.pdf",
+   "text": "Chem Screen",
+   "box": {
+    "x": 900,
+    "y": 850,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/ASUu5dZza8s?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 367,
+    "y": 1212,
+    "w": 480,
+    "h": 277
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 880,
+    "y": 1218,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Learn more about this tool",
+   "box": {
+    "x": 247,
+    "y": 1555,
+    "w": 236,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Case Study",
+   "box": {
+    "x": 510,
+    "y": 1555,
+    "w": 95,
+    "h": 27
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+   "text": "Case Study",
+   "box": {
+    "x": 510,
+    "y": 1555,
+    "w": 90,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Webinar",
+   "box": {
+    "x": 681,
+    "y": 1555,
+    "w": 80,
+    "h": 27
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/ZGH4sdUJm_c",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 687,
+    "y": 1555,
+    "w": 68,
+    "h": 27
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Chemical Composition",
+   "box": {
+    "x": 840,
+    "y": 1553,
+    "w": 201,
+    "h": 31
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+   "text": "Chemical Composition",
+   "box": {
+    "x": 848,
+    "y": 1553,
+    "w": 193,
+    "h": 31
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Chem Screen are a solid based blend with 97%",
+   "box": {
+    "x": 428,
+    "y": 1664,
+    "w": 454,
+    "h": 100
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "active chemical ingredients",
+   "box": {
+    "x": 428,
+    "y": 1764,
+    "w": 454,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s Chem Screen are downhole chemical conditioning systems",
+   "box": {
+    "x": 423,
+    "y": 1862,
+    "w": 465,
+    "h": 51
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 366,
+    "y": 2084,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/ZqpLYoG4mAbzOxJ8LGLw1ywQ7dX03agjPvE5/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 440,
+    "y": 2082,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

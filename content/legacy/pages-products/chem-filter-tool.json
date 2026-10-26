@@ -1,0 +1,241 @@
+{
+ "slug": "chem-filter-tool",
+ "path": "/chem-filter-tool",
+ "url": "https://www.odessaseparator.com/chem-filter-tool",
+ "title": "Chem Filter Tool | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:41:13.512Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "CHEM FILTER TOOL",
+   "box": {
+    "x": 228,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_adf9791a564b4344be01a77282d3fa2f~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/CFT%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "Chem Filter Tool - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 40,
+    "y": 170,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI CHEM FILTER TOOL is three tools in one.",
+   "box": {
+    "x": 598,
+    "y": 225,
+    "w": 599,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "One, it is a Chem Screen that provides efficient, cost-effective downhole chemical treatment. With the treating chemicals placed downhole, the activation and dispersal of the chemicals occur much faster and more efficiently. The Chem Screen is engineered for durability so that, in most cases, it can be refilled when needed.",
+   "box": {
+    "x": 598,
+    "y": 273,
+    "w": 599,
+    "h": 120
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Two, it is a TUBING SCREEN designed to extend the run life of downhole components. The tubing screen uses a “V” wire mesh to separate large particles, abrasive solids and providing maximum flow area for well fluids. The tubing screen provides the best protection available against the destructive effects of sand.",
+   "box": {
+    "x": 598,
+    "y": 417,
+    "w": 599,
+    "h": 120
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Three, it is TOP BYPASS VALVE that extends pump runtimes by allowing fluid flow to the pump should the intakes plug off from sand, scale, or paraffin.",
+   "box": {
+    "x": 598,
+    "y": 561,
+    "w": 599,
+    "h": 48
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1665145b85434a348c772b77aa6fc93a.pdf",
+   "text": "Chem Filter Tool",
+   "box": {
+    "x": 852,
+    "y": 748,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 880,
+    "y": 1218,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Chemical treatment and",
+   "box": {
+    "x": 262,
+    "y": 1270,
+    "w": 575,
+    "h": 34
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "sand control in a single tool!",
+   "box": {
+    "x": 262,
+    "y": 1304,
+    "w": 575,
+    "h": 34
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Learn more about this tool",
+   "box": {
+    "x": 240,
+    "y": 1458,
+    "w": 236,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Case Study",
+   "box": {
+    "x": 503,
+    "y": 1458,
+    "w": 94,
+    "h": 27
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_67c32c8c83474af495705f3a240f7395.pdf",
+   "text": "Case Study",
+   "box": {
+    "x": 503,
+    "y": 1458,
+    "w": 90,
+    "h": 27
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Webinar",
+   "box": {
+    "x": 674,
+    "y": 1458,
+    "w": 80,
+    "h": 27
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://youtu.be/ZGH4sdUJm_c",
+   "text": "Webinar",
+   "external": true,
+   "box": {
+    "x": 680,
+    "y": 1458,
+    "w": 68,
+    "h": 27
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Chemical Composition",
+   "box": {
+    "x": 833,
+    "y": 1456,
+    "w": 201,
+    "h": 29
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_86aeba9dc95b4e81bf8152ef27c7deb9.pdf",
+   "text": "Chemical Composition",
+   "box": {
+    "x": 841,
+    "y": 1456,
+    "w": 193,
+    "h": 29
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/Ws5jgDnWwCE?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 230,
+    "y": 1602,
+    "w": 440,
+    "h": 245
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 837,
+    "y": 1672,
+    "w": 236,
+    "h": 72
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/AW23nbGqxJVr5Ew1Wzk4DpQKzoev7g9ymM6k-chem-filter-tool/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 842,
+    "y": 1670,
+    "w": 227,
+    "h": 76
+   }
+  }
+ ]
+}

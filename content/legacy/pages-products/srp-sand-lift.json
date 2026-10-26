@@ -1,0 +1,184 @@
+{
+ "slug": "srp-sand-lift",
+ "path": "/srp-sand-lift",
+ "url": "https://www.odessaseparator.com/srp-sand-lift",
+ "title": "SRP Sand Lift | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:45:31.718Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "SRP SAND LIFT",
+   "box": {
+    "x": 255,
+    "y": 80,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_dc1744e27f5841fdbd2f450622f4fde5~mv2.jpg/v1/crop/x_95,y_50,w_4971,h_4267/fill/w_991,h_851,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/SRP-SL-Diagram-Aug05-25.jpg",
+   "alt": "SRP-SL-Diagram-Aug05-25.jpg",
+   "natural": {
+    "w": 991,
+    "h": 851
+   },
+   "box": {
+    "x": 219,
+    "y": 194,
+    "w": 991,
+    "h": 851
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s SRP SAND LIFT is an advanced downhole tool engineered to address challenges related to sand production in rod pump systems. Designed to prevent workovers due to sand failures, it enhances operational efficiency by extending run times and regulating the rate at which sand falls.",
+   "box": {
+    "x": 574,
+    "y": 194,
+    "w": 601,
+    "h": 101
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Its innovative design allows for easy backflush operations, ensuring minimal and straightforward maintenance, making it highly durable and effective in harsh, sand-laden environments. This combination of features makes the SRP Sand Lift a reliable solution for optimizing artificial lift performance and reducing costly downtime.",
+   "box": {
+    "x": 574,
+    "y": 320,
+    "w": 601,
+    "h": 126
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 604,
+    "y": 507,
+    "w": 517,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Eliminates the need for workover operations resulting from sand failures.",
+    "Prolongs the operational lifespan of SRP systems and shields them from sand intrusion into pump stages.",
+    "Enables pumping fluid down the tubing."
+   ],
+   "box": {
+    "x": 574,
+    "y": 547,
+    "w": 592,
+    "h": 25
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Considerations",
+   "box": {
+    "x": 568,
+    "y": 709,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Length of the Tool: 30 ft standard, adjustable to any stroke length"
+   ],
+   "box": {
+    "x": 575,
+    "y": 752,
+    "w": 492,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_4ab55571b20d4a9fa03c100453871018.pdf",
+   "text": "SRP Sand Lift",
+   "box": {
+    "x": 1097,
+    "y": 770,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Maximum diameter: 2 inches",
+    "Tool connected: above the Pull Tube / ValveRod",
+    "Rod material: can be made in 8620 Steel or 316SS upon request"
+   ],
+   "box": {
+    "x": 575,
+    "y": 777,
+    "w": 492,
+    "h": 25
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 279,
+    "y": 1097,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://video.wixstatic.com/video/1ac9e9_f0dffc630b7d4fe596f64c08ac068b78/720p/mp4/file.mp4",
+   "provider": "wix",
+   "box": {
+    "x": 619,
+    "y": 1147,
+    "w": 547,
+    "h": 565
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_f0dffc630b7d4fe596f64c08ac068b78f000.jpg/v1/fill/w_547,h_565,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/1ac9e9_f0dffc630b7d4fe596f64c08ac068b78f000.jpg",
+   "alt": "",
+   "natural": {
+    "w": 547,
+    "h": 565
+   },
+   "box": {
+    "x": 619,
+    "y": 1147,
+    "w": 547,
+    "h": 565
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 230,
+    "y": 1528,
+    "w": 188,
+    "h": 173
+   }
+  }
+ ]
+}

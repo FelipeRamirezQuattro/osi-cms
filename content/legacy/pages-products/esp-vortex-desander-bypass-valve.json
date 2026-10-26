@@ -1,0 +1,184 @@
+{
+ "slug": "esp-vortex-desander-bypass-valve",
+ "path": "/esp-vortex-desander-bypass-valve",
+ "url": "https://www.odessaseparator.com/esp-vortex-desander-bypass-valve",
+ "title": "ESP Vortex Desander Bypass Valve | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:28:47.864Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "WITH BYPASS VALVE ESP VORTEX DESANDER",
+   "box": {
+    "x": 230,
+    "y": 130,
+    "w": 979,
+    "h": 40
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_2a16c1ba47964bb1b4ecb63cfe7ee2a1~mv2.png/v1/crop/x_141,y_0,w_3722,h_3450/fill/w_1055,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP%20Vortex%20Desander%20BypassValve%20(Brochure)%20Jun28%2023.png",
+   "alt": "ESP Vortex Desander BypassValve (Brochure) Jun28 23.png",
+   "natural": {
+    "w": 1055,
+    "h": 978
+   },
+   "box": {
+    "x": 156,
+    "y": 168,
+    "w": 1055,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI ESP Vortex Desander with Bypass Valve was engineered to provide extended run times after the mud joint fills with sand.",
+   "box": {
+    "x": 598,
+    "y": 201,
+    "w": 600,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Bypass system activates when a differential pressure of greater than 33 psi occurs between the sections below and above the packer.",
+   "box": {
+    "x": 598,
+    "y": 277,
+    "w": 600,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Bypass maintains fluid flow to the ESP after the storage joints have reached maximum capacity.",
+   "box": {
+    "x": 598,
+    "y": 352,
+    "w": 600,
+    "h": 50
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 775,
+    "y": 488,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Reduces the downtime due to sand issues.",
+    "Fewer interventions and less investment in CAPEX.",
+    "Stable pump parameters: Vibration, frequency, voltage and motor current.",
+    "Avoid the premature failures of the pump components caused by sand production.",
+    "Keeps fluid flow to the ESP."
+   ],
+   "box": {
+    "x": 699,
+    "y": 531,
+    "w": 406,
+    "h": 21
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_db0470f153f84e519c64da463fca7615.pdf",
+   "text": "ESP VD Bypass Valve",
+   "box": {
+    "x": 915,
+    "y": 835,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1150,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 895,
+    "y": 1213,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Fluid flowing thru the top bypass valve, Spring",
+   "box": {
+    "x": 257,
+    "y": 1285,
+    "w": 652,
+    "h": 28
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "displaced by the fluid due to the differential pressure.",
+   "box": {
+    "x": 257,
+    "y": 1313,
+    "w": 652,
+    "h": 29
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/MpiL_7I76bY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 363,
+    "y": 1367,
+    "w": 440,
+    "h": 259
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 443,
+    "y": 1761,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/6w0b3lOXorReKEaNavGoDqdZP5xyn472pmGM-esp-vortex-desander-bypass-valve/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 517,
+    "y": 1759,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

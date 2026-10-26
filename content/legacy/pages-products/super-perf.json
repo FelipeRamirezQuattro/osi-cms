@@ -1,0 +1,172 @@
+{
+ "slug": "super-perf",
+ "path": "/super-perf",
+ "url": "https://www.odessaseparator.com/super-perf",
+ "title": "Super Perf | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:39:40.971Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "SUPER PERF",
+   "box": {
+    "x": 228,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_e7e6acaee090470a8024fc42fe45e7e0~mv2.png/v1/crop/x_0,y_0,w_3915,h_3450/fill/w_1169,h_1030,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Super%20Perf%20Diagram%20(Brochure)%20July01%202021.png",
+   "alt": "Super Perf - OSI",
+   "natural": {
+    "w": 1169,
+    "h": 1030
+   },
+   "box": {
+    "x": 28,
+    "y": 174,
+    "w": 1169,
+    "h": 1030
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI’s SUPER PERF is a high efficiency filtration system that homogenizes sand slugs coming from the formation which allows improved sand management downhole.",
+   "box": {
+    "x": 599,
+    "y": 233,
+    "w": 600,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The large opening mesh provides 27 times the open area of a traditional perforated joint.",
+   "box": {
+    "x": 599,
+    "y": 329,
+    "w": 600,
+    "h": 48
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Super Perf is compatible with any artificial lift system and is a vast improvement from perforated subs.",
+   "box": {
+    "x": 599,
+    "y": 401,
+    "w": 600,
+    "h": 48
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 774,
+    "y": 535,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Downhole, and sand-related, equipment failures are greatly reduced.",
+    "Large opening mesh provides 27 times the open area of a traditional perforated joint.",
+    "Compatible with any artificial lift system."
+   ],
+   "box": {
+    "x": 693,
+    "y": 577,
+    "w": 412,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI’s SUPER PERF is a high efficiency filtration system that homogenizes sand slugs from the formation. The sand screen is corrosion resistant while reducing flow restrictions.",
+   "box": {
+    "x": 333,
+    "y": 882,
+    "w": 350,
+    "h": 100
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_1d658699d88047a9b5b46db1d351b60d.pdf",
+   "text": "Super Perf",
+   "box": {
+    "x": 856,
+    "y": 887,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 229,
+    "y": 1187,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/_KksJrWXmDA?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 372,
+    "y": 1275,
+    "w": 449,
+    "h": 269
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 888,
+    "y": 1275,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 414,
+    "y": 1688,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/XkgJlEGmBKPdZRO1gorO13wY5Avxp4yaoM7r-super-perf/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 488,
+    "y": 1686,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

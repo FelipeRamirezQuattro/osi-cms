@@ -1,0 +1,183 @@
+{
+ "slug": "screen-vortex-desander",
+ "path": "/screen-vortex-desander-osi",
+ "url": "https://www.odessaseparator.com/screen-vortex-desander-osi",
+ "title": "Screen Vortex Desander | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:39:17.316Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "SCREEN VORTEX DESANDER",
+   "box": {
+    "x": 318,
+    "y": 73,
+    "w": 860,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_163fb97879494cdda7a62211c2f72396~mv2.png/v1/crop/x_0,y_0,w_3853,h_3450/fill/w_1092,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Screen%20Vortex%20Desander%20Diagram%20(Brochure)%20July01%202021%20v2.png",
+   "alt": "Screen Vortex Desander - OSI",
+   "natural": {
+    "w": 1092,
+    "h": 978
+   },
+   "box": {
+    "x": 119,
+    "y": 167,
+    "w": 1092,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Screen Vortex Desander is designed specifically for wells where high lifting costs are a result of sand problems.",
+   "box": {
+    "x": 600,
+    "y": 242,
+    "w": 597,
+    "h": 48
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI Vortex Sand Shield technology, which employs centrifugal force to achieve maximum separation efficiency, can be combined with the OSI Tubing Screen or the OSI Super Perf to achieve two-stage sand separation. This system has been successfully proven in multiple installations worldwide.",
+   "box": {
+    "x": 600,
+    "y": 314,
+    "w": 597,
+    "h": 96
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Screen Vortex Desander is installed is a versatile system that can be combined with other OSI tools solids control and gas separation to greatly improve the performance of artificial lift systems.",
+   "box": {
+    "x": 600,
+    "y": 434,
+    "w": 597,
+    "h": 72
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 771,
+    "y": 583,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Lower lifting costs, reduced downtime, and greater operating efficiency.",
+    "Reduced pump failures resulting from sand damage.",
+    "Two-stage sand separation.",
+    "Centrifugal force greatly increases sand separation efficiency."
+   ],
+   "box": {
+    "x": 696,
+    "y": 623,
+    "w": 410,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_5488d2d459e34af3ad9198d872ffd43d.pdf",
+   "text": "Screen Vortex Desander",
+   "box": {
+    "x": 853,
+    "y": 842,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1135,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/5aNHWn3ZZdA?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 242,
+    "y": 1218,
+    "w": 618,
+    "h": 395
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 909,
+    "y": 1197,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s Screen Vortex Desander maximizes artificial",
+   "box": {
+    "x": 256,
+    "y": 1685,
+    "w": 601,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "lift run life by separating harmful abrasives.",
+   "box": {
+    "x": 256,
+    "y": 1709,
+    "w": 601,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 424,
+    "y": 1830,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/jVYPlXgORZK4wBJDOlZe1rxAzy5daboG9qkE-screen-vortex-desander/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 498,
+    "y": 1828,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

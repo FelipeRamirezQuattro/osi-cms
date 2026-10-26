@@ -1,0 +1,195 @@
+{
+ "slug": "slotted-gas-shield",
+ "path": "/slotted-gas-shield",
+ "url": "https://www.odessaseparator.com/slotted-gas-shield",
+ "title": "Slotted Gas Shield | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:36:11.471Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "SLOTTED GAS SHIELD",
+   "box": {
+    "x": 230,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_680e5a8575e14bbaa0fec86bebfb0816~mv2.png/v1/crop/x_0,y_0,w_3856,h_3450/fill/w_1093,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/SGS%20(Brochure)%20July16%202021.png",
+   "alt": "Slotted Gas Shield - OSI",
+   "natural": {
+    "w": 1093,
+    "h": 978
+   },
+   "box": {
+    "x": 118,
+    "y": 167,
+    "w": 1093,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Odessa Separator Slotted Gas Shield is designed specifically for wells with high lifting costs associated with gas failures. The Slotted Gas Shield is made up of diffused intake ports which minimize gas entering the separator and a large body annulus, which reduces the fluid velocity allowing for gravity driven gas separation.",
+   "box": {
+    "x": 599,
+    "y": 233,
+    "w": 599,
+    "h": 126
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The fluid enters through the slotted intake, where the first stage of separation of free gas occurs in the annular gap “by mechanical action wherein the coalescence of gas particles occurs colliding directly with the slot,” then the fluid travels down inside the housing of Slotted Gas Shield.",
+   "box": {
+    "x": 599,
+    "y": 384,
+    "w": 599,
+    "h": 101
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 770,
+    "y": 551,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Mitigates the gas slugs.",
+    "Reduces or Eliminates the Gas locking.",
+    "Multiple stages of gas separation.",
+    "Allows sand & gas separation when is combined with the Vortex Sand Shield."
+   ],
+   "box": {
+    "x": 692,
+    "y": 592,
+    "w": 410,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_0170cef53e474ed5bb8e41fa90e1b03f.pdf",
+   "text": "Slotted Gas Shield",
+   "box": {
+    "x": 954,
+    "y": 832,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/RFxB7nnVlyM?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 191,
+    "y": 1216,
+    "w": 337,
+    "h": 218
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/DobhIXQX4LY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 537,
+    "y": 1216,
+    "w": 337,
+    "h": 218
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 909,
+    "y": 1210,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/bcIj74XSWgk?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 214,
+    "y": 1453,
+    "w": 438,
+    "h": 256
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Test Horizontal Well",
+   "box": {
+    "x": 667,
+    "y": 1470,
+    "w": 189,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+   "box": {
+    "x": 685,
+    "y": 1507,
+    "w": 153,
+    "h": 144
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 396,
+    "y": 1817,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/wA9rm4yPpRB6Qo08knxM1Oa3dWlXznkMxbvY-slotted-gas-shield/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 470,
+    "y": 1815,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

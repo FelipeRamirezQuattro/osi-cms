@@ -1,0 +1,173 @@
+{
+ "slug": "hot-oil-tool",
+ "path": "/hot-oil-tool",
+ "url": "https://www.odessaseparator.com/hot-oil-tool",
+ "title": "Hot Oil Tool | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:37:44.567Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "HOT OIL TOOL",
+   "box": {
+    "x": 227,
+    "y": 72,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_3e4b2d1915c8487db982007b168270e8~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/HOT%20(Brochure)%20July16%202021.png",
+   "alt": "Hot Oil Tool - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 40,
+    "y": 154,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator now provides an innovative new product designed and engineered to make hot oil operations more efficient less costly and far less damaging to formations. One of the common oil-field wellbore problems is paraffin deposition.",
+   "box": {
+    "x": 600,
+    "y": 186,
+    "w": 597,
+    "h": 96
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "While hot oiling or hot watering is a commonly accepted procedure for removing paraffin, the potential for the treating fluid to aggravate well problems and cause formation damage is tremendous. Field tests have shown that during a typical hot oiling job a significant amount of the fluid injected into the well goes into the formation, and hence, particulates and chemicals in the fluid have the potential to damage the formation.",
+   "box": {
+    "x": 600,
+    "y": 306,
+    "w": 597,
+    "h": 144
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "A ”typical” Hot Oil Job requires about six hours to complete.",
+   "box": {
+    "x": 600,
+    "y": 474,
+    "w": 597,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI Hot Oil Tool is a “packer type” tool that is set below the area that paraffin collects in the tubing (typically around 600 feet). With the OSI Hot Oil Tool in place:",
+   "box": {
+    "x": 600,
+    "y": 522,
+    "w": 597,
+    "h": 72
+   }
+  },
+  {
+   "type": "list",
+   "ordered": true,
+   "items": [
+    "Hot oil is pumped down to the depth of the packer and circulated back to the surface. The treating fluid does not go into the formation.",
+    "A typical hot oil job with the OSI Hot Oil Tool should require only about two hours and will treat much more thoroughly.",
+    "The well will take far less time to recover.",
+    "The main purpose of the Hot Oil Tool is to keep the treating oil hot while it does its’ job and to keep the treating oil from damaging the formation."
+   ],
+   "box": {
+    "x": 609,
+    "y": 641,
+    "w": 588,
+    "h": 168
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_72d661b5335342fba5f546ce18522baf.pdf",
+   "text": "Hot Oil Tool",
+   "box": {
+    "x": 853,
+    "y": 860,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Treat more effectively, with greater efficiency...",
+   "box": {
+    "x": 326,
+    "y": 1215,
+    "w": 497,
+    "h": 91
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 892,
+    "y": 1215,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/JTwHz4qHun0?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 385,
+    "y": 1325,
+    "w": 379,
+    "h": 210
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 418,
+    "y": 1628,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/Qkz9Ep532yw4YMxNpjdR106nvrXlRBP7emgO-hot-oil-tool/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 492,
+    "y": 1626,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

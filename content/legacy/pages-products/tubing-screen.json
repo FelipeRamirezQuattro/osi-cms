@@ -1,0 +1,172 @@
+{
+ "slug": "tubing-screen",
+ "path": "/tubing-screen",
+ "url": "https://www.odessaseparator.com/tubing-screen",
+ "title": "Tubing Screen | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:40:04.017Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "TUBING SCREEN",
+   "box": {
+    "x": 227,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_ec6954d79a83454cbfb20a399471b99f~mv2.png/v1/crop/x_0,y_0,w_3915,h_3450/fill/w_1169,h_1030,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Tubing%20Screen%20Diagram%20(Brochure)%20July26%202021.png",
+   "alt": "Tubing Screen - OSI",
+   "natural": {
+    "w": 1169,
+    "h": 1030
+   },
+   "box": {
+    "x": 29,
+    "y": 174,
+    "w": 1169,
+    "h": 1030
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The Tubing Screen™ is a multifunctional system designed to extend the run life of the artificial lift systems through the management and homogenization of the sand production in downhole.",
+   "box": {
+    "x": 599,
+    "y": 245,
+    "w": 601,
+    "h": 72
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "This innovative system uses a V-shaped mesh design that allows the separation of abrasive solids while maximizing the open area to flow fluid. This operational advantage makes the Tubing Screen one of the best options against the abrasive effects of sand.",
+   "box": {
+    "x": 599,
+    "y": 317,
+    "w": 601,
+    "h": 120
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The size and length of system for sand management in downhole is designed based on the production and mechanical conditions of each well.",
+   "box": {
+    "x": 599,
+    "y": 461,
+    "w": 601,
+    "h": 48
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 772,
+    "y": 556,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "V-shaped mesh design allows the separation of abrasive solids while maximizing fluid flow area.",
+    "The size and length of the system is designed specifically for each well based on the production and the mechanical conditions of the well.",
+    "Large intake area reduces pressure drops while a small contact area reduces flow friction."
+   ],
+   "box": {
+    "x": 687,
+    "y": 596,
+    "w": 420,
+    "h": 24
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_31eefd69b0e347c9857d34873bd586e9.pdf",
+   "text": "Tubing Screen",
+   "box": {
+    "x": 852,
+    "y": 851,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 229,
+    "y": 1187,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 825,
+    "y": 1264,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/wpTz2VdPt6E?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 266,
+    "y": 1346,
+    "w": 453,
+    "h": 288
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Odessa Separator’s Tubing Screen™ are used for maximizing artificial lift run life by separating the harmful abrasives.",
+   "box": {
+    "x": 736,
+    "y": 1533,
+    "w": 366,
+    "h": 66
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 416,
+    "y": 1782,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/X4G2eovl0LPzpR71mq7v1AKW5Jxawq3OBkgy-tubing-screen/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 490,
+    "y": 1780,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

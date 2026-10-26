@@ -1,0 +1,204 @@
+{
+ "slug": "slotted-gas-shield-gas-vent",
+ "path": "/slotted-gas-shield-gas-vent",
+ "url": "https://www.odessaseparator.com/slotted-gas-shield-gas-vent",
+ "title": "Gas Vent | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:36:34.846Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "GAS VENT",
+   "box": {
+    "x": 228,
+    "y": 76,
+    "w": 983,
+    "h": 93
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_708b0126b7a544388fe645b38af165f7~mv2.png/v1/crop/x_0,y_0,w_4082,h_3450/fill/w_1157,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/GAS%20VENT%20(Brochure)%20Aug04%202021.png",
+   "alt": "Gas Vent - OSI",
+   "natural": {
+    "w": 1157,
+    "h": 978
+   },
+   "box": {
+    "x": 40,
+    "y": 169,
+    "w": 1157,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The GAS VENT is a component that is engineered to optimize gas separation. It is designed to be compatible with any manufacturers’ gas separator. The Gas Vent releases free gas inside the dip tube, reducing gas interference when the capacity of the gas separator is maxed out.",
+   "box": {
+    "x": 597,
+    "y": 216,
+    "w": 600,
+    "h": 101
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The GAS VENT is attached to the top of a gas separator and works in synchronous with the pump. During the upstroke, when the standing valve is open, the Gas Vent valve is closed, keeping the gas in the top of the separator. During the downstroke, when the standing valve is closed, the Gas Vent is open allowing gas to flow upward into the annulus.",
+   "box": {
+    "x": 597,
+    "y": 342,
+    "w": 600,
+    "h": 126
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The GAS VENT is provided in 2.375”, 2.875 and 3.50 O.D.",
+   "box": {
+    "x": 597,
+    "y": 509,
+    "w": 613,
+    "h": 29
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 772,
+    "y": 579,
+    "w": 254,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Reduces gas interference when the gas separator capacity is maxed out.",
+    "Improves pumping efficiency.",
+    "Reduces the potential for gas locking."
+   ],
+   "box": {
+    "x": 693,
+    "y": 622,
+    "w": 406,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_469711938b2e43138c3c7dc2a5cb4d4e.pdf",
+   "text": "Gas Vent",
+   "box": {
+    "x": 852,
+    "y": 816,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1145,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/mrdyNVMZwh4?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 425,
+    "y": 1210,
+    "w": 353,
+    "h": 209
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Test Gas Vent",
+   "box": {
+    "x": 804,
+    "y": 1218,
+    "w": 189,
+    "h": 24
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.",
+   "box": {
+    "x": 822,
+    "y": 1246,
+    "w": 153,
+    "h": 144
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "Vortex",
+   "box": {
+    "x": 256,
+    "y": 1277,
+    "w": 119,
+    "h": 20
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/O1DzgYKVPoY?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 425,
+    "y": 1454,
+    "w": 353,
+    "h": 209
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 812,
+    "y": 1472,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 419,
+    "y": 1764,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/eLqOvXwA0nydoWMD2pMB8BGpm7zbVxkEjgal-gas-vent/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 493,
+    "y": 1762,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

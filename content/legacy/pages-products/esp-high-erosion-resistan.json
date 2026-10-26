@@ -1,0 +1,183 @@
+{
+ "slug": "esp-high-erosion-resistan",
+ "path": "/esp-high-erosion-resistan",
+ "url": "https://www.odessaseparator.com/esp-high-erosion-resistan",
+ "title": "ESP Vortex Desander High Resistance | odessaseparator",
+ "meta_description": null,
+ "scraped_at": "2026-10-26T00:26:01.159Z",
+ "items": [
+  {
+   "type": "heading",
+   "level": 1,
+   "text": "ESP VORTEX DESANDER HIGH RESISTANCE",
+   "box": {
+    "x": 230,
+    "y": 95,
+    "w": 980,
+    "h": 84
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_fb9f82e67b134850babf5e497f5d8289~mv2.png/v1/crop/x_0,y_0,w_4170,h_3450/fill/w_1182,h_978,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/ESP%20HIGH%20RESISTEN%20Diagram%20(Brochure)%20Jan25%202022.png",
+   "alt": "ESP Vortex Desander High Resistance - OSI",
+   "natural": {
+    "w": 1182,
+    "h": 978
+   },
+   "box": {
+    "x": 40,
+    "y": 185,
+    "w": 1182,
+    "h": 978
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The OSI ESP Vortex Desander (High Resistance) was engineered for conditions involving high rates of abrasive or corrosive flow.",
+   "box": {
+    "x": 595,
+    "y": 223,
+    "w": 606,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "A Boronized hardened, wear-resistant body provides substantially more resistance to excessive erosion in the Vortex body.",
+   "box": {
+    "x": 595,
+    "y": 299,
+    "w": 606,
+    "h": 50
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "The improved sleeve is available in two lengths: 6 ft. and 15 ft.",
+   "box": {
+    "x": 595,
+    "y": 374,
+    "w": 606,
+    "h": 25
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "BENEFITS",
+   "box": {
+    "x": 769,
+    "y": 473,
+    "w": 260,
+    "h": 40
+   }
+  },
+  {
+   "type": "list",
+   "ordered": false,
+   "items": [
+    "Reduces sand cutting problems.",
+    "Reduces the frequency of workovers and the lost production associated with them.",
+    "Boronizing provides a greater surface density which is resistant to excessive corrosion from H2S and CO2.",
+    "Boronization is not a coating so there is no reduction of the i.d."
+   ],
+   "box": {
+    "x": 694,
+    "y": 516,
+    "w": 411,
+    "h": 25
+   }
+  },
+  {
+   "type": "pdf",
+   "url": "https://www.odessaseparator.com/_files/ugd/1ac9e9_0fde8bb48ca248189733ed07c14646d7.pdf",
+   "text": "ESP VD Boronized",
+   "box": {
+    "x": 853,
+    "y": 821,
+    "w": 90,
+    "h": 90
+   }
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "text": "HOW IT WORKS",
+   "box": {
+    "x": 230,
+    "y": 1150,
+    "w": 881,
+    "h": 50
+   }
+  },
+  {
+   "type": "image",
+   "src": "https://static.wixstatic.com/media/1ac9e9_469545db4e5b40b9b3b517634dbdfead~mv2.png/v1/fill/w_188,h_173,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Seal-for-web-V1.png",
+   "alt": "Seal-for-web-V1.png",
+   "natural": {
+    "w": 188,
+    "h": 173
+   },
+   "box": {
+    "x": 895,
+    "y": 1214,
+    "w": 188,
+    "h": 173
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Longer sleeve provide a most effective protection by keeping",
+   "box": {
+    "x": 240,
+    "y": 1269,
+    "w": 653,
+    "h": 31
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "the centrifugal wave inside the double-wall high resistance sleeve",
+   "box": {
+    "x": 240,
+    "y": 1300,
+    "w": 653,
+    "h": 31
+   }
+  },
+  {
+   "type": "video",
+   "url": "https://www.youtube.com/embed/Uqh-0zgbgyU?wmode=transparent&autoplay=0&mute=0&theme=dark&controls=1&autohide=1&loop=0&showinfo=0&rel=0&enablejsapi=0",
+   "provider": "youtube",
+   "box": {
+    "x": 346,
+    "y": 1395,
+    "w": 440,
+    "h": 259
+   }
+  },
+  {
+   "type": "paragraph",
+   "text": "Click here to see this tool in 3D",
+   "box": {
+    "x": 413,
+    "y": 1851,
+    "w": 574,
+    "h": 36
+   }
+  },
+  {
+   "type": "link",
+   "url": "https://portal.worldcast.io/show/MK732voRrWOXz0ANdX0XNY6gywqBbknl4a9P-esp-vortex-desander-high-resistance/",
+   "text": "Click here to see this tool in 3D",
+   "external": true,
+   "box": {
+    "x": 487,
+    "y": 1849,
+    "w": 426,
+    "h": 40
+   }
+  }
+ ]
+}

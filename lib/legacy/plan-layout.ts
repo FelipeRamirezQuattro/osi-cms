@@ -64,15 +64,19 @@ export interface ProductPlan {
   fieldChanges: FieldChange[];
   /** Fields where the DB value differs from what the importer wrote, so it is left alone. */
   keptHumanEdits: { field: string; db: string | null; scrape: string | null }[];
-  benefitsChange: { from: string[]; to: string[] } | null;
+  benefitsChange: { from: string[]; to: string[]; rows: { title: string; body?: string }[] } | null;
   layoutApplied: boolean;
   layoutNote?: string;
   /** Layout to write (importer-owned products only). */
   layout: LayoutSeed[];
 }
 
+/** QA marked these "Complete" (Oct 21–24): they are not touched. */
+export const QA_COMPLETE = new Set(["gas-vent-tac", "vortex-desander"]);
+
 export function planProduct(m: MappedProductLayout, db: DbProduct, prev: PreviousImport | null): ProductPlan {
   const plan: ProductPlan = { slug: m.slug, status: db.status, action: "unchanged", fieldChanges: [], keptHumanEdits: [], benefitsChange: null, layoutApplied: false, layout: [] };
+  if (QA_COMPLETE.has(m.slug)) return { ...plan, action: "skip", reason: "QA marked this product complete — left as is" };
 
   // Scalars: the importer owns a field when the DB still holds what it wrote (or nothing at all).
   for (const [dbField, prevField, newField] of FIELD_MAP) {
@@ -90,7 +94,7 @@ export function planProduct(m: MappedProductLayout, db: DbProduct, prev: Previou
   const newTitles = m.benefits.map((b) => b.title);
   if (stable(dbTitles) !== stable(newTitles) && newTitles.length > 0) {
     const owned = dbTitles.length === 0 || (prev ? stable(prev.benefits.map((b) => b.title)) === stable(dbTitles) : false);
-    if (owned) plan.benefitsChange = { from: dbTitles, to: newTitles };
+    if (owned) plan.benefitsChange = { from: dbTitles, to: newTitles, rows: m.benefits };
     else plan.keptHumanEdits.push({ field: "benefits", db: dbTitles.join(" | "), scrape: newTitles.join(" | ") });
   }
 
@@ -134,7 +138,7 @@ export function productSql(plan: ProductPlan, db: DbProduct, m: MappedProductLay
   if (plan.benefitsChange) {
     lines.push("  delete from product_benefits where product_id = pid;");
     lines.push(
-      `  insert into product_benefits (product_id, title, position) values ${plan.benefitsChange.to.map((t, i) => `(pid, ${q(t)}, ${(i + 1) * 10})`).join(", ")};`,
+      `  insert into product_benefits (product_id, title, body, position) values ${plan.benefitsChange.rows.map((r, i) => `(pid, ${q(r.title)}, ${qn(r.body ?? null)}, ${(i + 1) * 10})`).join(", ")};`,
     );
   }
   if (plan.layoutApplied) {
