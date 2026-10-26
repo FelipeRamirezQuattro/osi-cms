@@ -18,6 +18,7 @@ import { buttonGroupBlock } from "@/components/blocks/button-group";
 import { resourceListBlock } from "@/components/blocks/resource-list";
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { imageGalleryBlock } from "@/components/blocks/image-gallery";
+import { mediaTextBlock } from "@/components/blocks/media-text";
 import { stagesCarouselBlock } from "@/components/blocks/stages-carousel";
 import {
   Divider,
@@ -452,6 +453,23 @@ export default async function StyleguidePage() {
           ],
         })}
       />
+
+      <Section bg="cream">
+        <Heading>Media + text — video beside / above its paragraph</Heading>
+      </Section>
+      {(["media-left", "media-right", "media-above"] as const).map((layout) => (
+        <div key={layout} data-media-text={layout}>
+          <mediaTextBlock.Render
+            data={mediaTextBlock.schema.parse({
+              title: layout === "media-above" ? "Test horizontal well" : "",
+              mediaType: "video",
+              videoUrl: "https://www.youtube.com/embed/abc123",
+              layout,
+              body: "OSI has facilities to carry out flow and pressure tests to demonstrate the efficiency of our tools.\n\nA second paragraph keeps the text column honest at every width.",
+            })}
+          />
+        </div>
+      ))}
 
       <Section bg="cream">
         <Heading>Interactive media — stages</Heading>
