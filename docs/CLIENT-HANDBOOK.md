@@ -634,7 +634,12 @@ this and when" without having to ask around.
 
 ## Extra content on a product page
 
-Besides the fixed sections (benefits, video, "How does it work?", specifications), a product can have **Extra content blocks** — shown below them. Open the product, scroll to "Extra content blocks" and add the same kinds of blocks you use on pages (video, image, text, a headed list of cards, …). Use the arrows to reorder, **Hide** to keep a block without showing it, **Remove** to delete it. Click **Save** as usual.
+Below the product header, a product page is an ordered list called **Page layout**. It mixes two kinds of rows:
+
+- **Linked** rows are the product's own sections — Benefits, Stages, Video, Downloads (PDF + 3D), Body text and Specifications. Their content is edited in the product form (each row says which part). You can move them, **Hide** them and change their heading (leave the heading empty for none), but not remove them, so no data is lost.
+- **Other blocks** you add: video, image, text, a headed list of cards, and **Media + text** — a video or image with its paragraph beside it or under it. Use the arrows to reorder, **Hide** to keep a block without showing it, **Remove** to delete it.
+
+Click **Save** as usual. A product that has not been given a layout yet shows the original order (Benefits, Stages, Video, Downloads, Body, Specifications, then extra blocks).
 
 Products that aren't published yet can be reviewed with the **Preview** button at the top of the product's edit screen (it opens `/preview/products/<category>/<product-slug>` in a new tab; you must be signed in, the product needs a saved category, and it shows the last saved version). In that preview a dashed note or a greyed button marks anything still missing, such as a PDF or 3D link; visitors never see those.
 

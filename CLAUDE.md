@@ -585,6 +585,10 @@ time. Real sends need `publish` (admin); drafting/preview/test need
 (`lib/newsletter/readiness.ts` reports what's missing). All four are unset
 in production until the client supplies them — see `docs/CONTENT-GAPS.md`.
 
+## Products: ordered layout (Oct 2026)
+
+A product page = pinned hero, then the **ordered list** in `product_blocks`, then pinned Related/Resources. Rows are either ordinary registry blocks or *linked* sections (`lib/products/layout.ts`: `product_benefits|stages|video|downloads|body|specs`) that render the product's own data; a linked row stores only `{title, background}` (empty title = no heading) and can be moved/hidden/retitled but never removed (editor + `saveProductAction` enforce it). No linked rows → the original template renders (`components/products/product-detail-view.test.tsx` snapshot pins it). New block `media_text` = video/image beside or above its paragraph. Re-import path: `scripts/rescrape-products.ts` → `lib/legacy/map-layout.ts` → `scripts/plan-product-layouts.ts` (read-only; emits guarded SQL under docs/qa/, which is gitignored). See docs/DECISIONS.md.
+
 ## Products: extra blocks and previews (batch-2 pass)
 
 `product_blocks` (0047) holds free-form blocks rendered after a product's fixed sections by `components/products/product-detail-view.tsx` (shared by `/products/...` and the staff-only `/preview/products/...`). Edited via `components/admin/product-blocks-field.tsx`; saved by `saveProductBlocks` (delete+insert — see docs/DECISIONS.md for why not atomic). Failed saves in the page/shared-section/product editors open `AlertDialog` (`components/admin/ui/alert*.tsx`, hook `use-block-problem-alert.tsx`) — use these, never `alert()` or a text line at the top of a page. Importer: `pnpm migrate:batch2 [--unpublish-batch2-edited] [--dry-run]`; helpers `rescrape:targeted`, `migrate:batch1-images`.
