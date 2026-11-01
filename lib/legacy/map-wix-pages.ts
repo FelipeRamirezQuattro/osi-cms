@@ -251,8 +251,6 @@ export function genericBlocks(items: ScrapedItem[], ctx: Ctx): BlockSeed[] {
 
 const hero = (title: string, extra: Record<string, Json> = {}): BlockSeed => ({ type: "hero_page", data: { background: "navy", title, ...extra } });
 const ncase = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
-const findText = (items: ScrapedItem[], text: string) =>
-  items.find((i) => (i.type === "heading" || i.type === "paragraph") && ncase(i.text) === ncase(text));
 const textOf = (i: ScrapedItem | undefined) => (i && (i.type === "heading" || i.type === "paragraph") ? i.text : "");
 
 // ---------- recipes (one per page that is a layout, not prose) ----------
