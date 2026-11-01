@@ -74,6 +74,7 @@ Re-capture on the day (`T-48h` step) and compare. These are what you restore on 
 | `selector1._domainkey.odessaseparator.com` | **CNAME** | `selector1-odessaseparator-com._domainkey.odsep.onmicrosoft.com` | — | **Never** |
 | `selector2._domainkey.odessaseparator.com` | **CNAME** | `selector2-odessaseparator-com._domainkey.odsep.onmicrosoft.com` | — | **Never** |
 | `autodiscover.odessaseparator.com` | **CNAME** | `autodiscover.outlook.com` | — | **Never** |
+| `learning.odessaseparator.com` | **A** | `96.18.5.227` (OSI's e-learning site, Moodle on Apache/PHP; captured 1 Nov 2026) | — | **Never** — must still resolve after the cutover |
 | anything else in the Wix zone | ? | **Export the full list from the Wix DNS page** and attach it to the go/no-go ticket. `dig` cannot list a zone; there may be records (verification TXTs, subdomains) it can't see. | | Never |
 
 Commands to capture/compare:
@@ -139,6 +140,8 @@ dashboard, **[Terminal]** repo root `OSI_CMS/` with `.env.local` present.
    Set `odessaseparator.com` as the primary; set `www.odessaseparator.com` to **redirect to `odessaseparator.com`** (308).
    Both show "Invalid Configuration" until DNS changes — expected.
 5. **[Wix]** Verify access, export the full DNS record list, save it with this runbook. Decide 4.2.
+   The export must include **every** record, not only the ones in section 3: at least `learning` (the e-learning site), `MX`, SPF/other `TXT`, DKIM (`selector1/2._domainkey`), `_dmarc`, `autodiscover` and any other `CNAME`/`A` for a subdomain.
+   Before the cutover, check each one is present in whichever zone will answer after the switch (if nameservers move away from Wix, **recreate every record there first**, then compare with `dig`). `learning` is the one that is easy to forget: it is not in the Wix sitemap and nothing on the new site links to it except the footer.
 6. **[Supabase]** Authentication → URL Configuration: *add* (do not replace yet) `https://odessaseparator.com/**` to Redirect URLs.
 7. **Google Search Console** (https://search.google.com/search-console): add a **Domain** property
    `odessaseparator.com`; it asks for a TXT record — add that one TXT record in the zone (it is additive and safe).
@@ -261,6 +264,7 @@ Expected for #2 on the apex: `91 paths … ok 91, mismatch 0, error 0` (the coun
 - [ ] **Admin emails** — admin login works; *Forgot password* sends a mail whose button goes to `https://odessaseparator.com/admin/auth/confirm?...`, pressing it opens the reset form.
 - [ ] `https://odessaseparator.com/search?q=gas` returns products; `https://odessaseparator.com/this-does-not-exist` is a 404 page with the site header.
 - [ ] Browser address bar after clicking through 5 pages never shows `osi-cms.vercel.app`.
+- [ ] **E-learning subdomain still works:** `curl -sI https://learning.odessaseparator.com/ | head -1` → `HTTP/1.1 200 OK` (it is a Moodle site; expect a `MoodleSession` cookie), and `dig +short learning.odessaseparator.com A` returns the same address as before the cutover (`96.18.5.227` on 1 Nov 2026). Open it in a browser once.
 
 ---
 
