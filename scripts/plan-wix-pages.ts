@@ -10,6 +10,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+// @ts-expect-error jsdom ships no types and @types/jsdom is not a dependency (no new dependency for a script)
 import { JSDOM } from "jsdom";
 import { extractItems, orderForReading } from "../lib/legacy/wix-dom";
 import { WIX_PAGE_SPECS, mapWixPage, type MappedWixPage } from "../lib/legacy/map-wix-pages";
