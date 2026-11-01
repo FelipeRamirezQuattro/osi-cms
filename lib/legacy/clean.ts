@@ -13,16 +13,26 @@ export interface ItemBox {
   h: number;
 }
 
+/** One styled stretch of inline text (the DOM-snapshot scrape keeps these; the older scrapes only have flat text). */
+export interface Run {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  /** https:, mailto:, tel:, or a same-site/anchor URL exactly as the page links it. */
+  href?: string;
+}
+
 export type ScrapedItem = (
-  | { type: "heading"; level: number; text: string }
-  | { type: "paragraph"; text: string; href?: string }
-  | { type: "list"; ordered: boolean; items: string[] }
+  | { type: "heading"; level: number; text: string; href?: string; runs?: Run[] }
+  | { type: "paragraph"; text: string; href?: string; runs?: Run[] }
+  | { type: "list"; ordered: boolean; items: string[]; itemRuns?: Run[][] }
   | { type: "table"; rows: string[][] }
-  | { type: "image"; src: string; alt: string; caption?: string; natural?: { w: number; h: number } }
+  | { type: "image"; src: string; alt: string; caption?: string; natural?: { w: number; h: number }; href?: string; /** CSS background image, not an <img> (usually decoration). */ bg?: boolean }
   | { type: "video"; url: string; provider: "youtube" | "wix" | "other" }
+  | { type: "embed"; url: string }
   | { type: "pdf"; url: string; text: string }
   | { type: "link"; url: string; text: string; external: boolean }
-) & { box?: ItemBox };
+) & { box?: ItemBox; /** Index of the Wix <section> the item sat in (DOM-snapshot scrape only). */ section?: number; /** Id of the Wix text box (parent element) the item came from; one person's card is one group. */ group?: number };
 
 const ZERO_WIDTH = /[​-‏⁠﻿]/g;
 
@@ -97,6 +107,7 @@ const itemKey = (item: ScrapedItem): string => {
     case "image":
       return `image:${imageIdentity(item.src)}`;
     case "video":
+    case "embed":
     case "pdf":
     case "link":
       return `${item.type}:${item.url}`;
