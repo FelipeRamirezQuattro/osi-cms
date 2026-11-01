@@ -162,7 +162,27 @@ function main() {
       "",
     );
   }
-  fs.writeFileSync(path.join(OUT, "pages-reimport-diff.md"), [...lines, "", "## Per page", "", ...detail].join("\n"));
+  // Spanish headings, sentence-cased from Wix's all-caps; the spelling (no accents on the caps ones) is Wix's.
+  const spanish = plans
+    .filter((p) => p.spec.slug === "hse/sg-sst-policies")
+    .flatMap((p) => p.mapped.blocks.flatMap((b) => (b.type === "rich_text" ? ((b.data as { content: { content: { type: string; content?: { text: string }[] }[] } }).content.content.filter((n) => n.type === "heading").map((n) => n.content?.[0]?.text ?? "")) : [])));
+  const notesFile = path.join(OUT, "pages-reimport-notes.md");
+  const notes = fs.existsSync(notesFile) ? fs.readFileSync(notesFile, "utf8") : "";
+  fs.writeFileSync(
+    path.join(OUT, "pages-reimport-diff.md"),
+    [
+      ...lines,
+      "",
+      "## Per page",
+      "",
+      ...detail,
+      "## Spanish headings on SG-SST (Wix's spelling kept, no accents added; OSI may want them)",
+      "",
+      ...spanish.map((t) => `- ${t}`),
+      "",
+      notes,
+    ].join("\n"),
+  );
   console.log(lines.join("\n"));
   if (failed) {
     console.error("\nPlan FAILED: a page has Wix text that is neither in the blocks nor listed as not carried over (see docs/qa/pages-reimport-diff.md).");

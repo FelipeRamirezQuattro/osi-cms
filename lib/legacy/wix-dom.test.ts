@@ -130,8 +130,20 @@ describe("headings stay separate", () => {
   });
 
   it("makes a large short paragraph a heading (SMS Terms and Conditions)", () => {
-    const [h] = read(`<p data-fs="40" data-fw="400" data-box="0,0,964,58"><span data-fs="40">SMS Terms and Conditions</span></p>`);
-    expect(h).toMatchObject({ type: "heading", text: "SMS Terms and Conditions" });
+    const items = read(
+      `<p data-fs="17">By accessing the Service You agree to be bound by these Terms and Conditions, and the Company may change them at any time.</p>` +
+        `<p data-fs="40" data-fw="400" data-box="0,0,964,58"><span data-fs="40">SMS Terms and Conditions</span></p>`,
+    );
+    expect(items[1]).toMatchObject({ type: "heading", text: "SMS Terms and Conditions" });
+  });
+
+  it("keeps big text a paragraph when the whole page is set big (Machine Shop)", () => {
+    const items = read(
+      `<p data-fs="30">Diameters up 30 and lengths up to 160 for every job we take on.</p>` +
+        `<p data-fs="30" data-box="0,0,766,41"><span data-fs="30">These machines can be capable of facing, threading,</span></p>` +
+        `<p data-fs="30">knurling, drilling, boring, reaming, and taper turning.</p>`,
+    );
+    expect(items.every((i) => i.type === "paragraph")).toBe(true);
   });
 
   it("keeps a link wrapped around a heading's text", () => {

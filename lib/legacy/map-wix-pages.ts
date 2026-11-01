@@ -564,7 +564,7 @@ export function parseCard(paragraphs: Extract<ScrapedItem, { type: "paragraph" }
       } else pending += r.text;
     }
     const left = pending.replace(/[|\s]+$/g, "").replace(/^[|\s]+/g, "");
-    if (/[A-Za-z0-9]/.test(left) && !/^(e-?mail|cell|office|phone|fax)\s*:?$/i.test(left)) plain.push(left);
+    if (/[A-Za-z0-9].*[A-Za-z0-9]/.test(left) && !/^(e-?mail|cell|office|phone|fax)\s*:?$/i.test(left)) plain.push(left);
   }
   // US distributors: the first line is the company, the bold line the person.
   if (opts.companyFirst && plain.length) card.company = plain.shift();

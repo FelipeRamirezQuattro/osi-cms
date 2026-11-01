@@ -106,7 +106,7 @@ The 91 existing redirects are not touched. The 5 missing paths are added in the 
 | `/esp-surge-valve` | redirect | /products?category=gas-separation |  |  |
 | `/esp-vortex-desander-capillar-osi` | redirect | /products?category=chemical-treatment |  |  |
 | `/osihappyhour` | redirect | /news | Retire |  |
-| `/gas-release-system-bypass` | MISSING | **404** |  | Proposed → Gas Release System product (by reference). Wix page titled "GRSB". Not in the 96-address inventory. Proposed: redirect to the Gas Release System product; OSI to confirm whether it is a product of its own. |
+| `/gas-release-system-bypass` | MISSING | **404** |  | Proposed → Gas Release System product (by reference). Wix page titled "GRSB". Not in the 96-address inventory. Proposed: redirect to the Gas Release System product. **Pending OSI confirmation** (is it a product of its own?). |
 | `/hot-oil-tool` | redirect | /products?category=sand-control |  |  |
 | `/surge-valve-packer-type-gas-separat` | redirect | /products?category=gas-separation |  |  |
 | `/single-post/odessa-separator-inc-acquires-acs-pump-and-supply-from-diamondback-energy` | redirect | /blog |  | Only blog post. Redirects to /blog; it is not imported as a news item (see below). |
