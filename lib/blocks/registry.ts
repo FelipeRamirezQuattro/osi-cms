@@ -21,6 +21,7 @@ import { arModelBlock } from "@/components/blocks/ar-model";
 import { contactFormBlock } from "@/components/blocks/contact-form";
 import { newsletterSignupBlock } from "@/components/blocks/newsletter-signup";
 import { contactDetailsBlock } from "@/components/blocks/contact-details";
+import { peopleCardsBlock } from "@/components/blocks/people-cards";
 import { ctaBandBlock } from "@/components/blocks/cta-band";
 import { richTextBlock } from "@/components/blocks/rich-text";
 import { accordionBlock } from "@/components/blocks/accordion";
@@ -65,6 +66,7 @@ export const blockRegistry: Record<string, BlockDefinition<unknown>> = {
   contact_form: contactFormBlock,
   newsletter_signup: newsletterSignupBlock,
   contact_details: contactDetailsBlock,
+  people_cards: peopleCardsBlock,
   cta_band: ctaBandBlock,
   rich_text: richTextBlock,
   accordion: accordionBlock,

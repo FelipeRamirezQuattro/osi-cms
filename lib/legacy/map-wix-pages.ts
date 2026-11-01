@@ -37,6 +37,30 @@ export interface MapOptions {
   assetUrl?: (url: string, kind: WixAsset["kind"]) => string;
 }
 
+// ---------- spacing: blocks of one Wix section sit closer together ----------
+
+const GROUPS = new WeakMap<BlockSeed, string | number>();
+const grp = <T extends BlockSeed>(g: string | number | undefined, seeds: T[]): T[] => {
+  if (g != null) for (const b of seeds) GROUPS.set(b, g);
+  return seeds;
+};
+
+/**
+ * Consecutive blocks of the same section use the existing compact spacing ("sm") between them instead of
+ * each carrying full section padding: first block md/sm, middle sm/sm, last sm/md. No new tokens.
+ */
+export function applySectionSpacing(blocks: BlockSeed[]): BlockSeed[] {
+  blocks.forEach((b, i) => {
+    const g = GROUPS.get(b);
+    if (g == null) return;
+    const sameBefore = i > 0 && GROUPS.get(blocks[i - 1]) === g;
+    const sameAfter = i < blocks.length - 1 && GROUPS.get(blocks[i + 1]) === g;
+    if (!sameBefore && !sameAfter) return;
+    b.data = { ...b.data, spacingTop: sameBefore ? "sm" : "md", spacingBottom: sameAfter ? "sm" : "md" };
+  });
+  return blocks;
+}
+
 // ---------- links ----------
 
 const WIX_TO_CMS: Record<string, string> = {
@@ -163,12 +187,19 @@ export function genericBlocks(items: ScrapedItem[], ctx: Ctx): BlockSeed[] {
   const blocks: BlockSeed[] = [];
   const lvl = levelMap(items);
   let doc = new Doc(ctx.href);
+  let docSec: number | undefined;
   const flushDoc = () => {
-    if (!doc.empty) blocks.push(doc.toBlock());
+    if (!doc.empty) blocks.push(...grp(docSec, [doc.toBlock()]));
     doc = new Doc(ctx.href);
   };
   let images: Img[] = [];
+  let imgSec: number | undefined;
   const flushImages = () => {
+    const before = blocks.length;
+    flushImagesInner();
+    grp(imgSec, blocks.slice(before));
+  };
+  const flushImagesInner = () => {
     if (images.length === 1) {
       const { url, alt } = imageData(images[0], ctx, items);
       blocks.push({ type: "image", data: { background: "cream", imageUrl: url, alt, decorative: false, ...(images[0].href && !isDocument(images[0].href) && { href: cmsHref(images[0].href) }) } });
@@ -181,8 +212,9 @@ export function genericBlocks(items: ScrapedItem[], ctx: Ctx): BlockSeed[] {
     images = [];
   };
   let buttons: { label: string; href: string }[] = [];
+  let btnSec: number | undefined;
   const flushButtons = () => {
-    for (let i = 0; i < buttons.length; i += 3) blocks.push({ type: "button_group", data: { background: "cream", alignment: "left", buttons: buttons.slice(i, i + 3) } });
+    for (let i = 0; i < buttons.length; i += 3) blocks.push(...grp(btnSec, [{ type: "button_group", data: { background: "cream", alignment: "left", buttons: buttons.slice(i, i + 3) } } as BlockSeed]));
     buttons = [];
   };
   const flushAll = () => {
@@ -201,17 +233,20 @@ export function genericBlocks(items: ScrapedItem[], ctx: Ctx): BlockSeed[] {
         }
         flushImages();
         flushButtons();
+        if (doc.empty) docSec = it.section;
         doc.heading(headingText(it.text), lvl(it.level));
         break;
       }
       case "paragraph":
         flushImages();
         flushButtons();
+        if (doc.empty) docSec = it.section;
         doc.paragraph(runsOf(it));
         break;
       case "list":
         flushImages();
         flushButtons();
+        if (doc.empty) docSec = it.section;
         doc.list(it.itemRuns ?? it.items.map((t) => [{ text: t }]));
         break;
       case "image":
@@ -225,17 +260,19 @@ export function genericBlocks(items: ScrapedItem[], ctx: Ctx): BlockSeed[] {
         }
         flushDoc();
         flushButtons();
+        if (!images.length) imgSec = it.section;
         images.push(it);
         break;
       case "pdf":
       case "link":
         flushDoc();
         flushImages();
+        if (!buttons.length) btnSec = it.section;
         buttons.push({ label: it.text || (it.type === "pdf" ? "Download" : it.url), href: ctx.href(it.url) });
         break;
       case "video":
         flushAll();
-        blocks.push({ type: "video_embed", data: { background: "cream", videoUrl: it.url } });
+        blocks.push(...grp(it.section, [{ type: "video_embed", data: { background: "cream", videoUrl: it.url } } as BlockSeed]));
         break;
       case "embed":
         flushAll();
@@ -327,7 +364,7 @@ const machineShop: Recipe = (items, ctx) => {
       for (const x of texts) t.paragraph([{ text: x }]);
       out.push(t.toBlock());
     }
-    return out;
+    return grp(heading, out);
   };
   const p = (start: string) => items.find((i) => i.type === "paragraph" && i.text.startsWith(start));
   const diameters = items.find((i) => i.type === "heading" && i.text.startsWith("Diameters"));
@@ -345,10 +382,10 @@ const machineShop: Recipe = (items, ctx) => {
   blocks.push(...sec(headingText("WE ARE HERE TO PARTNER WITH YOU"), null, []));
   blocks.push(...sec(headingText("PLASMA CUTTING MACHINE"), textOf(combines), [img("4d2dc0bc573f")!, img("6d30f0d4a2bf")!].filter(Boolean) as Img[]));
   blocks.push(...sec(headingText("TURNING CENTERS"), textOf(diameters), [img("0f68c2e20492")!, img("2584e4035ef4")!, ...(turning ? [turning] : [])].filter(Boolean) as (Img | string)[]));
-  blocks.push(doc.toBlock());
+  blocks.push(...grp("Services", [doc.toBlock()]));
   blocks.push(...sec(headingText("VERTICAL MACHINING CENTERS"), null, [...vertical, img("7e85f9f8c326")!, ...(vmcText ? [vmcText] : [])].filter(Boolean) as (Img | string)[]));
   blocks.push(...sec(headingText("WELDING ROBOTS"), null, [img("b67b503462e0")!, ...(welding ? [welding] : [])].filter(Boolean) as (Img | string)[]));
-  return blocks;
+  return { blocks, hero: { eyebrow: "Useful for your needs" } };
 };
 
 /** Careers: organization summary beside a photo, then the ADP job board as a button (never copy the listings). */
@@ -392,6 +429,7 @@ const hse: Recipe = (items, ctx) => {
 /** SG-SST (Spanish, kept as on Wix): seven sections in Wix's order, every PDF a download, each document preview image with a factual alt. */
 const sgSst: Recipe = (items, ctx) => {
   const blocks: BlockSeed[] = [];
+  const starts: number[] = [];
   const img = (needle: string) => items.find((i): i is Img => i.type === "image" && i.src.includes(needle));
   const pdfBy = (needle: string) => items.find((i): i is Extract<ScrapedItem, { type: "pdf" }> => i.type === "pdf" && i.url.includes(needle));
   const button = (pdf: Extract<ScrapedItem, { type: "pdf" }> | undefined): BlockSeed[] =>
@@ -408,14 +446,17 @@ const sgSst: Recipe = (items, ctx) => {
     d.heading(headingText(t), 2);
     return d;
   };
-  const h = (starts: string) => items.find((i) => i.type === "heading" && ncase(i.text).startsWith(ncase(starts)));
+  // Wix sets some of these titles as headings and some as large paragraphs; either way they are the section titles.
+  const h = (starts: string) => items.find((i) => (i.type === "heading" || i.type === "paragraph") && ncase(i.text).startsWith(ncase(starts)));
 
   // 1. Política de seguridad y salud en el trabajo
+  starts.push(blocks.length);
   blocks.push(heading(textOf(h("Politica de seguridad"))).toBlock());
   blocks.push(...picture("33dae9e75649", "Vista previa del documento «Política de seguridad y salud en el trabajo», código OSI-SST-003, versión 03", "preview of the PDF's first page; the PDF is the real content"));
   blocks.push(...button(pdfBy("a02f2924")));
 
   // 2. Política (healthy habits / substances / teleworking)
+  starts.push(blocks.length);
   const polHead = h("Política");
   const list = items.find((i) => i.type === "list" && i.items[0]?.startsWith("Estilos de Vida"));
   const d2 = heading(textOf(polHead));
@@ -425,19 +466,22 @@ const sgSst: Recipe = (items, ctx) => {
   blocks.push(...button(pdfBy("827e2388")));
 
   // 3. Estadísticas de acoso sexual en el trabajo (the two counters are text drawn inside the image)
+  starts.push(blocks.length);
   const stats = new Doc(ctx.href);
   stats.heading(headingText(`${textOf(h("ESTADÍSTICAS DE ACOSO"))} ${textOf(h("SEXUAL EN EL TRABAJO"))}`), 2);
   stats.list([[{ text: "Quejas tramitadas: 0" }], [{ text: "Sanciones impuestas: 0" }]]);
   blocks.push(stats.toBlock());
-  blocks.push(...picture("7669b47c02f7", "Quejas tramitadas: 0. Sanciones impuestas: 0.", "text drawn in the image (\"Quejas tramitadas 0 / Sanciones impuestas 0\"), repeated above as a real list"));
+  ctx.skipped.push("Quejas-acoso2.png: the two counters (Quejas tramitadas 0 / Sanciones impuestas 0) drawn as an image; they are the real list above, so the picture is not repeated");
   blocks.push(...button(pdfBy("bc1012de")));
 
   // 4. Política de prevención de la violencia, acoso y discriminación
+  starts.push(blocks.length);
   blocks.push(heading(textOf(h("POLITICA DE PREVENCION"))).toBlock());
   blocks.push(...picture("112bb04b9069", "Vista previa del documento «Política de prevención de la violencia, el acoso y la discriminación en el trabajo», código OSI-SST-004, versión 03", "preview of the PDF's first page; the PDF is the real content"));
   blocks.push(...button(pdfBy("e24a9af5")));
 
   // 5. Formato para presentar quejas + mailto
+  starts.push(blocks.length);
   blocks.push(heading(textOf(h("FORMATO PARA PRESENTAR"))).toBlock());
   blocks.push(...button(pdfBy("7a478fe6")));
   const mail = items.find((i) => i.type === "paragraph" && i.text.startsWith("Descargar y enviar"));
@@ -448,6 +492,7 @@ const sgSst: Recipe = (items, ctx) => {
   }
 
   // 6. Valores corporativos
+  starts.push(blocks.length);
   const values = items.filter((i) => i.type === "paragraph" && ["Sostenibilidad", "Mejoramiento Continuo", "Consistencia", "Respeto", "Justicia"].includes(i.text));
   const d6 = heading(textOf(h("VALORES CORPORATIVOS")));
   d6.list(values.map((v) => [{ text: textOf(v) }]));
@@ -459,35 +504,165 @@ const sgSst: Recipe = (items, ctx) => {
   }
 
   // 7. Tarjeta líder
+  starts.push(blocks.length);
   blocks.push(heading(textOf(h("TARJETA"))).toBlock());
   blocks.push(...button(pdfBy("ecba681c")));
+  starts.forEach((from, n) => grp(`sst-${n}`, blocks.slice(from, starts[n + 1] ?? blocks.length)));
   return blocks;
 };
 
-/** Contact: Wix's directory as sections below the existing map/form blocks (which the migration leaves in place). */
+const HQ_ADDRESS = /^1001 pearl st,? odessa,? tx 79761$/i;
+const LOGO_ALT: Record<string, string> = {
+  "2f4b0dc17b6141c395841d330f69fc6d": "Velocity ALS (named from the card's email domain; Wix's alt was a file name)",
+  "037c659643aa46a9bba1304e451c22a4": "Western Oilfield Specialties",
+};
+const logoAlt = (src: string, alt: string) => {
+  const known = Object.entries(LOGO_ALT).find(([id]) => src.includes(id))?.[1];
+  if (known) return known;
+  return alt.replace(/\.(png|jpe?g|webp)$/i, "").replace(/[-_]+/g, " ").replace(/\b(logo|vector|reversed|final|ok)\b/gi, "").replace(/\s*\d{3,}x\d{3,}\s*/g, " ").replace(/\s+/g, " ").trim();
+};
+
+export interface PersonCard {
+  name: string;
+  region?: string;
+  company?: string;
+  title?: string;
+  address?: string;
+  phones: { label?: string; number: string }[];
+  emails: string[];
+  logoUrl?: string;
+  logoAlt?: string;
+}
+
+/** One Wix text box (a person) → card fields. Wording is untouched; labels such as "Cell:" move into the phone's label. */
+export function parseCard(paragraphs: Extract<ScrapedItem, { type: "paragraph" }>[], opts: { companyFirst?: boolean; name?: string } = {}): PersonCard {
+  const card: PersonCard = { name: "", phones: [], emails: [] };
+  const plain: string[] = [];
+  const boldLines: string[] = [];
+  for (const p of paragraphs) {
+    const runs = runsOf(p);
+    const hasContact = runs.some((r) => r.href && /^(tel|mailto):/i.test(r.href));
+    if (!hasContact) {
+      const line = p.text.trim();
+      if (!line) continue;
+      const emailInText = line.match(/^[\w.+-]+@[\w-]+(\.[\w-]+)+$/);
+      if (emailInText) card.emails.push(line);
+      else if (runs.every((r) => r.bold)) boldLines.push(line);
+      else plain.push(line);
+      continue;
+    }
+    let pending = "";
+    for (const r of runs) {
+      if (r.href && /^tel:/i.test(r.href)) {
+        const m = pending.match(/(?:^|[\s|])([A-Za-z-]{1,10})\s*[:：]?\s*$/);
+        card.phones.push({ ...(m && { label: m[1] }), number: r.text.trim() });
+        pending = m ? pending.slice(0, m.index) : pending;
+      } else if (r.href && /^mailto:/i.test(r.href)) {
+        // (Wix once typed the first letter of an address outside its link: "Email: L" + "guanacas@…"; the link target is the real address.)
+        pending = pending.replace(/(?:^|[\s|])(e-?mail)\s*[:：]?\s*[A-Za-z]?$/i, "");
+        card.emails.push(r.href.replace(/^mailto:/i, "").trim());
+      } else pending += r.text;
+    }
+    const left = pending.replace(/[|\s]+$/g, "").replace(/^[|\s]+/g, "");
+    if (/[A-Za-z0-9]/.test(left) && !/^(e-?mail|cell|office|phone|fax)\s*:?$/i.test(left)) plain.push(left);
+  }
+  // US distributors: the first line is the company, the bold line the person.
+  if (opts.companyFirst && plain.length) card.company = plain.shift();
+  const bold = opts.name ? [opts.name] : boldLines.length ? boldLines : plain.splice(0, 1);
+  if (bold.length > 1) {
+    card.company = bold[0];
+    card.name = bold[1];
+  } else card.name = bold[0] ?? "";
+  // The first plain line without digits is the job title; the rest is the address (unless it is head office).
+  const titleAt = plain.findIndex((l) => !/\d/.test(l));
+  if (titleAt === 0 && plain[0] !== card.company) card.title = plain.shift();
+  else if (titleAt === 0) plain.shift(); // the same company name repeated as the title line
+  const address = plain.join("\n");
+  if (address && !HQ_ADDRESS.test(address.replace(/\n/g, ", "))) card.address = address;
+  // Keys in reading order (the text-coverage guard reads them in this order).
+  return { ...(card.region && { region: card.region }), ...(card.company && { company: card.company }), name: card.name, ...(card.title && { title: card.title }), ...(card.address && { address: card.address }), phones: card.phones, emails: card.emails };
+}
+
+/**
+ * The two distributor sections are free-floating text boxes (a card's lines, phones and address sit in
+ * different boxes), so their cards are listed by the first words of the boxes that belong to each one.
+ */
+type CuratedCard = { anchors: string[]; logo?: string; companyFirst?: boolean; nameFallback?: string };
+const US_DISTRIBUTORS: CuratedCard[] = [
+  { anchors: ["Evolution Completions"], companyFirst: true },
+  { anchors: ["Jameson Specialties, Inc"], companyFirst: true },
+  { anchors: ["Harris Sales Co."], companyFirst: true },
+];
+const INTL_DISTRIBUTORS: CuratedCard[] = [
+  { anchors: ["William Aya"], logo: "2f4b0dc17b61" },
+  { anchors: ["Juan Perdomo"], logo: "2f4b0dc17b61" },
+  { anchors: ["Ali Al Habsi", "+968 9921 6924"], logo: "c3b813c9beeb" },
+  { anchors: ["Douglas Tenías"], logo: "2d52998184b7" },
+  { anchors: ["Brian Waterhouse"], logo: "037c659643aa" },
+  { anchors: ["Brad Metke"], logo: "037c659643aa" },
+  { anchors: ["1585 W Sam Houston"], logo: "b83fd16c6301", nameFallback: "Power flow" },
+  { anchors: ["Daniel Sanchez", "Phone: +54 9 11 4005 5540"], logo: "5349705fcdbf" },
+  { anchors: ["Abdullah Sakr", "14G, Ahmed Kamel St."], logo: "8ea6e74ec4794" },
+  { anchors: ["Rana M. El-Saghier"], logo: "8ea6e74ec4794" },
+  { anchors: ["Silvio Diazgranados", "Street 113"], logo: "9a02c4bcb7e0" },
+];
+
+/** Contact: Wix's directory as people cards below the existing map/form blocks (which the migration leaves in place). */
 const contact: Recipe = (items, ctx) => {
   const blocks: BlockSeed[] = [];
-  const headings = items.filter((i): i is Extract<ScrapedItem, { type: "heading" }> => i.type === "heading" && !!i.box).sort((a, b) => a.box!.y - b.box!.y);
+  const REGIONS = ["NORTH DAKOTA", "CALIFORNIA", "OKLAHOMA"];
+  // Wix sets each US distributor's company name as a heading inside its card; those are not sections.
+  const CARD_HEADINGS = ["Evolution Completions", "Jameson Specialties, Inc", "Harris Sales Co."];
+  const headings = items.filter((i): i is Extract<ScrapedItem, { type: "heading" }> => i.type === "heading" && !!i.box && !REGIONS.includes(i.text) && !CARD_HEADINGS.includes(i.text)).sort((a, b) => a.box!.y - b.box!.y);
+  const regionHeads = items.filter((i): i is Extract<ScrapedItem, { type: "heading" }> => i.type === "heading" && REGIONS.includes(i.text) && !!i.box);
   const after = items.find((i): i is Img => i.type === "image" && i.src.includes("617f7421ba51"));
   if (after) {
-    ctx.imageOfText.push(`${imageIdentity(after.src)}: "After hours, holidays and weekend. Call us: +1-432-580-7111" drawn in the image, repeated below as real text`);
-    const { url } = imageData(after, ctx, items, "After hours, holidays and weekend. Call us: +1-432-580-7111");
+    ctx.imageOfText.push(`${imageIdentity(after.src)}: "After hours, holidays and weekend. Call us: +1-432-580-7111" drawn in the image; only the sentence with a tel: link is carried over`);
     const d = new Doc(ctx.href);
     d.paragraph([{ text: "After hours, holidays and weekend. Call us: " }, { text: "+1-432-580-7111", href: "tel:+14325807111" }]);
     blocks.push(d.toBlock());
-    void url; // the picture is a phone handset + the same words; only the text is carried over
   }
   headings.forEach((hd, n) => {
     const top = hd.box!.y;
     const bottom = headings[n + 1]?.box!.y ?? Infinity;
     const inSection = items.filter((i) => i !== hd && i.box && i.box.y >= top && i.box.y < bottom);
-    // One card per Wix text box (group); the first bold line is the person's name.
+    const curated = hd.text === "US Distributors" ? US_DISTRIBUTORS : hd.text === "International Distributors" ? INTL_DISTRIBUTORS : null;
+    if (curated) {
+      const paras = inSection.flatMap((i): Extract<ScrapedItem, { type: "paragraph" }>[] =>
+        i.type === "paragraph" ? [i] : i.type === "heading" && CARD_HEADINGS.includes(i.text) ? [{ type: "paragraph", text: i.text, box: i.box, section: i.section, group: i.group }] : [],
+      );
+      const people: PersonCard[] = [];
+      for (const spec of curated) {
+        const groups = new Set<number>();
+        for (const a of spec.anchors) {
+          const hit = paras.find((p) => p.text.startsWith(a));
+          if (hit?.group != null) groups.add(hit.group);
+        }
+        const mine = paras.filter((p) => (p.group != null && groups.has(p.group)) || spec.anchors.some((a) => p.text.startsWith(a)));
+        mine.sort((a, b) => a.box!.y - b.box!.y || a.box!.x - b.box!.x);
+        const card = parseCard(mine, { companyFirst: spec.companyFirst, name: spec.nameFallback });
+        if (spec.nameFallback) ctx.flags.push("card_name_from_logo_alt");
+        const x0 = Math.min(...mine.map((p) => p.box!.x));
+        const region = regionHeads.find((r) => r.box!.x + r.box!.w / 2 > x0 && r.box!.x < x0 + 330);
+        if (region && spec.companyFirst) card.region = region.text.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+        const logo = spec.logo ? inSection.find((i): i is Img => i.type === "image" && i.src.includes(spec.logo!)) : undefined;
+        if (logo) {
+          const alt = logoAlt(logo.src, logo.alt) || card.company || card.name;
+          imageData(logo, ctx, items, alt);
+          card.logoUrl = ctx.assetUrl(wixOriginalUrl(logo.src), "image");
+          card.logoAlt = alt;
+          if (Object.keys(LOGO_ALT).some((id) => logo.src.includes(id))) ctx.flags.push("logo_alt_inferred");
+        }
+        people.push(card);
+      }
+      blocks.push({ type: "people_cards", data: { background: "cream", title: headingText(hd.text), cards: people as unknown as Json } });
+      return;
+    }
     const byGroup = new Map<number, Extract<ScrapedItem, { type: "paragraph" }>[]>();
     for (const i of inSection) if (i.type === "paragraph" && i.group != null) byGroup.set(i.group, [...(byGroup.get(i.group) ?? []), i]);
     const cards = [...byGroup.values()]
       .map((ps) => ({ ps, x: Math.min(...ps.map((p) => p.box!.x)), y: Math.min(...ps.map((p) => p.box!.y)), w: Math.max(...ps.map((p) => p.box!.w)) }))
       .sort((a, b) => a.y - b.y || a.x - b.x);
-    // Rows: cards whose tops are within 100px read left to right.
     const rows: (typeof cards)[] = [];
     for (const c of cards) {
       const row = rows[rows.length - 1];
@@ -495,29 +670,30 @@ const contact: Recipe = (items, ctx) => {
       else rows.push([c]);
     }
     const ordered = rows.flatMap((r) => r.sort((a, b) => a.x - b.x));
-    const logos = inSection.filter((i): i is Img => i.type === "image" && !i.bg);
-    let doc = new Doc(ctx.href);
-    doc.heading(headingText(hd.text), 2);
+    const logos = inSection.filter((i): i is Img => i.type === "image" && !i.bg && !i.src.includes("617f7421ba51"));
     const place = new Map<(typeof ordered)[number], Img>();
     for (const logo of logos) {
       const lb = logo.box!;
+      // A logo sits above (or beside) its person: the nearest card whose columns overlap it.
       const best = ordered
-        .filter((c) => c.x < lb.x + lb.w && c.x + c.w > lb.x && c.y >= lb.y - 20 && !place.has(c))
-        .sort((a, b) => a.y - b.y)[0];
+        .filter((c) => c.x < lb.x + lb.w + 30 && c.x + c.w > lb.x - 30 && c.y >= lb.y - 40 && !place.has(c))
+        .sort((a, b) => Math.abs(a.y - lb.y) - Math.abs(b.y - lb.y))[0];
       if (best) place.set(best, logo);
       else ctx.skipped.push(`logo ${logo.alt} not tied to a person card`);
     }
-    for (const c of ordered) {
+    const people = ordered.map((c) => {
+      const card = parseCard(c.ps);
       const logo = place.get(c);
       if (logo) {
-        if (!doc.empty) blocks.push(doc.toBlock());
-        doc = new Doc(ctx.href);
-        const { url, alt } = imageData(logo, ctx, items, logo.alt.replace(/\.(png|jpe?g)$/i, "").trim() || undefined);
-        blocks.push({ type: "image", data: { background: "cream", imageUrl: url, alt, decorative: false, alignment: "left", displayWidth: 200 } });
+        const { url } = imageData(logo, ctx, items, logoAlt(logo.src, logo.alt) || card.company || card.name);
+        card.logoUrl = url;
+        card.logoAlt = logoAlt(logo.src, logo.alt) || card.company || card.name;
+        if (LOGO_ALT[Object.keys(LOGO_ALT).find((id) => logo.src.includes(id)) ?? ""]) ctx.flags.push("logo_alt_inferred");
       }
-      for (const p of c.ps) doc.paragraph(runsOf(p));
-    }
-    if (!doc.empty) blocks.push(doc.toBlock());
+      return card;
+    });
+    if (!people.length) return;
+    blocks.push({ type: "people_cards", data: { background: "cream", title: headingText(hd.text), cards: people as unknown as Json } });
   });
   return blocks;
 };
@@ -530,6 +706,10 @@ export interface PageSpec {
   recipe?: Recipe;
   /** "append": keep the page's existing blocks and add these after them (Contact). */
   mode?: "replace" | "append";
+  /** Wix text the page deliberately does not carry over (checked by the planner's coverage guard), with the reason. */
+  notCarried?: { match: RegExp; reason: string }[];
+  /** A leading label the mapper moved into structure (e.g. "Email:" on a people card). */
+  movedLabels?: RegExp;
 }
 
 export const WIX_PAGE_SPECS: PageSpec[] = [
@@ -542,7 +722,12 @@ export const WIX_PAGE_SPECS: PageSpec[] = [
   { slug: "careers/hiring", file: "careers__hiring", title: "Hiring", template: "standard" },
   { slug: "hse", file: "hse", title: "HSE", template: "standard", recipe: hse },
   { slug: "hse/sg-sst-policies", file: "hse__sg-sst-policies", title: "SG-SST Policies", template: "standard", recipe: sgSst },
-  { slug: "contact", file: "contact", title: "Contact", template: "contact", recipe: contact, mode: "append" },
+  { slug: "contact", file: "contact", title: "Contact", template: "contact", recipe: contact, mode: "append", movedLabels: /^e-?mail\s*:?\s*/i,
+    notCarried: [
+      { match: /^1001 Pearl St, Odessa, TX 79761$/, reason: "head-office address; cards show an address only when it differs (the footer shows this one)" },
+      { match: /^M: \+2 01090222018 I /, reason: "Wix has a stray letter \"I\" (a typo for a separator) between the phone and the email; both are carried" },
+    ],
+  },
   { slug: "privacy-policy", file: "privacy-policy", title: "Privacy Policy", template: "legal" },
   { slug: "terms-and-conditions", file: "terms-and-conditions", title: "Terms and Conditions", template: "legal" },
 ];
@@ -550,7 +735,7 @@ export const WIX_PAGE_SPECS: PageSpec[] = [
 export function mapWixPage(spec: PageSpec, items: ScrapedItem[], opts: MapOptions = {}): MappedWixPage {
   const ctx = newCtx(spec.title, opts);
   const result: RecipeResult = spec.recipe ? spec.recipe(items, ctx) : genericBlocks(items, ctx);
-  const blocks = Array.isArray(result) ? result : result.blocks;
+  const blocks = applySectionSpacing(Array.isArray(result) ? result : result.blocks);
   const heroExtra = Array.isArray(result) ? {} : result.hero;
   const darkHero = spec.template === "legal" ? "cream" : "navy";
   if (spec.mode === "append") return { slug: spec.slug, mode: "append", blocks, assets: ctx.assets, flags: [...new Set(ctx.flags)], imageOfText: ctx.imageOfText, skipped: ctx.skipped };

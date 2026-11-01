@@ -42,6 +42,7 @@ export const BLOCK_APPEARANCE_CAPABILITIES = {
   contact_form: { surface: true, accent: true, typography: ["heading", "label"] },
   newsletter_signup: { surface: true, accent: true, typography: ["heading", "label"] },
   contact_details: { surface: true, accent: false, typography: ["heading", "label"] },
+  people_cards: { surface: true, accent: false, typography: ["heading", "label"] },
   cta_band: { surface: true, accent: true, typography: ["heading"] },
   rich_text: { surface: true, accent: true, typography: ["heading", "body"] },
   accordion: { surface: true, accent: false, typography: ["heading", "body"] },

@@ -290,6 +290,15 @@ export function extractItems(root: ParentNode): ScrapedItem[] {
     return s ? sections.indexOf(s) : undefined;
   };
 
+  // The page's usual paragraph size (median over text, by length): a paragraph is only "set as a heading"
+  // when it is clearly bigger than that. Machine Shop sets all of its body text large, Terms sets it at 17px.
+  const sizes: number[] = [];
+  for (const p of Array.from(root.querySelectorAll("p[data-fs]"))) {
+    const len = stripZeroWidth(p.textContent ?? "").trim().length;
+    for (let k = 0; k < Math.min(len, 400); k += 20) sizes.push(num(p.getAttribute("data-fs")));
+  }
+  sizes.sort((a, b) => a - b);
+  const bodyFont = sizes.length ? sizes[Math.floor(sizes.length / 2)] : 16;
   const groups = new Map<Element, number>();
   const groupOf = (el: Element) => {
     const parent = el.parentElement;
@@ -313,7 +322,7 @@ export function extractItems(root: ParentNode): ScrapedItem[] {
       // A paragraph Wix set in a heading weight and size ("SMS Terms and Conditions") is a heading.
       const pRuns = inlineRunsOf(el);
       const pText = plain(pRuns);
-      if (pText && pText.length <= 80 && !pRuns.some((r) => r.text === "\n") && largestFont(el) >= 24) {
+      if (pText && pText.length <= 80 && !pRuns.some((r) => r.text === "\n") && largestFont(el) >= Math.max(24, 1.6 * bodyFont)) {
         items.push({ type: "heading", level: 2, text: pText, ...(box && { box }), ...(section != null && { section }), group });
         return;
       }

@@ -67,6 +67,7 @@ export const BLOCK_TYPE_KEYS = [
   "contact_form",
   "newsletter_signup",
   "contact_details",
+  "people_cards",
   "cta_band",
   "rich_text",
   "accordion",
