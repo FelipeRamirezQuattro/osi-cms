@@ -60,8 +60,9 @@ test.describe("email flows (dry-run)", () => {
     await expect(notification).toBeVisible();
     await expect(notification).toContainText("Reply-To");
     await expect(notification.locator("iframe")).toHaveCount(1);
-    // The submission itself is still saved.
+    // The submission itself is still saved. The inbox row shows the visitor's email; the name only appears once the row is expanded.
     await page.goto("/admin/submissions");
+    await page.getByText(visitor).first().click();
     await expect(page.getByText(`Contact ${stamp}`).first()).toBeVisible();
   });
 
