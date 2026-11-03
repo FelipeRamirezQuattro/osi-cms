@@ -127,6 +127,20 @@ QA counted 21 event pages: **Keep** 9, **Archive as news** 2, **Retire** 10 (the
 recommendations only; nothing in the CMS was changed for them. `/osi-at-pbalf` is one of the 10 to retire and was not in the
 original 96-address inventory — it is the only event page missing from the redirect table.
 
+### Checks on three draft event pages (P8 — report only, nothing was changed or published)
+
+Checked on 2026-11-03 against the live Wix pages and YouTube itself (oEmbed status plus the player's own `playabilityStatus`).
+The three drafts in the CMS (`one-minute-manager`, `training-vid-1`, `reciclaje`) are all `draft`.
+
+| Page | Question | Finding |
+|---|---|---|
+| One Minute Manager | YouTube links don't work: Wix too, or only our import? | **Broken at the source, and the page no longer exists on Wix** (`https://www.odessaseparator.com/one-minute-manager` answers 404, so it is unpublished there and not in Wix's sitemap). All 4 videos it embeds (`SE2wi7zBvSg`, `LCUTRWLk-Z8`, `sah4DSUgM4s`, `DuIDnLX6rUQ`) are **private** on YouTube ("Video privado", login required). Not an import error. QA marks the page "Keep": OSI must either make the 4 videos public/unlisted, give us replacements, or drop the page. |
+| Training Vid 1 | "Beam pumping" and "sucker rod pump" unavailable: Wix too? | **Broken on Wix too.** The live Wix page embeds the same IDs. `SvktBZJiG04` ("Beam Pumping", 7th video) and `YoHYz7VA28A` ("Sucker Rod Pump", 9th video) are **removed from YouTube** ("Video no disponible"). The other 9 videos play. Our draft matches Wix one to one. Fix needs OSI to supply new links for those two, or the two sections can be removed. |
+| Reciclaje | QA says it is really an ESP Vortex Regulator video: confirm. | **Confirmed, and it is larger than one video.** The live page (`/reciclaje`, 200) is a copy of the home-page layout, not a recycling page: "ESP Vortex Regulator ™" (patent US 2017/0268322 A1, "Play" / "CLOSE VALVE"), the 145+ customers metrics, UltraMesh, ESP PMM Guardian video, Top Bypass Valve text, a job-openings list, the chemical-treatment and gas/sand sections, and the Silvio Diazgranados contact card. The title "Reciclaje" is a leftover name. The draft also carries 3 Wix-hosted custom-HTML embeds (`filesusr.com`: a TradingView WTI/Brent chart and an oilprice.com chart, both live-market widgets) and a Wix map; those depend on Wix hosting and are not videos. One link on the page (`watch?v=6WJYG4m8AKg`) is also unavailable. Suggest not keeping it as a page; OSI to decide. |
+
+QA's recommendations for all 21 event pages are in the "Event decision (QA)" column of the table above (Keep 9, Archive as
+news 2, Retire 10). Note for the **Keep** ones: One Minute Manager and Reciclaje cannot be published as they stand, for the reasons above.
+
 ## Not in any sitemap (checked)
 
 - `https://learning.odessaseparator.com/` is a **subdomain** (A `96.18.5.227`, Apache/PHP, `MoodleSession` cookie → Moodle), so it is not a redirect.
