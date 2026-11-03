@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { optionalMapLinkSchema, optionalNullableString, optionalSafeHrefSchema } from "@/lib/validation/common";
+import { optionalMapLinkSchema, optionalNullableString, optionalSafeHrefSchema, requiredString } from "@/lib/validation/common";
 
 /**
  * site_settings.announcement_bar (jsonb, 0007_nav_settings_media.sql) —
@@ -15,6 +15,22 @@ export const announcementBarSchema = z.object({
 });
 
 export type AnnouncementBarInput = z.infer<typeof announcementBarSchema>;
+
+/** site_settings.footer_badges (jsonb, 0060): certification badges; `href` makes a badge a link. Alt text is required. */
+export const footerBadgeSchema = z.object({
+  imageUrl: requiredString("Badge image"),
+  alt: requiredString("Badge description"),
+  href: optionalSafeHrefSchema({ label: "Badge link" }),
+});
+
+/** site_settings.footer_utility_links (jsonb, 0060): small links shown under the footer columns. */
+export const footerUtilityLinkSchema = z.object({
+  label: requiredString("Link label"),
+  href: optionalSafeHrefSchema({ label: "Link URL" }).refine((v) => v !== null, "Link URL is required"),
+});
+
+export type FooterBadge = z.infer<typeof footerBadgeSchema>;
+export type FooterUtilityLink = z.infer<typeof footerUtilityLinkSchema>;
 
 /**
  * site_settings is a singleton row (supabase/migrations/0007) with every
@@ -42,6 +58,8 @@ export const siteSettingsSchema = z.object({
   social_youtube: optionalSafeHrefSchema({ label: "YouTube URL" }),
   social_instagram: optionalSafeHrefSchema({ label: "Instagram URL" }),
   footer_tagline: optionalNullableString(),
+  footer_badges: z.array(footerBadgeSchema).max(6, "At most 6 badges").default([]),
+  footer_utility_links: z.array(footerUtilityLinkSchema).max(8, "At most 8 links").default([]),
   default_og_image: optionalNullableString(),
   announcement_bar: announcementBarSchema.default({
     enabled: false,

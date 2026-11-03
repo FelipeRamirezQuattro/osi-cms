@@ -10,6 +10,7 @@ import type { BrandingConfig } from "@/lib/branding/schema";
 import type { MediaAsset } from "@/lib/data/media";
 import { OSI_SEED_BRANDING_CONFIG } from "@/lib/branding/seed";
 import { longTitle } from "@/lib/text/long-title";
+import { FooterExtras } from "@/components/layout/footer-extras";
 
 const SOCIAL_LINKS = [
   { key: "social_facebook", label: "Facebook" },
@@ -81,6 +82,8 @@ export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
             </div>
           ))}
         </div>
+
+        <FooterExtras utilityLinks={settings.footer_utility_links} badges={settings.footer_badges} />
 
         <div className="mt-12 grid gap-8 border-t border-white/12 pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <address className="max-w-xl text-sm not-italic leading-relaxed text-white/64">

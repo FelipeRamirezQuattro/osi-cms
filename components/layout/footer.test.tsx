@@ -78,3 +78,46 @@ describe("Footer nav links honor is_external", () => {
     expect(link?.getAttribute("rel")).toBeNull();
   });
 });
+
+describe("Footer extras (site_settings.footer_utility_links / footer_badges)", () => {
+  const render = async (extra: Record<string, unknown>) => {
+    mockGetNavMenu.mockResolvedValue([]);
+    mockGetSiteSettings.mockResolvedValue({ phone: null, address_lines: [], social_facebook: null, social_linkedin: null, social_youtube: null, social_instagram: null, ...extra });
+    const container = document.createElement("div");
+    container.innerHTML = renderToStaticMarkup(await Footer());
+    return container;
+  };
+
+  it("renders nothing for empty or missing settings", async () => {
+    expect((await render({ footer_utility_links: [], footer_badges: [] })).querySelector("[data-footer-extras]")).toBeNull();
+    expect((await render({})).querySelector("[data-footer-extras]")).toBeNull();
+  });
+
+  it("renders links (external ones in a new tab) and badges with alt text; a linked badge is one named link", async () => {
+    const c = await render({
+      footer_utility_links: [
+        { label: "SG-SST Policies", href: "/hse/sg-sst-policies" },
+        { label: "E-learning", href: "https://learning.example.com/" },
+      ],
+      footer_badges: [
+        { imageUrl: "https://x.supabase.co/storage/v1/object/public/media/a.jpg", alt: "ISO 9001", href: null },
+        { imageUrl: "https://x.supabase.co/storage/v1/object/public/media/b.jpg", alt: "ISO 45001 by SGS", href: "https://www.sgs.com/es-co" },
+      ],
+    });
+    const links = c.querySelector("ul[aria-label='Footer links']")!;
+    expect(links.textContent).toContain("SG-SST Policies");
+    expect(links.querySelector("a[href='/hse/sg-sst-policies']")?.getAttribute("target")).toBeNull();
+    expect(links.querySelector("a[href^='https://learning']")?.getAttribute("target")).toBe("_blank");
+    const badges = c.querySelectorAll("ul[aria-label='Certifications'] li");
+    expect(badges).toHaveLength(2);
+    expect([...badges].map((li) => li.querySelector("img")?.getAttribute("alt"))).toEqual(["ISO 9001", "ISO 45001 by SGS"]);
+    expect(badges[0].querySelector("a")).toBeNull();
+    expect(badges[1].querySelector("a")?.getAttribute("href")).toBe("https://www.sgs.com/es-co");
+  });
+
+  it("skips malformed entries instead of rendering broken ones", async () => {
+    const c = await render({ footer_utility_links: [{ label: "", href: "/x" }, { label: "Ok", href: "/ok" }, "junk"], footer_badges: [{ imageUrl: "", alt: "" }] });
+    expect(c.querySelectorAll("ul[aria-label='Footer links'] li")).toHaveLength(1);
+    expect(c.querySelector("ul[aria-label='Certifications']")).toBeNull();
+  });
+});

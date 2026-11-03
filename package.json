@@ -30,7 +30,8 @@
     "report:product-readiness": "tsx --env-file=.env.local scripts/report-product-readiness.ts",
     "verify:redirects": "tsx --env-file=.env.local scripts/verify-redirects.ts",
     "backup:export": "tsx --env-file=.env.local scripts/backup-export.ts",
-    "import:page-assets": "tsx --env-file=.env.local scripts/import-page-assets.ts"
+    "import:page-assets": "tsx --env-file=.env.local scripts/import-page-assets.ts",
+    "import:footer-assets": "tsx --env-file=.env.local scripts/import-footer-assets.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

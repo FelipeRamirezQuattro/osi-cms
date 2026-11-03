@@ -1821,7 +1821,9 @@ export type Database = {
           created_at: string
           default_og_image: string | null
           email: string | null
+          footer_badges: Json
           footer_tagline: string | null
+          footer_utility_links: Json
           id: boolean
           map_embed_url: string | null
           phone: string | null
@@ -1837,7 +1839,9 @@ export type Database = {
           created_at?: string
           default_og_image?: string | null
           email?: string | null
+          footer_badges?: Json
           footer_tagline?: string | null
+          footer_utility_links?: Json
           id?: boolean
           map_embed_url?: string | null
           phone?: string | null
@@ -1853,7 +1857,9 @@ export type Database = {
           created_at?: string
           default_og_image?: string | null
           email?: string | null
+          footer_badges?: Json
           footer_tagline?: string | null
+          footer_utility_links?: Json
           id?: boolean
           map_embed_url?: string | null
           phone?: string | null

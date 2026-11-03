@@ -22,6 +22,27 @@ const SETTINGS_FIELDS: FieldSpec[] = [
   { key: "social_youtube", label: "YouTube URL", type: "text", optional: true },
   { key: "social_instagram", label: "Instagram URL", type: "text", optional: true },
   { key: "footer_tagline", label: "Footer tagline", type: "text", optional: true },
+  {
+    key: "footer_utility_links",
+    label: "Footer links (e.g. SG-SST Policies, E-learning)",
+    type: "array",
+    maxItems: 8,
+    itemFields: [
+      { key: "label", label: "Label", type: "text" },
+      { key: "href", label: "Link (a page path like /contact, or a full https:// URL)", type: "text" },
+    ],
+  },
+  {
+    key: "footer_badges",
+    label: "Certification badges (footer)",
+    type: "array",
+    maxItems: 6,
+    itemFields: [
+      { key: "imageUrl", label: "Badge image", type: "image" },
+      { key: "alt", label: "Description for screen readers", type: "text" },
+      { key: "href", label: "Link (optional)", type: "text", optional: true },
+    ],
+  },
   { key: "default_og_image", label: "Default social image", type: "image", optional: true },
   {
     key: "announcement_bar",
