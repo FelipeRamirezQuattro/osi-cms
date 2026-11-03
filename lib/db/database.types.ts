@@ -352,6 +352,45 @@ export type Database = {
           },
         ]
       }
+      email_outbox: {
+        Row: {
+          created_at: string
+          from_address: string
+          headers: Json
+          html_body: string | null
+          id: string
+          kind: string
+          reply_to: string | null
+          subject: string
+          text_body: string
+          to_address: string
+        }
+        Insert: {
+          created_at?: string
+          from_address: string
+          headers?: Json
+          html_body?: string | null
+          id?: string
+          kind: string
+          reply_to?: string | null
+          subject: string
+          text_body: string
+          to_address: string
+        }
+        Update: {
+          created_at?: string
+          from_address?: string
+          headers?: Json
+          html_body?: string | null
+          id?: string
+          kind?: string
+          reply_to?: string | null
+          subject?: string
+          text_body?: string
+          to_address?: string
+        }
+        Relationships: []
+      }
       form_definitions: {
         Row: {
           created_at: string
@@ -665,6 +704,13 @@ export type Database = {
             foreignKeyName: "nav_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "nav_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -732,6 +778,7 @@ export type Database = {
           locale?: string
           published_at?: string | null
           reading_minutes?: number | null
+          search_body?: string | null
           search_vector?: unknown
           slug: string
           status?: string
@@ -755,6 +802,7 @@ export type Database = {
           locale?: string
           published_at?: string | null
           reading_minutes?: number | null
+          search_body?: string | null
           search_vector?: unknown
           slug?: string
           status?: string
@@ -988,6 +1036,42 @@ export type Database = {
           },
         ]
       }
+      page_blocks_backup_20261102: {
+        Row: {
+          backed_up_at: string
+          created_at: string
+          data: Json
+          id: string
+          is_visible: boolean
+          page_id: string
+          position: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          backed_up_at?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          page_id: string
+          position: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          backed_up_at?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          page_id?: string
+          position?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_publications: {
         Row: {
           locale: string
@@ -1003,6 +1087,7 @@ export type Database = {
           locale?: string
           page_id: string
           published_at?: string
+          search_body?: string | null
           search_vector?: unknown
           slug: string
           snapshot: Json
@@ -1012,6 +1097,7 @@ export type Database = {
           locale?: string
           page_id?: string
           published_at?: string
+          search_body?: string | null
           search_vector?: unknown
           slug?: string
           snapshot?: Json
@@ -1144,6 +1230,13 @@ export type Database = {
             foreignKeyName: "product_applications_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_applications_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -1181,6 +1274,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "product_benefits_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
           {
             foreignKeyName: "product_benefits_product_id_fkey"
             columns: ["product_id"]
@@ -1226,10 +1326,53 @@ export type Database = {
             foreignKeyName: "product_blocks_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_blocks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
+      }
+      product_blocks_backup_20261103: {
+        Row: {
+          backed_up_at: string
+          created_at: string
+          data: Json
+          id: string
+          is_visible: boolean
+          position: number
+          product_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          backed_up_at?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          position?: number
+          product_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          backed_up_at?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          is_visible?: boolean
+          position?: number
+          product_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       product_categories: {
         Row: {
@@ -1283,10 +1426,41 @@ export type Database = {
             foreignKeyName: "product_industries_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_industries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
+      }
+      product_layout_backup_20261025: {
+        Row: {
+          deleted_at: string
+          id: number
+          product_id: string
+          row_data: Json
+          table_name: string
+        }
+        Insert: {
+          deleted_at?: string
+          id?: never
+          product_id: string
+          row_data: Json
+          table_name: string
+        }
+        Update: {
+          deleted_at?: string
+          id?: never
+          product_id?: string
+          row_data?: Json
+          table_name?: string
+        }
+        Relationships: []
       }
       product_related: {
         Row: {
@@ -1309,8 +1483,22 @@ export type Database = {
             foreignKeyName: "product_related_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_related_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_related_related_product_id_fkey"
+            columns: ["related_product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
           },
           {
             foreignKeyName: "product_related_related_product_id_fkey"
@@ -1357,6 +1545,13 @@ export type Database = {
             foreignKeyName: "product_specs_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_specs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -1394,6 +1589,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "product_stages_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
           {
             foreignKeyName: "product_stages_product_id_fkey"
             columns: ["product_id"]
@@ -1538,6 +1740,13 @@ export type Database = {
             foreignKeyName: "redirects_target_product_id_fkey"
             columns: ["target_product_id"]
             isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "redirects_target_product_id_fkey"
+            columns: ["target_product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -1584,6 +1793,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "resources_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_documents"
+            referencedColumns: ["product_id"]
+          },
           {
             foreignKeyName: "resources_product_id_fkey"
             columns: ["product_id"]
@@ -1911,6 +2127,7 @@ export type Database = {
       has_capability: { Args: { capability: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      product_search_text: { Args: { pid: string }; Returns: string }
       publish_branding_atomic: {
         Args: { p_expected_version: number }
         Returns: undefined
@@ -2000,6 +2217,8 @@ export type Database = {
         }
         Returns: number
       }
+      search_page_text: { Args: { snapshot: Json }; Returns: string }
+      search_visible_text: { Args: { doc: Json }; Returns: string }
       swap_entity_position: {
         Args: { p_id_a: string; p_id_b: string; p_table: string }
         Returns: undefined
