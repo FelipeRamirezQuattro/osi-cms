@@ -1410,6 +1410,7 @@ export type Database = {
           brochure_pdf_url: string | null
           category_id: string | null
           created_at: string
+          diagram_caption: string | null
           diagram_image_url: string | null
           eyebrow: string | null
           hero_image_url: string | null
@@ -1434,6 +1435,7 @@ export type Database = {
           brochure_pdf_url?: string | null
           category_id?: string | null
           created_at?: string
+          diagram_caption?: string | null
           diagram_image_url?: string | null
           eyebrow?: string | null
           hero_image_url?: string | null
@@ -1458,6 +1460,7 @@ export type Database = {
           brochure_pdf_url?: string | null
           category_id?: string | null
           created_at?: string
+          diagram_caption?: string | null
           diagram_image_url?: string | null
           eyebrow?: string | null
           hero_image_url?: string | null

@@ -144,3 +144,14 @@ describe("ProductDetailView — ordered layout", () => {
     expect(html).toContain("Body copy.");
   });
 });
+
+describe("ProductDetailView — diagram caption", () => {
+  it("shows the caption under the hero diagram as a figcaption, and nothing when it is empty", () => {
+    const withCaption = new DOMParser().parseFromString(view({ ...product(), diagram_caption: "Denotes gas that enters the separator." }), "text/html");
+    const caption = withCaption.querySelector("figure > figcaption[data-diagram-caption]");
+    expect(caption?.textContent).toBe("Denotes gas that enters the separator.");
+    expect(caption?.closest("figure")?.querySelector("img, [data-technical-image], button")).not.toBeNull();
+    const without = new DOMParser().parseFromString(view({ ...product(), diagram_caption: null }), "text/html");
+    expect(without.querySelector("[data-diagram-caption]")).toBeNull();
+  });
+});

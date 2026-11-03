@@ -187,6 +187,7 @@ export function ProductDetailView({
             title: product.name,
             paragraphs: splitParagraphs(product.summary),
             diagramImageUrl: product.diagram_image_url ?? undefined,
+            diagramCaption: product.diagram_caption ?? undefined,
             ctaLabel: "Find a distributor",
             ctaHref: "/contact",
           }}

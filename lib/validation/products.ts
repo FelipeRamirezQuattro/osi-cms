@@ -62,6 +62,8 @@ export const productSaveInputSchema = z
     body: z.preprocess((v) => (v === undefined ? null : v), tiptapDocSchema.nullable().default(null)),
     hero_image_url: optionalNullableString(),
     diagram_image_url: optionalNullableString(),
+    // Caption under the diagram in the product hero (0062), e.g. the "Denotes gas / liquid" legend of a technical drawing.
+    diagram_caption: optionalNullableString(),
     // Rendered via VideoEmbedRender on the product detail page (see
     // CLAUDE.md's content gaps — no legacy video URLs exist yet, so this
     // renders nothing on every real product today, but the plumbing is

@@ -15,6 +15,8 @@ export const productHeroSchema = blockCommonSchema.extend({
   title: requiredString("Title"),
   paragraphs: z.array(z.string()).max(3).default([]),
   diagramImageUrl: z.string().optional(),
+  /** Caption under the diagram (a legend for the drawing); plain text. */
+  diagramCaption: z.string().optional(),
   ctaLabel: z.string().default("Find a distributor"),
   ctaHref: safeHrefSchema({ allowAnchor: true, label: "CTA link", defaultValue: "/contact" }),
 });
@@ -70,10 +72,28 @@ export function ProductHeroRender({ data }: { data: ProductHeroData }) {
             Contained, full-colour, on a light plate so the drawing's own
             white background doesn't float on navy. */}
         {data.diagramImageUrl ? (
-          <TechnicalImageViewer
-            image={{ url: resolveMediaUrl(data.diagramImageUrl), alt: `${data.title} diagram` }}
-            title={`${data.title} diagram`}
-          />
+          (() => {
+            const viewer = (
+              <TechnicalImageViewer
+                image={{ url: resolveMediaUrl(data.diagramImageUrl), alt: `${data.title} diagram` }}
+                title={`${data.title} diagram`}
+              />
+            );
+            // Without a caption the markup is exactly the original template (its snapshot test pins that).
+            return data.diagramCaption ? (
+              <figure className="m-0">
+                {viewer}
+                <figcaption
+                  data-diagram-caption
+                  className="mt-3 max-w-[var(--site-reading-width)] text-sm leading-relaxed text-[var(--block-muted-text,var(--brand-color-muted-text-on-light))]"
+                >
+                  {data.diagramCaption}
+                </figcaption>
+              </figure>
+            ) : (
+              viewer
+            );
+          })()
         ) : (
           <div className="flex aspect-[4/3] w-full items-end rounded-[var(--site-radius-lg)] border border-white/15 bg-osi-white/8 p-6 text-sm text-osi-slate-200">
             Technical image unavailable
@@ -90,6 +110,7 @@ const adminFields: FieldSpec[] = [
   { key: "title", label: "Title", type: "text" },
   { key: "paragraphs", label: "Paragraphs", type: "array", maxItems: 3 },
   { key: "diagramImageUrl", label: "Diagram image", type: "image", optional: true },
+  { key: "diagramCaption", label: "Diagram caption", type: "textarea", optional: true },
   { key: "ctaLabel", label: "CTA label", type: "text" },
   { key: "ctaHref", label: "CTA link", type: "text" },
 ];

@@ -25,6 +25,7 @@ export const PRODUCT_FIELDS: FieldSpec[] = [
     optional: true,
   },
   { key: "diagram_image_url", label: "Diagram image", type: "image", optional: true },
+  { key: "diagram_caption", label: "Diagram caption (shown under the diagram, e.g. a legend)", type: "textarea", optional: true },
   { key: "video_url", label: "Video URL", type: "text", optional: true },
   { key: "brochure_pdf_url", label: "Brochure PDF URL", type: "text", optional: true },
   { key: "model_3d_url", label: "3D model URL", type: "text", optional: true },
