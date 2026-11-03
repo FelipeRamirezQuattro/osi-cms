@@ -570,6 +570,21 @@ everyone, even people who dismissed the old wording.
 
 ![The Settings Announcement bar with its enable, message, and optional link controls marked](handbook/screenshots/settings-01-form.png)
 
+**Footer.** Three more boxes control the strip above the copyright line:
+**Footer links** (a label and a link each — for example *SG-SST Policies*
+or *E-learning*; use a page path such as `/contact` for a page on this
+site or a full `https://` address for another site, which opens in a new
+tab) and **Certification badges** (pick an image from the media library,
+write what it shows for screen readers, and optionally a link). The
+**Facebook, LinkedIn, YouTube and Instagram** boxes above become the round
+icons in the footer. Anything you leave empty simply isn't shown.
+
+**Site search.** The search box on the public site looks at the words
+visitors can read on a published page, news item or product — not only the
+title — and shows a short excerpt with the match highlighted. Drafts, hidden
+blocks and hidden product sections are never searched. A page you just
+published is searchable straight away.
+
 ## Redirects
 
 **Redirects** sends visitors from an old web address to a new one — use
