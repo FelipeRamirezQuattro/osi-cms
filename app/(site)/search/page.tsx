@@ -5,6 +5,7 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { EmptyState, Eyebrow } from "@/components/ui/public-primitives";
 import { searchSite } from "@/lib/data/search";
 import { normalizeSearchQuery } from "@/lib/search-query";
+import { highlightParts } from "@/lib/search-snippet";
 import { longTitle } from "@/lib/text/long-title";
 
 export const metadata: Metadata = {
@@ -86,9 +87,19 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
                 <h2 {...longTitle(result.title)} className="mt-1 font-editorial text-xl font-semibold leading-tight text-balance group-hover:underline group-hover:decoration-osi-gold-700 group-hover:underline-offset-4">
                   {result.title}
                 </h2>
-                {result.excerpt && (
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-osi-slate-300">
-                    {result.excerpt}
+                {(result.snippet ?? result.excerpt) && (
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-osi-slate-300">
+                    {result.snippet
+                      ? highlightParts(result.snippet, q).map((part, i) =>
+                          part.hit ? (
+                            <mark key={i} className="rounded-[2px] bg-osi-gold-500/30 px-0.5 font-semibold text-osi-navy-900">
+                              {part.text}
+                            </mark>
+                          ) : (
+                            part.text
+                          ),
+                        )
+                      : result.excerpt}
                   </p>
                 )}
               </Link>

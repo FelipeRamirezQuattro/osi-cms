@@ -83,7 +83,74 @@ test.describe("site search", () => {
     await expect(page.getByRole("heading", { name: "Start with a product or topic" })).toBeVisible();
   });
 
+  // --- P6: body text (migration 0061) ---
+  // These read page_publications.search_body, which exists once 0061 is applied; until then they skip.
+  test.describe("body text", () => {
+    let published: { slug: string; search_body: string | null; snapshot: { meta: { title: string } } }[] = [];
+    test.beforeAll(async ({ request }) => {
+      const res = await request.get(`${SUPABASE_URL}/rest/v1/page_publications?select=slug,search_body,snapshot`, {
+        headers: ANON_KEY?.startsWith("sb_") ? { apikey: ANON_KEY, "user-agent": "osi-e2e-readonly" } : { apikey: ANON_KEY!, Authorization: `Bearer ${ANON_KEY}` },
+      });
+      published = res.ok() ? await res.json() : [];
+    });
+    test.beforeEach(() => test.skip(published.length === 0, "Migration 0061_search_body_text.sql is not applied to this database."));
+
+    const mentions = (word: string) => published.filter((p) => new RegExp(`\\b${word}`, "i").test(p.search_body ?? ""));
+
+    // The three searches from the brief. They assert on whatever is published: a page whose body has the word must be found,
+    // and the named pages must be among them once their re-imported text is published.
+    for (const [word, slugs] of [
+      ["ISO", ["hse"]],
+      ["careers", ["careers", "careers/hiring"]],
+      ["machine shop", ["services/machine-shop"]],
+    ] as const) {
+      test(`"${word}" finds every published page whose body mentions it`, async ({ page }) => {
+        const expected = word.includes(" ") ? published.filter((p) => (p.search_body ?? "").toLowerCase().includes(word)) : mentions(word);
+        const named = slugs.filter((slug) => expected.some((p) => p.slug === slug));
+        test.skip(named.length === 0, `No published ${slugs.join(" / ")} page contains "${word}" yet (publish the re-imported draft).`);
+        await page.goto(`/search?q=${encodeURIComponent(word)}`);
+        for (const p of expected) await expect(page.locator(`main a[href="/${p.slug}"]`).first()).toBeVisible();
+        for (const slug of named) await expect(page.locator(`main a[href="/${slug}"]`).first()).toBeVisible();
+      });
+    }
+
+    test("a body-only match shows a short highlighted snippet, never the whole body", async ({ page }) => {
+      const bodyOnly = published.find((p) => (p.search_body ?? "").length > 400);
+      test.skip(!bodyOnly, "No published page with a long body.");
+      const title = bodyOnly!.snapshot.meta.title.toLowerCase();
+      const words = (bodyOnly!.search_body ?? "").toLowerCase().match(/[a-z]{7,}/g) ?? [];
+      const word = words.find((w) => !title.includes(w));
+      test.skip(!word, "No distinctive body word.");
+      await page.goto(`/search?q=${encodeURIComponent(word!)}`);
+      const card = page.locator(`main a[href="/${bodyOnly!.slug}"]`).first();
+      await expect(card).toBeVisible();
+      await expect(card.locator("mark").first()).toContainText(new RegExp(word!.slice(0, 5), "i"));
+      const text = (await card.locator("p").innerText()).trim();
+      expect(text.length).toBeLessThanOrEqual(175);
+      expect(text.length).toBeLessThan((bodyOnly!.search_body ?? "").length);
+    });
+
+    test("a word that exists only in a draft returns nothing", async ({ page, request }) => {
+      test.skip(!SERVICE_KEY, "Needs SUPABASE_SERVICE_ROLE_KEY to read draft blocks (read-only).");
+      const blocks = await rest<{ data: unknown }>(request, "page_blocks?select=data&limit=400", SERVICE_KEY);
+      const everythingPublished = published.map((p) => `${p.search_body} ${p.snapshot.meta.title}`).join(" ").toLowerCase();
+      const strings: string[] = [];
+      const walk = (v: unknown, key = "") => {
+        if (typeof v === "string") {
+          if (key === "text" || key === "title" || key === "body") strings.push(v);
+        } else if (Array.isArray(v)) v.forEach((x) => walk(x, key));
+        else if (v && typeof v === "object") for (const [k, x] of Object.entries(v)) walk(x, k);
+      };
+      for (const b of blocks) walk(b.data);
+      const word = (strings.join(" ").toLowerCase().match(/[a-z]{8,}/g) ?? []).find((w) => !everythingPublished.includes(w));
+      test.skip(!word, "Every draft word also appears in published content.");
+      await page.goto(`/search?q=${encodeURIComponent(word!)}`);
+      await expect(page.getByRole("heading", { name: "No results found" })).toBeVisible();
+    });
+  });
+
   const hostile: [string, string][] = [
+    ["a 500-character query", "iso ".repeat(125)],
     ["a lone percent sign", "%"],
     ["percent and underscore wildcards", "%_%"],
     ["an apostrophe", "O'Brien"],

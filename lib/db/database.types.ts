@@ -708,6 +708,7 @@ export type Database = {
           locale: string
           published_at: string | null
           reading_minutes: number | null
+          search_body: string | null
           search_vector: unknown
           slug: string
           status: string
@@ -992,6 +993,7 @@ export type Database = {
           locale: string
           page_id: string
           published_at: string
+          search_body: string | null
           search_vector: unknown
           slug: string
           snapshot: Json
@@ -1873,7 +1875,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      product_search_documents: {
+        Row: {
+          body_text: string | null
+          category_slug: string | null
+          name: string | null
+          product_id: string | null
+          search_vector: unknown
+          slug: string | null
+          status: string | null
+          summary: string | null
+          tagline: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       archive_page_atomic: { Args: { p_page_id: string }; Returns: undefined }
