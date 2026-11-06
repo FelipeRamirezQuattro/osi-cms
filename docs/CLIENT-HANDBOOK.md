@@ -99,6 +99,12 @@ preview can only show what was last saved.
 
 ![A published page editor with Version history and Unpublish marked without activating either control](handbook/screenshots/editing-a-page-04-version-history.png)
 
+**Changing a page that is already live.** Saving only updates the draft; the
+public page keeps showing the last published version. When a page (or shared
+section) is live, the header shows **Publish changes** next to **Unpublish** —
+click it to push your edits to the public site. You never need to unpublish
+first.
+
 ![The page editor at phone width with the save control and block header marked](handbook/screenshots/editing-a-page-05-mobile-editor.png)
 
 If you try to leave the page (closing the tab, or clicking **← Pages**)
