@@ -96,7 +96,7 @@ export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
             {settings.address_lines?.map((line) => <p key={line}>{line}</p>)}
           </address>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               {SOCIAL_LINKS.filter((s) => settings[s.key]).map((s) => (
                 <a
                   key={s.key}

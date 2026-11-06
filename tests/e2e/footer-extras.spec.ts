@@ -33,3 +33,27 @@ for (const width of [1440, 390, 320]) {
     expect(results.violations).toEqual([]);
   });
 }
+
+// QA (Entregable 7): "the SG-SST Policies link doesn't work". Click the real footer link from several pages (the live settings carry it).
+for (const from of ["/", "/about-us", "/products", "/services/machine-shop", "/hse"]) {
+  test(`footer SG-SST Policies link opens the policy page from ${from}`, async ({ page }) => {
+    await page.goto(from, { waitUntil: "networkidle" });
+    const link = page.locator("footer").getByRole("list", { name: "Footer links" }).getByRole("link", { name: "SG-SST Policies" });
+    await link.scrollIntoViewIfNeeded();
+    await expect(link).toHaveAttribute("href", "/hse/sg-sst-policies");
+    await link.click();
+    await page.waitForURL("**/hse/sg-sst-policies");
+    await expect(page.getByRole("heading", { level: 1, name: "SG-SST Policies" })).toBeVisible();
+  });
+}
+
+test("footer badges render in full colour (no filter)", async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+  const filters = await page
+    .locator("footer")
+    .getByRole("list", { name: "Certifications" })
+    .locator("img")
+    .evaluateAll((imgs) => imgs.map((i) => getComputedStyle(i).filter));
+  expect(filters.length).toBeGreaterThan(0);
+  for (const f of filters) expect(f).toBe("none");
+});

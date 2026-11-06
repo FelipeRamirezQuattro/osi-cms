@@ -47,9 +47,9 @@ export function FooterExtras({ utilityLinks, badges }: { utilityLinks: unknown; 
       {marks.length > 0 && (
         <ul aria-label="Certifications" className="flex flex-wrap items-center gap-3">
           {marks.map((badge) => {
-            // Badges are grey artwork on white, so they sit on a white plate to stay legible on the dark footer.
+            // Badge artwork has a white background, so it sits on a white plate to stay legible on the dark footer. Shown in full colour, no filter.
             const image = (
-              <Image src={resolveMediaUrl(badge.imageUrl)} alt={badge.alt} width={642} height={700} sizes="64px" className="h-16 w-auto" />
+              <Image src={resolveMediaUrl(badge.imageUrl)} alt={badge.alt} width={480} height={480} sizes="80px" className="h-20 w-auto" />
             );
             return (
               <li key={badge.imageUrl} className="rounded-sm bg-white p-1.5">

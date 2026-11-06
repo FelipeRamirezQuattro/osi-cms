@@ -2,7 +2,7 @@
  * Copies the two certification badges of the Wix footer into the media library (QA entregables 5/6, P4).
  * Wix serves both as crops of one image (Cert-45-9.jpg); content/legacy/footer holds the two crops.
  *
- * Run it BEFORE applying migration 0060 (which links these URLs from site_settings.footer_badges).
+ * Run it BEFORE applying migrations 0060 / 0063 (which link these URLs from site_settings.footer_badges).
  * Idempotent: an object/row that already exists is left alone. Touches no site content.
  *
  * Usage: pnpm import:footer-assets [--dry-run]
@@ -16,6 +16,9 @@ const DIR = path.join(import.meta.dirname, "..", "content", "legacy", "footer");
 const BADGES = [
   { file: "iso-9001-scb.jpg", alt: "ISO 9001 quality management certification, certified by SCB" },
   { file: "iso-45001-sgs.jpg", alt: "ISO 45001 occupational health and safety certification by SGS" },
+  // Full-colour originals from the Wix HSE page (QA: the footer crops above are grey artwork). Used by migration 0063.
+  { file: "iso-9001-scb-color.jpg", alt: "ISO 9001 quality management certification, certified by SCB" },
+  { file: "iso-45001-sgs-color.jpg", alt: "ISO 45001 occupational health and safety certification by SGS" },
 ];
 
 async function main() {
