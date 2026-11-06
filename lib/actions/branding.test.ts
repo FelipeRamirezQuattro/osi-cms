@@ -25,6 +25,7 @@ const { mockRequireAdmin, mockRequireCapability } = vi.hoisted(() => ({
   mockRequireAdmin: vi.fn(),
   mockRequireCapability: vi.fn(),
 }));
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/auth", () => ({
   requireAdmin: mockRequireAdmin,
   requireCapability: mockRequireCapability,

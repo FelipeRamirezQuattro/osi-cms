@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import { ENTITY_CONFIGS, type EntityKey } from "@/lib/admin/entity-config";
 import {
@@ -143,6 +144,7 @@ export async function saveEntityAction(
   try {
     if (id) {
       const row = await updateEntityRow(config.table, id, payload);
+      revalidatePublicSite();
       return { status: "success", id: row.id as string };
     }
     if (config.hasPosition) {
@@ -150,6 +152,7 @@ export async function saveEntityAction(
       payload.position = rows.length > 0 ? Number(rows[0].position ?? 0) + 1 : 0;
     }
     const row = await insertEntityRow(config.table, payload);
+    revalidatePublicSite();
     return { status: "success", id: row.id as string };
   } catch (err) {
     if (isUniqueViolationError(err)) {
@@ -182,6 +185,7 @@ export async function deleteEntityAction(entity: EntityKey, id: string): Promise
 
   try {
     await deleteEntityRow(ENTITY_CONFIGS[entity].table, id);
+    revalidatePublicSite();
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Delete failed." };
   }
@@ -196,6 +200,7 @@ export async function deleteEntityAction(entity: EntityKey, id: string): Promise
 export async function moveEntityAction(entity: EntityKey, id: string, direction: "up" | "down"): Promise<void> {
   await requireCapability("edit_drafts");
   await moveEntityRow(ENTITY_CONFIGS[entity].table, id, direction);
+  revalidatePublicSite();
 }
 
 export type ArchiveEntityResult = { status: "success" } | { status: "error"; message: string };
@@ -223,6 +228,7 @@ export async function archiveEntityAction(entity: EntityKey, id: string): Promis
 
   try {
     await updateEntityRow(config.table, id, { status: "archived" });
+    revalidatePublicSite();
     return { status: "success" };
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Archive failed." };
@@ -246,6 +252,7 @@ export async function restoreEntityAction(entity: EntityKey, id: string): Promis
 
   try {
     await updateEntityRow(config.table, id, { status: "draft" });
+    revalidatePublicSite();
     return { status: "success" };
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Restore failed." };

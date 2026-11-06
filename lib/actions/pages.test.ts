@@ -30,6 +30,7 @@ const { mockRequireAdmin, mockRequireAdminRole, mockRequireCapability } = vi.hoi
 // would silently let a real, uncontrolled createServerDbClient()/
 // cookies() session lookup leak into this test. Mocking requireCapability
 // directly as its own controllable export sidesteps that.
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/auth", () => ({
   requireAdmin: mockRequireAdmin,
   requireAdminRole: mockRequireAdminRole,

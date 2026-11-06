@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import {
   deleteProduct,
@@ -54,6 +55,7 @@ export async function getProductRelationOptionsAction(excludeProductId?: string)
 export async function moveProductAction(id: string, direction: "up" | "down"): Promise<void> {
   await requireCapability("edit_drafts");
   await moveEntityRow("products", id, direction);
+  revalidatePublicSite();
 }
 
 export type SaveProductResult =
@@ -144,6 +146,7 @@ export async function saveProductAction(id: string | null, values: any): Promise
       };
     }
 
+    revalidatePublicSite();
     return { status: "success", id: productId };
   } catch (err) {
     if (isUniqueViolationError(err)) {
@@ -156,6 +159,7 @@ export async function saveProductAction(id: string | null, values: any): Promise
 export async function deleteProductAction(id: string): Promise<void> {
   await requireCapability("delete_content");
   await deleteProduct(id);
+  revalidatePublicSite();
   redirect("/admin/products");
 }
 
@@ -177,6 +181,7 @@ export async function archiveProductAction(id: string): Promise<ArchiveProductRe
   await requirePublishCapabilityForStatusChange((current?.status as string | null | undefined) ?? null, "archived");
   try {
     await updateEntityRow("products", id, { status: "archived" });
+    revalidatePublicSite();
     return { status: "success" };
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Archive failed." };
@@ -196,6 +201,7 @@ export async function restoreProductAction(id: string): Promise<ArchiveProductRe
   }
   try {
     await updateEntityRow("products", id, { status: "draft" });
+    revalidatePublicSite();
     return { status: "success" };
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Restore failed." };

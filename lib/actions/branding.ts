@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability } from "@/lib/auth";
 import {
   getBrandingDraft,
@@ -137,6 +138,7 @@ export async function publishBrandingAction(expectedVersion: number): Promise<Br
     }
 
     await publishBranding(expectedVersion);
+    revalidatePublicSite();
     // publish_branding_atomic doesn't bump draft_version (it only writes
     // the revision + publication rows) — the version the caller already
     // holds is still correct, threaded back through for a uniform

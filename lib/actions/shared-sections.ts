@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability } from "@/lib/auth";
 import {
   createSharedSection,
@@ -99,6 +100,7 @@ export async function publishSharedSectionAction(
   await requireCapability("publish");
   try {
     await publishSharedSection(sectionId, expectedVersion);
+    revalidatePublicSite();
     // publish_shared_section_atomic doesn't bump draft_version (matches
     // publish_page_atomic) — the version the editor already holds is
     // still correct.
@@ -120,6 +122,7 @@ export async function unpublishSharedSectionAction(sectionId: string): Promise<U
   await requireCapability("publish");
   try {
     await unpublishSharedSection(sectionId);
+    revalidatePublicSite();
     return { status: "success", newStatus: "draft" };
   } catch {
     return { status: "error", message: "Unpublish failed. Please try again." };
@@ -129,5 +132,6 @@ export async function unpublishSharedSectionAction(sectionId: string): Promise<U
 export async function deleteSharedSectionAction(sectionId: string): Promise<void> {
   await requireCapability("delete_content");
   await deleteSharedSection(sectionId);
+  revalidatePublicSite();
   redirect("/admin/shared-sections");
 }

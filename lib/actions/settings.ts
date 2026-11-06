@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability } from "@/lib/auth";
 import { getSiteSettings, updateSiteSettings } from "@/lib/data/settings";
 import type { Tables } from "@/lib/db/database.types";
@@ -28,6 +29,7 @@ export async function saveSettingsAction(values: any): Promise<SaveSettingsResul
 
   try {
     await updateSiteSettings(parsed.data);
+    revalidatePublicSite();
     return { status: "success" };
   } catch (err) {
     return { status: "error", message: err instanceof Error ? err.message : "Save failed." };

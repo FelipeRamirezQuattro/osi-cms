@@ -647,14 +647,25 @@ export function PageEditor({
               </button>
               {canPublish &&
                 (status === "published" ? (
-                  <button
-                    type="button"
-                    onClick={onUnpublish}
-                    disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
-                    className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
-                  >
-                    Unpublish
-                  </button>
+                  <>
+                    {/* Saving only updates the draft; the live page is the last published snapshot. This pushes the edits live without an Unpublish round trip. */}
+                    <button
+                      type="button"
+                      onClick={onPublish}
+                      disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
+                      className="rounded bg-osi-gold-500 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-navy-900 disabled:opacity-50"
+                    >
+                      {isPublishing ? "Publishing…" : "Publish changes"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onUnpublish}
+                      disabled={isManualSaveActionBlocked({ actionInFlight: isPublishing, isAutosaving })}
+                      className="rounded bg-osi-navy-900 px-3 py-1.5 text-xs uppercase tracking-wide-label text-osi-white disabled:opacity-50"
+                    >
+                      Unpublish
+                    </button>
+                  </>
                 ) : (
                   <button
                     type="button"

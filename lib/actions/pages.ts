@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability, requirePublishCapabilityForStatusChange } from "@/lib/auth";
 import { getBlockPalette } from "@/lib/blocks/registry";
 import {
@@ -164,6 +165,7 @@ export async function publishPageAction(
   await requireCapability("publish");
   try {
     await publishPage(pageId, expectedVersion, { createRedirect: options?.createRedirect ?? false });
+    revalidatePublicSite();
     // publish_page_atomic doesn't bump draft_version (it only flips
     // status/published_at) — the version the editor already holds is
     // still correct, so it's threaded back through unchanged for a
@@ -180,6 +182,7 @@ export async function publishPageAction(
 export async function unpublishPageAction(pageId: string): Promise<void> {
   await requireCapability("publish");
   await unpublishPage(pageId);
+  revalidatePublicSite();
 }
 
 /**
@@ -198,6 +201,7 @@ export async function archivePageAction(pageId: string): Promise<SaveResult> {
   await requirePublishCapabilityForStatusChange((current?.status as string | null | undefined) ?? null, "archived");
   try {
     await archivePage(pageId);
+    revalidatePublicSite();
     return { status: "success", newVersion: 0 };
   } catch {
     return { status: "error", message: "Archive failed. Please try again." };
@@ -208,6 +212,7 @@ export async function restorePageAction(pageId: string): Promise<SaveResult> {
   await requireCapability("edit_drafts");
   try {
     await restorePage(pageId);
+    revalidatePublicSite();
     return { status: "success", newVersion: 0 };
   } catch {
     return { status: "error", message: "Restore failed. Please try again." };
@@ -228,6 +233,7 @@ export async function runPagePreflightAction(blocks: BlockInput[]): Promise<Pref
 export async function deletePageAction(pageId: string): Promise<void> {
   await requireCapability("delete_content");
   await deletePage(pageId);
+  revalidatePublicSite();
   redirect("/admin/pages");
 }
 

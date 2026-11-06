@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { saveProductAction, deleteProductAction, restoreProductAction } from "@/lib/actions/products";
 
 const { mockRedirect } = vi.hoisted(() => ({ mockRedirect: vi.fn() }));
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/navigation", () => ({
   redirect: mockRedirect,
 }));

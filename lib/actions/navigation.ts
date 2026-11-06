@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { requireCapability } from "@/lib/auth";
 import {
   createNavItem,
@@ -41,6 +42,7 @@ export async function createNavItemAction(input: {
   const parsed = navItemCreateSchema.safeParse(input);
   if (!parsed.success) throw new Error(formatZodError(parsed.error).message);
   await createNavItem(parsed.data);
+  revalidatePublicSite();
 }
 
 export async function updateNavItemAction(
@@ -58,14 +60,17 @@ export async function updateNavItemAction(
   const parsed = navItemUpdateSchema.safeParse(input);
   if (!parsed.success) throw new Error(formatZodError(parsed.error).message);
   await updateNavItem(id, parsed.data);
+  revalidatePublicSite();
 }
 
 export async function deleteNavItemAction(id: string): Promise<void> {
   await requireCapability("manage_navigation");
   await deleteNavItem(id);
+  revalidatePublicSite();
 }
 
 export async function moveNavItemAction(id: string, direction: "up" | "down"): Promise<void> {
   await requireCapability("manage_navigation");
   await moveNavItem(id, direction);
+  revalidatePublicSite();
 }

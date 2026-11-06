@@ -17,6 +17,7 @@ const { mockRequireCapability, mockRequirePublish } = vi.hoisted(() => ({
   mockRequireCapability: vi.fn(),
   mockRequirePublish: vi.fn(),
 }));
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/auth", () => ({
   requireCapability: mockRequireCapability,
   requirePublishCapabilityForStatusChange: mockRequirePublish,
