@@ -14,6 +14,7 @@ export function LabelPlateCard({
   href = "#",
   image,
   imageTreatment = "none",
+  headingLevel = 3,
   className = "",
 }: {
   title: string;
@@ -21,8 +22,11 @@ export function LabelPlateCard({
   href?: string;
   image?: string;
   imageTreatment?: "duotone" | "none";
+  /** 2 when the grid has no section heading above it, so the page outline never skips a level. */
+  headingLevel?: 2 | 3;
   className?: string;
 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <Link
       href={href}
@@ -51,9 +55,9 @@ export function LabelPlateCard({
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
-        <h3 {...longTitle(title)} className="font-editorial text-xl font-semibold leading-tight text-balance text-osi-navy-900">
+        <Heading {...longTitle(title)} className="font-editorial text-xl font-semibold leading-tight text-balance text-osi-navy-900">
           {title}
-        </h3>
+        </Heading>
         {body && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-osi-slate-300">{body}</p>}
         <span className="mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-sm font-semibold text-osi-navy-900">
           Learn more

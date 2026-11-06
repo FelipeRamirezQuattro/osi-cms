@@ -11,9 +11,11 @@ export interface LabelPlateItem {
 export function LabelPlateGrid({
   items,
   columns = 4,
+  headingLevel,
 }: {
   items: LabelPlateItem[];
   columns?: 2 | 3 | 4;
+  headingLevel?: 2 | 3;
 }) {
   const colsClass =
     columns === 2
@@ -31,6 +33,7 @@ export function LabelPlateGrid({
           body={item.body}
           href={item.href}
           image={item.imageUrl}
+          headingLevel={headingLevel}
         />
       ))}
     </div>

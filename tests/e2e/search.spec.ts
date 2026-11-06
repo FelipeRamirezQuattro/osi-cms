@@ -23,6 +23,9 @@ async function rest<T>(request: APIRequestContext, query: string, key = ANON_KEY
 
 const STOP = new Set(["which", "their", "there", "these", "those", "about", "would", "could", "other", "where", "while", "using", "within", "without"]);
 
+/** The home page's slug is "home" but its URL is "/". */
+const hrefOf = (slug: string) => (slug === "home" ? "/" : `/${slug}`);
+
 test.describe("site search", () => {
   test.skip(!SUPABASE_URL || !ANON_KEY, "Needs NEXT_PUBLIC_SUPABASE_URL/ANON_KEY (.env.local).");
 
@@ -109,8 +112,8 @@ test.describe("site search", () => {
         const named = slugs.filter((slug) => expected.some((p) => p.slug === slug));
         test.skip(named.length === 0, `No published ${slugs.join(" / ")} page contains "${word}" yet (publish the re-imported draft).`);
         await page.goto(`/search?q=${encodeURIComponent(word)}`);
-        for (const p of expected) await expect(page.locator(`main a[href="/${p.slug}"]`).first()).toBeVisible();
-        for (const slug of named) await expect(page.locator(`main a[href="/${slug}"]`).first()).toBeVisible();
+        for (const p of expected) await expect(page.locator(`main a[href="${hrefOf(p.slug)}"]`).first()).toBeVisible();
+        for (const slug of named) await expect(page.locator(`main a[href="${hrefOf(slug)}"]`).first()).toBeVisible();
       });
     }
 
@@ -122,7 +125,7 @@ test.describe("site search", () => {
       const word = words.find((w) => !title.includes(w));
       test.skip(!word, "No distinctive body word.");
       await page.goto(`/search?q=${encodeURIComponent(word!)}`);
-      const card = page.locator(`main a[href="/${bodyOnly!.slug}"]`).first();
+      const card = page.locator(`main a[href="${hrefOf(bodyOnly!.slug)}"]`).first();
       await expect(card).toBeVisible();
       await expect(card.locator("mark").first()).toContainText(new RegExp(word!.slice(0, 5), "i"));
       const text = (await card.locator("p").innerText()).trim();

@@ -37,7 +37,7 @@ function Render({ data }: { data: Data }) {
           {data.title}
         </h2>
       )}
-      <LabelPlateGrid items={data.tiles} columns={data.tiles.length >= 4 ? 4 : 3} />
+      <LabelPlateGrid items={data.tiles} columns={data.tiles.length >= 4 ? 4 : 3} headingLevel={data.title ? 3 : 2} />
       {data.showLoadMore && (
         <div className="mt-8 flex justify-center">
           <ArrowButton variant="outline-dark">Load more</ArrowButton>
