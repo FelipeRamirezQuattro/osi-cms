@@ -13,7 +13,7 @@ export default async function PreviewPage({ params }: PageProps<"/preview/[...sl
   if (!page) notFound();
 
   return (
-    <div>
+    <div data-staff-preview>
       <div className="bg-osi-gold-500 px-4 py-2 text-center text-xs uppercase tracking-wide-label text-osi-navy-900">
         Preview — {page.status === "published" ? "published" : "draft"} — reflects the last saved draft, not
         unsaved edits
