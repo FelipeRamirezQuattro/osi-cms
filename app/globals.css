@@ -351,3 +351,30 @@ body:has(dialog[open]) {
     scroll-behavior: auto !important;
   }
 }
+
+/* Staff preview shows every block immediately: scroll-reveal would leave
+   below-the-fold sections at opacity 0 for full-page captures, print and
+   anything else that never scrolls to them. Targets only the inline
+   opacity:0 the motion library sets; !important is needed to beat it. */
+[data-staff-preview] [style*="opacity: 0;"],
+[data-staff-preview] [style*="opacity:0;"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Consecutive text / image and button blocks read as one group: trim the stacked
+   section padding between them (the block's own spacing still applies elsewhere). */
+[data-block-type="rich_text"]:has(+ [data-block-type="button_group"]) > section,
+[data-block-type="image"]:has(+ [data-block-type="button_group"]) > section {
+  padding-bottom: 1rem;
+}
+[data-block-type="rich_text"] + [data-block-type="button_group"] > section,
+[data-block-type="image"] + [data-block-type="button_group"] > section {
+  padding-top: 0;
+}
+[data-block-type="rich_text"] + [data-block-type="image"]:has(+ [data-block-type="button_group"]) > section {
+  padding-top: 0.5rem;
+}
+[data-block-type="button_group"]:has(+ [data-block-type]) > section {
+  padding-bottom: 1rem;
+}

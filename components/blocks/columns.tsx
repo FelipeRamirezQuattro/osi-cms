@@ -47,7 +47,8 @@ function ColumnContent({ item, background }: { item: ColumnItem; background: Dat
   if (item.type === "text") {
     return (
       <div>
-        <h3 {...longTitle(item.heading)} className="font-editorial text-xl font-semibold leading-tight text-balance">{item.heading}</h3>
+        {/* h2, not h3: a columns block has no section title above it, so an h3 here would skip a level after the page h1. */}
+        <h2 {...longTitle(item.heading)} className="font-editorial text-xl font-semibold leading-tight text-balance">{item.heading}</h2>
         {item.body && <p className="mt-3 text-sm leading-relaxed opacity-80">{item.body}</p>}
       </div>
     );
@@ -80,6 +81,8 @@ function ColumnContent({ item, background }: { item: ColumnItem; background: Dat
 }
 
 function Render({ data }: { data: Data }) {
+  // A text column followed by two photos keeps the photos side by side on phones (text on top) instead of three tall rows.
+  const textThenPhotos = data.columns.length === 3 && data.columns[0].type === "text" && data.columns[1].type === "image" && data.columns[2].type === "image";
   return (
     <Section
       background={data.background}
@@ -88,9 +91,9 @@ function Render({ data }: { data: Data }) {
       anchorId={data.anchorId}
       reveal={false}
     >
-      <AnimatedGroup className={`grid grid-cols-1 gap-8 ${COLS_CLASS[data.columns.length] ?? ""}`}>
+      <AnimatedGroup className={`grid gap-8 ${textThenPhotos ? "grid-cols-2 gap-4 sm:gap-8" : "grid-cols-1"} ${COLS_CLASS[data.columns.length] ?? ""}`}>
         {data.columns.map((item, i) => (
-          <AnimatedItem key={i}>
+          <AnimatedItem key={i} className={textThenPhotos && i === 0 ? "col-span-2 sm:col-span-1" : undefined}>
             <ColumnContent item={item} background={data.background} />
           </AnimatedItem>
         ))}

@@ -72,3 +72,26 @@ test("text at 200% does not overflow a 390px screen (WCAG 1.4.4)", async ({ page
   test.setTimeout(180_000);
   expect(await sweep(page, 390, 844, PATHS, true)).toEqual([]);
 });
+
+// QA (Entregable 7): on an iPhone 15 Pro Max the Services tile cards touched the right edge.
+// Overflow alone would not catch that, so measure the gutter on both sides of the grid too.
+for (const width of [430, 440]) {
+  test(`feature tiles keep an equal left and right gutter at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 932 });
+    await page.goto("/services");
+    await page.waitForLoadState("networkidle");
+    const gutters = await page.evaluate(() => {
+      const grid = document.querySelector("[data-block-type=feature_tiles] .grid");
+      return [...(grid?.children ?? [])].map((card) => {
+        const r = card.getBoundingClientRect();
+        return { left: Math.round(r.left), right: Math.round(window.innerWidth - r.right) };
+      });
+    });
+    expect(gutters.length).toBeGreaterThan(0);
+    for (const g of gutters) {
+      expect(g.left).toBeGreaterThanOrEqual(16);
+      expect(g.right).toBeGreaterThanOrEqual(16);
+      expect(Math.abs(g.left - g.right)).toBeLessThanOrEqual(2);
+    }
+  });
+}
