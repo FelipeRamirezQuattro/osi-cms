@@ -25,6 +25,9 @@ const cardSchema = z
     emails: z.array(z.string().includes("@", { message: "Email must contain @" })).default([]),
     logoUrl: z.string().optional(),
     logoAlt: z.string().optional(),
+    // Optional portrait (a media asset). Alt text is optional and defaults to the person's name.
+    photoUrl: z.string().optional(),
+    photoAlt: z.string().optional(),
   })
   .superRefine((card, ctx) => {
     if (card.logoUrl && !card.logoAlt?.trim()) {
@@ -60,6 +63,18 @@ function Render({ data }: { data: Data }) {
       <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.cards.map((card, i) => (
           <li key={`${card.name}-${i}`} className="flex flex-col gap-3 border border-current/15 p-5 text-sm leading-relaxed">
+            {card.photoUrl && (
+              // Fixed square box + object-cover: every portrait is cropped the same whatever its source size.
+              <Image
+                data-people-photo
+                src={resolveMediaUrl(card.photoUrl)}
+                alt={card.photoAlt?.trim() || card.name}
+                width={224}
+                height={224}
+                sizes="112px"
+                className="aspect-square h-28 w-28 shrink-0 self-start object-cover object-top"
+              />
+            )}
             {card.logoUrl && (
               <Image
                 src={resolveMediaUrl(card.logoUrl)}
@@ -128,6 +143,8 @@ const adminFields: FieldSpec[] = [
       { key: "emails", label: "Emails", type: "array", optional: true },
       { key: "logoUrl", label: "Logo", type: "image", optional: true },
       { key: "logoAlt", label: "Logo alt text", type: "text", optional: true },
+      { key: "photoUrl", label: "Photo (optional, shown at the top of the card)", type: "image", optional: true },
+      { key: "photoAlt", label: "Photo alt text (leave empty to use the person's name)", type: "text", optional: true },
     ],
   },
 ];
@@ -137,7 +154,7 @@ export const peopleCardsBlock = defineBlock({
   label: "People cards",
   category: "content",
   description:
-    "A grid of contact cards (name, title, phone and email links, optional logo) — 3–4 per row on desktop, 1 on phones. One block per group (e.g. US Sales, Distributors).",
+    "A grid of contact cards (name, title, phone and email links, optional photo or logo) — 3–4 per row on desktop, 1 on phones. One block per group (e.g. US Sales, Distributors).",
   schema,
   adminFields,
   defaults: { background: "cream", spacingTop: "md", spacingBottom: "md", cards: [{ name: "Name", phones: [], emails: [] }] },

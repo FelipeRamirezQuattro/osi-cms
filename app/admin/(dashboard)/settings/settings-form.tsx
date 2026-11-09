@@ -24,7 +24,7 @@ const SETTINGS_FIELDS: FieldSpec[] = [
   { key: "footer_tagline", label: "Footer tagline", type: "text", optional: true },
   {
     key: "footer_utility_links",
-    label: "Footer links (e.g. SG-SST Policies, E-learning)",
+    label: "Footer links (e.g. SG-SST Policies)",
     type: "array",
     maxItems: 8,
     itemFields: [
@@ -32,6 +32,8 @@ const SETTINGS_FIELDS: FieldSpec[] = [
       { key: "href", label: "Link (a page path like /contact, or a full https:// URL)", type: "text" },
     ],
   },
+  { key: "footer_elearning_label", label: "E-learning button label (footer)", type: "text", optional: true },
+  { key: "footer_elearning_url", label: "E-learning button link (full https:// URL; leave both empty to hide the button)", type: "text", optional: true },
   {
     key: "footer_badges",
     label: "Certification badges (footer)",

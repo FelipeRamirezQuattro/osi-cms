@@ -3,6 +3,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
 import { resolveMediaUrl } from "@/lib/media";
+import { ArrowButton } from "@/components/ui/arrow-button";
 import { externalLinkAttrs } from "@/lib/routes";
 import { footerBadgeSchema, footerUtilityLinkSchema } from "@/lib/validation/settings";
 
@@ -12,7 +13,18 @@ const isExternal = (href: string) => /^https?:\/\//i.test(href);
  * Admin-editable footer extras (site_settings.footer_utility_links / footer_badges, migration 0060).
  * Entries that fail validation are skipped and an empty list renders nothing, so a half-filled setting never shows a broken link or image.
  */
-export function FooterExtras({ utilityLinks, badges }: { utilityLinks: unknown; badges: unknown }) {
+export function FooterExtras({
+  utilityLinks,
+  badges,
+  elearningLabel,
+  elearningUrl,
+}: {
+  utilityLinks: unknown;
+  badges: unknown;
+  /** site_settings.footer_elearning_label / _url (migration 0067): the E-learning button. Hidden unless both are set. */
+  elearningLabel?: string | null;
+  elearningUrl?: string | null;
+}) {
   const links = z.array(z.unknown()).catch([]).parse(utilityLinks).flatMap((l) => {
     const r = footerUtilityLinkSchema.safeParse(l);
     return r.success ? [r.data] : [];
@@ -21,7 +33,8 @@ export function FooterExtras({ utilityLinks, badges }: { utilityLinks: unknown; 
     const r = footerBadgeSchema.safeParse(b);
     return r.success ? [r.data] : [];
   });
-  if (links.length === 0 && marks.length === 0) return null;
+  const elearning = elearningLabel?.trim() && elearningUrl?.trim() ? { label: elearningLabel.trim(), href: elearningUrl.trim() } : null;
+  if (links.length === 0 && marks.length === 0 && !elearning) return null;
 
   return (
     <div data-footer-extras className="mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 border-t border-white/12 pt-8">
@@ -43,6 +56,15 @@ export function FooterExtras({ utilityLinks, badges }: { utilityLinks: unknown; 
             );
           })}
         </ul>
+      )}
+      {elearning && (
+        <ArrowButton
+          href={elearning.href}
+          variant="outline-light"
+          {...(isExternal(elearning.href) ? { target: "_blank" as const, rel: "noopener" } : {})}
+        >
+          {elearning.label}
+        </ArrowButton>
       )}
       {marks.length > 0 && (
         <ul aria-label="Certifications" className="flex flex-wrap items-center gap-3">

@@ -2043,6 +2043,8 @@ export type Database = {
           default_og_image: string | null
           email: string | null
           footer_badges: Json
+          footer_elearning_label: string | null
+          footer_elearning_url: string | null
           footer_tagline: string | null
           footer_utility_links: Json
           id: boolean
@@ -2061,6 +2063,8 @@ export type Database = {
           default_og_image?: string | null
           email?: string | null
           footer_badges?: Json
+          footer_elearning_label?: string | null
+          footer_elearning_url?: string | null
           footer_tagline?: string | null
           footer_utility_links?: Json
           id?: boolean
@@ -2079,6 +2083,8 @@ export type Database = {
           default_og_image?: string | null
           email?: string | null
           footer_badges?: Json
+          footer_elearning_label?: string | null
+          footer_elearning_url?: string | null
           footer_tagline?: string | null
           footer_utility_links?: Json
           id?: boolean

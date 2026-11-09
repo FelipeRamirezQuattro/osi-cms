@@ -58,4 +58,15 @@ describe("siteSettingsSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("E-learning button: both label and URL, or neither", () => {
+    const url = "https://learning.odessaseparator.com/login/index.php";
+    const ok = siteSettingsSchema.safeParse({ footer_elearning_label: "E-learning", footer_elearning_url: url });
+    expect(ok.success && ok.data.footer_elearning_url).toBe(url);
+    const empty = siteSettingsSchema.safeParse({ footer_elearning_label: "", footer_elearning_url: "" });
+    expect(empty.success && empty.data.footer_elearning_label).toBeNull();
+    expect(siteSettingsSchema.safeParse({ footer_elearning_url: url }).success).toBe(false);
+    expect(siteSettingsSchema.safeParse({ footer_elearning_label: "E-learning" }).success).toBe(false);
+    expect(siteSettingsSchema.safeParse({ footer_elearning_label: "E-learning", footer_elearning_url: "javascript:alert(1)" }).success).toBe(false);
+  });
 });

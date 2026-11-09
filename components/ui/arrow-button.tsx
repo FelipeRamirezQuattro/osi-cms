@@ -14,6 +14,9 @@ const VARIANT_CLASSES: Record<Exclude<Variant, "ghost-arrow">, string> = {
 type CommonProps = {
   variant?: Variant;
   href?: string;
+  /** Only used with `href`, e.g. an external link that opens in a new tab. */
+  target?: "_blank";
+  rel?: string;
   className?: string;
   children: ReactNode;
 };
@@ -26,6 +29,8 @@ type CommonProps = {
 export function ArrowButton({
   variant = "outline-dark",
   href,
+  target,
+  rel,
   className = "",
   children,
   ...rest
@@ -43,7 +48,7 @@ export function ArrowButton({
       </span>
     );
     return href ? (
-      <Link href={href} className={className}>
+      <Link href={href} target={target} rel={rel} className={className}>
         {content}
       </Link>
     ) : (
@@ -69,7 +74,7 @@ export function ArrowButton({
   );
 
   return href ? (
-    <Link href={href} className={shared}>
+    <Link href={href} target={target} rel={rel} className={shared}>
       {inner}
     </Link>
   ) : (

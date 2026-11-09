@@ -38,4 +38,50 @@ describe("people_cards", () => {
   it("normalises phone numbers for tel:", () => {
     expect(telHref("+1 (432)-444-1234")).toBe("tel:+14324441234");
   });
+
+  describe("photo", () => {
+    const photo = "https://x.example/media/lbell.jpg";
+
+    it("is optional: a card with no photo renders no image, placeholder or initials", () => {
+      const html = render({ cards: [{ name: "Luke Bell", title: "Sales/Application Engineer" }] });
+      expect(html).not.toContain("<img");
+      expect(html).not.toContain("data-people-photo");
+      expect(html).not.toContain("svg");
+      expect(html).toContain("Luke Bell");
+    });
+
+    it("shows a fixed-ratio, cover-cropped portrait at the top of the card", () => {
+      const html = render({ cards: [{ name: "Luke Bell", photoUrl: photo }] });
+      expect(html).toContain("data-people-photo");
+      expect(html).toContain("aspect-square");
+      expect(html).toContain("object-cover");
+      // The portrait comes before the name.
+      expect(html.indexOf("data-people-photo")).toBeLessThan(html.indexOf("Luke Bell</p>"));
+    });
+
+    it("defaults the alt text to the person's name and uses a custom one when given", () => {
+      expect(render({ cards: [{ name: "Luke Bell", photoUrl: photo }] })).toContain('alt="Luke Bell"');
+      expect(render({ cards: [{ name: "Luke Bell", photoUrl: photo, photoAlt: "Luke Bell at the Odessa yard" }] })).toContain(
+        'alt="Luke Bell at the Odessa yard"',
+      );
+      expect(render({ cards: [{ name: "Luke Bell", photoUrl: photo, photoAlt: "   " }] })).toContain('alt="Luke Bell"');
+    });
+
+    it("schema accepts a photo without alt text and keeps the distributor logo rule", () => {
+      expect(peopleCardsBlock.schema.safeParse({ ...base, cards: [{ name: "A", photoUrl: photo }] }).success).toBe(true);
+      expect(peopleCardsBlock.schema.safeParse({ ...base, cards: [{ name: "A", photoUrl: photo, logoUrl: "https://x/y.png" }] }).success).toBe(false);
+    });
+
+    it("a distributor card keeps its logo and shows no portrait", () => {
+      const html = render({ cards: [{ name: "A", company: "Impel Energy", logoUrl: "https://x.example/impel.png", logoAlt: "Impel Energy" }] });
+      expect(html).toContain('alt="Impel Energy"');
+      expect(html).not.toContain("data-people-photo");
+    });
+
+    it("exposes the photo in the admin form", () => {
+      const cards = peopleCardsBlock.adminFields.find((f) => f.key === "cards") as { itemFields: { key: string; type: string }[] };
+      expect(cards.itemFields).toContainEqual(expect.objectContaining({ key: "photoUrl", type: "image" }));
+      expect(cards.itemFields.map((f) => f.key)).toContain("photoAlt");
+    });
+  });
 });

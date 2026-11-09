@@ -576,14 +576,22 @@ everyone, even people who dismissed the old wording.
 
 ![The Settings Announcement bar with its enable, message, and optional link controls marked](handbook/screenshots/settings-01-form.png)
 
-**Footer.** Three more boxes control the strip above the copyright line:
-**Footer links** (a label and a link each — for example *SG-SST Policies*
-or *E-learning*; use a page path such as `/contact` for a page on this
+**Footer.** Four more settings control the strip above the copyright line:
+the **E-learning button** (a label and a full `https://` address; it opens
+in a new tab, and leaving both empty hides it),
+**Footer links** (a label and a link each — for example *SG-SST Policies*;
+use a page path such as `/contact` for a page on this
 site or a full `https://` address for another site, which opens in a new
 tab) and **Certification badges** (pick an image from the media library,
 write what it shows for screen readers, and optionally a link). The
 **Facebook, LinkedIn, YouTube and Instagram** boxes above become the round
 icons in the footer. Anything you leave empty simply isn't shown.
+
+**People cards (Contact page).** Each person can have an optional **Photo**
+(pick it from the media library). It appears as a square portrait at the top
+of that person's card, always cropped to the same size; leave it empty and
+the card looks as before. The photo's description for screen readers defaults
+to the person's name, so you only fill it in if you want something different.
 
 **Site search.** The search box on the public site looks at the words
 visitors can read on a published page, news item or product — not only the

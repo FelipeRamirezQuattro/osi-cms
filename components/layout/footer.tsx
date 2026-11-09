@@ -83,7 +83,12 @@ export async function Footer({ branding = OSI_SEED_BRANDING_CONFIG, logoAsset = 
           ))}
         </div>
 
-        <FooterExtras utilityLinks={settings.footer_utility_links} badges={settings.footer_badges} />
+        <FooterExtras
+          utilityLinks={settings.footer_utility_links}
+          badges={settings.footer_badges}
+          elearningLabel={settings.footer_elearning_label}
+          elearningUrl={settings.footer_elearning_url}
+        />
 
         <div className="mt-12 grid gap-8 border-t border-white/12 pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <address className="max-w-xl text-sm not-italic leading-relaxed text-white/64">

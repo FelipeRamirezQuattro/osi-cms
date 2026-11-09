@@ -121,3 +121,48 @@ describe("Footer extras (site_settings.footer_utility_links / footer_badges)", (
     expect(c.querySelector("ul[aria-label='Certifications']")).toBeNull();
   });
 });
+
+describe("Footer E-learning button", () => {
+  const withElearning = (over: Record<string, unknown> = {}) =>
+    mockGetSiteSettings.mockResolvedValue({
+      phone: null,
+      address_lines: [],
+      social_facebook: null,
+      social_linkedin: null,
+      social_youtube: null,
+      social_instagram: null,
+      footer_utility_links: [{ label: "SG-SST Policies", href: "/hse/sg-sst-policies" }],
+      footer_elearning_label: "E-learning",
+      footer_elearning_url: "https://learning.odessaseparator.com/login/index.php",
+      ...over,
+    });
+  const links = async () => {
+    mockGetNavMenu.mockResolvedValue([]);
+    const container = document.createElement("div");
+    container.innerHTML = renderToStaticMarkup(await Footer());
+    return [...container.querySelectorAll("a")];
+  };
+
+  it("renders one button that opens the Moodle login in a new tab with rel=noopener", async () => {
+    withElearning();
+    const matches = (await links()).filter((a) => a.textContent?.includes("E-learning"));
+    expect(matches).toHaveLength(1);
+    expect(matches[0].getAttribute("href")).toBe("https://learning.odessaseparator.com/login/index.php");
+    expect(matches[0].getAttribute("target")).toBe("_blank");
+    expect(matches[0].getAttribute("rel")).toBe("noopener");
+    expect(matches[0].className).toContain("rounded-full"); // the existing ArrowButton style, not a text link
+  });
+
+  it("keeps the SG-SST Policies link", async () => {
+    withElearning();
+    expect((await links()).some((a) => a.getAttribute("href") === "/hse/sg-sst-policies")).toBe(true);
+  });
+
+  it("renders nothing when the label or the URL is empty", async () => {
+    for (const over of [{ footer_elearning_url: null }, { footer_elearning_label: null }, { footer_elearning_label: " ", footer_elearning_url: " " }]) {
+      withElearning(over);
+      expect((await links()).some((a) => a.textContent?.includes("E-learning"))).toBe(false);
+    }
+  });
+});
+

@@ -10,6 +10,7 @@ import { TiltCard } from "@/components/ui/tilt-card";
 import { GradientText } from "@/components/ui/gradient-text";
 import { MarqueeStrip } from "@/components/ui/marquee-strip";
 import { FooterExtras } from "@/components/layout/footer-extras";
+import { peopleCardsBlock } from "@/components/blocks/people-cards";
 import { LabelPlateDemo } from "@/components/styleguide/label-plate-demo";
 import { imageBlock } from "@/components/blocks/image";
 import { embedBlock } from "@/components/blocks/embed";
@@ -509,8 +510,9 @@ export default async function StyleguidePage() {
           <FooterExtras
             utilityLinks={[
               { label: "SG-SST Policies", href: "/hse/sg-sst-policies" },
-              { label: "E-learning", href: "https://learning.odessaseparator.com/" },
             ]}
+            elearningLabel="E-learning"
+            elearningUrl="https://learning.odessaseparator.com/login/index.php"
             badges={[
               { imageUrl: "https://static.wixstatic.com/media/1ac9e9_15ded07185504a98828f06c62d48ab19~mv2.jpg/v1/crop/x_58,y_0,w_642,h_700/fill/w_321,h_350/Cert.jpg", alt: "ISO 9001 quality management certification, certified by SCB", href: null },
               { imageUrl: "https://static.wixstatic.com/media/1ac9e9_15ded07185504a98828f06c62d48ab19~mv2.jpg/v1/crop/x_797,y_0,w_604,h_700/fill/w_302,h_350/Cert.jpg", alt: "ISO 45001 occupational health and safety certification by SGS", href: "https://www.sgs.com/es-co" },
@@ -518,6 +520,35 @@ export default async function StyleguidePage() {
           />
         </div>
       </Section>
+      <div data-styleguide-people-cards>
+        {/* Fixture for tests/e2e/people-cards-photo.spec.ts: a portrait and a landscape source (both must crop to the same square), and a card without a photo. */}
+        <peopleCardsBlock.Render
+          data={peopleCardsBlock.schema.parse({
+            background: "cream",
+            spacingTop: "md",
+            spacingBottom: "md",
+            title: "People cards: with and without a photo",
+            cards: [
+              {
+                name: "Test Person One",
+                title: "Sales/Application Engineer",
+                phones: [{ label: "Cell", number: "+1 (432) 000-0001" }],
+                emails: ["one@example.test"],
+                photoUrl: "https://static.wixstatic.com/media/1ac9e9_15ded07185504a98828f06c62d48ab19~mv2.jpg/v1/crop/x_58,y_0,w_642,h_700/fill/w_321,h_350/Cert.jpg",
+              },
+              {
+                name: "Test Person Two",
+                title: "Sales Manager",
+                phones: [],
+                emails: ["two@example.test"],
+                photoUrl: "https://static.wixstatic.com/media/1ac9e9_15ded07185504a98828f06c62d48ab19~mv2.jpg/v1/fill/w_1200,h_400/Wide.jpg",
+                photoAlt: "Portrait of Test Person Two",
+              },
+              { name: "Test Person Three", title: "No photo", phones: [], emails: ["three@example.test"] },
+            ],
+          })}
+        />
+      </div>
       </main>
     </PublicThemeBoundary>
   );

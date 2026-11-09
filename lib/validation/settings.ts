@@ -60,6 +60,9 @@ export const siteSettingsSchema = z.object({
   footer_tagline: optionalNullableString(),
   footer_badges: z.array(footerBadgeSchema).max(6, "At most 6 badges").default([]),
   footer_utility_links: z.array(footerUtilityLinkSchema).max(8, "At most 8 links").default([]),
+  // The "E-learning" button in the footer (0067). Both or neither.
+  footer_elearning_label: optionalNullableString(),
+  footer_elearning_url: optionalSafeHrefSchema({ label: "E-learning button URL" }),
   default_og_image: optionalNullableString(),
   announcement_bar: announcementBarSchema.default({
     enabled: false,
@@ -67,6 +70,13 @@ export const siteSettingsSchema = z.object({
     link_url: null,
     link_label: null,
   }),
+}).superRefine((s, ctx) => {
+  if (s.footer_elearning_url && !s.footer_elearning_label) {
+    ctx.addIssue({ code: "custom", path: ["footer_elearning_label"], message: "E-learning button label is required when a URL is set" });
+  }
+  if (s.footer_elearning_label && !s.footer_elearning_url) {
+    ctx.addIssue({ code: "custom", path: ["footer_elearning_url"], message: "E-learning button URL is required when a label is set" });
+  }
 });
 
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;

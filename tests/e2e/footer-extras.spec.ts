@@ -15,9 +15,16 @@ for (const width of [1440, 390, 320]) {
 
     const links = box.getByRole("list", { name: "Footer links" });
     await expect(links.getByRole("link", { name: "SG-SST Policies" })).toHaveAttribute("href", "/hse/sg-sst-policies");
-    const elearning = links.getByRole("link", { name: "E-learning" });
+    // E-learning is a button now, not a text link: it is not in the links list, and its destination is not repeated.
+    await expect(links.getByRole("link", { name: "E-learning" })).toHaveCount(0);
+    const elearning = box.getByRole("link", { name: "E-learning" });
+    await expect(elearning).toHaveCount(1);
+    await expect(elearning).toHaveAttribute("href", "https://learning.odessaseparator.com/login/index.php");
     await expect(elearning).toHaveAttribute("target", "_blank");
-    await expect(elearning).toHaveAttribute("rel", /noopener/);
+    await expect(elearning).toHaveAttribute("rel", "noopener");
+    expect((await elearning.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await expect(elearning).toHaveCSS("border-top-width", "1px"); // the outlined ArrowButton, not a plain text link
+    await expect(elearning.locator("span[aria-hidden]")).toHaveText("→");
 
     const badges = box.getByRole("list", { name: "Certifications" });
     await expect(badges.getByRole("img", { name: /ISO 9001/ })).toBeVisible();
@@ -56,4 +63,19 @@ test("footer badges render in full colour (no filter)", async ({ page }) => {
     .evaluateAll((imgs) => imgs.map((i) => getComputedStyle(i).filter));
   expect(filters.length).toBeGreaterThan(0);
   for (const f of filters) expect(f).toBe("none");
+});
+
+// Live footer: the button is a site setting (migration 0067). Skipped until that migration is applied to the project being tested.
+test("live footer shows the E-learning button once, opening Moodle in a new tab", async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+  const footer = page.locator("footer");
+  // The button is a direct child of the extras row; the old text link lived inside the "Footer links" list.
+  const button = footer.locator("[data-footer-extras] > a", { hasText: "E-learning" });
+  test.skip((await button.count()) === 0, "footer_elearning_* not set on this database yet (apply 0067)");
+  await expect(button).toHaveCount(1);
+  await expect(button).toHaveAttribute("href", "https://learning.odessaseparator.com/login/index.php");
+  await expect(button).toHaveAttribute("target", "_blank");
+  await expect(button).toHaveAttribute("rel", "noopener");
+  await expect(footer.getByRole("list", { name: "Footer links" }).getByRole("link", { name: "E-learning" })).toHaveCount(0);
+  await expect(footer.getByRole("link", { name: "SG-SST Policies" })).toBeVisible();
 });
