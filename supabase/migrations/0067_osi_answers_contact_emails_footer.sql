@@ -42,7 +42,7 @@
 
 do $osi$
 declare
-  contact_email constant text := '<OSI_CONTACT_EMAIL>';
+  contact_email constant text := 'ctrujillo@odsep.com';
   email_pattern constant text := '^[^\s"''\\<>@]+@[^\s"''\\<>@]+\.[^\s"''\\<>@]+$';
   ishani constant jsonb := jsonb_build_object(
     'name', 'Ishani Chakrabarty',
